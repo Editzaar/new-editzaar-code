@@ -299,3 +299,38 @@ if (filter !== 'all' && cat !== filter) {
   });
 
 });
+
+
+/* ──────────────────────────────────────────────
+   14. AUTO-PLAY WITH AUDIO ON HOVER
+────────────────────────────────────────────── */
+let audioUnlocked = false;
+
+// Step 1: Unlock audio capability on the first click anywhere
+document.addEventListener('click', () => {
+    audioUnlocked = true;
+}, { once: true });
+
+document.querySelectorAll('.vcard').forEach(card => {
+    const video = card.querySelector('video');
+    if (!video) return;
+
+    card.addEventListener('mouseenter', () => {
+        // If user has clicked at least once, we can try to unmute
+        if (audioUnlocked) {
+            video.muted = false;
+        }
+        
+        video.play().catch(error => {
+            // If it fails, play it muted as a fallback
+            video.muted = true;
+            video.play();
+            console.log("Play with audio blocked; playing muted instead.");
+        });
+    });
+
+    card.addEventListener('mouseleave', () => {
+        video.pause();
+        video.muted = true; // Reset to muted for next hover
+    });
+});
