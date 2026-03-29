@@ -243,7 +243,7 @@ if (filter !== 'all' && cat !== filter) {
       var text = 'Hi Editzaar! I saw your work on your website and I want something similar to: "' + videoTitle + '". Can we discuss?';
       var encoded  = encodeURIComponent(text);
       var waNumber = '919476766340'; // ← Replace with your actual WhatsApp number
-      window.open('https://wa.me/' + waNumber + '?text=' + encoded, '_blank');
+      window.open('https://wa.link/4g11ud' + waNumber + '?text=' + encoded, '_blank');
     });
   });
 
