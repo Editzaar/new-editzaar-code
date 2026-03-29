@@ -12,13 +12,13 @@
 }
 
 :root {
-  --gold:        #BFA46A;
+  --gold:        hsl(41, 94%, 48%);
   --gold-dim:    rgba(191, 164, 106, 0.12);
   --gold-border: rgba(191, 164, 106, 0.25);
   --bg:          #080808;
   --bg2:         #0d0d0d;
   --bg3:         #050505;
-  --t1:          #ede8df;
+  --t1:          #ffffff;
   --t2:          rgba(237, 232, 223, 0.45);
   --t3:          rgba(237, 232, 223, 0.2);
   --border:      rgba(191, 164, 106, 0.12);
@@ -152,7 +152,7 @@ nav {
 }
 
 .nav-cta:hover {
-  background: #d4b878;
+  background: #f1ab07;
 }
 
 .nav-toggle {
@@ -268,7 +268,7 @@ nav {
   transition: background 0.2s;
 }
 
-.btn-p:hover { background: #d4b878; }
+.btn-p:hover { background: #ffb300; }
 
 .btn-g {
   font-size: 11px;
@@ -646,7 +646,7 @@ nav {
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  border: 1.5px solid rgba(191, 164, 106, 0.8);
+  border: 1.5px solid rgba(239, 165, 7, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -930,7 +930,7 @@ nav {
   transition: background 0.2s;
 }
 
-.plan-cta-gold:hover { background: #d4b878; }
+.plan-cta-gold:hover { background: #f5ae08; }
 
 /* ── Partner Logos ── */
 .logo-strip {
