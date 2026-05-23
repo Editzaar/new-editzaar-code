@@ -334,3 +334,6 @@ document.querySelectorAll('.vcard').forEach(card => {
         video.muted = true; // Reset to muted for next hover
     });
 });
+
+
+
