@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Infrastructure & Growth | Editzaar</title>
+    <style>
+        :root { --accent: #ffcc00; --bg: #0d0d0d; --card-bg: #121212; --text: #a6a6a6; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; line-height: 1.8; margin: 0; padding: 0; }
+        .container { max-width: 1100px; margin: auto; padding: 8% 5%; }
+        
+        /* Header styling */
+        .hdr { margin-bottom: 60px; border-left: 2px solid var(--accent); padding-left: 20px; }
+        .hdr h1 { font-size: 2.8rem; margin: 0; font-weight: 300; letter-spacing: -1px; }
+        .hdr h1 em { color: var(--accent); font-style: normal; font-weight: 700; }
+        .hdr p { color: var(--text); margin-top: 10px; font-size: 1.1rem; }
+
+        /* Split layout for Web and Marketing */
+        .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; margin-bottom: 50px; }
+        .card { background: var(--card-bg); border: 1px solid #222; padding: 45px; border-radius: 4px; }
+        
+        .card-icon { font-size: 2.5rem; margin-bottom: 25px; }
+        .card h2 { font-size: 1.5rem; margin-top: 0; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .card p { color: var(--text); font-size: 0.95rem; margin-bottom: 30px; }
+        
+        /* Tech & Metric Pill Badges */
+        .badge-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 35px; }
+        .badge { background: #1a1a1a; color: var(--accent); font-family: monospace; font-size: 0.8rem; padding: 6px 14px; border-radius: 50px; border: 1px solid #333; }
+        
+        /* Premium Action Button */
+        .action-btn { display: inline-block; background: var(--accent); color: #000; text-decoration: none; padding: 12px 30px; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; border-radius: 2px; transition: 0.3s; }
+        .action-btn:hover { background: #fff; transform: translateY(-2px); }
+        
+        .nav-back { display: inline-block; margin-bottom: 40px; color: var(--text); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; }
+        .nav-back:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="nav-back">← RETURN TO SHOWCASE</a>
+        
+        <div class="hdr">
+            <h1>Digital <em>Capabilities</em></h1>
+            <p>Engineering robust web systems and high-ROI traffic frameworks.</p>
+        </div>
+
+        <div class="row">
+            <div class="card">
+                <div class="card-icon">💻</div>
+                <h2>Premium Web Development</h2>
+                <p>We build production-ready front-end code tailored for clear content presentation and client scheduling. Every site is engineered completely from scratch for raw loading performance, clean mobile responsiveness, and high Google Lighthouse scores.</p>
+                
+                <div class="badge-grid">
+                    <span class="badge">HTML5/CSS3</span>
+                    <span class="badge">JavaScript (ES6)</span>
+                    <span class="badge">GitHub Deployments</span>
+                    <span class="badge">95+ Performance Rating</span>
+                </div>
+                
+                <a href="index.html#book" class="action-btn">Request Custom Architecture</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h2>Performance Marketing & SMM</h2>
+                <p>We match our high-retention video assets with strategic distribution funnels. By targeting search traffic and setting up custom brand calendars, we map out clear customer journeys that transform casual social views into an active audience base.</p>
+                
+                <div class="badge-grid">
+                    <span class="badge">Google Search Ads</span>
+                    <span class="badge">Audience Analytics</span>
+                    <span class="badge">Content Automations</span>
+                    <span class="badge">Funnel Optimization</span>
+                </div>
+                
+                <a href="index.html#book" class="action-btn">Deploy Growth Funnel</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
