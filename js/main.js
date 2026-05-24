@@ -337,3 +337,47 @@ document.querySelectorAll('.vcard').forEach(card => {
 
 
 
+document.addEventListener("DOMContentLoaded", function() {
+  let selectedPlan = "Shorts — ₹1,000"; // Default selection matching active state
+
+  // 1. Handle Plan Selection Toggles
+  const planOptions = document.querySelectorAll(".plan-opt");
+  planOptions.forEach(option => {
+    option.addEventListener("click", function() {
+      // Strip highlights from options
+      planOptions.forEach(opt => opt.classList.remove("sel"));
+      // Highlight the choice clicked
+      this.classList.add("sel");
+      // Store current data plan attribute value
+      selectedPlan = this.getAttribute("data-plan");
+    });
+  });
+
+  // 2. Handle WhatsApp Form Redirect Pipeline
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", function() {
+      const name = document.getElementById("fname").value.trim();
+      const clientPhone = document.getElementById("fphone").value.trim();
+      const message = document.getElementById("fmsg").value.trim();
+
+      if (!name || !clientPhone) {
+        alert("Please fill in your Name and WhatsApp Number so we can reach you.");
+        return;
+      }
+
+      // Enter your real phone number here (with 91 country code, no symbols/spaces)
+      const agencyPhoneNumber = "919476766340"; 
+
+      // Format custom enterprise presentation strings
+      const textMessage = `⚡ NEW PROJECT BRIEF — EDITZAAR ⚡%0A%0A` +
+                          `👤 *Client Name:* ${name}%0A` +
+                          `📱 *WhatsApp:* ${clientPhone}%0A` +
+                          `📦 *Selected Strategy:* ${selectedPlan}%0A%0A` +
+                          `📝 *Project Overview:* %0A${message || "No project overview provided yet."}`;
+
+      const whatsappUrl = `https://wa.me/${agencyPhoneNumber}?text=${textMessage}`;
+      window.open(whatsappUrl, '_blank');
+    });
+  }
+});

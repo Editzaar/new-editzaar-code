@@ -1407,3 +1407,8 @@ video.vthumb { object-fit: cover; background: #000; }
 
 
 
+/* Active state styling for form selection blocks */
+.plan-opt.sel {
+  border-color: #ffcc00 !important; /* Changes border to your gold/yellow theme colour */
+  background: #1a1a1a !important;   /* Slightly lighter gray highlight fill */
+}
