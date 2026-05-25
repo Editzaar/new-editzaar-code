@@ -381,3 +381,28 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 });
+
+
+// Place this inside your document.addEventListener("DOMContentLoaded", function() ...
+
+const navToggle = document.getElementById("navToggle");
+const navLinks = document.querySelector(".nav-links");
+
+if (navToggle && navLinks) {
+  navToggle.addEventListener("click", function() {
+    // Toggles the open/close class on the menu drawer
+    navLinks.classList.toggle("nav-active");
+    // Optional: Toggles an animation class on your lines/burger icon
+    navToggle.classList.toggle("toggle-active");
+  });
+
+  // Close menu automatically if a user clicks a link (like #work)
+  const links = navLinks.querySelectorAll("a");
+  links.forEach(link => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("nav-active");
+      navToggle.classList.remove("toggle-active");
+    });
+  });
+}
+

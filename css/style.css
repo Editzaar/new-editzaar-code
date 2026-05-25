@@ -1412,3 +1412,71 @@ video.vthumb { object-fit: cover; background: #000; }
   border-color: #ffcc00 !important; /* Changes border to your gold/yellow theme colour */
   background: #1a1a1a !important;   /* Slightly lighter gray highlight fill */
 }
+
+
+@media (max-width: 768px) {
+  /* Make sure the mobile nav menu transitions on screen properly */
+  .nav-links {
+    position: fixed;
+    right: 0;
+    top: 70px; /* Adjust based on your header height */
+    height: calc(100vh - 70px);
+    background: #0d0d0d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%; /* Slid-out panel width */
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 999; /* Forces it above all other elements */
+  }
+
+  /* This is the class our new JS script applies on click */
+  .nav-links.nav-active {
+    transform: translateX(0%);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Restructure the split layout wrapper */
+  .booking {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 20px 5%;
+  }
+
+  /* Keep the left and right containers bounded cleanly */
+  .book-left, .book-right {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Prevent the pricing options matrix from looking massive */
+  .plan-sel {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Turns it into a clean 2x2 grid instead of long bars */
+    gap: 12px;
+    width: 100%;
+  }
+
+  .plan-opt {
+    padding: 15px 10px !important;
+    text-align: center;
+  }
+
+  /* Form entry fields scaling optimization */
+  .field input, .field textarea {
+    width: 100% !important;
+    font-size: 16px !important; /* Prevents mobile Safari/Chrome from automatically zooming in */
+    box-sizing: border-box;
+  }
+  
+  /* Make the main button size feel punchy but accessible */
+  .sub-btn {
+    width: 100% !important;
+    padding: 16px !important;
+    font-size: 0.95rem !important;
+  }
+}
