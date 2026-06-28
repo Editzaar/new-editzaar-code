@@ -1258,23 +1258,30 @@ footer {
   nav { padding: 14px 20px; }
   .nav-links { display: none; }
   .nav-toggle { display: flex; }
-  .nav-links.open {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: rgba(8, 8, 8, 0.98);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 0;
-    z-index: 99;
-  }
-  .nav-links.open li a {
-    display: block;
-    padding: 12px 24px;
-  }
+  /* Add this to force the nav container to stop pushing the menu to the right */
+nav.menu-is-open {
+    justify-content: center !important;
+}
+ .nav-links.open {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; 
+    align-items: center !important;
+    position: fixed !important;
+    /* Force to cover entire screen */
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    /* Absolute dimensions */
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(8, 8, 8, 0.98) !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+  
   .sec { padding: 52px 20px; }
   .hero-left { padding: 48px 20px 36px; }
   .hero h1 { font-size: 38px; }
