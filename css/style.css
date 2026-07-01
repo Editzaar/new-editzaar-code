@@ -1520,7 +1520,7 @@ video.vthumb { object-fit: cover; background: #000; }
     z-index: 10;
     background: #0d0d0d; /* Match your site's dark theme */
     min-width: 120px;
-    border-right: 1px solid #222;
+    border-right: 1px solid #0d0d0d;
 }
 
 /* Style for GST text */
