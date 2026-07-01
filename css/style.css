@@ -1518,7 +1518,7 @@ video.vthumb { object-fit: cover; background: #000; }
     position: sticky;
     left: 0;
     z-index: 10;
-    background: #080808; /* Match your site's dark theme */
+    background: #0d0d0d; /* Match your site's dark theme */
     min-width: 120px;
     border-right: 1px solid #222;
 }
@@ -1526,7 +1526,7 @@ video.vthumb { object-fit: cover; background: #000; }
 /* Style for GST text */
 .gst-text {
     font-size: 0.70rem;
-    color: #888;
+    color: #5c5b5b;
     margin-top: 5px;
     font-weight: normal;
 }
@@ -1542,7 +1542,7 @@ video.vthumb { object-fit: cover; background: #000; }
 /* Active state styling for form selection blocks */
 .plan-opt.sel {
   border-color: #ffcc00 !important; /* Changes border to your gold/yellow theme colour */
-  background: #1a1a1a !important;   /* Slightly lighter gray highlight fill */
+  background: #0d0d0d !important;   /* Slightly lighter gray highlight fill */
 }
 
 
