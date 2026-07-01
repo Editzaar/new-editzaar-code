@@ -1403,8 +1403,33 @@ nav.menu-is-open {
 
 
 
+@media (max-width: 768px) {
+  /* 1. Force the wrapper to be a horizontal scrolling track short reel*/
+  .reels-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    width: 100% !important;
+    gap: 16px !important;
+    padding: 0 20px !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
 
+  /* 2. Force the reels to sit side-by-side */
+  .v-reel {
+    flex: 0 0 70vw !important; /* Forces 70% width */
+    max-width: 70vw !important;
+    scroll-snap-align: center !important;
+  }
 
+  /* 3. Hide scrollbars */
+  .reels-wrapper::-webkit-scrollbar {
+    display: none !important;
+  }
+}
 
 
 
