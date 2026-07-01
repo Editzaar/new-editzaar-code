@@ -468,86 +468,93 @@
     </div>
   </section>
 
+
+
+
   <!-- BOOKING -->
   <section class="sec sec-alt" id="book">
-    <div class="sec-hdr reveal">
-      <div class="sec-title">Book your <em>project</em></div>
-      <div class="sec-tag">06 / Get started</div>
-    </div>
-    <div class="booking reveal reveal-d1">
-      <div class="book-left">
-        <div class="book-title">Start your project</div>
-        <div class="book-sub">Choose a plan, tell us about your project, and we'll get back to you within 2 hours via WhatsApp.</div>
-        <div class="plan-sel-label">Select a plan</div>
-        <div class="plan-sel" id="planSel">
-          <div class="plan-opt sel" data-plan="Shorts — ₹1,000">
-            <div class="plan-opt-name">Shorts edit</div>
-            <div class="plan-opt-price">₹1,000 / video</div>
-          </div>
-          <div class="plan-opt" data-plan="Animated — ₹2,500">
-            <div class="plan-opt-name">Animated edit</div>
-            <div class="plan-opt-price">₹2,500 / video</div>
-          </div>
-          <div class="plan-opt" data-plan="Long Form — ₹5,000">
-            <div class="plan-opt-name">Long-form video</div>
-            <div class="plan-opt-price">₹5,000 / video</div>
-          </div>
-          <div class="plan-opt" data-plan="Partnership — Custom">
-            <div class="plan-opt-name">Monthly partnership</div>
-            <div class="plan-opt-price">Custom</div>
-          </div>
+  <div class="sec-hdr reveal">
+    <div class="sec-title">Book your <em>project</em></div>
+    <div class="sec-tag">06 / Get started</div>
+  </div>
+  <div class="booking reveal reveal-d1">
+    <div class="book-left">
+      <div class="book-title">Start your project</div>
+      <div class="book-sub">Choose a plan, tell us about your project, and we'll get back to you within 2 hours via WhatsApp.</div>
+      <div class="plan-sel-label">Select a plan (Inclusive of 18% GST)</div>
+      <div class="plan-sel" id="planSel">
+        <!-- Updated Prices -->
+        <div class="plan-opt sel" data-plan="Shorts — ₹1,180">
+          <div class="plan-opt-name">Shorts edit</div>
+          <div class="plan-opt-price">₹1,000 + GST</div>
         </div>
-        <div class="field">
-          <label for="fname">Your name</label>
-          <input type="text" id="fname" placeholder="Rahul Sharma" />
+        <div class="plan-opt" data-plan="Animated — ₹2,950">
+          <div class="plan-opt-name">Animated edit</div>
+          <div class="plan-opt-price">₹2,500 + GST</div>
         </div>
-        <div class="field">
-          <label for="fphone">WhatsApp number</label>
-          <input type="text" id="fphone" placeholder="+91 98765 43210" />
+        <div class="plan-opt" data-plan="Long Form — ₹5,900">
+          <div class="plan-opt-name">Long-form video</div>
+          <div class="plan-opt-price">₹5,000 + GST</div>
         </div>
-        <div class="field">
-          <label for="fmsg">Tell us about your project</label>
-          <textarea id="fmsg" placeholder="I'm a finance creator with 50K subscribers and I need..."></textarea>
-        </div>
-        <button class="sub-btn" id="submitBtn">Send project brief on WhatsApp</button>
-      </div>
-      <div class="book-right">
-        <div class="book-title">Why Editzaar?</div>
-        <div class="book-sub">We don't just edit videos. We engineer content that performs.</div>
-        <div class="perk">
-          <div class="perk-icon">
-            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5.5" stroke="#BFA46A" stroke-width="1"/><path d="M4.5 7L6.5 9L9.5 5" stroke="#BFA46A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div><div class="perk-title">48-hour delivery</div><div class="perk-desc">Every project delivered in 48 hours or less. Deadlines are sacred to us.</div></div>
-        </div>
-        <div class="perk">
-          <div class="perk-icon">
-            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 2L8.5 5.5H12L9.5 7.5L10.5 11L7 9L3.5 11L4.5 7.5L2 5.5H5.5L7 2Z" stroke="#BFA46A" stroke-width="1" stroke-linejoin="round"/></svg>
-          </div>
-          <div><div class="perk-title">Niche-specific expertise</div><div class="perk-desc">Finance, real estate, education, weddings — we understand your audience's psychology.</div></div>
-        </div>
-        <div class="perk">
-          <div class="perk-icon">
-            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="10" height="7" rx="1" stroke="#BFA46A" stroke-width="1"/><path d="M5 4V3a2 2 0 014 0v1" stroke="#BFA46A" stroke-width="1"/></svg>
-          </div>
-          <div><div class="perk-title">Revision guarantee</div><div class="perk-desc">Up to 4 revisions included. We don't stop until you're 100% happy.</div></div>
-        </div>
-        <div class="perk">
-          <div class="perk-icon">
-            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10.5C3.5 8 5 7 7 7C9 7 10.5 8 12 10.5" stroke="#BFA46A" stroke-width="1" stroke-linecap="round"/><circle cx="7" cy="4.5" r="2" stroke="#BFA46A" stroke-width="1"/></svg>
-          </div>
-          <div><div class="perk-title">Direct WhatsApp access</div><div class="perk-desc">No ticket systems. Chat directly with your editor anytime during the project.</div></div>
-        </div>
-        <div class="bdiv"></div>
-        <div class="trust-row">
-          <div class="trust-item">200+ projects</div>
-          <div class="trust-item">12M+ views</div>
-          <div class="trust-item">Hyderabad-based</div>
-          <div class="trust-item">Serving globally</div>
+        <div class="plan-opt" data-plan="Partnership — Custom">
+          <div class="plan-opt-name">Monthly partnership</div>
+          <div class="plan-opt-price">Custom</div>
         </div>
       </div>
+      <!-- Fields remain unchanged -->
+      <div class="field">
+        <label for="fname">Your name</label>
+        <input type="text" id="fname" placeholder="Mukesh ambani" />
+      </div>
+      <div class="field">
+        <label for="fphone">WhatsApp number</label>
+        <input type="text" id="fphone" placeholder="+91 9876543210" />
+      </div>
+      <div class="field">
+        <label for="fmsg">Tell us about your project</label>
+        <textarea id="fmsg" placeholder="Mukesh Ambani here.the richest person in India, Need premium video editing for a few upcoming projects."></textarea>
+      </div>
+      <button class="sub-btn" id="submitBtn">Send project brief on WhatsApp</button>
     </div>
-  </section>
+    
+    <!-- book-right remains exactly as you provided -->
+    <div class="book-right">
+      <div class="book-title">Why Editzaar?</div>
+      <div class="book-sub">We don't just edit videos. We engineer content that performs.</div>
+      <!-- Perk 1 -->
+      <div class="perk">
+        <div class="perk-icon"><svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5.5" stroke="#BFA46A" stroke-width="1"/><path d="M4.5 7L6.5 9L9.5 5" stroke="#BFA46A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="perk-title">48-hour delivery</div><div class="perk-desc">Every project delivered in 48 hours or less. Deadlines are sacred to us.</div></div>
+      </div>
+      <!-- Perk 2 -->
+      <div class="perk">
+        <div class="perk-icon"><svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 2L8.5 5.5H12L9.5 7.5L10.5 11L7 9L3.5 11L4.5 7.5L2 5.5H5.5L7 2Z" stroke="#BFA46A" stroke-width="1" stroke-linejoin="round"/></svg></div>
+        <div><div class="perk-title">Niche-specific expertise</div><div class="perk-desc">Finance, real estate, education, weddings — we understand your audience's psychology.</div></div>
+      </div>
+      <!-- Perk 3 -->
+      <div class="perk">
+        <div class="perk-icon"><svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="10" height="7" rx="1" stroke="#BFA46A" stroke-width="1"/><path d="M5 4V3a2 2 0 014 0v1" stroke="#BFA46A" stroke-width="1"/></svg></div>
+        <div><div class="perk-title">Revision guarantee</div><div class="perk-desc">Up to 4 revisions included. We don't stop until you're 100% happy.</div></div>
+      </div>
+      <!-- Perk 4 -->
+      <div class="perk">
+        <div class="perk-icon"><svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10.5C3.5 8 5 7 7 7C9 7 10.5 8 12 10.5" stroke="#BFA46A" stroke-width="1" stroke-linecap="round"/><circle cx="7" cy="4.5" r="2" stroke="#BFA46A" stroke-width="1"/></svg></div>
+        <div><div class="perk-title">Direct WhatsApp access</div><div class="perk-desc">No ticket systems. Chat directly with your editor anytime during the project.</div></div>
+      </div>
+      <div class="bdiv"></div>
+      <div class="trust-row">
+        <div class="trust-item">200+ projects</div>
+        <div class="trust-item">12M+ views</div>
+        <div class="trust-item">Hyderabad-based</div>
+        <div class="trust-item">Serving globally</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
 
   <!-- REVIEWS -->
   <section class="sec">
