@@ -1387,29 +1387,37 @@ video.vthumb { object-fit: cover; background: #000; }
     border-radius: 12px;
 }
 
-/* MOBILE: Carousel Version */
-@media (max-width: 768px) {
-    .reels-wrapper {
-        overflow-x: auto; /* Enable swiping */
-        scroll-snap-type: x mandatory; /* Professional snap effect */
-        padding-bottom: 20px;
-        -webkit-overflow-scrolling: touch;
-    }
 
-    /* Hide Scrollbar */
-    .reels-wrapper::-webkit-scrollbar { display: none; }
-    .reels-wrapper { scrollbar-width: none; }
+/* Enable horizontal scrolling for mobile for pricing section */
+.table-wrap {
+    overflow-x: auto;
+    display: block;
+    width: 100%;
+}
 
-    .reels-container {
-        display: flex;
-        width: max-content; /* Allows container to grow horizontally */
-        gap: 12px;
-    }
+/* Fix the first column (labels) to the left */
+.ptable th:first-child,
+.ptable td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background: #080808; /* Match your site's dark theme */
+    min-width: 120px;
+    border-right: 1px solid #222;
+}
 
-    .reels-container .v-reel {
-        flex: 0 0 75vw; /* Each video takes 75% of screen width */
-        scroll-snap-align: center;
-    }
+/* Style for GST text */
+.gst-text {
+    font-size: 0.70rem;
+    color: #888;
+    margin-top: 5px;
+    font-weight: normal;
+}
+
+/* Optional: Ensure table does not collapse */
+.ptable {
+    width: 100%;
+    border-collapse: collapse;
 }
 
 
