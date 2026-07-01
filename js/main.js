@@ -248,39 +248,48 @@ if (filter !== 'all' && cat !== filter) {
   });
 
 
-  /* ──────────────────────────────────────────────
-     9. MOBILE NAV TOGGLE
-  ────────────────────────────────────────────── */
-  var navToggle = document.getElementById('navToggle');
-  var navLinks  = document.querySelector('.nav-links');
+  
+document.addEventListener('DOMContentLoaded', function () {
+    /* ──────────────────────────────────────────────
+       9. MOBILE NAV TOGGLE
+    ────────────────────────────────────────────── */
+    var navToggle = document.getElementById('navToggle');
+    var navLinks = document.querySelector('.nav-links');
 
-  if (navToggle && navLinks) {
-    navToggle.addEventListener('click', function () {
-      navLinks.classList.toggle('open');
-    });
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', function () {
+            // Toggles the 'active' class to show/hide the menu
+            navLinks.classList.toggle('active');
+            
+            // Optional: Add logic here to animate the hamburger icon 
+            // if you have CSS classes for it
+        });
 
-    // Close on nav link click
-    navLinks.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        navLinks.classList.remove('open');
-      });
-    });
-  }
-
-
-  /* ──────────────────────────────────────────────
-     10. NAVBAR SCROLL SHADOW
-  ────────────────────────────────────────────── */
-  var navbar = document.getElementById('navbar');
-
-  window.addEventListener('scroll', function () {
-    if (!navbar) return;
-    if (window.scrollY > 40) {
-      navbar.style.boxShadow = '0 1px 32px rgba(0,0,0,0.55)';
-    } else {
-      navbar.style.boxShadow = 'none';
+        // Close menu when a link is clicked
+        navLinks.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                navLinks.classList.remove('active');
+            });
+        });
     }
-  });
+
+    /* ──────────────────────────────────────────────
+       10. NAVBAR SCROLL SHADOW
+    ────────────────────────────────────────────── */
+    var navbar = document.getElementById('navbar');
+
+    window.addEventListener('scroll', function () {
+        if (!navbar) return;
+        
+        // Adds shadow when user scrolls down more than 40px
+        if (window.scrollY > 40) {
+            navbar.style.boxShadow = '0 1px 32px rgba(0,0,0,0.55)';
+        } else {
+            navbar.style.boxShadow = 'none';
+        }
+    });
+});
+
 
 
   /* ──────────────────────────────────────────────

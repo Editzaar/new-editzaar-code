@@ -93,6 +93,8 @@ body:hover .cursor-dot {
 .reveal-d3 { transition-delay: 0.28s; }
 .reveal-d4 { transition-delay: 0.38s; }
 
+
+
 /* ── Navbar ── */
 nav {
   display: flex;
@@ -114,6 +116,7 @@ nav {
   font-weight: 600;
   letter-spacing: 0.18em;
   color: #fff;
+  z-index: 101; /* Keeps logo above the mobile menu */
 }
 
 .logo em {
@@ -156,13 +159,14 @@ nav {
 }
 
 .nav-toggle {
-  display: none;
+  display: none; /* Hidden on desktop */
   flex-direction: column;
   gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 4px;
+  z-index: 101;
 }
 
 .nav-toggle span {
@@ -172,6 +176,94 @@ nav {
   background: var(--t1);
   transition: all 0.25s;
 }
+
+/* ── Mobile Correction Styles ── */
+@media (max-width: 768px) {
+  nav {
+    padding: 16px 24px;
+  }
+
+  .nav-toggle {
+    display: flex; /* Show toggle on mobile */
+  }
+
+  .nav-links {
+    display: none; /* Hidden by default on mobile */
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100vh;
+    background: #080808;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    z-index: 90;
+    padding: 0;
+  }
+
+  /* This class is added by your JavaScript */
+  .nav-links.active {
+    display: flex; 
+  }
+  
+  .nav-cta {
+      display: none; /* Optional: hide CTA in mobile menu if desired */
+  }
+}
+/* ── Premium Floating Header ── */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5%;
+  position: fixed; /* Header stays at the top */
+  top: 20px;       /* Adds the 'floating' gap */
+  left: 5%;
+  right: 5%;
+  background: rgba(8, 8, 8, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px; /* Pill shape for premium feel */
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Subtle hover effect for the whole nav */
+nav:hover {
+  background: rgba(8, 8, 8, 0.7);
+  border-color: rgba(255, 215, 0, 0.3); /* Subtle gold tint */
+}
+
+/* Enhancing the Logo */
+.logo {
+  font-size: 18px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+/* Premium Button style */
+.nav-cta {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 8px 20px;
+  border-radius: 50px; /* Matches the pill shape */
+  font-size: 10px;
+  transition: all 0.3s;
+}
+
+.nav-cta:hover {
+  background: var(--gold);
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+
+
+
 
 /* ── Hero ── */
 .hero {
