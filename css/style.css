@@ -352,7 +352,7 @@ nav:hover {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #080808;
+  color: #ffffff;
   background: var(--gold);
   padding: 14px 30px;
   border-radius: 2px;
@@ -367,7 +367,7 @@ nav:hover {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--t1);
-  border: 1px solid rgba(237, 232, 223, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 14px 30px;
   border-radius: 2px;
   font-weight: 400;
@@ -375,7 +375,7 @@ nav:hover {
 }
 
 .btn-g:hover {
-  border-color: rgba(191, 164, 106, 0.5);
+  border-color: rgba(255, 255, 255, 0.5);
   color: var(--gold);
 }
 
@@ -394,7 +394,7 @@ nav:hover {
   transition: background 0.2s;
 }
 
-.hstat:hover { background: rgba(191, 164, 106, 0.03); }
+.hstat:hover { background: rgba(255, 255, 255, 0.03); }
 
 .hstat-n {
   font-family: var(--font-display);
@@ -500,7 +500,7 @@ nav:hover {
   text-transform: uppercase;
   padding: 9px 20px;
   border-radius: 2px;
-  border: 1px solid rgba(237, 232, 223, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--t2);
   background: transparent;
   cursor: pointer;
@@ -523,7 +523,7 @@ nav:hover {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2px;
-  background: rgba(191, 164, 106, 0.06);
+  background: rgba(251, 251, 251, 0.06);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -598,7 +598,7 @@ nav:hover {
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(191, 164, 106, 0.28);
+  color: rgba(255, 255, 255, 0.28);
 }
 
 .vthumb-play-sm {
@@ -606,7 +606,7 @@ nav:hover {
   height: 0;
   border-top: 9px solid transparent;
   border-bottom: 9px solid transparent;
-  border-left: 16px solid rgba(191, 164, 106, 0.3);
+  border-left: 16px solid rgba(255, 255, 255, 0.3);
 }
 
 .vthumb-bars {
@@ -615,11 +615,11 @@ nav:hover {
   align-items: flex-end;
 }
 
-.vthumb-bars div:nth-child(1) { width: 6px; height: 20px; background: rgba(191,164,106,0.25); border-radius: 1px; }
-.vthumb-bars div:nth-child(2) { width: 6px; height: 32px; background: rgba(191,164,106,0.4);  border-radius: 1px; }
-.vthumb-bars div:nth-child(3) { width: 6px; height: 24px; background: rgba(191,164,106,0.3);  border-radius: 1px; }
-.vthumb-bars div:nth-child(4) { width: 6px; height: 38px; background: rgba(191,164,106,0.5);  border-radius: 1px; }
-.vthumb-bars div:nth-child(5) { width: 6px; height: 16px; background: rgba(191,164,106,0.25); border-radius: 1px; }
+.vthumb-bars div:nth-child(1) { width: 6px; height: 20px; background: rgba(249, 249, 249, 0.25); border-radius: 1px; }
+.vthumb-bars div:nth-child(2) { width: 6px; height: 32px; background: rgba(255, 255, 255, 0.4);  border-radius: 1px; }
+.vthumb-bars div:nth-child(3) { width: 6px; height: 24px; background: rgba(255, 255, 254, 0.3);  border-radius: 1px; }
+.vthumb-bars div:nth-child(4) { width: 6px; height: 38px; background: rgba(255, 255, 255, 0.5);  border-radius: 1px; }
+.vthumb-bars div:nth-child(5) { width: 6px; height: 16px; background: rgba(253, 253, 253, 0.25); border-radius: 1px; }
 
 .vthumb-lines {
   display: flex;
@@ -632,21 +632,21 @@ nav:hover {
 .vthumb-lines div:last-child {
   width: 18px;
   height: 1px;
-  background: rgba(191, 164, 106, 0.28);
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .vthumb-line-label {
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(191, 164, 106, 0.28);
+  color: rgba(255, 255, 255, 0.28);
 }
 
 .vthumb-circle {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 1px solid rgba(191, 164, 106, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -664,7 +664,7 @@ nav:hover {
   width: 66px;
   height: 66px;
   border-radius: 50%;
-  border: 1.5px solid rgba(191, 164, 106, 0.55);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
