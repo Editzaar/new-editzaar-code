@@ -167,20 +167,12 @@ document.addEventListener('DOMContentLoaded', function () {
           }, 20);
         } else {
           card.style.display = 'none';
+          var v = card.querySelector('video');
+          if(v) v.pause(); // Stop hidden videos from playing in the background
         }
       });
     });
   });
-
-
-
-  // Inside your filter click event
-if (filter !== 'all' && cat !== filter) {
-    card.style.display = 'none';
-    const v = card.querySelector('video');
-    if(v) v.pause(); // Stop hidden videos from playing in the background
-}
-
 
   /* ──────────────────────────────────────────────
      6. BOOKING FORM — PLAN SELECTOR
@@ -248,28 +240,34 @@ if (filter !== 'all' && cat !== filter) {
   });
 
 
-  
-document.addEventListener('DOMContentLoaded', function () {
-    /* ──────────────────────────────────────────────
-       9. MOBILE NAV TOGGLE
-    ────────────────────────────────────────────── */
+
+  /* ──────────────────────────────────────────────
+     9. MOBILE NAV TOGGLE
+  ────────────────────────────────────────────── */
     var navToggle = document.getElementById('navToggle');
     var navLinks = document.querySelector('.nav-links');
 
     if (navToggle && navLinks) {
-        navToggle.addEventListener('click', function () {
-            // Toggles the 'active' class to show/hide the menu
+        navToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
             navLinks.classList.toggle('active');
-            
-            // Optional: Add logic here to animate the hamburger icon 
-            // if you have CSS classes for it
+            navToggle.classList.toggle('active');
         });
 
         // Close menu when a link is clicked
         navLinks.querySelectorAll('a').forEach(function (link) {
             link.addEventListener('click', function () {
                 navLinks.classList.remove('active');
+                navToggle.classList.remove('active');
             });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
+                navLinks.classList.remove('active');
+                navToggle.classList.remove('active');
+            }
         });
     }
 
@@ -288,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
             navbar.style.boxShadow = 'none';
         }
     });
-});
 
 
 
@@ -391,27 +388,4 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
-
-// Place this inside your document.addEventListener("DOMContentLoaded", function() ...
-
-const navToggle = document.getElementById("navToggle");
-const navLinks = document.querySelector(".nav-links");
-
-if (navToggle && navLinks) {
-  navToggle.addEventListener("click", function() {
-    // Toggles the open/close class on the menu drawer
-    navLinks.classList.toggle("nav-active");
-    // Optional: Toggles an animation class on your lines/burger icon
-    navToggle.classList.toggle("toggle-active");
-  });
-
-  // Close menu automatically if a user clicks a link (like #work)
-  const links = navLinks.querySelectorAll("a");
-  links.forEach(link => {
-    link.addEventListener("click", () => {
-      navLinks.classList.remove("nav-active");
-      navToggle.classList.remove("toggle-active");
-    });
-  });
-}
 
