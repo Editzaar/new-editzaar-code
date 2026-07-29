@@ -54,7 +54,7 @@ a {
   transform: translate(-50%, -50%);
   transition: left 0.14s ease, top 0.14s ease;
   z-index: 9998;
-  opacity: 0;
+  opacity: 1; /* Always visible on desktop */
 }
 
 .cursor-dot {
@@ -67,12 +67,7 @@ a {
   transform: translate(-50%, -50%);
   transition: left 0.04s, top 0.04s;
   z-index: 9999;
-  opacity: 0;
-}
-
-body:hover .cursor-glow,
-body:hover .cursor-dot {
-  opacity: 1;
+  opacity: 1; /* Always visible on desktop */
 }
 
 /* ── Scroll Reveal ── */
@@ -486,12 +481,30 @@ nav:hover {
 }
 
 .vgrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  background: rgba(251, 251, 251, 0.06);
-  border-radius: 4px;
-  overflow: hidden;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 20px;
+  background: none;
+  border-radius: 0;
+  padding: 10px 0 24px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) rgba(255, 255, 255, 0.05);
+}
+
+.vgrid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.vgrid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+}
+
+.vgrid::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 10px;
 }
 
 .vcard {
@@ -499,6 +512,10 @@ nav:hover {
   position: relative;
   cursor: pointer;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  flex: 0 0 380px; /* fixed width on desktop */
+  scroll-snap-align: start;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .vcard:hover {
@@ -1193,41 +1210,57 @@ nav:hover {
 .reviews-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 16px;
 }
 
 .rev {
-  background: var(--bg2);
-  border: 1px solid rgba(237, 232, 223, 0.05);
-  border-radius: 4px;
-  padding: 26px 22px;
-  transition: border-color 0.2s;
+  background: rgba(18, 18, 18, 0.75);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 22px 20px;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-.rev:hover { border-color: rgba(191, 164, 106, 0.18); }
+.rev:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 215, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
 
 .rev-stars {
   color: var(--gold);
-  font-size: 13px;
-  letter-spacing: 3px;
-  margin-bottom: 14px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.15);
 }
 
 .rev-q {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 300;
   font-style: italic;
-  color: rgba(237, 232, 223, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   line-height: 1.7;
   margin-bottom: 18px;
+  flex-grow: 1;
 }
 
 .rev-name {
-  font-size: 11px;
+  font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--t3);
+  color: var(--gold);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 10px;
+  font-weight: 600;
 }
 
 /* ── Footer ── */
@@ -1303,7 +1336,7 @@ footer {
   .hero h1 { font-size: 48px; }
   .hero-stats { grid-template-columns: repeat(4, 1fr); }
   .hstat { border-top: none; }
-  .vgrid { grid-template-columns: repeat(2, 1fr); }
+  .vcard { flex: 0 0 320px; }
   .vcard.feat { grid-template-columns: 1fr; }
   .vcard.feat .vthumb-wrap { min-height: 220px; padding-top: 56%; }
   .vcard.feat .vthumb { padding-top: 0; height: 100%; }
@@ -1346,7 +1379,7 @@ nav.menu-is-open {
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
   .hstat { padding: 20px; }
   .hstat-n { font-size: 36px; }
-  .vgrid { grid-template-columns: 1fr; }
+  .vcard { flex: 0 0 280px; }
   .vcard.feat { grid-template-columns: 1fr; }
   .process { grid-template-columns: 1fr 1fr; }
   .ptable { font-size: 11px; }
@@ -1450,18 +1483,37 @@ video.vthumb { object-fit: cover; background: #000; }
 /* Container Logic */
 .reels-wrapper {
     width: 100%;
-    overflow: hidden; /* Clips any overflow on desktop */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) rgba(255, 255, 255, 0.05);
+    padding-bottom: 12px;
+}
+
+.reels-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.reels-wrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+}
+
+.reels-wrapper::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 10px;
 }
 
 .reels-container {
     display: flex;
     gap: 16px;
-    transition: all 0.3s ease;
 }
 
-/* Desktop: Fixed 5-column display */
+/* Scrollable Reels cards */
 .reels-container .v-reel {
-    flex: 0 0 calc(20% - 13px); /* 20% width for each of the 5 videos */
+    flex: 0 0 240px; /* Fixed width on desktop/mobile for carousel feel */
+    scroll-snap-align: start;
     min-width: 0;
 }
 
