@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.1"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.2"/>
 
   <style>
     .modal-overlay {
@@ -395,46 +395,49 @@
       });
     }
 
-    /* SEED DEMO CLIENTS & DEMO PROJECTS */
+    /* SEED DEMO CLIENTS & REAL FIREBASE AUTHENTICATION ACCOUNTS */
     document.getElementById('btnSeedDemoData').addEventListener('click', async () => {
-      showToast('Seeding Demo Clients & Projects…', 'success');
+      showToast('Creating Demo Client Accounts in Auth & Firestore…', 'success');
 
-      // Demo Client 1: Bikram Nath
-      const c1Id = 'demo_client_bikram';
-      await setDoc(doc(db, 'users', c1Id), {
-        name: 'Bikram Nath (Creator)',
-        email: 'bickram.nath@dreamsanddegrees.com',
-        tempPass: 'password123',
-        role: 'client',
-        createdAt: serverTimestamp()
-      });
+      const secondaryApp  = initializeApp(firebaseConfig, 'sec_seed_gen');
+      const secondaryAuth = getAuth(secondaryApp);
 
-      // Demo Client 2: Rohan Sharma
-      const c2Id = 'demo_client_rohan';
-      await setDoc(doc(db, 'users', c2Id), {
-        name: 'Rohan Sharma (Tech Scale)',
-        email: 'rohan@techscale.in',
-        tempPass: 'clientpass123',
-        role: 'client',
-        createdAt: serverTimestamp()
-      });
+      const demoUsers = [
+        { name: 'Rohan Sharma (Tech Scale)', email: 'rohan@techscale.in', pass: 'clientpass123' },
+        { name: 'Priya Verma (Fashion D2C)', email: 'priya@luxeclothing.com', pass: 'clientpass456' },
+        { name: 'Bikram Nath (Creator)', email: 'bickram.nath@dreamsanddegrees.com', pass: 'password123' }
+      ];
 
-      // Demo Client 3: Priya Verma
-      const c3Id = 'demo_client_priya';
-      await setDoc(doc(db, 'users', c3Id), {
-        name: 'Priya Verma (Fashion D2C)',
-        email: 'priya@luxeclothing.com',
-        tempPass: 'clientpass456',
-        role: 'client',
-        createdAt: serverTimestamp()
-      });
+      const createdUids = [];
+
+      for (const u of demoUsers) {
+        let uid = '';
+        try {
+          const cred = await createUserWithEmailAndPassword(secondaryAuth, u.email, u.pass);
+          uid = cred.user.uid;
+          await secondaryAuth.signOut();
+        } catch (e) {
+          // If user already exists in auth, generate deterministic or Firestore document ID
+          uid = 'demo_' + u.email.split('@')[0];
+        }
+
+        createdUids.push({ uid, name: u.name, email: u.email, pass: u.pass });
+
+        await setDoc(doc(db, 'users', uid), {
+          name: u.name,
+          email: u.email,
+          tempPass: u.pass,
+          role: 'client',
+          createdAt: serverTimestamp()
+        });
+      }
 
       // Demo Projects
       const d1 = new Date(); d1.setDate(d1.getDate() + 3);
       await addDoc(collection(db, 'projects'), {
         title: 'Shorts & Instagram Reels Pack — Tech Launch',
         description: '3-second hook optimization with kinetic captions and sound FX.',
-        clientId: c2Id,
+        clientId: createdUids[0].uid,
         clientGstin: '36TECHSCALE123Z1',
         editorId: editors[0]?.id || '',
         status: 'in_progress',
@@ -448,7 +451,7 @@
       await addDoc(collection(db, 'projects'), {
         title: 'Long-Form YouTube Documentary Edit',
         description: 'High-retention storytelling cuts, lower thirds, and cinematic color grading.',
-        clientId: c1Id,
+        clientId: createdUids[2].uid,
         clientGstin: '',
         editorId: editors[0]?.id || '',
         status: 'pending',
@@ -458,7 +461,7 @@
         deadline: d2
       });
 
-      showToast('3 Demo Clients & Active Projects Seeded Successfully! ✅', 'success');
+      showToast('3 Real Auth Demo Clients & Projects Created! ✅', 'success');
     });
 
     function renderStats() {
@@ -551,7 +554,7 @@
         <tr>
           <td><strong>${c.name||'Client'}</strong></td>
           <td>${c.email}</td>
-          <td><span class="pass-pill">${c.tempPass||'password123'}</span></td>
+          <td><span class="pass-pill">${c.tempPass||'clientpass123'}</span></td>
           <td>${projCount}</td>
           <td>${nameOf(c.assignedEditor)||'—'}</td>
           <td>
