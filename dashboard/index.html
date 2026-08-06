@@ -29,7 +29,6 @@
     .auth-ring:nth-child(2){ width:500px; height:500px; animation-delay:1.3s; }
     .auth-ring:nth-child(3){ width:700px; height:700px; animation-delay:2.6s; }
 
-    /* Auth Tabs */
     .auth-tabs {
       display: flex;
       background: rgba(255,255,255,0.04);
@@ -95,7 +94,6 @@
     <div class="auth-box" style="position:relative;z-index:3;">
       <span class="auth-logo">EDIT<em>ZAAR</em></span>
 
-      <!-- Sign In / Sign Up Tabs -->
       <div class="auth-tabs">
         <div class="auth-tab active" id="tabSignin">Sign In</div>
         <div class="auth-tab" id="tabSignup">Create Account</div>
@@ -107,7 +105,6 @@
       <div class="auth-error" id="authError"></div>
       <div class="auth-success" id="authSuccess"></div>
 
-      <!-- Signup Name Field (Hidden on Signin) -->
       <div class="auth-field" id="fieldFullname" style="display:none;">
         <label for="fullname">Full Name</label>
         <input type="text" id="fullname" placeholder="John Doe" autocomplete="name"/>
@@ -153,7 +150,7 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    let mode = 'signin'; // 'signin' or 'signup'
+    let mode = 'signin';
 
     /* Auto-redirect if already logged in */
     onAuthStateChanged(auth, async (user) => {
@@ -161,12 +158,21 @@
     });
 
     async function redirectByRole(uid) {
-      const snap = await getDoc(doc(db, 'users', uid));
-      if (!snap.exists()) return;
-      const role = snap.data().role;
-      if      (role === 'admin')  location.href = '/dashboard/admin.html';
-      else if (role === 'editor') location.href = '/dashboard/editor.html';
-      else                        location.href = '/dashboard/client.html';
+      try {
+        const snap = await getDoc(doc(db, 'users', uid));
+        if (!snap.exists()) {
+          // If Firestore profile doesn't exist yet, default to client
+          location.href = '/dashboard/client.html';
+          return;
+        }
+        const role = snap.data().role;
+        if      (role === 'admin')  location.href = '/dashboard/admin.html';
+        else if (role === 'editor') location.href = '/dashboard/editor.html';
+        else                        location.href = '/dashboard/client.html';
+      } catch(err) {
+        console.error('Role redirect error:', err);
+        location.href = '/dashboard/client.html';
+      }
     }
 
     const tabSignin     = document.getElementById('tabSignin');
@@ -182,7 +188,6 @@
     const errorEl       = document.getElementById('authError');
     const successEl     = document.getElementById('authSuccess');
 
-    /* Switch Tabs */
     tabSignin.addEventListener('click', () => setMode('signin'));
     tabSignup.addEventListener('click', () => setMode('signup'));
 
@@ -198,6 +203,7 @@
         authSub.textContent = 'Sign in to access your portal';
         fieldFullname.style.display = 'none';
         submitBtn.textContent = 'Sign In →';
+        submitBtn.disabled = false;
         forgotBtn.style.display = 'inline';
       } else {
         tabSignup.classList.add('active');
@@ -206,6 +212,7 @@
         authSub.textContent = 'Register to track projects and chat with editors';
         fieldFullname.style.display = 'block';
         submitBtn.textContent = 'Create Account →';
+        submitBtn.disabled = false;
         forgotBtn.style.display = 'none';
       }
     }
@@ -239,15 +246,19 @@
           submitBtn.disabled = false;
           submitBtn.textContent = 'Sign In →';
           const msgs = {
-            'auth/invalid-credential': 'Invalid email or password.',
-            'auth/user-not-found':     'No account found with this email.',
-            'auth/wrong-password':     'Incorrect password.',
+            'auth/invalid-credential': 'Invalid email or password. Please check your credentials or click "Create Account".',
+            'auth/user-not-found':     'No account found with this email. Please click "Create Account" tab to register.',
+            'auth/wrong-password':     'Incorrect password. Click "Forgot password?" below to reset it.',
             'auth/invalid-email':      'Please enter a valid email address.',
           };
-          showError(msgs[e.code] || 'Sign-in failed. Please check your credentials.');
+          showError(msgs[e.code] || 'Sign-in failed. Please check your email and password.');
+        } finally {
+          if (submitBtn.textContent === 'Signing in…') {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sign In →';
+          }
         }
       } else {
-        /* SIGN UP NEW CLIENT */
         if (!name || !email || !pass) { showError('Please fill in your name, email, and password.'); return; }
         if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
 
@@ -257,7 +268,6 @@
 
         try {
           const cred = await createUserWithEmailAndPassword(auth, email, pass);
-          /* Store user profile in Firestore as Client */
           await setDoc(doc(db, 'users', cred.user.uid), {
             name: name,
             email: email,
@@ -265,21 +275,25 @@
             createdAt: serverTimestamp()
           });
           showSuccess('Account created! Redirecting to your dashboard…');
-          setTimeout(() => { location.href = '/dashboard/client.html'; }, 1000);
+          setTimeout(() => { location.href = '/dashboard/client.html'; }, 800);
         } catch (e) {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Create Account →';
           const msgs = {
-            'auth/email-already-in-use': 'An account already exists with this email address.',
+            'auth/email-already-in-use': 'An account already exists with this email address. Please click "Sign In" tab.',
             'auth/invalid-email':        'Please enter a valid email address.',
             'auth/weak-password':        'Password should be at least 6 characters.',
           };
           showError(msgs[e.code] || e.message || 'Registration failed.');
+        } finally {
+          if (submitBtn.textContent === 'Creating Account…') {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Account →';
+          }
         }
       }
     });
 
-    /* Forgot Password handler */
     forgotBtn.addEventListener('click', async () => {
       const email = emailEl.value.trim();
       if (!email) {
@@ -295,7 +309,6 @@
       }
     });
 
-    /* Enter Key handler */
     [nameEl, emailEl, passEl].forEach(el => {
       el.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); });
     });
