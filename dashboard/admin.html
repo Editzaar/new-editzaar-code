@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.5"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.6"/>
 
   <style>
     .modal-overlay {
@@ -76,6 +76,11 @@
       background: rgba(255,184,0,0.1); border: 1px solid var(--gold-border);
       padding: 2px 8px; border-radius: 4px; display: inline-block;
     }
+    .editor-assign-select {
+      background: rgba(255,184,0,0.06); border: 1px solid var(--gold-border);
+      color: var(--gold); border-radius: 6px; padding: 4px 8px; font-size: 11px;
+      outline: none; cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -118,7 +123,6 @@
             <div class="live-badge"><div class="live-dot"></div> Live Sync</div>
           </div>
           <div style="display:flex;gap:10px;">
-            <button class="btn-outline btn-sm" id="btnSeedDemoData">⚡ Seed Demo Clients &amp; Projects</button>
             <button class="btn-gold" id="btnNewProject">＋ New Project</button>
           </div>
         </div>
@@ -139,7 +143,7 @@
           </div>
           <div style="overflow-x:auto;">
             <table class="dash-table" id="recentProjectsTable">
-              <thead><tr><th>Project</th><th>Client</th><th>Editor</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Project</th><th>Client</th><th>Assigned Editor</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
               <tbody id="recentProjectsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Listening for live updates…</td></tr></tbody>
             </table>
           </div>
@@ -166,7 +170,7 @@
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table" id="allProjectsTable">
-              <thead><tr><th>Project</th><th>Client</th><th>Editor</th><th>Status</th><th>Invoice</th><th>Deadline</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Project</th><th>Client</th><th>Assigned Editor (Manual)</th><th>Status</th><th>Invoice</th><th>Deadline</th><th>Actions</th></tr></thead>
               <tbody id="allProjectsTbody"><tr><td colspan="7" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
           </div>
@@ -198,7 +202,7 @@
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
-              <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Projects</th><th>Assigned Editor</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Projects</th><th>Assign Editor (Manual)</th><th>Actions</th></tr></thead>
               <tbody id="clientsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
           </div>
@@ -286,7 +290,7 @@
         <div class="field"><label>Project Title</label><input id="np-title" type="text" placeholder="e.g. Finance Reel - March"/></div>
         <div class="field"><label>Description / Brief</label><textarea id="np-desc" placeholder="Project details, style, references…"></textarea></div>
         <div class="field"><label>Assign Client</label><select id="np-client"><option value="">Select client…</option></select></div>
-        <div class="field"><label>Assign Editor</label><select id="np-editor"><option value="">Select editor…</option></select></div>
+        <div class="field"><label>Assign Editor (Manual)</label><select id="np-editor"><option value="">Select editor…</option></select></div>
         <div class="field"><label>Deadline</label><input id="np-deadline" type="date"/></div>
         <div class="field"><label>Invoice Amount (₹)</label><input id="np-invoice" type="number" placeholder="5000"/></div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateProject">Create Project</button>
@@ -315,7 +319,7 @@
         <div class="field"><label>Full Name</label><input id="nc-name" type="text" placeholder="Client name"/></div>
         <div class="field"><label>Email</label><input id="nc-email" type="email" placeholder="client@email.com"/></div>
         <div class="field"><label>Password</label><input id="nc-pass" type="text" placeholder="min. 6 characters"/></div>
-        <div class="field"><label>Assign Default Editor</label><select id="nc-editor"><option value="">Select editor…</option></select></div>
+        <div class="field"><label>Assign Default Editor (Manual)</label><select id="nc-editor"><option value="">Select editor…</option></select></div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateClient">Add Client</button>
       </div>
     </div>
@@ -335,6 +339,7 @@
             <option value="done">Done ✓</option>
           </select>
         </div>
+        <div class="field"><label>Assign / Change Editor</label><select id="es-editor"><option value="">Select editor…</option></select></div>
         <div class="field"><label>Base Amount (₹)</label><input id="es-invoice" type="number"/></div>
         <div class="field"><label>Tax Status / Issue Official GST Invoice?</label>
           <select id="es-paid">
@@ -349,7 +354,7 @@
   </div>
 
   <script type="module">
-    import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, setDoc,
@@ -372,6 +377,13 @@
     let currentUser = null, activeAdminChatPid = null, adminChatUnsub = null;
     let projects=[], editors=[], clients=[];
 
+    function getSecondaryAuth(appName) {
+      const existing = getApps().find(a => a.name === appName);
+      if (existing) return getAuth(existing);
+      const secApp = initializeApp(firebaseConfig, appName);
+      return getAuth(secApp);
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('/dashboard/index.html'); return; }
       currentUser = user;
@@ -382,7 +394,6 @@
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('/dashboard/index.html')));
 
     function initRealtimeListeners() {
-      // Listen to users collection (No index required)
       onSnapshot(collection(db, 'users'), (snap) => {
         const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
@@ -390,10 +401,8 @@
         renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
       }, (err) => console.error('Users listener error:', err));
 
-      // Listen to projects collection without server-side orderBy (No index required)
       onSnapshot(collection(db, 'projects'), (snap) => {
         projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        // Client-side sort by createdAt desc
         projects.sort((a, b) => {
           const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
           const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
@@ -402,59 +411,6 @@
         renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices(); renderChatProjectList();
       }, (err) => console.error('Projects listener error:', err));
     }
-
-    /* SEED DEMO CLIENTS & REAL FIREBASE AUTHENTICATION ACCOUNTS */
-    document.getElementById('btnSeedDemoData').addEventListener('click', async () => {
-      showToast('Seeding Demo Clients & Projects…', 'success');
-
-      const demoUsers = [
-        { name: 'Rohan Sharma (Tech Scale)', email: 'rohan@techscale.in', pass: 'clientpass123' },
-        { name: 'Priya Verma (Fashion D2C)', email: 'priya@luxeclothing.com', pass: 'clientpass456' },
-        { name: 'Bikram Nath (Creator)', email: 'bickram.nath@dreamsanddegrees.com', pass: 'password123' }
-      ];
-
-      for (const u of demoUsers) {
-        const uDocId = 'demo_' + u.email.replace(/[^a-zA-Z0-9]/g, '_');
-        await setDoc(doc(db, 'users', uDocId), {
-          name: u.name,
-          email: u.email,
-          tempPass: u.pass,
-          role: 'client',
-          createdAt: serverTimestamp()
-        });
-      }
-
-      // Demo Projects
-      const d1 = new Date(); d1.setDate(d1.getDate() + 3);
-      await addDoc(collection(db, 'projects'), {
-        title: 'Shorts & Instagram Reels Pack — Tech Launch',
-        description: '3-second hook optimization with kinetic captions and sound FX.',
-        clientId: 'demo_rohan_techscale_in',
-        clientGstin: '36TECHSCALE123Z1',
-        editorId: editors[0]?.id || '',
-        status: 'in_progress',
-        invoiceAmount: 2500,
-        invoicePaid: true,
-        createdAt: serverTimestamp(),
-        deadline: d1
-      });
-
-      const d2 = new Date(); d2.setDate(d2.getDate() + 5);
-      await addDoc(collection(db, 'projects'), {
-        title: 'Long-Form YouTube Documentary Edit',
-        description: 'High-retention storytelling cuts, lower thirds, and cinematic color grading.',
-        clientId: 'demo_bickram_nath_dreamsanddegrees_com',
-        clientGstin: '',
-        editorId: editors[0]?.id || '',
-        status: 'pending',
-        invoiceAmount: 5000,
-        invoicePaid: false,
-        createdAt: serverTimestamp(),
-        deadline: d2
-      });
-
-      showToast('Demo Clients & Active Projects Created! ✅', 'success');
-    });
 
     function renderStats() {
       document.getElementById('statTotal').textContent   = projects.length;
@@ -470,7 +426,7 @@
     function badge(status) { return `<span class="status-badge status-${status}">${STATUS_LABELS[status]||status}</span>`; }
     function nameOf(uid) {
       const u = [...editors,...clients].find(u=>u.id===uid);
-      return u ? (u.name || u.email) : (uid ? uid.substring(0,8)+'…' : '—');
+      return u ? (u.name || u.email) : (uid ? uid.substring(0,8)+'…' : 'Unassigned');
     }
     function dateStr(ts) {
       if (!ts) return '—';
@@ -481,7 +437,7 @@
     function renderRecentProjects() {
       const tbody = document.getElementById('recentProjectsTbody');
       const slice = projects.slice(0,8);
-      if (!slice.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No projects yet. Click "+ New Project" or "⚡ Seed Demo Clients" to generate.</td></tr>'; return; }
+      if (!slice.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No projects yet. Click "+ New Project" to create one.</td></tr>'; return; }
       tbody.innerHTML = slice.map(p=>`
         <tr>
           <td><strong>${p.title||'Untitled'}</strong></td>
@@ -489,7 +445,7 @@
           <td>${nameOf(p.editorId)}</td>
           <td>${badge(p.status)}</td>
           <td>${dateStr(p.deadline)}</td>
-          <td><button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Edit</button></td>
+          <td><button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'${p.editorId||''}')">Edit</button></td>
         </tr>`).join('');
     }
 
@@ -503,16 +459,31 @@
         <tr>
           <td><strong>${p.title||'Untitled'}</strong></td>
           <td>${nameOf(p.clientId)}</td>
-          <td>${nameOf(p.editorId)}</td>
+          <td>
+            <select class="editor-assign-select" onchange="assignProjectEditor('${p.id}', this.value)">
+              <option value="">Unassigned</option>
+              ${editors.map(e=>`<option value="${e.id}" ${e.id===p.editorId?'selected':''}>${e.name || e.email}</option>`).join('')}
+            </select>
+          </td>
           <td>${badge(p.status)}</td>
           <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ GST Invoice':'⏳ Receipt Only'}</span><br><small style="color:var(--t3);">₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</small></td>
           <td>${dateStr(p.deadline)}</td>
           <td>
-            <button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Edit</button>
+            <button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'${p.editorId||''}')">Edit</button>
             <button class="btn-danger" onclick="deleteProject('${p.id}')">Delete</button>
           </td>
         </tr>`).join('');
     }
+
+    window.assignProjectEditor = async (pid, editorId) => {
+      await updateDoc(doc(db, 'projects', pid), { editorId });
+      showToast('Editor assigned to project! ✅', 'success');
+    };
+
+    window.assignClientEditor = async (clientId, assignedEditor) => {
+      await updateDoc(doc(db, 'users', clientId), { assignedEditor });
+      showToast('Default editor assigned to client! ✅', 'success');
+    };
 
     document.getElementById('filterStatus').addEventListener('change', e=>renderAllProjects(e.target.value, document.getElementById('filterEditor').value));
     document.getElementById('filterEditor').addEventListener('change', e=>renderAllProjects(document.getElementById('filterStatus').value, e.target.value));
@@ -539,16 +510,21 @@
 
     function renderClients() {
       const tbody = document.getElementById('clientsTbody');
-      if (!clients.length) { tbody.innerHTML='<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. Click "⚡ Seed Demo Clients" above to generate test clients!</td></tr>'; return; }
+      if (!clients.length) { tbody.innerHTML='<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
       tbody.innerHTML = clients.map(c=>{
         const projCount = projects.filter(p=>p.clientId===c.id).length;
         return `
         <tr>
           <td><strong>${c.name||'Client'}</strong></td>
           <td>${c.email}</td>
-          <td><span class="pass-pill">${c.tempPass||'clientpass123'}</span></td>
+          <td><span class="pass-pill">${c.tempPass||'password123'}</span></td>
           <td>${projCount}</td>
-          <td>${nameOf(c.assignedEditor)||'—'}</td>
+          <td>
+            <select class="editor-assign-select" onchange="assignClientEditor('${c.id}', this.value)">
+              <option value="">Unassigned</option>
+              ${editors.map(e=>`<option value="${e.id}" ${e.id===c.assignedEditor?'selected':''}>${e.name || e.email}</option>`).join('')}
+            </select>
+          </td>
           <td>
             <button class="btn-gold btn-sm" onclick="openModal('modalNewProject');document.getElementById('np-client').value='${c.id}'">＋ Add Project</button>
             <button class="btn-danger" onclick="deleteUser('${c.id}','${c.name||c.email}')">Delete</button>
@@ -657,7 +633,7 @@
           <td>${nameOf(p.clientId)}<br/><small style="color:var(--gold);">GSTIN: ${p.clientGstin||'N/A (Individual)'}</small></td>
           <td>₹${tot.toLocaleString()} <small style="color:var(--t3);">(Base ₹${(p.invoiceAmount||0).toLocaleString()})</small></td>
           <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Official GST Invoice':'⏳ Receipt Only'}</span></td>
-          <td><button class="btn-gold btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Confirm &amp; Issue GST Invoice</button></td>
+          <td><button class="btn-gold btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'${p.editorId||''}')">Confirm &amp; Issue GST Invoice</button></td>
         </tr>`;
       }).join('');
     }
@@ -668,8 +644,9 @@
       const filterEdSel = document.getElementById('filterEditor');
       filterEdSel.innerHTML = '<option value="">All Editors</option>' + editors.map(e=>`<option value="${e.id}">${e.name || e.email}</option>`).join('');
       document.getElementById('np-client').innerHTML = '<option value="">Select client…</option>' + clientOpts;
-      document.getElementById('np-editor').innerHTML = '<option value="">Select editor…</option>' + editorOpts;
-      document.getElementById('nc-editor').innerHTML = '<option value="">Select editor…</option>' + editorOpts;
+      document.getElementById('np-editor').innerHTML = '<option value="">Select editor (Manual)…</option>' + editorOpts;
+      document.getElementById('nc-editor').innerHTML = '<option value="">Select editor (Manual)…</option>' + editorOpts;
+      document.getElementById('es-editor').innerHTML = '<option value="">Select editor (Manual)…</option>' + editorOpts;
     }
 
     document.getElementById('btnCreateProject').addEventListener('click', async ()=>{
@@ -681,7 +658,7 @@
       const invoice  = parseFloat(document.getElementById('np-invoice').value)||0;
       if (!title || !clientId) { showToast('Please fill in title and client.','error'); return; }
       await addDoc(collection(db,'projects'),{
-        title, description:desc, clientId, editorId,
+        title, description:desc, clientId, editorId: editorId || '',
         deadline: deadline ? new Date(deadline) : null,
         invoiceAmount: invoice, invoicePaid: false,
         status: 'pending', createdAt: serverTimestamp()
@@ -690,40 +667,43 @@
       closeModal('modalNewProject');
     });
 
-    window.openEditStatus = (pid,status,amount,paid) => {
+    window.openEditStatus = (pid,status,amount,paid,editorId) => {
       document.getElementById('es-pid').value    = pid;
       document.getElementById('es-status').value = status;
       document.getElementById('es-invoice').value= amount;
       document.getElementById('es-paid').value   = String(paid);
+      document.getElementById('es-editor').value = editorId || '';
       openModal('modalEditStatus');
     };
 
     document.getElementById('btnSaveStatus').addEventListener('click', async ()=>{
-      const pid    = document.getElementById('es-pid').value;
-      const status = document.getElementById('es-status').value;
-      const amount = parseFloat(document.getElementById('es-invoice').value)||0;
-      const paid   = document.getElementById('es-paid').value === 'true';
-      await updateDoc(doc(db,'projects',pid),{ status, invoiceAmount:amount, invoicePaid:paid });
+      const pid      = document.getElementById('es-pid').value;
+      const status   = document.getElementById('es-status').value;
+      const amount   = parseFloat(document.getElementById('es-invoice').value)||0;
+      const paid     = document.getElementById('es-paid').value === 'true';
+      const editorId = document.getElementById('es-editor').value;
+      await updateDoc(doc(db,'projects',pid),{ status, invoiceAmount:amount, invoicePaid:paid, editorId });
       showToast('Project & Tax Status updated! ✅','success');
       closeModal('modalEditStatus');
     });
 
+    /* FIX: Safe secondary app creation for manual editor addition */
     document.getElementById('btnCreateEditor').addEventListener('click', async ()=>{
       const name  = document.getElementById('ne-name').value.trim();
       const email = document.getElementById('ne-email').value.trim();
       const pass  = document.getElementById('ne-pass').value;
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       try {
-        const secondaryApp  = initializeApp(firebaseConfig, 'sec_editor');
-        const secondaryAuth = getAuth(secondaryApp);
-        const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-        await secondaryAuth.signOut();
+        const secAuth = getSecondaryAuth('sec_editor_' + Date.now());
+        const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
+        await secAuth.signOut();
         await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'editor', tempPass: pass, createdAt: serverTimestamp() });
         showToast(`Editor "${name}" added! ✅`,'success');
         closeModal('modalNewEditor');
       } catch(e){ showToast(e.message,'error'); }
     });
 
+    /* FIX: Safe secondary app creation for manual client addition */
     document.getElementById('btnCreateClient').addEventListener('click', async ()=>{
       const name         = document.getElementById('nc-name').value.trim();
       const email        = document.getElementById('nc-email').value.trim();
@@ -731,11 +711,10 @@
       const assignedEditor = document.getElementById('nc-editor').value;
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       try {
-        const secondaryApp  = initializeApp(firebaseConfig, 'sec_client');
-        const secondaryAuth = getAuth(secondaryApp);
-        const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-        await secondaryAuth.signOut();
-        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', tempPass: pass, assignedEditor, createdAt: serverTimestamp() });
+        const secAuth = getSecondaryAuth('sec_client_' + Date.now());
+        const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
+        await secAuth.signOut();
+        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', tempPass: pass, assignedEditor: assignedEditor || '', createdAt: serverTimestamp() });
         showToast(`Client "${name}" added! ✅`,'success');
         closeModal('modalNewClient');
       } catch(e){ showToast(e.message,'error'); }
