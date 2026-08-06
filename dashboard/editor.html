@@ -157,9 +157,17 @@
     let allUsers = {};
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { location.href='/dashboard/index.html'; return; }
+      if (!user) { window.location.replace('/dashboard/index.html'); return; }
       const snap = await getDoc(doc(db,'users',user.uid));
-      if (!snap.exists() || snap.data().role !== 'editor') { location.href='/dashboard/index.html'; return; }
+      if (!snap.exists()) {
+        window.location.replace('/dashboard/client.html');
+        return;
+      }
+      const role = snap.data().role;
+      if (role !== 'editor') {
+        window.location.replace(role === 'admin' ? '/dashboard/admin.html' : '/dashboard/client.html');
+        return;
+      }
       currentUser = { uid:user.uid, ...snap.data() };
       document.getElementById('editorEmail').textContent = user.email;
       loadUsers();

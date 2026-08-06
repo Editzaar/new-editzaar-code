@@ -151,27 +151,22 @@
     const db   = getFirestore(app);
 
     let mode = 'signin';
-
-    /* Auto-redirect if already logged in */
-    onAuthStateChanged(auth, async (user) => {
-      if (user) { await redirectByRole(user.uid); }
-    });
+    let isSubmitting = false;
 
     async function redirectByRole(uid) {
+      if (isSubmitting) return;
       try {
         const snap = await getDoc(doc(db, 'users', uid));
-        if (!snap.exists()) {
-          // If Firestore profile doesn't exist yet, default to client
-          location.href = '/dashboard/client.html';
-          return;
+        let role = 'client';
+        if (snap.exists() && snap.data().role) {
+          role = snap.data().role;
         }
-        const role = snap.data().role;
-        if      (role === 'admin')  location.href = '/dashboard/admin.html';
-        else if (role === 'editor') location.href = '/dashboard/editor.html';
-        else                        location.href = '/dashboard/client.html';
+        if (role === 'admin')       window.location.replace('/dashboard/admin.html');
+        else if (role === 'editor') window.location.replace('/dashboard/editor.html');
+        else                        window.location.replace('/dashboard/client.html');
       } catch(err) {
         console.error('Role redirect error:', err);
-        location.href = '/dashboard/client.html';
+        window.location.replace('/dashboard/client.html');
       }
     }
 
@@ -236,6 +231,7 @@
 
       if (mode === 'signin') {
         if (!email || !pass) { showError('Please enter your email and password.'); return; }
+        isSubmitting = true;
         submitBtn.disabled = true;
         submitBtn.textContent = 'Signing in…';
         errorEl.classList.remove('show');
@@ -243,25 +239,22 @@
           const cred = await signInWithEmailAndPassword(auth, email, pass);
           await redirectByRole(cred.user.uid);
         } catch (e) {
+          isSubmitting = false;
           submitBtn.disabled = false;
           submitBtn.textContent = 'Sign In →';
           const msgs = {
-            'auth/invalid-credential': 'Invalid email or password. Please check your credentials or click "Create Account".',
+            'auth/invalid-credential': 'Invalid email or password. Please check your password or click "Create Account".',
             'auth/user-not-found':     'No account found with this email. Please click "Create Account" tab to register.',
             'auth/wrong-password':     'Incorrect password. Click "Forgot password?" below to reset it.',
             'auth/invalid-email':      'Please enter a valid email address.',
           };
-          showError(msgs[e.code] || 'Sign-in failed. Please check your email and password.');
-        } finally {
-          if (submitBtn.textContent === 'Signing in…') {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Sign In →';
-          }
+          showError(msgs[e.code] || 'Sign-in failed. Please check your credentials.');
         }
       } else {
         if (!name || !email || !pass) { showError('Please fill in your name, email, and password.'); return; }
         if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
 
+        isSubmitting = true;
         submitBtn.disabled = true;
         submitBtn.textContent = 'Creating Account…';
         errorEl.classList.remove('show');
@@ -274,22 +267,18 @@
             role: 'client',
             createdAt: serverTimestamp()
           });
-          showSuccess('Account created! Redirecting to your dashboard…');
-          setTimeout(() => { location.href = '/dashboard/client.html'; }, 800);
+          showSuccess('Account created! Opening your dashboard…');
+          setTimeout(() => { window.location.replace('/dashboard/client.html'); }, 600);
         } catch (e) {
+          isSubmitting = false;
           submitBtn.disabled = false;
           submitBtn.textContent = 'Create Account →';
           const msgs = {
-            'auth/email-already-in-use': 'An account already exists with this email address. Please click "Sign In" tab.',
+            'auth/email-already-in-use': 'An account already exists with this email address. Click "Sign In" tab.',
             'auth/invalid-email':        'Please enter a valid email address.',
             'auth/weak-password':        'Password should be at least 6 characters.',
           };
           showError(msgs[e.code] || e.message || 'Registration failed.');
-        } finally {
-          if (submitBtn.textContent === 'Creating Account…') {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Create Account →';
-          }
         }
       }
     });

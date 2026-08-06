@@ -296,9 +296,17 @@
     /* ── Auth Guard ── */
     let currentUser = null;
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { location.href = '/dashboard/index.html'; return; }
+      if (!user) { window.location.replace('/dashboard/index.html'); return; }
       const snap = await getDoc(doc(db, 'users', user.uid));
-      if (!snap.exists() || snap.data().role !== 'admin') { location.href = '/dashboard/index.html'; return; }
+      if (!snap.exists()) {
+        window.location.replace('/dashboard/client.html');
+        return;
+      }
+      const role = snap.data().role;
+      if (role !== 'admin') {
+        window.location.replace(role === 'editor' ? '/dashboard/editor.html' : '/dashboard/client.html');
+        return;
+      }
       currentUser = user;
       document.getElementById('adminEmail').textContent = user.email;
       loadAll();

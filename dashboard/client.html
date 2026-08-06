@@ -218,10 +218,17 @@
     let allUsers = {}, chatHistory = [];
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { location.href='/dashboard/index.html'; return; }
+      if (!user) { window.location.replace('/dashboard/index.html'); return; }
       const snap = await getDoc(doc(db,'users',user.uid));
-      if (!snap.exists() || snap.data().role !== 'client') { location.href='/dashboard/index.html'; return; }
-      currentUser = { uid: user.uid, ...snap.data() };
+      if (snap.exists() && snap.data().role === 'admin') {
+        window.location.replace('/dashboard/admin.html');
+        return;
+      }
+      if (snap.exists() && snap.data().role === 'editor') {
+        window.location.replace('/dashboard/editor.html');
+        return;
+      }
+      currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client'}) };
       document.getElementById('clientEmail').textContent = user.email;
       document.getElementById('clientName').textContent  = currentUser.name || 'there';
       loadUsers(); loadProjects();
