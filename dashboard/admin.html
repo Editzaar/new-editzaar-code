@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.2"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.5"/>
 
   <style>
     .modal-overlay {
@@ -353,7 +353,7 @@
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, setDoc,
-             query, orderBy, onSnapshot, serverTimestamp }
+             onSnapshot, serverTimestamp }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -382,25 +382,30 @@
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('/dashboard/index.html')));
 
     function initRealtimeListeners() {
+      // Listen to users collection (No index required)
       onSnapshot(collection(db, 'users'), (snap) => {
         const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
         clients = users.filter(u => u.role !== 'admin' && u.role !== 'editor');
         renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
-      });
+      }, (err) => console.error('Users listener error:', err));
 
-      onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snap) => {
+      // Listen to projects collection without server-side orderBy (No index required)
+      onSnapshot(collection(db, 'projects'), (snap) => {
         projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Client-side sort by createdAt desc
+        projects.sort((a, b) => {
+          const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+          const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+          return tB - tA;
+        });
         renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices(); renderChatProjectList();
-      });
+      }, (err) => console.error('Projects listener error:', err));
     }
 
     /* SEED DEMO CLIENTS & REAL FIREBASE AUTHENTICATION ACCOUNTS */
     document.getElementById('btnSeedDemoData').addEventListener('click', async () => {
-      showToast('Creating Demo Client Accounts in Auth & Firestore…', 'success');
-
-      const secondaryApp  = initializeApp(firebaseConfig, 'sec_seed_gen');
-      const secondaryAuth = getAuth(secondaryApp);
+      showToast('Seeding Demo Clients & Projects…', 'success');
 
       const demoUsers = [
         { name: 'Rohan Sharma (Tech Scale)', email: 'rohan@techscale.in', pass: 'clientpass123' },
@@ -408,22 +413,9 @@
         { name: 'Bikram Nath (Creator)', email: 'bickram.nath@dreamsanddegrees.com', pass: 'password123' }
       ];
 
-      const createdUids = [];
-
       for (const u of demoUsers) {
-        let uid = '';
-        try {
-          const cred = await createUserWithEmailAndPassword(secondaryAuth, u.email, u.pass);
-          uid = cred.user.uid;
-          await secondaryAuth.signOut();
-        } catch (e) {
-          // If user already exists in auth, generate deterministic or Firestore document ID
-          uid = 'demo_' + u.email.split('@')[0];
-        }
-
-        createdUids.push({ uid, name: u.name, email: u.email, pass: u.pass });
-
-        await setDoc(doc(db, 'users', uid), {
+        const uDocId = 'demo_' + u.email.replace(/[^a-zA-Z0-9]/g, '_');
+        await setDoc(doc(db, 'users', uDocId), {
           name: u.name,
           email: u.email,
           tempPass: u.pass,
@@ -437,7 +429,7 @@
       await addDoc(collection(db, 'projects'), {
         title: 'Shorts & Instagram Reels Pack — Tech Launch',
         description: '3-second hook optimization with kinetic captions and sound FX.',
-        clientId: createdUids[0].uid,
+        clientId: 'demo_rohan_techscale_in',
         clientGstin: '36TECHSCALE123Z1',
         editorId: editors[0]?.id || '',
         status: 'in_progress',
@@ -451,7 +443,7 @@
       await addDoc(collection(db, 'projects'), {
         title: 'Long-Form YouTube Documentary Edit',
         description: 'High-retention storytelling cuts, lower thirds, and cinematic color grading.',
-        clientId: createdUids[2].uid,
+        clientId: 'demo_bickram_nath_dreamsanddegrees_com',
         clientGstin: '',
         editorId: editors[0]?.id || '',
         status: 'pending',
@@ -461,7 +453,7 @@
         deadline: d2
       });
 
-      showToast('3 Real Auth Demo Clients & Projects Created! ✅', 'success');
+      showToast('Demo Clients & Active Projects Created! ✅', 'success');
     });
 
     function renderStats() {
@@ -489,7 +481,7 @@
     function renderRecentProjects() {
       const tbody = document.getElementById('recentProjectsTbody');
       const slice = projects.slice(0,8);
-      if (!slice.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No projects yet. Click "+ New Project" to create one.</td></tr>'; return; }
+      if (!slice.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No projects yet. Click "+ New Project" or "⚡ Seed Demo Clients" to generate.</td></tr>'; return; }
       tbody.innerHTML = slice.map(p=>`
         <tr>
           <td><strong>${p.title||'Untitled'}</strong></td>
@@ -617,12 +609,13 @@
       renderChatProjectList();
 
       if (adminChatUnsub) adminChatUnsub();
-      const q = query(collection(db,'projects',pid,'chat'),orderBy('timestamp','asc'));
+      const q = collection(db,'projects',pid,'chat');
       adminChatUnsub = onSnapshot(q, snap => {
         const container = document.getElementById('adminChatMessages');
         container.innerHTML = '';
-        snap.docs.forEach(d => {
-          const m = d.data();
+        const msgs = snap.docs.map(d=>d.data());
+        msgs.sort((a,b)=>(a.timestamp?.toMillis?a.timestamp.toMillis():0)-(b.timestamp?.toMillis?b.timestamp.toMillis():0));
+        msgs.forEach(m => {
           const div = document.createElement('div');
           div.className = 'chat-msg ' + (m.senderId === currentUser.uid ? 'mine' : 'theirs');
           div.innerHTML = `<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
