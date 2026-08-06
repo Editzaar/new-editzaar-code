@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.2"/>
 
   <style>
     .status-timeline {
@@ -51,24 +51,59 @@
 
     .chatbot-panel {
       position: fixed; bottom: 92px; right: 28px; z-index: 499;
-      width: 340px; max-width: calc(100vw - 40px);
+      width: 360px; max-width: calc(100vw - 40px);
       background: var(--bg-card); border: 1px solid var(--gold-border);
-      border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+      border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.85);
       display: none; flex-direction: column; overflow: hidden;
     }
     .chatbot-panel.open { display: flex; }
     .chatbot-header {
       padding: 14px 18px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,184,0,0.06);
     }
     .chatbot-title { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     .chatbot-close-btn { background: none; border: none; color: var(--t2); font-size: 1.2rem; cursor: pointer; }
+
     .link-input-box {
       background: rgba(255,255,255,0.03);
       border: 1px dashed var(--gold-border);
       border-radius: var(--r);
       padding: 20px;
       margin-bottom: 18px;
+    }
+
+    /* Modal for New Project Booking */
+    .modal-overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.82);
+      z-index:900;
+      display:flex; align-items:center; justify-content:center;
+      padding:20px;
+      display:none;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+      background:var(--bg-card);
+      border:1px solid var(--gold-border);
+      border-radius:16px;
+      padding:32px;
+      width:100%; max-width:540px;
+      max-height:92vh;
+      overflow-y:auto;
+      position:relative;
+    }
+    .modal-title { font-family:var(--font-h); font-size:1.6rem; margin-bottom:20px; color:#fff; }
+    .modal-close {
+      position:absolute; top:16px; right:16px;
+      background:none; border:none; color:var(--t2);
+      font-size:1.4rem; cursor:pointer; transition:color 0.2s;
+    }
+    .modal-close:hover { color:var(--gold); }
+    .service-price-pill {
+      font-size: 11px; color: var(--gold); background: var(--gold-dim);
+      border: 1px solid var(--gold-border); padding: 4px 10px; border-radius: 20px;
+      display: inline-block; margin-top: 4px;
     }
   </style>
 </head>
@@ -80,13 +115,16 @@
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <a href="index.html" class="sidebar-logo">EDIT<em>ZAAR</em></a>
-      <div class="sidebar-role-badge">👤 Client</div>
+      <a href="../index.html" class="sidebar-logo" title="Back to Home Page">EDIT<em>ZAAR</em> ↗</a>
+      <div class="sidebar-role-badge">👤 Client Portal</div>
       <nav class="sidebar-nav">
-        <div class="sidebar-nav-section">My Projects</div>
+        <div class="sidebar-nav-section">Navigation</div>
         <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
         <div class="sidebar-nav-section">Account</div>
         <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices</div>
+        <div class="sidebar-nav-section">Main Site</div>
+        <a href="../index.html" class="sidebar-nav-item"><span class="nav-icon">🏠</span> Home Page</a>
+        <a href="../services.html" class="sidebar-nav-item"><span class="nav-icon">🎬</span> Services &amp; Pricing</a>
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="clientEmail">Loading…</div>
@@ -101,7 +139,7 @@
       <section id="sec-projects">
         <div class="dash-topbar">
           <div class="dash-page-title">Welcome, <em id="clientName">…</em> 👋</div>
-          <a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold">Start New Project</a>
+          <button class="btn-gold" id="btnOpenNewProjectModal">＋ Start New Project</button>
         </div>
         <div id="projectsList"></div>
       </section>
@@ -109,7 +147,7 @@
       <!-- ── SECTION: PROJECT DETAIL ── -->
       <section id="sec-detail" style="display:none;">
         <div class="dash-topbar">
-          <button class="btn-outline" onclick="showSection('projects')">← Back</button>
+          <button class="btn-outline" onclick="showSection('projects')">← Back to My Projects</button>
           <div id="detailStatus"></div>
         </div>
         <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;">
@@ -118,11 +156,11 @@
             <div class="dash-card">
               <div class="dash-card-header"><div class="dash-card-title">Project <em>Progress</em></div></div>
               <div class="status-timeline" id="statusTimeline"></div>
-              <div style="font-size:1rem;font-weight:600;margin-bottom:6px;" id="detailTitle">—</div>
+              <div style="font-size:1.1rem;font-weight:600;margin-bottom:6px;" id="detailTitle">—</div>
               <div style="font-size:0.88rem;color:var(--t2);margin-bottom:18px;" id="detailDesc">—</div>
               <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
-                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Your Editor</div><div style="font-size:0.9rem;" id="detailEditor">—</div></div>
-                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">—</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Your Assigned Editor</div><div style="font-size:0.9rem;color:var(--gold);" id="detailEditor">—</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">—</div></div>
               </div>
 
               <!-- Raw Footage Link Input -->
@@ -138,7 +176,7 @@
               <!-- Download Final Delivery -->
               <div id="deliverySection" style="display:none;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--r);padding:20px;">
                 <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎉 Final Video Delivered!</div>
-                <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;" id="deliveryNote">Your editor has delivered the final video.</div>
+                <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;" id="detailDeliveryNote">Your editor has delivered your final edit.</div>
                 <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold">🎬 Open Delivered Video / Drive →</a>
               </div>
             </div>
@@ -160,13 +198,46 @@
 
       <!-- ── SECTION: INVOICES ── -->
       <section id="sec-invoices" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title"><em>Invoices</em></div></div>
+        <div class="dash-topbar"><div class="dash-page-title"><em>Invoices &amp; Payments</em></div></div>
         <div class="dash-card">
           <div id="invoicesList"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices yet.</div></div></div>
         </div>
       </section>
 
     </main>
+  </div>
+
+  <!-- ══ MODAL: NEW PROJECT BOOKING ══ -->
+  <div class="modal-overlay" id="modalClientNewProject">
+    <div class="modal-box">
+      <button class="modal-close" id="btnCloseClientModal">✕</button>
+      <div class="modal-title">Book New Project</div>
+      <div class="dash-form">
+        <div class="field">
+          <label>Project Title</label>
+          <input id="cnp-title" type="text" placeholder="e.g. Instagram Reel / Finance Edit / YouTube Video"/>
+        </div>
+        <div class="field">
+          <label>Select Service Package</label>
+          <select id="cnp-service">
+            <option value="Shorts &amp; Reels (₹1,000 / video)|1000">📱 Shorts &amp; Instagram Reels — ₹1,000 / video</option>
+            <option value="Motion Graphic &amp; Animated (₹2,500 / video)|2500">🎨 Motion Graphic &amp; Animated Video — ₹2,500 / video</option>
+            <option value="Long Form YouTube Edit (₹5,000 / video)|5000">🎬 Long Form YouTube Video Edit — ₹5,000 / video</option>
+            <option value="Custom Brand Partnership|0">⭐ Custom Brand Partnership / Agency Retainer</option>
+          </select>
+          <div class="service-price-pill" id="cnpPriceTag">Est. Price: ₹1,000</div>
+        </div>
+        <div class="field">
+          <label>Project Brief / Instructions</label>
+          <textarea id="cnp-desc" placeholder="Describe your video style, reference links, hook preferences, audio instructions…"></textarea>
+        </div>
+        <div class="field">
+          <label>Raw Footage Link (Google Drive / WeTransfer / Dropbox)</label>
+          <input id="cnp-footage" type="url" placeholder="https://drive.google.com/..."/>
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center;margin-top:8px;" id="btnSubmitClientProject">Submit Project Request →</button>
+      </div>
+    </div>
   </div>
 
   <!-- ── GEMINI AI CHATBOT ── -->
@@ -183,11 +254,11 @@
       <div class="chatbot-messages" id="botMessages">
         <div class="bot-msg">
           <div class="bot-avatar">🤖</div>
-          <div class="bot-bubble">Hi! I'm your Editzaar AI Assistant. Ask me anything about your project, drive uploads, editing turnaround, or pricing!</div>
+          <div class="bot-bubble">Hi! I'm Editzaar AI. I can help you with our Services, Pricing, Deadlines, or connect you directly with our team on WhatsApp: <strong>+91 9476766340</strong>. What can I answer for you?</div>
         </div>
       </div>
       <div class="chat-input-row" style="padding-top:12px;">
-        <input class="chat-input" id="botInput" placeholder="Ask anything…" style="height:40px;"/>
+        <input class="chat-input" id="botInput" placeholder="Ask about services, pricing, contact…"/>
         <button class="btn-gold btn-sm" id="btnBotSend">↑</button>
       </div>
     </div>
@@ -210,9 +281,9 @@
       appId:             "1:419930711716:web:b1504f651e397a14726831"
     };
 
-    const app     = initializeApp(firebaseConfig);
-    const auth    = getAuth(app);
-    const db      = getFirestore(app);
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
     let currentUser = null, currentProject = null, chatUnsub = null;
     let allUsers = {}, chatHistory = [];
@@ -228,30 +299,30 @@
         window.location.replace('/dashboard/editor.html');
         return;
       }
-      currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client'}) };
+      currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client',name:'Client'}) };
       document.getElementById('clientEmail').textContent = user.email;
       document.getElementById('clientName').textContent  = currentUser.name || 'there';
-      loadUsers(); loadProjects();
+      loadUsers(); listenRealtimeProjects();
     });
 
-    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>location.href='/dashboard/index.html'));
+    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('/dashboard/index.html')));
 
     async function loadUsers() {
       const snap = await getDocs(collection(db,'users'));
       snap.forEach(d=>{ allUsers[d.id]=d.data(); });
     }
 
-    async function loadProjects() {
+    /* Real-Time Projects Listener */
+    function listenRealtimeProjects() {
       const q = query(collection(db,'projects'), where('clientId','==',currentUser.uid), orderBy('createdAt','desc'));
-      const snap = await getDocs(q);
-      const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
-      renderProjects(projects);
-      renderInvoices(projects);
+      onSnapshot(q, (snap) => {
+        const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
+        renderProjects(projects);
+        renderInvoices(projects);
+      });
     }
 
-    const STATUS_FLOW = ['pending','in_progress','review','done'];
     const STATUS_LABELS= {pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
-    const STATUS_ICONS = {pending:'⏳',in_progress:'🔄',review:'👁',done:'✅'};
     function badge(s){ return `<span class="status-badge status-${s}">${STATUS_LABELS[s]||s}</span>`; }
     function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
 
@@ -260,24 +331,24 @@
       if (!projects.length) {
         container.innerHTML = `<div class="dash-card" style="text-align:center;padding:52px 24px;">
           <div style="font-size:3rem;margin-bottom:16px;">🎬</div>
-          <div style="font-family:var(--font-h);font-size:1.6rem;margin-bottom:10px;">No projects yet</div>
-          <div style="color:var(--t2);margin-bottom:24px;">Start a new project with us via WhatsApp!</div>
-          <a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold">Book a Project on WhatsApp →</a>
+          <div style="font-family:var(--font-h);font-size:1.6rem;margin-bottom:10px;">No active projects</div>
+          <div style="color:var(--t2);margin-bottom:24px;">Click the button below to book your video project with us!</div>
+          <button class="btn-gold" onclick="document.getElementById('modalClientNewProject').classList.add('open')">＋ Book a New Project →</button>
         </div>`;
         return;
       }
       container.innerHTML = projects.map(p=>`
         <div class="project-card">
           <div class="project-card-top">
-            <div class="project-card-title">${p.title||'Untitled'}</div>
+            <div class="project-card-title">${p.title||'Untitled Project'}</div>
             ${badge(p.status)}
           </div>
-          <div class="project-card-meta">Editor: ${allUsers[p.editorId]?.name||'Being assigned'} · Deadline: ${dateStr(p.deadline)}</div>
-          <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
-          ${p.deliveryUrl ? `<div style="margin-top:10px;"><a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">🎬 Download / View Final Video →</a></div>`:''}
+          <div class="project-card-meta">Editor: ${allUsers[p.editorId]?.name||'Being assigned'} · Estimated Deadline: ${dateStr(p.deadline)}</div>
+          <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;">${(p.description||'').substring(0,140)}${p.description?.length>140?'…':''}</div>
+          ${p.deliveryUrl ? `<div style="margin-bottom:12px;"><a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">🎬 Open Delivered Video Link →</a></div>`:''}
           <div class="project-card-actions">
             <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">View Details &amp; Chat →</button>
-            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ Invoice Paid':'💳 Invoice Pending'}</span>
+            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ Invoice Paid':'💳 Invoice Pending (₹'+(p.invoiceAmount||0)+')'}</span>
           </div>
         </div>`).join('');
     }
@@ -293,18 +364,16 @@
       document.getElementById('detailStatus').innerHTML     = badge(currentProject.status);
       renderTimeline(currentProject.status);
 
-      // Raw footage link display
       const footInput = document.getElementById('rawFootageInput');
       const footDisp  = document.getElementById('footageLinkDisplay');
       if (currentProject.rawFootageUrl) {
         footInput.value = currentProject.rawFootageUrl;
-        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
+        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Drive Link ↗</a>`;
       } else {
         footInput.value = '';
-        footDisp.innerHTML = '<span style="color:var(--t3);">No drive link saved yet.</span>';
+        footDisp.innerHTML = '<span style="color:var(--t3);">No drive link saved yet. Paste your Google Drive link above!</span>';
       }
 
-      // Delivery
       const delivSection = document.getElementById('deliverySection');
       if (currentProject.deliveryUrl) {
         delivSection.style.display='block';
@@ -343,6 +412,52 @@
       showToast('Raw footage link saved! ✅','success');
     });
 
+    /* Client New Project Booking Modal */
+    const modalClientNewProject = document.getElementById('modalClientNewProject');
+    document.getElementById('btnOpenNewProjectModal').addEventListener('click', ()=> modalClientNewProject.classList.add('open'));
+    document.getElementById('btnCloseClientModal').addEventListener('click', ()=> modalClientNewProject.classList.remove('open'));
+
+    const cnpServiceSelect = document.getElementById('cnp-service');
+    cnpServiceSelect.addEventListener('change', (e)=>{
+      const [name, price] = e.target.value.split('|');
+      document.getElementById('cnpPriceTag').textContent = price === '0' ? 'Custom Quote' : `Est. Price: ₹${parseInt(price).toLocaleString()}`;
+    });
+
+    document.getElementById('btnSubmitClientProject').addEventListener('click', async () => {
+      const title   = document.getElementById('cnp-title').value.trim();
+      const rawVal  = cnpServiceSelect.value;
+      const [serviceName, priceStr] = rawVal.split('|');
+      const desc    = document.getElementById('cnp-desc').value.trim();
+      const footage = document.getElementById('cnp-footage').value.trim();
+      const price   = parseInt(priceStr) || 0;
+
+      if (!title) { showToast('Please enter a project title.','error'); return; }
+
+      // 48-hour default deadline
+      const deadline = new Date();
+      deadline.setDate(deadline.getDate() + 2);
+
+      await addDoc(collection(db, 'projects'), {
+        title: title + ' (' + serviceName + ')',
+        description: desc,
+        clientId: currentUser.uid,
+        editorId: '',
+        rawFootageUrl: footage,
+        deliveryUrl: '',
+        invoiceAmount: price,
+        invoicePaid: false,
+        status: 'pending',
+        createdAt: serverTimestamp(),
+        deadline: deadline
+      });
+
+      showToast('Project booked successfully! ✅','success');
+      modalClientNewProject.classList.remove('open');
+      document.getElementById('cnp-title').value = '';
+      document.getElementById('cnp-desc').value = '';
+      document.getElementById('cnp-footage').value = '';
+    });
+
     /* Invoices */
     function renderInvoices(projects) {
       const container = document.getElementById('invoicesList');
@@ -352,7 +467,7 @@
         <div class="invoice-row">
           <div>
             <div style="font-weight:600;margin-bottom:3px;">${p.title||'Untitled Project'}</div>
-            <div style="font-size:11px;color:var(--t3);">Invoice</div>
+            <div style="font-size:11px;color:var(--t3);">Invoice Ref #${p.id.substring(0,6)}</div>
           </div>
           <div style="text-align:right;">
             <div style="font-family:var(--font-h);font-size:1.3rem;color:var(--gold);">₹${(p.invoiceAmount||0).toLocaleString()}</div>
@@ -399,8 +514,16 @@
     /* Gemini AI Chatbot */
     const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY';
     const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
-    const SYSTEM_PROMPT = `You are Editzaar AI, assistant for clients of Editzaar video editing agency based in Hyderabad.
-Help clients with drive link sharing, project timelines, video styles, and pricing. Direct booking questions to WhatsApp: +91 9476766340.`;
+    const SYSTEM_PROMPT = `You are Editzaar AI, assistant for Editzaar video editing & growth agency based in Hyderabad.
+Our Contact Phone/WhatsApp: +91 9476766340
+
+Our Core Services & Pricing:
+- Instagram Reels & Shorts: ₹1,000 / video (48h turnaround)
+- Motion Graphics & Animated Videos: ₹2,500 / video
+- Long Form YouTube Edits: ₹5,000 / video
+- Custom Brand Retainers: Custom Quote
+
+Provide clear, helpful answers to users. Always include our WhatsApp/Phone number (+91 9476766340) for booking or urgent queries.`;
 
     async function sendBotMessage() {
       const input = document.getElementById('botInput');
@@ -427,13 +550,13 @@ Help clients with drive link sharing, project timelines, video styles, and prici
           })
         });
         const data = await res.json();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Need help? Contact us directly on WhatsApp: +91 9476766340";
+        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Need help? Contact us directly on WhatsApp/Phone: +91 9476766340";
         document.getElementById('botTyping')?.remove();
         appendBotMsg('model', reply);
         chatHistory.push({role:'model', parts:[{text:reply}]});
       } catch(e) {
         document.getElementById('botTyping')?.remove();
-        appendBotMsg('model','Feel free to chat with our team on WhatsApp: +91 9476766340');
+        appendBotMsg('model','Our services: Shorts (₹1,000), Animated (₹2,500), Long-Form (₹5,000). Contact us on WhatsApp/Phone: <strong>+91 9476766340</strong>');
       }
     }
 
