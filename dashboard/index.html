@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.9"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.3"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -172,7 +172,6 @@
             createdAt: serverTimestamp()
           });
 
-          // Create Welcome Announcement & Welcome Notification for New Client
           await addDoc(collection(db, 'announcements'), {
             title: '👋 Welcome to Editzaar Agency!',
             message: `Hi ${defaultName}! We're thrilled to partner with you. Book your first video edit or web project anytime!`,
@@ -255,71 +254,48 @@
     submitBtn.addEventListener('click', async () => {
       const email = emailEl.value.trim();
       const pass  = passEl.value;
-      const name  = nameEl.value.trim();
+      const name  = nameEl.value.trim() || email.split('@')[0];
 
-      const safetyTimer = setTimeout(() => {
-        resetButton();
-        if (mode === 'signin') {
-          showError('Account not found. Click "CREATE ACCOUNT" tab above to register!');
-        }
-      }, 4000);
+      if (!email || !pass) { showError('Please enter your email address and password.'); return; }
+      if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
 
-      if (mode === 'signin') {
-        if (!email || !pass) { clearTimeout(safetyTimer); showError('Please enter your email and password.'); return; }
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Signing in…';
-        errorEl.classList.remove('show');
-        try {
-          const cred = await signInWithEmailAndPassword(auth, email, pass);
-          clearTimeout(safetyTimer);
-          await redirectByRole(cred.user);
-        } catch (e) {
-          clearTimeout(safetyTimer);
-          const msgs = {
-            'auth/invalid-credential': 'Account not found or password incorrect. Click "CREATE ACCOUNT" tab above to register!',
-            'auth/user-not-found':     'Account not found. Click "CREATE ACCOUNT" tab above to register!',
-            'auth/wrong-password':     'Incorrect password. Click "Forgot password?" below to reset it.',
-            'auth/invalid-email':      'Please enter a valid email address.',
-          };
-          showError(msgs[e.code] || 'Account not found. Click "CREATE ACCOUNT" tab above to register!');
-        }
-      } else {
-        if (!name || !email || !pass) { clearTimeout(safetyTimer); showError('Please fill in your name, email, and password.'); return; }
-        if (pass.length < 6) { clearTimeout(safetyTimer); showError('Password must be at least 6 characters.'); return; }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Authenticating…';
+      errorEl.classList.remove('show');
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Creating Account…';
-        errorEl.classList.remove('show');
+      // 1. Try Signing In first
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        showSuccess('Sign in successful! Loading your dashboard…');
+        await redirectByRole(cred.user);
+      } catch (e) {
+        // 2. If Auth account does not exist, AUTO-CREATE it seamlessly so sign in NEVER fails!
+        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+          try {
+            submitBtn.textContent = 'Creating Account & Logging In…';
+            const newCred = await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, 'users', newCred.user.uid), {
+              name: name,
+              email: email,
+              role: 'client',
+              tempPass: pass,
+              createdAt: serverTimestamp()
+            });
 
-        try {
-          const cred = await createUserWithEmailAndPassword(auth, email, pass);
-          clearTimeout(safetyTimer);
-          await setDoc(doc(db, 'users', cred.user.uid), {
-            name: name,
-            email: email,
-            role: 'client',
-            tempPass: pass, // Stored password visible to Admin
-            createdAt: serverTimestamp()
-          });
+            await addDoc(collection(db, 'announcements'), {
+              title: '🚀 Welcome to Editzaar Agency!',
+              message: `Hi ${name}! Thank you for logging in. You can now track your projects and chat live with your video editor!`,
+              target: newCred.user.uid,
+              createdAt: serverTimestamp()
+            });
 
-          // Create Welcome Announcement for Client
-          await addDoc(collection(db, 'announcements'), {
-            title: '🚀 Welcome to Editzaar Agency!',
-            message: `Hi ${name}! Thank you for registering. You can now book video projects, track edits live, and chat with your editor!`,
-            target: cred.user.uid,
-            createdAt: serverTimestamp()
-          });
-
-          showSuccess('Account created! Opening your dashboard…');
-          setTimeout(() => { window.location.replace('/dashboard/client.html'); }, 600);
-        } catch (e) {
-          clearTimeout(safetyTimer);
-          const msgs = {
-            'auth/email-already-in-use': 'An account already exists with this email address. Click "Sign In" tab.',
-            'auth/invalid-email':        'Please enter a valid email address.',
-            'auth/weak-password':        'Password should be at least 6 characters.',
-          };
-          showError(msgs[e.code] || e.message || 'Registration failed.');
+            showSuccess('Account initialized! Opening your dashboard…');
+            await redirectByRole(newCred.user);
+          } catch (createErr) {
+            showError('Incorrect password or invalid email format. Please check your credentials.');
+          }
+        } else {
+          showError('Incorrect password or invalid email format. Please check your credentials.');
         }
       }
     });
