@@ -1,797 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services & Industry Expertise | Editzaar — Premium Video Editing Agency</title>
-    <meta name="description"
-        content="Explore Editzaar's full range of video editing, post-production, and digital marketing services tailored for every industry — Finance, Real Estate, Wedding, D2C, and more.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Outfit:wght@300;400;600;700&display=swap"
-        rel="stylesheet" />
-    <link rel="icon" type="image/png" href="media/fav-logo.png">
-    <link rel="stylesheet" href="css/services.css?v=2.0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5020093784155856" crossorigin="anonymous"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4Y6R3LKHGY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4Y6R3LKHGY');
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Services &amp; Industry Expertise | Editzaar</title>
+  <meta name="description" content="Explore Editzaar's full range of video post-production, landing page development, and performance ad creative services."/>
+  <link rel="canonical" href="https://editzaar.in/services.html"/>
+  <link rel="icon" type="image/png" href="media/fav-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css?v=3.2"/>
+  <style>
+    .srv-page-hero {
+      padding: 120px 48px 60px;
+      text-align: center;
+      background: radial-gradient(circle at 50% 20%, rgba(255,184,0,0.1) 0%, transparent 60%);
+    }
+    .srv-services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+    }
+    .srv-sc-icon { font-size: 2.2rem; margin-bottom: 16px; }
+    .srv-service-card h3 { font-size: 1.5rem; margin-bottom: 12px; }
+    .srv-service-card p { color: var(--t2); font-size: 0.92rem; margin-bottom: 16px; line-height: 1.7; }
+    .srv-service-card ul { list-style: none; border-top: 1px solid var(--border); padding-top: 14px; }
+    .srv-service-card li { font-size: 0.85rem; color: var(--t3); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .srv-service-card li::before { content: '✓'; color: var(--gold); }
+  </style>
 </head>
-
 <body>
 
-    <!-- NAV -->
-    <nav class="srv-nav">
-        <a href="index.html" class="srv-logo">EDIT<em>ZAAR</em></a>
-        <div class="srv-nav-links">
-            <a href="index.html#work">Our Work</a>
-            <a href="index.html#pricing">Pricing</a>
-            <a href="https://wa.link/pz3w3p" target="_blank" class="srv-nav-cta">Book a Free Call</a>
-        </div>
-    </nav>
+  <div class="cursor-glow" id="cglow"></div>
+  <div class="cursor-dot" id="cdot"></div>
 
-    <!-- HERO -->
-    <section class="srv-hero">
-        <div class="srv-hero-inner">
-            <div class="srv-hero-tag">Editzaar Services</div>
-            <h1 class="srv-hero-h1">We Edit. We Create.<br><em>We Scale Your Brand.</em></h1>
-            <p class="srv-hero-sub"> Whether you're scaling a creator brand or launching a D2C business, we deliver
-                high-retention video editing, high-converting websites, strategic social media management, and
-                performance-driven Meta & Google Ads designed <strong>to stop the scroll and drive real growth.</strong>
-            </p>
-            <div class="srv-hero-stats">
-                <div class="srv-stat"><span class="srv-stat-n">200+</span><span class="srv-stat-l">Projects
-                        Delivered</span></div>
-                <div class="srv-stat"><span class="srv-stat-n">12M+</span><span class="srv-stat-l">Total Views
-                        Generated</span></div>
-                <div class="srv-stat"><span class="srv-stat-n">48hr</span><span class="srv-stat-l">Average Delivery
-                        Time</span></div>
-                <div class="srv-stat"><span class="srv-stat-n">8+</span><span class="srv-stat-l">Industries
-                        Served</span></div>
-            </div>
-        </div>
-    </section>
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="logo">EDIT<em>ZAAR</em></a>
+    <ul class="nav-links">
+      <li><a href="services.html" class="active">Services</a></li>
+      <li><a href="work.html">Work</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
+      <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
+    </ul>
+    <a class="nav-cta" href="dashboard/index.html">Client Login</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
-    <!-- WHAT WE DO: INTRO -->
-    <section class="srv-section">
-        <div class="srv-container">
-            <div class="srv-section-header">
-                <span class="srv-sec-tag">What We Do</span>
-                <h2 class="srv-sec-title">More than just <em>video editing</em></h2>
-                <p class="srv-sec-sub">Most agencies just cut clips or run basic ads. We go deeper — we analyze audience
-                    behavior, study digital trends, and build high-converting websites, scroll-stopping videos, and
-                    performance-driven campaigns for retention, conversions, and brand authority. Here's everything we
-                    offer:</p>
-            </div>
+  <!-- HERO -->
+  <section class="srv-page-hero">
+    <div class="eyebrow" style="justify-content:center;margin-bottom:16px;">Our Capabilities</div>
+    <h1 style="font-size:clamp(2.5rem,5vw,4.2rem);font-weight:300;margin-bottom:20px;">
+      We Edit. We Build. <em>We Scale.</em>
+    </h1>
+    <p style="color:var(--t2);max-width:620px;margin:0 auto 36px;font-size:1.05rem;line-height:1.8;">
+      From high-retention video post-production to high-converting landing pages and data-driven ad creative strategy.
+    </p>
+    <a href="https://wa.link/pz3w3p" target="_blank" class="btn-p">Book a free call on WhatsApp →</a>
+  </section>
 
-            <div class="srv-services-grid">
-                <div class="srv-service-card">
-                    <div class="srv-sc-icon">🎬</div>
-                    <h3>Video Post-Production</h3>
-                    <p>Precision editing with high-impact hooks in the first 3 seconds, tight cuts, colour grading,
-                        sound design, and stylish subtitles. Every video is engineered for maximum retention.</p>
-                    <ul>
-                        <li>Short-form Reels & YouTube Shorts</li>
-                        <li>Long-form YouTube Videos (10–60 min)</li>
-                        <li>Cinematic films & brand documentaries</li>
-                        <li>Podcast & talking head editing</li>
-                    </ul>
-                </div>
+  <!-- SERVICES GRID -->
+  <section class="sec sec-alt">
+    <div class="sec-hdr reveal">
+      <div class="sec-title">Full Service <em>Offerings</em></div>
+      <div class="sec-tag">End-to-End Execution</div>
+    </div>
 
-                <div class="srv-service-card">
-                    <div class="srv-sc-icon">💻</div>
-                    <h3>Website Design & Development</h3>
-                    <p>High-converting, lightning-fast custom websites built to turn visitors into paying clients. From
-                        sleek landing pages to full business websites, we create digital storefronts that build instant
-                        trust and drive action.</p>
-                    <ul>
-                        <li>Custom landing page design & optimization</li>
-                        <li>D2C & business portfolio websites</li>
-                        <li>Mobile-responsive & high-speed layouts</li>
-                        <li>Conversion rate optimization (CRO)</li>
-                    </ul>
-                </div>
+    <div class="srv-services-grid reveal reveal-d1">
 
-                <div class="srv-service-card">
-                    <div class="srv-sc-icon">📈</div>
-                    <h3>Paid Advertising (Meta & Google Ads)</h3>
-                    <p>Data-driven ad campaigns engineered for maximum ROAS. We handle full-funnel strategy, audience
-                        targeting, and campaign management across Meta (Facebook/Instagram) and Google to scale your
-                        revenue predictably.</p>
-                    <ul>
-                        <li>Meta Ads strategy & campaign scaling</li>
-                        <li>Google Search, Display, & YouTube campaigns</li>
-                        <li>Funnel building & audience segmentation</li>
-                        <li>Continuous A/B testing & performance tracking</li>
-                    </ul>
-                </div>
+      <div class="srv-service-card">
+        <div class="srv-sc-icon">🎬</div>
+        <h3>Shorts &amp; Instagram Reels</h3>
+        <p>3-second scroll-stopping hooks, kinetic captions, sound design, and pacing tuned for maximum algorithm reach.</p>
+        <ul>
+          <li>Hook Optimization &amp; Re-framing</li>
+          <li>Kinetic Subtitles &amp; Sound FX</li>
+          <li>48-Hour Turnaround Time</li>
+        </ul>
+      </div>
 
-                <div class="srv-service-card">
-                    <div class="srv-sc-icon">🏢</div>
-                    <h3>Corporate & Brand Films</h3>
-                    <p>Premium brand videos for companies that want to stand out. From company culture films to product
-                        launches and leadership interviews — we make your brand look world-class.</p>
-                    <ul>
-                        <li>Corporate culture & story films</li>
-                        <li>Product launch cinematic videos</li>
-                        <li>Client testimonial edits</li>
-                        <li>Event recap highlight reels</li>
-                    </ul>
-                </div>
+      <div class="srv-service-card">
+        <div class="srv-sc-icon">📽️</div>
+        <h3>Long-Form YouTube Content</h3>
+        <p>Engaging B-roll integration, custom animations, lower thirds, storytelling cuts, and high-retention editing.</p>
+        <ul>
+          <li>10 to 60-Minute Video Cuts</li>
+          <li>Custom Motion Graphics &amp; SFX</li>
+          <li>CTR-Optimized Thumbnail Options</li>
+        </ul>
+      </div>
 
-                <div class="srv-service-card">
-                    <div class="srv-sc-icon">📢</div>
-                    <h3>Ads & Performance Marketing Video</h3>
-                    <p>High-converting video ads designed for Meta, YouTube, and Google campaigns. We build creative
-                        variations, test hooks, and design for maximum click-through rate and ROAS.</p>
-                    <ul>
-                        <li>Facebook & Instagram ad creatives</li>
-                        <li>YouTube pre-roll & bumper ads</li>
-                        <li>UGC-style ad editing</li>
-                        <li>A/B test creative variations</li>
-                    </ul>
-                </div>
+      <div class="srv-service-card">
+        <div class="srv-sc-icon">💻</div>
+        <h3>Web Design &amp; Development</h3>
+        <p>Custom landing pages and agency systems optimized for lighting speed, mobile responsiveness, and high conversion.</p>
+        <ul>
+          <li>Mobile-First Responsive UI</li>
+          <li>Firebase &amp; Web Dashboard Setup</li>
+          <li>SEO &amp; Performance Optimized</li>
+        </ul>
+      </div>
 
-                <div class="srv-service-card">
-                    <div class="srv-sc-icon">💻</div>
-                    <h3>YouTube Channel Management</h3>
-                    <p>Full-stack YouTube support including editing, thumbnail design, titles, descriptions, and content
-                        calendar planning. We turn your channel into a high-growth authority machine.</p>
-                    <ul>
-                        <li>Long-form video editing & formatting</li>
-                        <li>Custom thumbnail design (CTR-optimised)</li>
-                        <li>Channel SEO & metadata strategy</li>
-                        <li>Content consistency & posting calendar</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+      <div class="srv-service-card">
+        <div class="srv-sc-icon">📈</div>
+        <h3>Paid Ad Creatives</h3>
+        <p>High-converting video ads engineered for Meta, Instagram &amp; Google Ad campaigns with direct-response hooks.</p>
+        <ul>
+          <li>A/B Hook Variations</li>
+          <li>Direct Response Messaging</li>
+          <li>ROAS-Focused Visual Testing</li>
+        </ul>
+      </div>
 
-    <!-- INDUSTRY EXPERTISE -->
-    <section class="srv-section srv-section-dark">
-        <div class="srv-container">
-            <div class="srv-section-header">
-                <span class="srv-sec-tag">Industry Expertise</span>
-                <h2 class="srv-sec-title">We understand <em>your specific audience</em></h2>
-                <p class="srv-sec-sub">Every industry has different audiences, different algorithms, and different
-                    psychology. We don't give the same edit to a finance creator and a wedding filmmaker — we tailor
-                    every cut, colour, sound, and subtitle to what works in your niche.</p>
-            </div>
+    </div>
+  </section>
 
-            <!-- Finance -->
-            <div class="ind-block">
-                <div class="ind-block-left">
-                    <div class="ind-block-icon">📈</div>
-                    <div class="ind-block-tag">Finance & FinTech</div>
-                    <h3 class="ind-block-title">Finance Creators &amp; FinTech Brands</h3>
-                    <p class="ind-block-desc">Finance is the most competitive niche on YouTube. Audiences are
-                        intelligent, sceptical, and skip fast. Our editing builds authority, establishes trust, and
-                        creates that "this person knows what they're talking about" impression within the first 10
-                        seconds.</p>
-                    <div class="ind-block-what">
-                        <div class="ind-block-col">
-                            <h4>What We Create</h4>
-                            <ul>
-                                <li>Stock market & trading analysis videos</li>
-                                <li>Personal finance educational content</li>
-                                <li>Mutual fund & investment explainers</li>
-                                <li>FinTech product demo videos</li>
-                                <li>Business strategy breakdowns</li>
-                                <li>Short-form finance reels & hooks</li>
-                            </ul>
-                        </div>
-                        <div class="ind-block-col">
-                            <h4>Our Editing Approach</h4>
-                            <ul>
-                                <li>Data & chart visualisation overlays</li>
-                                <li>Kinetic typography for key numbers</li>
-                                <li>Authority-building B-roll footage</li>
-                                <li>Fast-paced retention cuts every 3–4 sec</li>
-                                <li>Professional news-anchor colour grade</li>
-                                <li>Clean, non-distracting lower thirds</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ind-block-results">
-                        <div class="ind-result-item"><span class="ind-result-n">68%</span><span>Avg. Watch Time
-                                Increase</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">3.2M</span><span>Views on a Finance
-                                Edit</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">60%+</span><span>Average View Duration
-                                Target</span></div>
-                    </div>
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="ind-block-cta">Get a Free Finance Strategy
-                        Call →</a>
-                </div>
-                <div class="ind-block-right">
-                    <div class="ind-block-preview">
-                        <div class="ibp-screen">
-                            <div class="ibp-bar">
-                                <span style="color: #ffcc00; font-size:0.6rem; letter-spacing:1px;">FINANCE EDIT · AFTER
-                                    EDITZAAR</span>
-                                <span style="color: #25d366; font-size:0.6rem;">LIVE ●</span>
-                            </div>
-                            <div class="ibp-metric-row">
-                                <div class="ibp-metric"><span class="ibp-n">72%</span><span class="ibp-l">Watch
-                                        Time</span></div>
-                                <div class="ibp-metric"><span class="ibp-n" style="color:#25d366;">+184%</span><span
-                                        class="ibp-l">Subscribers</span></div>
-                                <div class="ibp-metric"><span class="ibp-n">3.2M</span><span class="ibp-l">Total
-                                        Views</span></div>
-                            </div>
-                            <div style="padding: 12px; border-top: 1px solid #1a1a1a;">
-                                <div style="font-size: 0.6rem; color: #555; margin-bottom: 6px; letter-spacing: 0.5px;">
-                                    AVG VIEW DURATION OVER TIME</div>
-                                <div style="display: flex; gap: 3px; align-items: flex-end; height: 40px;">
-                                    <div style="width:12%;height:30%;background:#222;border-radius:2px 2px 0 0;"></div>
-                                    <div style="width:12%;height:38%;background:#222;border-radius:2px 2px 0 0;"></div>
-                                    <div style="width:12%;height:45%;background:#333;border-radius:2px 2px 0 0;"></div>
-                                    <div style="width:12%;height:52%;background:#333;border-radius:2px 2px 0 0;"></div>
-                                    <div style="width:12%;height:65%;background:#ffcc00;border-radius:2px 2px 0 0;">
-                                    </div>
-                                    <div style="width:12%;height:80%;background:#ffcc00;border-radius:2px 2px 0 0;">
-                                    </div>
-                                    <div style="width:12%;height:95%;background:#ffcc00;border-radius:2px 2px 0 0;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <div class="foot-logo">EDIT<em>ZAAR</em></div>
+      <div class="foot-copy">© 2026 Editzaar · Hyderabad, India · All rights reserved.</div>
+    </div>
+    <div class="foot-links">
+      <a href="index.html">Home</a>
+      <a href="work.html">Work</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard/index.html">Client Login</a>
+    </div>
+  </footer>
 
-            <!-- Real Estate -->
-            <div class="ind-block ind-block-flip">
-                <div class="ind-block-left">
-                    <div class="ind-block-icon">🏡</div>
-                    <div class="ind-block-tag">Real Estate & Property</div>
-                    <h3 class="ind-block-title">Real Estate Developers &amp; Brokers</h3>
-                    <p class="ind-block-desc">In real estate, buyers decide emotionally first, and justify rationally
-                        second. Our video editing transforms ordinary property footage into luxury experiences that make
-                        buyers feel — before they see the price tag. A great property edit can generate leads worth
-                        crores.</p>
-                    <div class="ind-block-what">
-                        <div class="ind-block-col">
-                            <h4>What We Create</h4>
-                            <ul>
-                                <li>Cinematic property walkthrough videos</li>
-                                <li>Drone footage highlight edits</li>
-                                <li>Luxury apartment & villa showcases</li>
-                                <li>Real estate developer brand films</li>
-                                <li>Property investment pitch decks (video)</li>
-                                <li>Agent personal brand reels</li>
-                            </ul>
-                        </div>
-                        <div class="ind-block-col">
-                            <h4>Our Editing Approach</h4>
-                            <ul>
-                                <li>Warm, premium cinematic colour grade</li>
-                                <li>Smooth drone-to-interior transitions</li>
-                                <li>Ambient luxury music bed</li>
-                                <li>Architectural detail close-up cuts</li>
-                                <li>Elegant title cards & property specs</li>
-                                <li>Emotional narrative video structure</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ind-block-results">
-                        <div class="ind-result-item"><span class="ind-result-n">4.5%</span><span>Lead Conversion
-                                Rate</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">860K</span><span>Views on a Property
-                                Edit</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">5x</span><span>More Enquiries vs Static
-                                Posts</span></div>
-                    </div>
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="ind-block-cta">Get a Free Property Strategy
-                        Call →</a>
-                </div>
-                <div class="ind-block-right">
-                    <div class="ind-block-preview">
-                        <div class="ibp-screen">
-                            <div class="ibp-bar">
-                                <span style="color: #ffcc00; font-size:0.6rem; letter-spacing:1px;">PROPERTY FILM ·
-                                    PREMIUM EDIT</span>
-                                <span style="color: #25d366; font-size:0.6rem;">HD ●</span>
-                            </div>
-                            <div style="padding: 16px;">
-                                <div
-                                    style="background: #111; border: 1px solid #1a1a1a; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
-                                    <div
-                                        style="color: #555; font-size: 0.55rem; text-transform:uppercase; letter-spacing:1px;">
-                                        Client Enquiries After Video</div>
-                                    <div style="color: #ffcc00; font-size: 1.5rem; font-weight: 700; margin: 4px 0;">
-                                        +340%</div>
-                                    <div style="color: #888; font-size: 0.6rem;">vs. static photo listing</div>
-                                </div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                                    <div
-                                        style="background:#111;border:1px solid #1a1a1a;padding:10px;border-radius:4px;text-align:center;">
-                                        <div style="color:#25d366;font-size:0.9rem;font-weight:700;">2.1M</div>
-                                        <div style="color:#555;font-size:0.55rem;">VIDEO REACH</div>
-                                    </div>
-                                    <div
-                                        style="background:#111;border:1px solid #ffcc00;padding:10px;border-radius:4px;text-align:center;">
-                                        <div style="color:#ffcc00;font-size:0.9rem;font-weight:700;">72 HRS</div>
-                                        <div style="color:#555;font-size:0.55rem;">DELIVERY</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI & Tech -->
-            <div class="ind-block">
-                <div class="ind-block-left">
-                    <div class="ind-block-icon">🤖</div>
-                    <div class="ind-block-tag">AI & Tech SaaS</div>
-                    <h3 class="ind-block-title">AI Startups &amp; Tech Product Brands</h3>
-                    <p class="ind-block-desc">Tech audiences don't want slow intros — they want to understand your
-                        product's value in under 30 seconds. We create fast-paced, feature-driven product demos,
-                        explainers, and ads that communicate complex technology in simple, exciting language.</p>
-                    <div class="ind-block-what">
-                        <div class="ind-block-col">
-                            <h4>What We Create</h4>
-                            <ul>
-                                <li>SaaS product demo & feature videos</li>
-                                <li>AI tool explainer animations</li>
-                                <li>Tech founder authority content</li>
-                                <li>App showcase & launch videos</li>
-                                <li>Startup pitch deck support videos</li>
-                                <li>B2B technology brand commercials</li>
-                            </ul>
-                        </div>
-                        <div class="ind-block-col">
-                            <h4>Our Editing Approach</h4>
-                            <ul>
-                                <li>UI zoom-in & screen recording edits</li>
-                                <li>Futuristic motion graphic overlays</li>
-                                <li>Fast-cut product feature highlights</li>
-                                <li>High-contrast typography animations</li>
-                                <li>Futuristic, clean sound design</li>
-                                <li>AI-generated visual augmentation</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ind-block-results">
-                        <div class="ind-result-item"><span class="ind-result-n">+12%</span><span>CTR Improvement</span>
-                        </div>
-                        <div class="ind-result-item"><span class="ind-result-n">780K</span><span>Views on an AI Brand
-                                Edit</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">3.4x</span><span>ROI on Product Demo
-                                Ads</span></div>
-                    </div>
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="ind-block-cta">Get a Free Tech Strategy Call
-                        →</a>
-                </div>
-                <div class="ind-block-right">
-                    <div class="ind-block-preview">
-                        <div class="ibp-screen">
-                            <div class="ibp-bar">
-                                <span style="color:#ffcc00;font-size:0.6rem;letter-spacing:1px;">AI BRAND VIDEO ·
-                                    PERFORMANCE</span>
-                                <span style="color:#25d366;font-size:0.6rem;">4K ●</span>
-                            </div>
-                            <div style="padding:14px;">
-                                <div
-                                    style="background:#111;border:1px solid #1a1a1a;border-radius:6px;padding:12px;margin-bottom:10px;">
-                                    <div
-                                        style="color:#555;font-size:0.55rem;text-transform:uppercase;letter-spacing:1px;">
-                                        Ad Campaign Performance</div>
-                                    <div style="display:flex;justify-content:space-between;margin-top:8px;">
-                                        <div>
-                                            <div style="color:#ff3333;font-size:1.1rem;font-weight:700;">-35%</div>
-                                            <div style="color:#555;font-size:0.55rem;">COST PER CLICK</div>
-                                        </div>
-                                        <div>
-                                            <div style="color:#25d366;font-size:1.1rem;font-weight:700;">+142%</div>
-                                            <div style="color:#555;font-size:0.55rem;">CONVERSION RATE</div>
-                                        </div>
-                                        <div>
-                                            <div style="color:#ffcc00;font-size:1.1rem;font-weight:700;">3.4x</div>
-                                            <div style="color:#555;font-size:0.55rem;">ROAS</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Education -->
-            <div class="ind-block ind-block-flip">
-                <div class="ind-block-left">
-                    <div class="ind-block-icon">🎓</div>
-                    <div class="ind-block-tag">Education & E-Learning</div>
-                    <h3 class="ind-block-title">Course Creators &amp; Education Brands</h3>
-                    <p class="ind-block-desc">Education content has a retention problem — students get distracted and
-                        drop off. Our editing adds visual engagement through animated slides, highlight callouts,
-                        chapter markers, and structured pacing that helps students absorb and retain information.
-                        Better-edited courses mean better reviews, more completions, and more referrals.</p>
-                    <div class="ind-block-what">
-                        <div class="ind-block-col">
-                            <h4>What We Create</h4>
-                            <ul>
-                                <li>Online course module editing</li>
-                                <li>Educational YouTube channel videos</li>
-                                <li>Tutorial & how-to video series</li>
-                                <li>Webinar recording refinements</li>
-                                <li>Course promo & marketing videos</li>
-                                <li>Educational Instagram Reels & Shorts</li>
-                            </ul>
-                        </div>
-                        <div class="ind-block-col">
-                            <h4>Our Editing Approach</h4>
-                            <ul>
-                                <li>Animated keynote & slide overlays</li>
-                                <li>Key term highlight & callout boxes</li>
-                                <li>Chapter marker & section transitions</li>
-                                <li>Zoom-in on important moments</li>
-                                <li>Focused, non-distracting sound mix</li>
-                                <li>Summary sheet animation sequences</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ind-block-results">
-                        <div class="ind-result-item"><span class="ind-result-n">+40%</span><span>Course Completion
-                                Rate</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">520K</span><span>Views on Education
-                                Edit</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">4.9★</span><span>Avg. Review After Video
-                                Polish</span></div>
-                    </div>
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="ind-block-cta">Get a Free Education Strategy
-                        Call →</a>
-                </div>
-                <div class="ind-block-right">
-                    <div class="ind-block-preview">
-                        <div class="ibp-screen">
-                            <div class="ibp-bar">
-                                <span style="color:#ffcc00;font-size:0.6rem;letter-spacing:1px;">COURSE EDIT · RETENTION
-                                    BOOST</span>
-                                <span style="color:#25d366;font-size:0.6rem;">★★★★★</span>
-                            </div>
-                            <div style="padding:14px;">
-                                <div
-                                    style="background:#111;border:1px solid #1a1a1a;border-radius:6px;padding:12px;margin-bottom:8px;">
-                                    <div
-                                        style="color:#555;font-size:0.55rem;text-transform:uppercase;letter-spacing:1px;">
-                                        Completion Rate Before vs. After</div>
-                                    <div
-                                        style="display:flex;gap:10px;margin-top:10px;align-items:flex-end;height:50px;">
-                                        <div
-                                            style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                                            <div style="background:#222;width:100%;height:30%;border-radius:2px;"></div>
-                                            <div style="color:#555;font-size:0.5rem;">BEFORE: 34%</div>
-                                        </div>
-                                        <div
-                                            style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                                            <div style="background:#ffcc00;width:100%;height:85%;border-radius:2px;">
-                                            </div>
-                                            <div style="color:#ffcc00;font-size:0.5rem;font-weight:700;">AFTER: 74%
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- D2C -->
-            <div class="ind-block">
-                <div class="ind-block-left">
-                    <div class="ind-block-icon">🛒</div>
-                    <div class="ind-block-tag">D2C & E-Commerce</div>
-                    <h3 class="ind-block-title">D2C Brands &amp; E-Commerce Businesses</h3>
-                    <p class="ind-block-desc">For D2C brands, every second of video is either making you money or losing
-                        it. We create scroll-stopping ads with irresistible hooks in the first 2 seconds, lifestyle
-                        footage that makes customers emotionally connect with your product, and clear CTAs that drive
-                        purchases. Our ad creatives are designed to sell.</p>
-                    <div class="ind-block-what">
-                        <div class="ind-block-col">
-                            <h4>What We Create</h4>
-                            <ul>
-                                <li>Product close-up showcase videos</li>
-                                <li>Lifestyle & UGC-style ad content</li>
-                                <li>Unboxing & packaging reveal reels</li>
-                                <li>Brand story & founder videos</li>
-                                <li>ASMR & sensory product videos</li>
-                                <li>Seasonal campaign ad creatives</li>
-                            </ul>
-                        </div>
-                        <div class="ind-block-col">
-                            <h4>Our Editing Approach</h4>
-                            <ul>
-                                <li>2-second scroll-stopping hook design</li>
-                                <li>Lifestyle B-roll cut-sync to music</li>
-                                <li>Text overlays for muted-play viewing</li>
-                                <li>Desire-building product close-ups</li>
-                                <li>Warm, saturated colour grade for products</li>
-                                <li>Multiple A/B creative variations</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ind-block-results">
-                        <div class="ind-result-item"><span class="ind-result-n">2.5–4x</span><span>ROAS
-                                Improvement</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">490K</span><span>Views on D2C Product
-                                Reel</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">+89%</span><span>Add-to-Cart Rate vs.
-                                Static</span></div>
-                    </div>
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="ind-block-cta">Get a Free D2C Ad Strategy
-                        Call →</a>
-                </div>
-                <div class="ind-block-right">
-                    <div class="ind-block-preview">
-                        <div class="ibp-screen">
-                            <div class="ibp-bar">
-                                <span style="color:#ffcc00;font-size:0.6rem;letter-spacing:1px;">D2C AD CREATIVE ·
-                                    RESULTS</span>
-                                <span style="color:#25d366;font-size:0.6rem;">LIVE ●</span>
-                            </div>
-                            <div style="padding:14px;">
-                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-                                    <div
-                                        style="background:#111;border:1px solid #1a1a1a;padding:10px;border-radius:4px;text-align:center;">
-                                        <div style="color:#25d366;font-size:1rem;font-weight:700;">3.8x</div>
-                                        <div style="color:#555;font-size:0.5rem;">ROAS</div>
-                                    </div>
-                                    <div
-                                        style="background:#111;border:1px solid #ffcc00;padding:10px;border-radius:4px;text-align:center;">
-                                        <div style="color:#ffcc00;font-size:1rem;font-weight:700;">+89%</div>
-                                        <div style="color:#555;font-size:0.5rem;">ADD TO CART</div>
-                                    </div>
-                                    <div
-                                        style="background:#111;border:1px solid #1a1a1a;padding:10px;border-radius:4px;text-align:center;">
-                                        <div style="color:#fff;font-size:1rem;font-weight:700;">-41%</div>
-                                        <div style="color:#555;font-size:0.5rem;">CPM COST</div>
-                                    </div>
-                                    <div
-                                        style="background:#111;border:1px solid #1a1a1a;padding:10px;border-radius:4px;text-align:center;">
-                                        <div style="color:#25d366;font-size:1rem;font-weight:700;">2.1M</div>
-                                        <div style="color:#555;font-size:0.5rem;">IMPRESSIONS</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Weddings -->
-            <div class="ind-block ind-block-flip">
-                <div class="ind-block-left">
-                    <div class="ind-block-icon">💍</div>
-                    <div class="ind-block-tag">Weddings & Events</div>
-                    <h3 class="ind-block-title">Wedding Videographers &amp; Event Filmmakers</h3>
-                    <p class="ind-block-desc">Wedding videos are the only videos that will be watched over and over for
-                        decades. We edit wedding footage with emotional narrative structure, multi-camera
-                        synchronisation, and cinematic grading that preserves every precious moment in the most
-                        beautiful way possible.</p>
-                    <div class="ind-block-what">
-                        <div class="ind-block-col">
-                            <h4>What We Create</h4>
-                            <ul>
-                                <li>Full cinematic wedding films</li>
-                                <li>2–3 min highlight reels (for Instagram)</li>
-                                <li>Mehendi, sangeet & ceremony edits</li>
-                                <li>Pre-wedding shoot montages</li>
-                                <li>Wedding album teaser videos</li>
-                                <li>Event recap & venue showcase films</li>
-                            </ul>
-                        </div>
-                        <div class="ind-block-col">
-                            <h4>Our Editing Approach</h4>
-                            <ul>
-                                <li>Narrative voiceover & vow sync</li>
-                                <li>Multi-cam synchronisation</li>
-                                <li>Warm, emotional colour grading</li>
-                                <li>Slow-motion highlight moments</li>
-                                <li>Custom music selection & mood</li>
-                                <li>4K export for print-quality delivery</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ind-block-results">
-                        <div class="ind-result-item"><span class="ind-result-n">4K</span><span>Crystal Clear Final
-                                Delivery</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">1.1M</span><span>Views on Wedding
-                                Cinematic Edit</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">100%</span><span>Client Satisfaction
-                                Rate</span></div>
-                    </div>
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="ind-block-cta">Get a Free Wedding
-                        Consultation →</a>
-                </div>
-                <div class="ind-block-right">
-                    <div class="ind-block-preview">
-                        <div class="ibp-screen">
-                            <div class="ibp-bar">
-                                <span style="color:#ffcc00;font-size:0.6rem;letter-spacing:1px;">WEDDING FILM ·
-                                    CINEMATIC EDIT</span>
-                                <span style="color:#25d366;font-size:0.6rem;">4K ●</span>
-                            </div>
-                            <div style="padding:14px;">
-                                <div
-                                    style="background:#111;border:1px solid #1a1a1a;border-radius:6px;padding:14px;margin-bottom:8px;text-align:center;">
-                                    <div style="color:#ffcc00;font-size:1.6rem;margin-bottom:4px;">💍</div>
-                                    <div style="color:#fff;font-size:0.75rem;margin-bottom:2px;">lofy love song —
-                                        cinematic edit</div>
-                                    <div style="color:#555;font-size:0.55rem;margin-bottom:10px;">Slow motion · Colour
-                                        graded · Music sync</div>
-                                    <div style="display:flex;justify-content:space-around;">
-                                        <div>
-                                            <div style="color:#ffcc00;font-size:0.9rem;font-weight:700;">1.1M</div>
-                                            <div style="color:#555;font-size:0.5rem;">VIEWS</div>
-                                        </div>
-                                        <div>
-                                            <div style="color:#25d366;font-size:0.9rem;font-weight:700;">★★★★★</div>
-                                            <div style="color:#555;font-size:0.5rem;">RATING</div>
-                                        </div>
-                                        <div>
-                                            <div style="color:#fff;font-size:0.9rem;font-weight:700;">4K</div>
-                                            <div style="color:#555;font-size:0.5rem;">QUALITY</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Animation -->
-            <div class="ind-block">
-                <div class="ind-block-left">
-                    <div class="ind-block-icon">✨</div>
-                    <div class="ind-block-tag">Animation & Motion Design</div>
-                    <h3 class="ind-block-title">Brands That Need to Explain &amp; Impress</h3>
-                    <p class="ind-block-desc">When live-action footage isn't enough, animation tells the story. We
-                        create 2D motion graphics, animated explainer videos, logo reveal intros, and stylised content
-                        that makes your brand look premium without the cost of a traditional animation studio.</p>
-                    <div class="ind-block-what">
-                        <div class="ind-block-col">
-                            <h4>What We Create</h4>
-                            <ul>
-                                <li>2D animated explainer videos</li>
-                                <li>Logo animation & brand idents</li>
-                                <li>Kinetic typography social videos</li>
-                                <li>Animated product infographic videos</li>
-                                <li>AI-assisted visual generation + edit</li>
-                                <li>Stylised motion reel content</li>
-                            </ul>
-                        </div>
-                        <div class="ind-block-col">
-                            <h4>Our Editing Approach</h4>
-                            <ul>
-                                <li>Clean motion graphic design from brief</li>
-                                <li>Sound effects layered to animations</li>
-                                <li>Brand color palette integration</li>
-                                <li>Smooth easing & spring animation curves</li>
-                                <li>AI visual generation where applicable</li>
-                                <li>Multiple resolution exports</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="ind-block-results">
-                        <div class="ind-result-item"><span class="ind-result-n">340K</span><span>Views on AI Motion
-                                Promo</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">24hr</span><span>Fast-Track Delivery
-                                Available</span></div>
-                        <div class="ind-result-item"><span class="ind-result-n">100%</span><span>Custom to Your
-                                Brand</span></div>
-                    </div>
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="ind-block-cta">Get a Free Animation Brief
-                        Call →</a>
-                </div>
-                <div class="ind-block-right">
-                    <div class="ind-block-preview">
-                        <div class="ibp-screen">
-                            <div class="ibp-bar">
-                                <span style="color:#ffcc00;font-size:0.6rem;letter-spacing:1px;">ANIMATION REEL · AI
-                                    PROMO</span>
-                                <span style="color:#25d366;font-size:0.6rem;">NEW ●</span>
-                            </div>
-                            <div style="padding:14px;">
-                                <div
-                                    style="background:#111;border:1px solid #1a1a1a;border-radius:6px;padding:12px;text-align:center;margin-bottom:8px;">
-                                    <div style="font-size:2rem;margin-bottom:8px;">🎭</div>
-                                    <div style="color:#fff;font-size:0.7rem;margin-bottom:4px;">Hospital instruments —
-                                        AI promo</div>
-                                    <div style="color:#888;font-size:0.55rem;margin-bottom:10px;">AI visuals · Motion
-                                        graphics · Professional grade</div>
-                                    <div style="display:flex;justify-content:space-around;">
-                                        <div>
-                                            <div style="color:#25d366;font-size:0.85rem;font-weight:700;">340K</div>
-                                            <div style="color:#555;font-size:0.5rem;">VIEWS</div>
-                                        </div>
-                                        <div>
-                                            <div style="color:#ffcc00;font-size:0.85rem;font-weight:700;">2D+AI</div>
-                                            <div style="color:#555;font-size:0.5rem;">STYLE</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- PROCESS SECTION -->
-    <section class="srv-section">
-        <div class="srv-container">
-            <div class="srv-section-header">
-                <span class="srv-sec-tag">How We Work</span>
-                <h2 class="srv-sec-title">Simple, fast, <em>and painless</em></h2>
-                <p class="srv-sec-sub">You focus on creating and growing your brand. We handle everything else. Here's
-                    our simple, transparent process from day one.</p>
-            </div>
-
-            <div class="srv-process-grid">
-                <div class="srv-process-step">
-                    <div class="srv-process-num">01</div>
-                    <h3>Book a Free Call</h3>
-                    <p>Tell us about your niche, goals, and the type of content you create. We'll recommend the exact
-                        editing style and package for your needs — completely free, no pressure.</p>
-                </div>
-                <div class="srv-process-step">
-                    <div class="srv-process-num">02</div>
-                    <h3>Send Your Footage</h3>
-                    <p>Upload your raw recordings to our secure Google Drive. No complicated software — just drop your
-                        files and we take it from there. We'll send a confirmation once received.</p>
-                </div>
-                <div class="srv-process-step">
-                    <div class="srv-process-num">03</div>
-                    <h3>We Edit & Perfect</h3>
-                    <p>Our editors get to work. We add hooks, cuts, colour grades, captions, music, and motion graphics
-                        tailored to your brand. You get a preview before final delivery.</p>
-                </div>
-                <div class="srv-process-step">
-                    <div class="srv-process-num">04</div>
-                    <h3>Receive & Publish</h3>
-                    <p>Receive your polished video within 48 hours. If you want changes, we do up to 4 rounds of
-                        revisions — included, no extra cost. Then publish and watch the results.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CONNECT CTA -->
-    <section class="srv-section srv-section-dark">
-        <div class="srv-container">
-            <div class="connect-wrap">
-                <h3 class="connect-title">Not sure which service is right for you?</h3>
-                <p class="connect-sub">That's exactly why we offer a free 20-minute strategy call. No sales pitch — just
-                    honest advice on what will work best for your brand and industry. We'll even show you examples from
-                    your specific niche.</p>
-                <div class="connect-btns">
-                    <a href="https://wa.link/pz3w3p" target="_blank" class="connect-btn">📲 Book a Free WhatsApp
-                        Call</a>
-                    <a href="index.html#work" class="connect-btn secondary">🎬 View Our Work First</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer
-        style="background:#030303; border-top: 1px solid #111; padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; font-family: 'Outfit', sans-serif; flex-wrap: wrap; gap: 16px;">
-        <a href="index.html"
-            style="color: #fff; text-decoration: none; font-size: 1rem; font-weight: 700; letter-spacing: 1px;">EDIT<em
-                style="color: #ffcc00; font-style: normal;">ZAAR</em></a>
-        <div style="color: #444; font-size: 0.75rem;">© 2024 Editzaar. All rights reserved. Hyderabad, India.</div>
-        <a href="https://wa.link/pz3w3p" target="_blank"
-            style="color: #ffcc00; text-decoration: none; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;">Book
-            a Call →</a>
-    </footer>
-
+  <script src="js/main.js?v=3.2"></script>
 </body>
-
 </html>
