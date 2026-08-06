@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.2"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.5"/>
 
   <style>
     .status-timeline {
@@ -34,7 +34,7 @@
 
     .invoice-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+      padding: 18px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 14px;
     }
     .invoice-row:last-child { border-bottom: none; }
 
@@ -76,7 +76,7 @@
     /* Modal for New Project Booking */
     .modal-overlay {
       position:fixed; inset:0;
-      background:rgba(0,0,0,0.82);
+      background:rgba(0,0,0,0.85);
       z-index:900;
       display:flex; align-items:center; justify-content:center;
       padding:20px;
@@ -88,7 +88,7 @@
       border:1px solid var(--gold-border);
       border-radius:16px;
       padding:32px;
-      width:100%; max-width:540px;
+      width:100%; max-width:620px;
       max-height:92vh;
       overflow-y:auto;
       position:relative;
@@ -104,6 +104,32 @@
       font-size: 11px; color: var(--gold); background: var(--gold-dim);
       border: 1px solid var(--gold-border); padding: 4px 10px; border-radius: 20px;
       display: inline-block; margin-top: 4px;
+    }
+
+    /* Printable Tax Invoice Modal Layout */
+    .tax-invoice-paper {
+      background: #ffffff; color: #111111;
+      border-radius: 12px; padding: 36px;
+      font-family: Arial, sans-serif;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .inv-header { display: flex; justify-content: space-between; border-bottom: 2px solid #FFB800; padding-bottom: 16px; margin-bottom: 20px; }
+    .inv-company-title { font-size: 22px; font-weight: 800; color: #000; letter-spacing: -0.5px; }
+    .inv-company-sub { font-size: 12px; color: #555; margin-top: 4px; }
+    .inv-meta-table { width: 100%; font-size: 12px; margin-bottom: 24px; }
+    .inv-meta-table td { padding: 4px 0; }
+    .inv-items-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
+    .inv-items-table th { background: #f4f4f4; text-align: left; padding: 10px; border-bottom: 1px solid #ccc; font-weight: 700; }
+    .inv-items-table td { padding: 10px; border-bottom: 1px solid #eee; }
+    .inv-summary-box { width: 260px; margin-left: auto; font-size: 13px; }
+    .inv-sum-row { display: flex; justify-content: space-between; padding: 4px 0; }
+    .inv-sum-row.grand { border-top: 2px solid #000; font-weight: 800; font-size: 15px; padding-top: 8px; }
+    .inv-footer-note { font-size: 11px; color: #777; border-top: 1px solid #eee; padding-top: 14px; margin-top: 28px; text-align: center; }
+
+    @media print {
+      body * { visibility: hidden; }
+      .tax-invoice-paper, .tax-invoice-paper * { visibility: visible; }
+      .tax-invoice-paper { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -121,10 +147,10 @@
         <div class="sidebar-nav-section">Navigation</div>
         <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
         <div class="sidebar-nav-section">Account</div>
-        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; GST Receipts</div>
         <div class="sidebar-nav-section">Main Site</div>
         <a href="../index.html" class="sidebar-nav-item"><span class="nav-icon">🏠</span> Home Page</a>
-        <a href="../services.html" class="sidebar-nav-item"><span class="nav-icon">🎬</span> Services &amp; Pricing</a>
+        <a href="../pricing.html" class="sidebar-nav-item"><span class="nav-icon">🎬</span> Services &amp; Pricing</a>
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="clientEmail">Loading…</div>
@@ -196,9 +222,9 @@
         </div>
       </section>
 
-      <!-- ── SECTION: INVOICES ── -->
+      <!-- ── SECTION: INVOICES & GST RECEIPTS ── -->
       <section id="sec-invoices" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title"><em>Invoices &amp; Payments</em></div></div>
+        <div class="dash-topbar"><div class="dash-page-title">Invoices &amp; <em>GST Tax Receipts</em></div></div>
         <div class="dash-card">
           <div id="invoicesList"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices yet.</div></div></div>
         </div>
@@ -225,7 +251,11 @@
             <option value="Long Form YouTube Edit (₹5,000 / video)|5000">🎬 Long Form YouTube Video Edit — ₹5,000 / video</option>
             <option value="Custom Brand Partnership|0">⭐ Custom Brand Partnership / Agency Retainer</option>
           </select>
-          <div class="service-price-pill" id="cnpPriceTag">Est. Price: ₹1,000</div>
+          <div class="service-price-pill" id="cnpPriceTag">Est. Price: ₹1,000 (+ 18% GST)</div>
+        </div>
+        <div class="field">
+          <label>Client GSTIN Number (Optional — For Tax Input Credit)</label>
+          <input id="cnp-gstin" type="text" placeholder="e.g. 36AAAAA0000A1Z5 (Optional)"/>
         </div>
         <div class="field">
           <label>Project Brief / Instructions</label>
@@ -240,21 +270,86 @@
     </div>
   </div>
 
+  <!-- ══ MODAL: PRINTABLE GST TAX INVOICE VIEWER ══ -->
+  <div class="modal-overlay" id="modalInvoiceView">
+    <div class="modal-box" style="max-width:760px;background:#111;">
+      <button class="modal-close" onclick="document.getElementById('modalInvoiceView').classList.remove('open')">✕</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="color:var(--gold);font-weight:700;" id="invModalTypeBadge">⏳ Acknowledgment Receipt</div>
+        <button class="btn-gold btn-sm" onclick="window.print()">🖨 Print / Download PDF</button>
+      </div>
+
+      <div class="tax-invoice-paper" id="printablePaper">
+        <div class="inv-header">
+          <div>
+            <div class="inv-company-title">EDITZAAR</div>
+            <div class="inv-company-sub">Post-Production &amp; Web Growth Agency</div>
+            <div class="inv-company-sub">Hyderabad, Telangana, India</div>
+            <div class="inv-company-sub">GSTIN: <strong id="invCompanyGstin">36EDITZAAR1234Z9</strong> (Official)</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:18px;font-weight:800;color:#000;" id="invPaperHeaderTitle">TAX INVOICE</div>
+            <div style="font-size:12px;color:#555;margin-top:4px;">Invoice #: <span id="invPaperNo">EDZ-1001</span></div>
+            <div style="font-size:12px;color:#555;">Date: <span id="invPaperDate">07 Aug 2026</span></div>
+          </div>
+        </div>
+
+        <table class="inv-meta-table">
+          <tr>
+            <td style="width:50%;"><strong>BILLED TO:</strong><br/><span id="invPaperClientName">Client Name</span><br/><span id="invPaperClientEmail">client@email.com</span><br/>GSTIN: <span id="invPaperClientGst">N/A (Individual)</span></td>
+            <td style="width:50%;text-align:right;"><strong>PAYMENT DETAILS:</strong><br/>UPI ID: nbikram704@okhdfcbank<br/>Account Name: Bikram Nath<br/>Status: <strong id="invPaperPayStatus" style="color:#28C840;">50% Advance Received</strong></td>
+          </tr>
+        </table>
+
+        <table class="inv-items-table">
+          <thead>
+            <tr>
+              <th>Description / Service</th>
+              <th>HSN/SAC</th>
+              <th>Qty</th>
+              <th>Rate (₹)</th>
+              <th>Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="invPaperItemsTbody">
+            <tr>
+              <td id="invItemName">Video Post-Production Service</td>
+              <td>998313</td>
+              <td>1</td>
+              <td id="invItemRate">₹1,000</td>
+              <td id="invItemAmt">₹1,000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="inv-summary-box">
+          <div class="inv-sum-row"><span>Subtotal:</span><span id="invSumSubtotal">₹1,000</span></div>
+          <div class="inv-sum-row"><span>CGST (9%):</span><span id="invSumCgst">₹90</span></div>
+          <div class="inv-sum-row"><span>SGST (9%):</span><span id="invSumSgst">₹90</span></div>
+          <div class="inv-sum-row grand"><span>Total Amount:</span><span id="invSumTotal">₹1,180</span></div>
+          <div class="inv-sum-row" style="color:#28C840;margin-top:6px;font-weight:700;"><span>50% Paid Advance:</span><span id="invSumPaid">₹590</span></div>
+        </div>
+
+        <div class="inv-footer-note">
+          This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── GEMINI AI CHATBOT ── -->
   <button class="chatbot-fab" id="chatbotFab" title="Ask AI Assistant">🤖</button>
 
   <div class="chatbot-panel" id="chatbotPanel">
     <div class="chatbot-header">
-      <div class="chatbot-title">
-        <span>🤖</span> Editzaar AI Assistant
-      </div>
+      <div class="chatbot-title"><span>🤖</span> Editzaar AI Assistant</div>
       <button class="chatbot-close-btn" id="chatbotClose">✕</button>
     </div>
     <div class="chatbot-container" style="padding:12px;">
       <div class="chatbot-messages" id="botMessages">
         <div class="bot-msg">
           <div class="bot-avatar">🤖</div>
-          <div class="bot-bubble">Hi! I'm Editzaar AI. I can help you with our Services, Pricing, Deadlines, or connect you directly with our team on WhatsApp: <strong>+91 9476766340</strong>. What can I answer for you?</div>
+          <div class="bot-bubble">Hi! I'm Editzaar AI. Contact us on WhatsApp/Phone: <strong>+91 9476766340</strong>. What can I answer for you?</div>
         </div>
       </div>
       <div class="chat-input-row" style="padding-top:12px;">
@@ -286,19 +381,11 @@
     const db   = getFirestore(app);
 
     let currentUser = null, currentProject = null, chatUnsub = null;
-    let allUsers = {}, chatHistory = [];
+    let allUsers = {};
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('/dashboard/index.html'); return; }
       const snap = await getDoc(doc(db,'users',user.uid));
-      if (snap.exists() && snap.data().role === 'admin') {
-        window.location.replace('/dashboard/admin.html');
-        return;
-      }
-      if (snap.exists() && snap.data().role === 'editor') {
-        window.location.replace('/dashboard/editor.html');
-        return;
-      }
       currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client',name:'Client'}) };
       document.getElementById('clientEmail').textContent = user.email;
       document.getElementById('clientName').textContent  = currentUser.name || 'there';
@@ -312,7 +399,6 @@
       snap.forEach(d=>{ allUsers[d.id]=d.data(); });
     }
 
-    /* Real-Time Projects Listener */
     function listenRealtimeProjects() {
       const q = query(collection(db,'projects'), where('clientId','==',currentUser.uid), orderBy('createdAt','desc'));
       onSnapshot(q, (snap) => {
@@ -348,11 +434,125 @@
           ${p.deliveryUrl ? `<div style="margin-bottom:12px;"><a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">🎬 Open Delivered Video Link →</a></div>`:''}
           <div class="project-card-actions">
             <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">View Details &amp; Chat →</button>
-            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ Invoice Paid':'💳 Invoice Pending (₹'+(p.invoiceAmount||0)+')'}</span>
+            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ GST Invoice Issued':'⏳ Acknowledgment Receipt'}</span>
           </div>
         </div>`).join('');
     }
 
+    /* Invoices List with Printable Modal */
+    function renderInvoices(projects) {
+      const container = document.getElementById('invoicesList');
+      const withInv = projects.filter(p=>p.invoiceAmount>0);
+      if (!withInv.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices or receipts yet.</div></div>';
+        return;
+      }
+      container.innerHTML = withInv.map(p=>{
+        const base = p.invoiceAmount || 0;
+        const gst = Math.round(base * 0.18);
+        const total = base + gst;
+        const advance = Math.round(total * 0.5);
+        const isOfficial = p.invoicePaid || false;
+
+        return `
+        <div class="invoice-row">
+          <div>
+            <div style="font-weight:700;font-size:1.05rem;margin-bottom:4px;">${p.title||'Untitled Project'}</div>
+            <div style="font-size:12px;color:var(--t3);">Invoice Ref #${p.id.substring(0,8).toUpperCase()} · Client GSTIN: ${p.clientGstin||'N/A'}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:var(--font-h);font-size:1.4rem;color:var(--gold);">₹${total.toLocaleString()} <small style="font-size:10px;color:var(--t3);">(incl. GST)</small></div>
+            <div style="margin-top:6px;display:flex;gap:8px;justify-content:flex-end;align-items:center;">
+              <span class="status-badge ${isOfficial?'invoice-paid':'invoice-unpaid'}">${isOfficial?'✅ Official GST Invoice':'⏳ Acknowledgment Receipt'}</span>
+              <button class="btn-gold btn-sm" onclick="openInvoiceModal('${p.id}')">View / Print Invoice →</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.openInvoiceModal = async (pid) => {
+      const snap = await getDoc(doc(db,'projects',pid));
+      if (!snap.exists()) return;
+      const p = snap.data();
+      const base = p.invoiceAmount || 0;
+      const gst = Math.round(base * 0.18);
+      const cgst = Math.round(gst / 2);
+      const sgst = gst - cgst;
+      const total = base + gst;
+      const advance = Math.round(total * 0.5);
+      const isOfficial = p.invoicePaid || false;
+
+      document.getElementById('invModalTypeBadge').textContent = isOfficial ? '✅ Official GST Tax Invoice' : '⏳ Acknowledgment Receipt (Pending Payment Confirmation)';
+      document.getElementById('invPaperHeaderTitle').textContent = isOfficial ? 'TAX INVOICE' : 'ACKNOWLEDGMENT RECEIPT';
+      document.getElementById('invPaperNo').textContent = 'EDZ-' + pid.substring(0,6).toUpperCase();
+      document.getElementById('invPaperDate').textContent = dateStr(p.createdAt);
+      document.getElementById('invPaperClientName').textContent = currentUser.name || 'Client';
+      document.getElementById('invPaperClientEmail').textContent = currentUser.email;
+      document.getElementById('invPaperClientGst').textContent = p.clientGstin || 'N/A (Individual)';
+      document.getElementById('invPaperPayStatus').textContent = isOfficial ? '✅ Paid in Full' : '50% Booking Deposit Pending';
+
+      document.getElementById('invItemName').textContent = p.title || 'Video Post-Production';
+      document.getElementById('invItemRate').textContent = '₹' + base.toLocaleString();
+      document.getElementById('invItemAmt').textContent = '₹' + base.toLocaleString();
+
+      document.getElementById('invSumSubtotal').textContent = '₹' + base.toLocaleString();
+      document.getElementById('invSumCgst').textContent = '₹' + cgst.toLocaleString();
+      document.getElementById('invSumSgst').textContent = '₹' + sgst.toLocaleString();
+      document.getElementById('invSumTotal').textContent = '₹' + total.toLocaleString();
+      document.getElementById('invSumPaid').textContent = '₹' + advance.toLocaleString();
+
+      document.getElementById('modalInvoiceView').classList.add('open');
+    };
+
+    /* Client New Project Booking Modal */
+    const modalClientNewProject = document.getElementById('modalClientNewProject');
+    document.getElementById('btnOpenNewProjectModal').addEventListener('click', ()=> modalClientNewProject.classList.add('open'));
+    document.getElementById('btnCloseClientModal').addEventListener('click', ()=> modalClientNewProject.classList.remove('open'));
+
+    const cnpServiceSelect = document.getElementById('cnp-service');
+    cnpServiceSelect.addEventListener('change', (e)=>{
+      const [name, price] = e.target.value.split('|');
+      document.getElementById('cnpPriceTag').textContent = price === '0' ? 'Custom Quote' : `Est. Price: ₹${parseInt(price).toLocaleString()} (+ 18% GST)`;
+    });
+
+    document.getElementById('btnSubmitClientProject').addEventListener('click', async () => {
+      const title   = document.getElementById('cnp-title').value.trim();
+      const rawVal  = cnpServiceSelect.value;
+      const [serviceName, priceStr] = rawVal.split('|');
+      const gstin   = document.getElementById('cnp-gstin').value.trim();
+      const desc    = document.getElementById('cnp-desc').value.trim();
+      const footage = document.getElementById('cnp-footage').value.trim();
+      const price   = parseInt(priceStr) || 0;
+
+      if (!title) { showToast('Please enter a project title.','error'); return; }
+
+      const deadline = new Date();
+      deadline.setDate(deadline.getDate() + 2);
+
+      await addDoc(collection(db, 'projects'), {
+        title: title + ' (' + serviceName + ')',
+        description: desc,
+        clientId: currentUser.uid,
+        clientGstin: gstin || '',
+        editorId: '',
+        rawFootageUrl: footage,
+        deliveryUrl: '',
+        invoiceAmount: price,
+        invoicePaid: false,
+        status: 'pending',
+        createdAt: serverTimestamp(),
+        deadline: deadline
+      });
+
+      showToast('Project booked! Acknowledgment receipt created ✅','success');
+      modalClientNewProject.classList.remove('open');
+      document.getElementById('cnp-title').value = '';
+      document.getElementById('cnp-desc').value = '';
+      document.getElementById('cnp-footage').value = '';
+    });
+
+    /* Chat logic & Gemini AI */
     window.openProject = async (pid) => {
       const snap = await getDoc(doc(db,'projects',pid));
       if (!snap.exists()) return;
@@ -368,17 +568,11 @@
       const footDisp  = document.getElementById('footageLinkDisplay');
       if (currentProject.rawFootageUrl) {
         footInput.value = currentProject.rawFootageUrl;
-        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Drive Link ↗</a>`;
+        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
       } else {
         footInput.value = '';
         footDisp.innerHTML = '<span style="color:var(--t3);">No drive link saved yet. Paste your Google Drive link above!</span>';
       }
-
-      const delivSection = document.getElementById('deliverySection');
-      if (currentProject.deliveryUrl) {
-        delivSection.style.display='block';
-        document.getElementById('deliveryDownloadBtn').href = currentProject.deliveryUrl;
-      } else { delivSection.style.display='none'; }
 
       showSection('detail');
       loadChat(pid);
@@ -402,81 +596,15 @@
       document.getElementById('statusTimeline').innerHTML=html;
     }
 
-    /* Save Raw Footage Drive Link */
     document.getElementById('btnSaveFootageLink').addEventListener('click', async ()=>{
       const url = document.getElementById('rawFootageInput').value.trim();
       if (!url || !currentProject) { showToast('Please enter a valid link.','error'); return; }
       await updateDoc(doc(db,'projects',currentProject.id),{ rawFootageUrl: url });
       currentProject.rawFootageUrl = url;
-      document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
-      showToast('Raw footage link saved! ✅','success');
+      document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Link ↗</a>`;
+      showToast('Footage link saved! ✅','success');
     });
 
-    /* Client New Project Booking Modal */
-    const modalClientNewProject = document.getElementById('modalClientNewProject');
-    document.getElementById('btnOpenNewProjectModal').addEventListener('click', ()=> modalClientNewProject.classList.add('open'));
-    document.getElementById('btnCloseClientModal').addEventListener('click', ()=> modalClientNewProject.classList.remove('open'));
-
-    const cnpServiceSelect = document.getElementById('cnp-service');
-    cnpServiceSelect.addEventListener('change', (e)=>{
-      const [name, price] = e.target.value.split('|');
-      document.getElementById('cnpPriceTag').textContent = price === '0' ? 'Custom Quote' : `Est. Price: ₹${parseInt(price).toLocaleString()}`;
-    });
-
-    document.getElementById('btnSubmitClientProject').addEventListener('click', async () => {
-      const title   = document.getElementById('cnp-title').value.trim();
-      const rawVal  = cnpServiceSelect.value;
-      const [serviceName, priceStr] = rawVal.split('|');
-      const desc    = document.getElementById('cnp-desc').value.trim();
-      const footage = document.getElementById('cnp-footage').value.trim();
-      const price   = parseInt(priceStr) || 0;
-
-      if (!title) { showToast('Please enter a project title.','error'); return; }
-
-      // 48-hour default deadline
-      const deadline = new Date();
-      deadline.setDate(deadline.getDate() + 2);
-
-      await addDoc(collection(db, 'projects'), {
-        title: title + ' (' + serviceName + ')',
-        description: desc,
-        clientId: currentUser.uid,
-        editorId: '',
-        rawFootageUrl: footage,
-        deliveryUrl: '',
-        invoiceAmount: price,
-        invoicePaid: false,
-        status: 'pending',
-        createdAt: serverTimestamp(),
-        deadline: deadline
-      });
-
-      showToast('Project booked successfully! ✅','success');
-      modalClientNewProject.classList.remove('open');
-      document.getElementById('cnp-title').value = '';
-      document.getElementById('cnp-desc').value = '';
-      document.getElementById('cnp-footage').value = '';
-    });
-
-    /* Invoices */
-    function renderInvoices(projects) {
-      const container = document.getElementById('invoicesList');
-      const withInv = projects.filter(p=>p.invoiceAmount>0);
-      if (!withInv.length) return;
-      container.innerHTML = withInv.map(p=>`
-        <div class="invoice-row">
-          <div>
-            <div style="font-weight:600;margin-bottom:3px;">${p.title||'Untitled Project'}</div>
-            <div style="font-size:11px;color:var(--t3);">Invoice Ref #${p.id.substring(0,6)}</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-family:var(--font-h);font-size:1.3rem;color:var(--gold);">₹${(p.invoiceAmount||0).toLocaleString()}</div>
-            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Paid':'❌ Unpaid'}</span>
-          </div>
-        </div>`).join('');
-    }
-
-    /* Real-time Chat */
     function loadChat(pid) {
       if (chatUnsub) chatUnsub();
       const q = query(collection(db,'projects',pid,'chat'),orderBy('timestamp','asc'));
@@ -511,72 +639,6 @@
     document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
     document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 
-    /* Gemini AI Chatbot */
-    const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY';
-    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
-    const SYSTEM_PROMPT = `You are Editzaar AI, assistant for Editzaar video editing & growth agency based in Hyderabad.
-Our Contact Phone/WhatsApp: +91 9476766340
-
-Our Core Services & Pricing:
-- Instagram Reels & Shorts: ₹1,000 / video (48h turnaround)
-- Motion Graphics & Animated Videos: ₹2,500 / video
-- Long Form YouTube Edits: ₹5,000 / video
-- Custom Brand Retainers: Custom Quote
-
-Provide clear, helpful answers to users. Always include our WhatsApp/Phone number (+91 9476766340) for booking or urgent queries.`;
-
-    async function sendBotMessage() {
-      const input = document.getElementById('botInput');
-      const text  = input.value.trim();
-      if (!text) return;
-      input.value='';
-
-      appendBotMsg('user', text);
-      chatHistory.push({role:'user', parts:[{text}]});
-
-      const typingDiv = document.createElement('div');
-      typingDiv.className='bot-msg'; typingDiv.id='botTyping';
-      typingDiv.innerHTML=`<div class="bot-avatar">🤖</div><div class="bot-bubble"><div class="bot-typing"><div class="bot-dot"></div><div class="bot-dot"></div><div class="bot-dot"></div></div></div>`;
-      document.getElementById('botMessages').appendChild(typingDiv);
-      scrollBot();
-
-      try {
-        const res = await fetch(GEMINI_ENDPOINT, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({
-            system_instruction:{ parts:[{text:SYSTEM_PROMPT}] },
-            contents: chatHistory
-          })
-        });
-        const data = await res.json();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Need help? Contact us directly on WhatsApp/Phone: +91 9476766340";
-        document.getElementById('botTyping')?.remove();
-        appendBotMsg('model', reply);
-        chatHistory.push({role:'model', parts:[{text:reply}]});
-      } catch(e) {
-        document.getElementById('botTyping')?.remove();
-        appendBotMsg('model','Our services: Shorts (₹1,000), Animated (₹2,500), Long-Form (₹5,000). Contact us on WhatsApp/Phone: <strong>+91 9476766340</strong>');
-      }
-    }
-
-    function appendBotMsg(role, text) {
-      const container = document.getElementById('botMessages');
-      const div=document.createElement('div');
-      if (role==='user') {
-        div.className='user-msg';
-        div.innerHTML=`<div class="user-bubble">${text}</div>`;
-      } else {
-        div.className='bot-msg';
-        div.innerHTML=`<div class="bot-avatar">🤖</div><div class="bot-bubble">${text.replace(/\n/g,'<br>')}</div>`;
-      }
-      container.appendChild(div);
-      scrollBot();
-    }
-    function scrollBot() { const c=document.getElementById('botMessages'); c.scrollTop=c.scrollHeight; }
-
-    document.getElementById('btnBotSend').addEventListener('click',sendBotMessage);
-    document.getElementById('botInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendBotMessage();});
     document.getElementById('chatbotFab').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.toggle('open'));
     document.getElementById('chatbotClose').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.remove('open'));
 

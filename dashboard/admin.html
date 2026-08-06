@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.6"/>
 
   <style>
     .modal-overlay {
@@ -79,7 +79,7 @@
         <div class="sidebar-nav-item" data-section="editors"><span class="nav-icon">🎬</span> Editors</div>
         <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients</div>
         <div class="sidebar-nav-section">Finance</div>
-        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; Tax Confirmations</div>
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="adminEmail">Loading…</div>
@@ -182,10 +182,10 @@
         </div>
       </section>
 
-      <!-- INVOICES -->
+      <!-- INVOICES & TAX CONFIRMATIONS -->
       <section id="sec-invoices" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title"><em>Invoices</em></div>
+          <div class="dash-page-title">Invoices &amp; <em>Tax Confirmations</em></div>
         </div>
         <div class="stats-row" style="margin-bottom:24px;">
           <div class="stat-card"><div class="stat-card-label">Total Invoiced</div><div class="stat-card-value" id="invTotal">₹0</div></div>
@@ -195,7 +195,7 @@
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
-              <thead><tr><th>Project</th><th>Client</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Project</th><th>Client &amp; GSTIN</th><th>Amount (+18% GST)</th><th>Tax Status</th><th>Actions</th></tr></thead>
               <tbody id="invoicesTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
           </div>
@@ -252,7 +252,7 @@
   <div class="modal-overlay" id="modalEditStatus">
     <div class="modal-box">
       <button class="modal-close" data-close="modalEditStatus">✕</button>
-      <div class="modal-title">Update Project</div>
+      <div class="modal-title">Update Project &amp; Issue Tax Invoice</div>
       <div class="dash-form">
         <div class="field"><label>Status</label>
           <select id="es-status">
@@ -263,15 +263,15 @@
             <option value="done">Done ✓</option>
           </select>
         </div>
-        <div class="field"><label>Invoice Amount (₹)</label><input id="es-invoice" type="number"/></div>
-        <div class="field"><label>Invoice Paid?</label>
+        <div class="field"><label>Base Amount (₹)</label><input id="es-invoice" type="number"/></div>
+        <div class="field"><label>Tax Status / Issue Official GST Invoice?</label>
           <select id="es-paid">
-            <option value="false">❌ Unpaid</option>
-            <option value="true">✅ Paid</option>
+            <option value="false">⏳ Acknowledgment Receipt Only (Unconfirmed)</option>
+            <option value="true">✅ Issue Official GST Tax Invoice (Confirmed)</option>
           </select>
         </div>
         <input type="hidden" id="es-pid"/>
-        <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSaveStatus">Save Changes</button>
+        <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSaveStatus">Save &amp; Update Tax Status</button>
       </div>
     </div>
   </div>
@@ -309,17 +309,15 @@
 
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('/dashboard/index.html')));
 
-    /* Real-Time Listeners */
     function initRealtimeListeners() {
-      // Real-time Users listener
+      // Real-time Users listener: non-admin and non-editor are treated as Clients so no client is EVER hidden!
       onSnapshot(collection(db, 'users'), (snap) => {
         const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
-        clients = users.filter(u => u.role === 'client');
+        clients = users.filter(u => u.role !== 'admin' && u.role !== 'editor');
         renderStats(); renderEditors(); renderClients(); populateSelects();
       });
 
-      // Real-time Projects listener
       onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snap) => {
         projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices();
@@ -330,7 +328,7 @@
       document.getElementById('statTotal').textContent   = projects.length;
       document.getElementById('statActive').textContent  = projects.filter(p=>p.status!=='done').length;
       document.getElementById('statDone').textContent    = projects.filter(p=>p.status==='done').length;
-      const rev = projects.filter(p=>p.invoicePaid).reduce((s,p)=>s+(p.invoiceAmount||0),0);
+      const rev = projects.filter(p=>p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
       document.getElementById('statRevenue').textContent = '₹'+rev.toLocaleString();
       document.getElementById('statEditors').textContent = editors.length;
       document.getElementById('statClients').textContent = clients.length;
@@ -340,7 +338,7 @@
     function badge(status) { return `<span class="status-badge status-${status}">${STATUS_LABELS[status]||status}</span>`; }
     function nameOf(uid) {
       const u = [...editors,...clients].find(u=>u.id===uid);
-      return u ? u.name : (uid ? uid.substring(0,8)+'…' : '—');
+      return u ? (u.name || u.email) : (uid ? uid.substring(0,8)+'…' : '—');
     }
     function dateStr(ts) {
       if (!ts) return '—';
@@ -364,7 +362,7 @@
     }
 
     function renderAllProjects(filterStatus='', filterEditorId='') {
-      const tbody = document.getElementById('allProjectsTbody');
+      const tbody = document.getElementById('allProjectsTable').querySelector('tbody');
       let list = [...projects];
       if (filterStatus)   list = list.filter(p=>p.status===filterStatus);
       if (filterEditorId) list = list.filter(p=>p.editorId===filterEditorId);
@@ -375,7 +373,7 @@
           <td>${nameOf(p.clientId)}</td>
           <td>${nameOf(p.editorId)}</td>
           <td>${badge(p.status)}</td>
-          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Paid':'❌ Unpaid'}</span><br><small style="color:var(--t3);">₹${(p.invoiceAmount||0).toLocaleString()}</small></td>
+          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ GST Invoice':'⏳ Receipt Only'}</span><br><small style="color:var(--t3);">₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</small></td>
           <td>${dateStr(p.deadline)}</td>
           <td><button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Edit</button></td>
         </tr>`).join('');
@@ -389,7 +387,7 @@
       if (!editors.length) { tbody.innerHTML='<tr><td colspan="4" style="color:var(--t3);text-align:center;padding:24px;">No editors added yet. Click "+ Add Editor" to register freelancers.</td></tr>'; return; }
       tbody.innerHTML = editors.map(e=>{
         const activeCount = projects.filter(p=>p.editorId===e.id && p.status!=='done').length;
-        return `<tr><td><strong>${e.name}</strong></td><td>${e.email}</td><td>${activeCount}</td><td>—</td></tr>`;
+        return `<tr><td><strong>${e.name||'Editor'}</strong></td><td>${e.email}</td><td>${activeCount}</td><td>—</td></tr>`;
       }).join('');
     }
 
@@ -398,35 +396,38 @@
       if (!clients.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
       tbody.innerHTML = clients.map(c=>{
         const projCount = projects.filter(p=>p.clientId===c.id).length;
-        return `<tr><td><strong>${c.name}</strong></td><td>${c.email}</td><td>${projCount}</td><td>${nameOf(c.assignedEditor)||'—'}</td><td>—</td></tr>`;
+        return `<tr><td><strong>${c.name||'Client'}</strong></td><td>${c.email}</td><td>${projCount}</td><td>${nameOf(c.assignedEditor)||'—'}</td><td><button class="btn-gold btn-sm" onclick="openModal('modalNewProject');document.getElementById('np-client').value='${c.id}'">＋ Add Project</button></td></tr>`;
       }).join('');
     }
 
     function renderInvoices() {
       const tbody = document.getElementById('invoicesTbody');
       const withInv = projects.filter(p=>p.invoiceAmount>0);
-      const total = withInv.reduce((s,p)=>s+(p.invoiceAmount||0),0);
-      const paid  = withInv.filter(p=>p.invoicePaid).reduce((s,p)=>s+(p.invoiceAmount||0),0);
+      const total = withInv.reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
+      const paid  = withInv.filter(p=>p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
       const unpaid = total - paid;
       document.getElementById('invTotal').textContent  = '₹'+total.toLocaleString();
       document.getElementById('invPaid').textContent   = '₹'+paid.toLocaleString();
       document.getElementById('invUnpaid').textContent = '₹'+unpaid.toLocaleString();
       if (!withInv.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No invoices yet.</td></tr>'; return; }
-      tbody.innerHTML = withInv.map(p=>`
+      tbody.innerHTML = withInv.map(p=>{
+        const tot = Math.round((p.invoiceAmount||0)*1.18);
+        return `
         <tr>
           <td><strong>${p.title||'Untitled'}</strong></td>
-          <td>${nameOf(p.clientId)}</td>
-          <td>₹${(p.invoiceAmount||0).toLocaleString()}</td>
-          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Paid':'❌ Unpaid'}</span></td>
-          <td><button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Update</button></td>
-        </tr>`).join('');
+          <td>${nameOf(p.clientId)}<br/><small style="color:var(--gold);">GSTIN: ${p.clientGstin||'N/A (Individual)'}</small></td>
+          <td>₹${tot.toLocaleString()} <small style="color:var(--t3);">(Base ₹${(p.invoiceAmount||0).toLocaleString()})</small></td>
+          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Official GST Invoice':'⏳ Receipt Only'}</span></td>
+          <td><button class="btn-gold btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Confirm &amp; Issue GST Invoice</button></td>
+        </tr>`;
+      }).join('');
     }
 
     function populateSelects() {
-      const clientOpts  = clients.map(c=>`<option value="${c.id}">${c.name} (${c.email})</option>`).join('');
-      const editorOpts  = editors.map(e=>`<option value="${e.id}">${e.name} (${e.email})</option>`).join('');
+      const clientOpts  = clients.map(c=>`<option value="${c.id}">${c.name || c.email} (${c.email})</option>`).join('');
+      const editorOpts  = editors.map(e=>`<option value="${e.id}">${e.name || e.email} (${e.email})</option>`).join('');
       const filterEdSel = document.getElementById('filterEditor');
-      filterEdSel.innerHTML = '<option value="">All Editors</option>' + editors.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+      filterEdSel.innerHTML = '<option value="">All Editors</option>' + editors.map(e=>`<option value="${e.id}">${e.name || e.email}</option>`).join('');
       document.getElementById('np-client').innerHTML = '<option value="">Select client…</option>' + clientOpts;
       document.getElementById('np-editor').innerHTML = '<option value="">Select editor…</option>' + editorOpts;
       document.getElementById('nc-editor').innerHTML = '<option value="">Select editor…</option>' + editorOpts;
@@ -464,7 +465,7 @@
       const amount = parseFloat(document.getElementById('es-invoice').value)||0;
       const paid   = document.getElementById('es-paid').value === 'true';
       await updateDoc(doc(db,'projects',pid),{ status, invoiceAmount:amount, invoicePaid:paid });
-      showToast('Project updated! ✅','success');
+      showToast('Project & Tax Status updated! ✅','success');
       closeModal('modalEditStatus');
     });
 
