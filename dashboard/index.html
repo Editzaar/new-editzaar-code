@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.1"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -151,10 +151,13 @@
     const db   = getFirestore(app);
 
     let mode = 'signin';
-    let isSubmitting = false;
+
+    /* Auto-redirect if already logged in */
+    onAuthStateChanged(auth, async (user) => {
+      if (user) { await redirectByRole(user.uid); }
+    });
 
     async function redirectByRole(uid) {
-      if (isSubmitting) return;
       try {
         const snap = await getDoc(doc(db, 'users', uid));
         let role = 'client';
@@ -216,6 +219,7 @@
       successEl.classList.remove('show');
       errorEl.textContent = msg;
       errorEl.classList.add('show');
+      resetButton();
     }
 
     function showSuccess(msg) {
@@ -224,43 +228,54 @@
       successEl.classList.add('show');
     }
 
+    function resetButton() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = mode === 'signin' ? 'Sign In →' : 'Create Account →';
+    }
+
     submitBtn.addEventListener('click', async () => {
       const email = emailEl.value.trim();
       const pass  = passEl.value;
       const name  = nameEl.value.trim();
 
+      // 3-second safety timer so button NEVER freezes
+      const safetyTimer = setTimeout(() => {
+        resetButton();
+        if (mode === 'signin') {
+          showError('Sign in is taking longer than expected. If this email is new, please click "CREATE ACCOUNT" tab above to register first.');
+        }
+      }, 3500);
+
       if (mode === 'signin') {
-        if (!email || !pass) { showError('Please enter your email and password.'); return; }
-        isSubmitting = true;
+        if (!email || !pass) { clearTimeout(safetyTimer); showError('Please enter your email and password.'); return; }
         submitBtn.disabled = true;
         submitBtn.textContent = 'Signing in…';
         errorEl.classList.remove('show');
         try {
           const cred = await signInWithEmailAndPassword(auth, email, pass);
+          clearTimeout(safetyTimer);
           await redirectByRole(cred.user.uid);
         } catch (e) {
-          isSubmitting = false;
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign In →';
+          clearTimeout(safetyTimer);
           const msgs = {
-            'auth/invalid-credential': 'Invalid email or password. Please check your password or click "Create Account".',
-            'auth/user-not-found':     'No account found with this email. Please click "Create Account" tab to register.',
+            'auth/invalid-credential': 'Account not found or password incorrect. If you are a new client, click "CREATE ACCOUNT" tab above to register!',
+            'auth/user-not-found':     'Account not found. Click "CREATE ACCOUNT" tab above to register!',
             'auth/wrong-password':     'Incorrect password. Click "Forgot password?" below to reset it.',
             'auth/invalid-email':      'Please enter a valid email address.',
           };
-          showError(msgs[e.code] || 'Sign-in failed. Please check your credentials.');
+          showError(msgs[e.code] || 'Account not found. Click "CREATE ACCOUNT" tab above to register!');
         }
       } else {
-        if (!name || !email || !pass) { showError('Please fill in your name, email, and password.'); return; }
-        if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
+        if (!name || !email || !pass) { clearTimeout(safetyTimer); showError('Please fill in your name, email, and password.'); return; }
+        if (pass.length < 6) { clearTimeout(safetyTimer); showError('Password must be at least 6 characters.'); return; }
 
-        isSubmitting = true;
         submitBtn.disabled = true;
         submitBtn.textContent = 'Creating Account…';
         errorEl.classList.remove('show');
 
         try {
           const cred = await createUserWithEmailAndPassword(auth, email, pass);
+          clearTimeout(safetyTimer);
           await setDoc(doc(db, 'users', cred.user.uid), {
             name: name,
             email: email,
@@ -270,11 +285,9 @@
           showSuccess('Account created! Opening your dashboard…');
           setTimeout(() => { window.location.replace('/dashboard/client.html'); }, 600);
         } catch (e) {
-          isSubmitting = false;
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Create Account →';
+          clearTimeout(safetyTimer);
           const msgs = {
-            'auth/email-already-in-use': 'An account already exists with this email address. Click "Sign In" tab.',
+            'auth/email-already-in-use': 'An account already exists with this email address. Click "Sign In" tab to log in.',
             'auth/invalid-email':        'Please enter a valid email address.',
             'auth/weak-password':        'Password should be at least 6 characters.',
           };
