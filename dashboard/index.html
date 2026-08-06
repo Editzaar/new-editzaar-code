@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.3"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.4"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -133,7 +133,7 @@
     import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp }
+    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, getDocs, serverTimestamp }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -164,20 +164,39 @@
 
         if (!snap.exists()) {
           const defaultName = user.displayName || user.email.split('@')[0];
+          role = user.email === 'editzaarbooking@gmail.com' ? 'admin' : 'client';
+
           await setDoc(userRef, {
             name: defaultName,
             email: user.email,
-            role: 'client',
+            role: role,
             tempPass: 'ClientAuth',
             createdAt: serverTimestamp()
           });
 
-          await addDoc(collection(db, 'announcements'), {
-            title: '👋 Welcome to Editzaar Agency!',
-            message: `Hi ${defaultName}! We're thrilled to partner with you. Book your first video edit or web project anytime!`,
-            target: user.uid,
-            createdAt: serverTimestamp()
-          });
+          if (role === 'client') {
+            await addDoc(collection(db, 'announcements'), {
+              title: '👋 Welcome to Editzaar Agency!',
+              message: `Hi ${defaultName}! We're thrilled to partner with you. Book your first video edit or web project anytime!`,
+              target: user.uid,
+              createdAt: serverTimestamp()
+            });
+
+            // Create initial sample project so dashboard has real data
+            const d = new Date(); d.setDate(d.getDate() + 3);
+            await addDoc(collection(db, 'projects'), {
+              title: 'Shorts & Instagram Reels Pack — Tech & Growth',
+              description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
+              clientId: user.uid,
+              clientGstin: '',
+              editorId: '',
+              status: 'in_progress',
+              invoiceAmount: 2500,
+              invoicePaid: true,
+              createdAt: serverTimestamp(),
+              deadline: d
+            });
+          }
         } else if (snap.data().role) {
           role = snap.data().role;
         }
@@ -263,13 +282,11 @@
       submitBtn.textContent = 'Authenticating…';
       errorEl.classList.remove('show');
 
-      // 1. Try Signing In first
       try {
         const cred = await signInWithEmailAndPassword(auth, email, pass);
         showSuccess('Sign in successful! Loading your dashboard…');
         await redirectByRole(cred.user);
       } catch (e) {
-        // 2. If Auth account does not exist, AUTO-CREATE it seamlessly so sign in NEVER fails!
         if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
           try {
             submitBtn.textContent = 'Creating Account & Logging In…';
@@ -287,6 +304,20 @@
               message: `Hi ${name}! Thank you for logging in. You can now track your projects and chat live with your video editor!`,
               target: newCred.user.uid,
               createdAt: serverTimestamp()
+            });
+
+            const d = new Date(); d.setDate(d.getDate() + 3);
+            await addDoc(collection(db, 'projects'), {
+              title: 'Shorts & Instagram Reels Pack — Tech & Growth',
+              description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
+              clientId: newCred.user.uid,
+              clientGstin: '',
+              editorId: '',
+              status: 'in_progress',
+              invoiceAmount: 2500,
+              invoicePaid: true,
+              createdAt: serverTimestamp(),
+              deadline: d
             });
 
             showSuccess('Account initialized! Opening your dashboard…');
