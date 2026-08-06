@@ -144,6 +144,8 @@ nav {
 .nav-links a:hover,
 .nav-links a.active { color: var(--gold-light); }
 
+.nav-cta-mobile { display: none; }
+
 .nav-cta {
   font-size: 10px;
   letter-spacing: 0.16em;
