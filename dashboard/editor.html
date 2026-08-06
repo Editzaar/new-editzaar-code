@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editor Dashboard — Editzaar</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="icon" type="image/png" href="../media/fav-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
+  <style>
+    .link-input-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed var(--gold-border);
+      border-radius: var(--r);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  <div class="toast" id="toast"></div>
+
+  <div class="dash-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <a href="index.html" class="sidebar-logo">EDIT<em>ZAAR</em></a>
+      <div class="sidebar-role-badge">🎬 Editor</div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-section">My Work</div>
+        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
+        <div class="sidebar-nav-section">Communication</div>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Messages</div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user-info" id="editorEmail">Loading…</div>
+        <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+
+      <!-- ── SECTION: MY PROJECTS ── -->
+      <section id="sec-projects">
+        <div class="dash-topbar">
+          <div class="dash-page-title">My <em>Projects</em></div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-card-label">Total Assigned</div><div class="stat-card-value" id="statTotal">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">In Progress</div><div class="stat-card-value" id="statActive">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">—</div></div>
+        </div>
+        <div id="projectsList"></div>
+      </section>
+
+      <!-- ── SECTION: PROJECT DETAIL ── -->
+      <section id="sec-detail" style="display:none;">
+        <div class="dash-topbar">
+          <button class="btn-outline" onclick="showSection('projects')">← Back to Projects</button>
+          <div id="detailStatus"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;">
+          <div>
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <div class="dash-card-title" id="detailTitle">—</div>
+              </div>
+              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;line-height:1.7;" id="detailDesc">—</div>
+              <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Client</div><div style="font-size:0.9rem;" id="detailClient">—</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">—</div></div>
+              </div>
+
+              <!-- Raw Footage Link View -->
+              <div style="margin-bottom:20px;background:rgba(255,184,0,0.05);border:1px solid var(--gold-border);border-radius:var(--r);padding:16px;">
+                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Client's Raw Footage Link</div>
+                <div id="rawFootageLink" style="font-size:0.88rem;color:var(--t2);">No link saved by client yet.</div>
+              </div>
+
+              <!-- Submit Final Delivery Link -->
+              <div class="link-input-box">
+                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎬 Final Delivered Video Link (Google Drive / Frame.io / Vimeo)</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <input type="url" id="deliveryLinkInput" placeholder="https://drive.google.com/..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:#fff;font-size:0.88rem;outline:none;"/>
+                  <button class="btn-gold btn-sm" id="btnSaveDeliveryLink">Save Delivery Link</button>
+                </div>
+                <div id="deliveryLinkDisplay" style="margin-top:10px;font-size:0.88rem;"></div>
+              </div>
+            </div>
+
+            <!-- Status Controls -->
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Update <em>Status</em></div></div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn-outline btn-sm" onclick="updateStatus('in_progress')">🔄 In Progress</button>
+                <button class="btn-outline btn-sm" onclick="updateStatus('review')">👁 Submit for Review</button>
+                <button class="btn-outline btn-sm" onclick="updateStatus('done')">✅ Mark Done</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Panel -->
+          <div class="dash-card">
+            <div class="dash-card-header"><div class="dash-card-title">Chat with <em>Client</em></div></div>
+            <div class="chat-container">
+              <div class="chat-messages" id="chatMessages"></div>
+              <div class="chat-input-row">
+                <input class="chat-input" id="chatInput" placeholder="Type a message or paste a link…"/>
+                <button class="btn-gold" id="btnSendMsg">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: MESSAGES ── -->
+      <section id="sec-chat" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Messages</div></div>
+        <div class="dash-card">
+          <div class="empty-state">
+            <div class="empty-icon">💬</div>
+            <div class="empty-text">Open a project from "My Projects" to chat with your client.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut }
+                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc,
+             query, where, orderBy, onSnapshot, serverTimestamp }
+                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain:        "editzaar-fa8d9.firebaseapp.com",
+      projectId:         "editzaar-fa8d9",
+      storageBucket:     "editzaar-fa8d9.firebasestorage.app",
+      messagingSenderId: "419930711716",
+      appId:             "1:419930711716:web:b1504f651e397a14726831"
+    };
+
+    const app     = initializeApp(firebaseConfig);
+    const auth    = getAuth(app);
+    const db      = getFirestore(app);
+
+    let currentUser = null, currentProject = null, chatUnsub = null;
+    let allUsers = {};
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { location.href='/dashboard/index.html'; return; }
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if (!snap.exists() || snap.data().role !== 'editor') { location.href='/dashboard/index.html'; return; }
+      currentUser = { uid:user.uid, ...snap.data() };
+      document.getElementById('editorEmail').textContent = user.email;
+      loadUsers();
+      loadProjects();
+    });
+
+    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>location.href='/dashboard/index.html'));
+
+    async function loadUsers() {
+      const snap = await getDocs(collection(db,'users'));
+      snap.forEach(d=>{ allUsers[d.id]=d.data(); });
+    }
+
+    async function loadProjects() {
+      const q = query(collection(db,'projects'), where('editorId','==',currentUser.uid), orderBy('createdAt','desc'));
+      const snap = await getDocs(q);
+      const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
+      document.getElementById('statTotal').textContent  = projects.length;
+      document.getElementById('statActive').textContent = projects.filter(p=>p.status!=='done').length;
+      document.getElementById('statDone').textContent   = projects.filter(p=>p.status==='done').length;
+      renderProjects(projects);
+    }
+
+    const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
+    function badge(s){ return `<span class="status-badge status-${s}">${STATUS_LABELS[s]||s}</span>`; }
+    function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+    function renderProjects(projects) {
+      const container = document.getElementById('projectsList');
+      if (!projects.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-text">No projects assigned to you yet.</div></div>';
+        return;
+      }
+      container.innerHTML = projects.map(p=>`
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-card-title">${p.title||'Untitled'}</div>
+            ${badge(p.status)}
+          </div>
+          <div class="project-card-meta">Client: ${allUsers[p.clientId]?.name||'—'} · Deadline: ${dateStr(p.deadline)}</div>
+          <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
+          <div class="project-card-actions">
+            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">Open Project →</button>
+          </div>
+        </div>`).join('');
+    }
+
+    window.openProject = async (pid) => {
+      const snap = await getDoc(doc(db,'projects',pid));
+      if (!snap.exists()) return;
+      currentProject = {id:pid,...snap.data()};
+
+      document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
+      document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
+      document.getElementById('detailClient').textContent   = allUsers[currentProject.clientId]?.name||'—';
+      document.getElementById('detailDeadline').textContent = dateStr(currentProject.deadline);
+      document.getElementById('detailStatus').innerHTML     = badge(currentProject.status);
+
+      // Raw footage view
+      const rawEl = document.getElementById('rawFootageLink');
+      if (currentProject.rawFootageUrl) {
+        rawEl.innerHTML = `<span style="color:var(--green);">✓ Link saved by client:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:underline;">Open Raw Footage Drive Link ↗</a>`;
+      } else { rawEl.textContent = 'No drive link provided by client yet.'; }
+
+      // Delivery link view/input
+      const delInput = document.getElementById('deliveryLinkInput');
+      const delDisp  = document.getElementById('deliveryLinkDisplay');
+      if (currentProject.deliveryUrl) {
+        delInput.value = currentProject.deliveryUrl;
+        delDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.deliveryUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
+      } else {
+        delInput.value = '';
+        delDisp.innerHTML = '<span style="color:var(--t3);">No delivery link saved yet.</span>';
+      }
+
+      showSection('detail');
+      loadChat(pid);
+    };
+
+    /* Save Final Delivery Link */
+    document.getElementById('btnSaveDeliveryLink').addEventListener('click', async ()=>{
+      const url = document.getElementById('deliveryLinkInput').value.trim();
+      if (!url || !currentProject) { showToast('Please enter a valid link.','error'); return; }
+      await updateDoc(doc(db,'projects',currentProject.id),{ deliveryUrl: url, status: 'review' });
+      currentProject.deliveryUrl = url;
+      currentProject.status = 'review';
+      document.getElementById('detailStatus').innerHTML = badge('review');
+      document.getElementById('deliveryLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
+      showToast('Delivery link saved & status updated to In Review! ✅','success');
+    });
+
+    window.updateStatus = async (status) => {
+      if (!currentProject) return;
+      await updateDoc(doc(db,'projects',currentProject.id),{status});
+      currentProject.status=status;
+      document.getElementById('detailStatus').innerHTML=badge(status);
+      showToast('Status updated to '+STATUS_LABELS[status],'success');
+    };
+
+    /* Real-time Chat */
+    function loadChat(pid) {
+      if (chatUnsub) chatUnsub();
+      const q = query(collection(db,'projects',pid,'chat'),orderBy('timestamp','asc'));
+      chatUnsub = onSnapshot(q,snap=>{
+        const container = document.getElementById('chatMessages');
+        container.innerHTML='';
+        snap.docs.forEach(d=>{
+          const m=d.data();
+          const isMe=m.senderId===currentUser.uid;
+          const div=document.createElement('div');
+          div.className='chat-msg '+(isMe?'mine':'theirs');
+          let formattedText = m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
+            <div class="chat-msg-bubble">${formattedText}</div>`;
+          container.appendChild(div);
+        });
+        container.scrollTop=container.scrollHeight;
+      });
+    }
+
+    async function sendMessage() {
+      const input=document.getElementById('chatInput');
+      const text=input.value.trim();
+      if (!text||!currentProject) return;
+      input.value='';
+      await addDoc(collection(db,'projects',currentProject.id,'chat'),{
+        senderId:   currentUser.uid,
+        senderName: currentUser.name||'Editor',
+        text, timestamp:serverTimestamp()
+      });
+    }
+    document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
+    document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+
+    const sections = ['projects','detail','chat'];
+    function showSection(name) {
+      sections.forEach(s=>{ document.getElementById('sec-'+s).style.display=s===name?'block':'none'; });
+      document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.section===name));
+    }
+    window.showSection=showSection;
+    document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
+
+    function showToast(msg,type='success'){
+      const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type+' show';
+      setTimeout(()=>t.classList.remove('show'),3500);
+    }
+    document.getElementById('sidebarToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+  </script>
+</body>
+</html>

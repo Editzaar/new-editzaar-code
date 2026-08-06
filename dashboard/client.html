@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Client Dashboard — Editzaar</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="icon" type="image/png" href="../media/fav-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
+
+  <style>
+    .status-timeline {
+      display: flex; align-items: flex-start;
+      gap: 0; margin-bottom: 24px; overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .sts-step { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 90px; }
+    .sts-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid var(--border); background: var(--bg-card2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; transition: all 0.3s; position: relative; z-index: 2;
+    }
+    .sts-dot.done  { border-color: var(--green); background: rgba(40,200,64,0.1); }
+    .sts-dot.active{ border-color: var(--gold); background: var(--gold-dim); }
+    .sts-label { font-size: 10px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; text-align: center; }
+    .sts-label.done   { color: var(--green); }
+    .sts-label.active { color: var(--gold); }
+    .sts-line { flex: 1; height: 2px; background: var(--border); margin-top: 15px; min-width: 24px; }
+    .sts-line.done { background: var(--green); }
+
+    .invoice-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+    }
+    .invoice-row:last-child { border-bottom: none; }
+
+    .chatbot-fab {
+      position: fixed; bottom: 28px; right: 28px; z-index: 500;
+      background: var(--gold); color: #000;
+      border: none; border-radius: 50%;
+      width: 54px; height: 54px; font-size: 1.5rem;
+      cursor: pointer; box-shadow: 0 8px 28px rgba(255,184,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .chatbot-fab:hover { transform: scale(1.1); background: var(--gold-light); }
+
+    .chatbot-panel {
+      position: fixed; bottom: 92px; right: 28px; z-index: 499;
+      width: 340px; max-width: calc(100vw - 40px);
+      background: var(--bg-card); border: 1px solid var(--gold-border);
+      border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+      display: none; flex-direction: column; overflow: hidden;
+    }
+    .chatbot-panel.open { display: flex; }
+    .chatbot-header {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .chatbot-title { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .chatbot-close-btn { background: none; border: none; color: var(--t2); font-size: 1.2rem; cursor: pointer; }
+    .link-input-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed var(--gold-border);
+      border-radius: var(--r);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  <div class="toast" id="toast"></div>
+
+  <div class="dash-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <a href="index.html" class="sidebar-logo">EDIT<em>ZAAR</em></a>
+      <div class="sidebar-role-badge">👤 Client</div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-section">My Projects</div>
+        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
+        <div class="sidebar-nav-section">Account</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices</div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user-info" id="clientEmail">Loading…</div>
+        <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+
+      <!-- ── SECTION: MY PROJECTS ── -->
+      <section id="sec-projects">
+        <div class="dash-topbar">
+          <div class="dash-page-title">Welcome, <em id="clientName">…</em> 👋</div>
+          <a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold">Start New Project</a>
+        </div>
+        <div id="projectsList"></div>
+      </section>
+
+      <!-- ── SECTION: PROJECT DETAIL ── -->
+      <section id="sec-detail" style="display:none;">
+        <div class="dash-topbar">
+          <button class="btn-outline" onclick="showSection('projects')">← Back</button>
+          <div id="detailStatus"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;">
+          <div>
+            <!-- Status Timeline -->
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Project <em>Progress</em></div></div>
+              <div class="status-timeline" id="statusTimeline"></div>
+              <div style="font-size:1rem;font-weight:600;margin-bottom:6px;" id="detailTitle">—</div>
+              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:18px;" id="detailDesc">—</div>
+              <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Your Editor</div><div style="font-size:0.9rem;" id="detailEditor">—</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">—</div></div>
+              </div>
+
+              <!-- Raw Footage Link Input -->
+              <div class="link-input-box">
+                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Raw Footage Link (Google Drive / WeTransfer / Dropbox)</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <input type="url" id="rawFootageInput" placeholder="https://drive.google.com/..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:#fff;font-size:0.88rem;outline:none;"/>
+                  <button class="btn-gold btn-sm" id="btnSaveFootageLink">Save Link</button>
+                </div>
+                <div id="footageLinkDisplay" style="margin-top:10px;font-size:0.88rem;"></div>
+              </div>
+
+              <!-- Download Final Delivery -->
+              <div id="deliverySection" style="display:none;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--r);padding:20px;">
+                <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎉 Final Video Delivered!</div>
+                <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;" id="deliveryNote">Your editor has delivered the final video.</div>
+                <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold">🎬 Open Delivered Video / Drive →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Panel -->
+          <div class="dash-card">
+            <div class="dash-card-header"><div class="dash-card-title">Chat with <em>Your Editor</em></div></div>
+            <div class="chat-container">
+              <div class="chat-messages" id="chatMessages"></div>
+              <div class="chat-input-row">
+                <input class="chat-input" id="chatInput" placeholder="Type a message or paste a link…"/>
+                <button class="btn-gold" id="btnSendMsg">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: INVOICES ── -->
+      <section id="sec-invoices" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title"><em>Invoices</em></div></div>
+        <div class="dash-card">
+          <div id="invoicesList"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices yet.</div></div></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── GEMINI AI CHATBOT ── -->
+  <button class="chatbot-fab" id="chatbotFab" title="Ask AI Assistant">🤖</button>
+
+  <div class="chatbot-panel" id="chatbotPanel">
+    <div class="chatbot-header">
+      <div class="chatbot-title">
+        <span>🤖</span> Editzaar AI Assistant
+      </div>
+      <button class="chatbot-close-btn" id="chatbotClose">✕</button>
+    </div>
+    <div class="chatbot-container" style="padding:12px;">
+      <div class="chatbot-messages" id="botMessages">
+        <div class="bot-msg">
+          <div class="bot-avatar">🤖</div>
+          <div class="bot-bubble">Hi! I'm your Editzaar AI Assistant. Ask me anything about your project, drive uploads, editing turnaround, or pricing!</div>
+        </div>
+      </div>
+      <div class="chat-input-row" style="padding-top:12px;">
+        <input class="chat-input" id="botInput" placeholder="Ask anything…" style="height:40px;"/>
+        <button class="btn-gold btn-sm" id="btnBotSend">↑</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut }
+                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc,
+             query, where, orderBy, onSnapshot, serverTimestamp }
+                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain:        "editzaar-fa8d9.firebaseapp.com",
+      projectId:         "editzaar-fa8d9",
+      storageBucket:     "editzaar-fa8d9.firebasestorage.app",
+      messagingSenderId: "419930711716",
+      appId:             "1:419930711716:web:b1504f651e397a14726831"
+    };
+
+    const app     = initializeApp(firebaseConfig);
+    const auth    = getAuth(app);
+    const db      = getFirestore(app);
+
+    let currentUser = null, currentProject = null, chatUnsub = null;
+    let allUsers = {}, chatHistory = [];
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { location.href='/dashboard/index.html'; return; }
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if (!snap.exists() || snap.data().role !== 'client') { location.href='/dashboard/index.html'; return; }
+      currentUser = { uid: user.uid, ...snap.data() };
+      document.getElementById('clientEmail').textContent = user.email;
+      document.getElementById('clientName').textContent  = currentUser.name || 'there';
+      loadUsers(); loadProjects();
+    });
+
+    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>location.href='/dashboard/index.html'));
+
+    async function loadUsers() {
+      const snap = await getDocs(collection(db,'users'));
+      snap.forEach(d=>{ allUsers[d.id]=d.data(); });
+    }
+
+    async function loadProjects() {
+      const q = query(collection(db,'projects'), where('clientId','==',currentUser.uid), orderBy('createdAt','desc'));
+      const snap = await getDocs(q);
+      const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
+      renderProjects(projects);
+      renderInvoices(projects);
+    }
+
+    const STATUS_FLOW = ['pending','in_progress','review','done'];
+    const STATUS_LABELS= {pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
+    const STATUS_ICONS = {pending:'⏳',in_progress:'🔄',review:'👁',done:'✅'};
+    function badge(s){ return `<span class="status-badge status-${s}">${STATUS_LABELS[s]||s}</span>`; }
+    function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+    function renderProjects(projects) {
+      const container = document.getElementById('projectsList');
+      if (!projects.length) {
+        container.innerHTML = `<div class="dash-card" style="text-align:center;padding:52px 24px;">
+          <div style="font-size:3rem;margin-bottom:16px;">🎬</div>
+          <div style="font-family:var(--font-h);font-size:1.6rem;margin-bottom:10px;">No projects yet</div>
+          <div style="color:var(--t2);margin-bottom:24px;">Start a new project with us via WhatsApp!</div>
+          <a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold">Book a Project on WhatsApp →</a>
+        </div>`;
+        return;
+      }
+      container.innerHTML = projects.map(p=>`
+        <div class="project-card">
+          <div class="project-card-top">
+            <div class="project-card-title">${p.title||'Untitled'}</div>
+            ${badge(p.status)}
+          </div>
+          <div class="project-card-meta">Editor: ${allUsers[p.editorId]?.name||'Being assigned'} · Deadline: ${dateStr(p.deadline)}</div>
+          <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
+          ${p.deliveryUrl ? `<div style="margin-top:10px;"><a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">🎬 Download / View Final Video →</a></div>`:''}
+          <div class="project-card-actions">
+            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">View Details &amp; Chat →</button>
+            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ Invoice Paid':'💳 Invoice Pending'}</span>
+          </div>
+        </div>`).join('');
+    }
+
+    window.openProject = async (pid) => {
+      const snap = await getDoc(doc(db,'projects',pid));
+      if (!snap.exists()) return;
+      currentProject = {id:pid,...snap.data()};
+      document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
+      document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
+      document.getElementById('detailEditor').textContent   = allUsers[currentProject.editorId]?.name||'Being assigned';
+      document.getElementById('detailDeadline').textContent = dateStr(currentProject.deadline);
+      document.getElementById('detailStatus').innerHTML     = badge(currentProject.status);
+      renderTimeline(currentProject.status);
+
+      // Raw footage link display
+      const footInput = document.getElementById('rawFootageInput');
+      const footDisp  = document.getElementById('footageLinkDisplay');
+      if (currentProject.rawFootageUrl) {
+        footInput.value = currentProject.rawFootageUrl;
+        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
+      } else {
+        footInput.value = '';
+        footDisp.innerHTML = '<span style="color:var(--t3);">No drive link saved yet.</span>';
+      }
+
+      // Delivery
+      const delivSection = document.getElementById('deliverySection');
+      if (currentProject.deliveryUrl) {
+        delivSection.style.display='block';
+        document.getElementById('deliveryDownloadBtn').href = currentProject.deliveryUrl;
+      } else { delivSection.style.display='none'; }
+
+      showSection('detail');
+      loadChat(pid);
+    };
+
+    function renderTimeline(currentStatus) {
+      const steps = ['pending','in_progress','review','done'];
+      const labels = {pending:'Pending',in_progress:'In Progress',review:'In Review',done:'Done'};
+      const icons  = {pending:'⏳',in_progress:'🔄',review:'👁',done:'✅'};
+      const curIdx = steps.indexOf(currentStatus==='revision'?'review':currentStatus);
+      let html='';
+      steps.forEach((s,i)=>{
+        const isDone   = i < curIdx;
+        const isActive = i === curIdx;
+        if (i>0) html += `<div class="sts-line ${isDone?'done':''}"></div>`;
+        html += `<div class="sts-step">
+          <div class="sts-dot ${isDone?'done':(isActive?'active':'')}">${isDone?'✓':icons[s]}</div>
+          <div class="sts-label ${isDone?'done':(isActive?'active':'')}">${labels[s]}</div>
+        </div>`;
+      });
+      document.getElementById('statusTimeline').innerHTML=html;
+    }
+
+    /* Save Raw Footage Drive Link */
+    document.getElementById('btnSaveFootageLink').addEventListener('click', async ()=>{
+      const url = document.getElementById('rawFootageInput').value.trim();
+      if (!url || !currentProject) { showToast('Please enter a valid link.','error'); return; }
+      await updateDoc(doc(db,'projects',currentProject.id),{ rawFootageUrl: url });
+      currentProject.rawFootageUrl = url;
+      document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
+      showToast('Raw footage link saved! ✅','success');
+    });
+
+    /* Invoices */
+    function renderInvoices(projects) {
+      const container = document.getElementById('invoicesList');
+      const withInv = projects.filter(p=>p.invoiceAmount>0);
+      if (!withInv.length) return;
+      container.innerHTML = withInv.map(p=>`
+        <div class="invoice-row">
+          <div>
+            <div style="font-weight:600;margin-bottom:3px;">${p.title||'Untitled Project'}</div>
+            <div style="font-size:11px;color:var(--t3);">Invoice</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:var(--font-h);font-size:1.3rem;color:var(--gold);">₹${(p.invoiceAmount||0).toLocaleString()}</div>
+            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Paid':'❌ Unpaid'}</span>
+          </div>
+        </div>`).join('');
+    }
+
+    /* Real-time Chat */
+    function loadChat(pid) {
+      if (chatUnsub) chatUnsub();
+      const q = query(collection(db,'projects',pid,'chat'),orderBy('timestamp','asc'));
+      chatUnsub = onSnapshot(q,snap=>{
+        const container = document.getElementById('chatMessages');
+        container.innerHTML='';
+        snap.docs.forEach(d=>{
+          const m=d.data();
+          const isMe=m.senderId===currentUser.uid;
+          const div=document.createElement('div');
+          div.className='chat-msg '+(isMe?'mine':'theirs');
+          let formattedText = m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
+            <div class="chat-msg-bubble">${formattedText}</div>`;
+          container.appendChild(div);
+        });
+        container.scrollTop=container.scrollHeight;
+      });
+    }
+
+    async function sendMessage() {
+      const input=document.getElementById('chatInput');
+      const text=input.value.trim();
+      if (!text||!currentProject) return;
+      input.value='';
+      await addDoc(collection(db,'projects',currentProject.id,'chat'),{
+        senderId:   currentUser.uid,
+        senderName: currentUser.name||'Client',
+        text, timestamp:serverTimestamp()
+      });
+    }
+    document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
+    document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+
+    /* Gemini AI Chatbot */
+    const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY';
+    const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+    const SYSTEM_PROMPT = `You are Editzaar AI, assistant for clients of Editzaar video editing agency based in Hyderabad.
+Help clients with drive link sharing, project timelines, video styles, and pricing. Direct booking questions to WhatsApp: +91 9476766340.`;
+
+    async function sendBotMessage() {
+      const input = document.getElementById('botInput');
+      const text  = input.value.trim();
+      if (!text) return;
+      input.value='';
+
+      appendBotMsg('user', text);
+      chatHistory.push({role:'user', parts:[{text}]});
+
+      const typingDiv = document.createElement('div');
+      typingDiv.className='bot-msg'; typingDiv.id='botTyping';
+      typingDiv.innerHTML=`<div class="bot-avatar">🤖</div><div class="bot-bubble"><div class="bot-typing"><div class="bot-dot"></div><div class="bot-dot"></div><div class="bot-dot"></div></div></div>`;
+      document.getElementById('botMessages').appendChild(typingDiv);
+      scrollBot();
+
+      try {
+        const res = await fetch(GEMINI_ENDPOINT, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            system_instruction:{ parts:[{text:SYSTEM_PROMPT}] },
+            contents: chatHistory
+          })
+        });
+        const data = await res.json();
+        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Need help? Contact us directly on WhatsApp: +91 9476766340";
+        document.getElementById('botTyping')?.remove();
+        appendBotMsg('model', reply);
+        chatHistory.push({role:'model', parts:[{text:reply}]});
+      } catch(e) {
+        document.getElementById('botTyping')?.remove();
+        appendBotMsg('model','Feel free to chat with our team on WhatsApp: +91 9476766340');
+      }
+    }
+
+    function appendBotMsg(role, text) {
+      const container = document.getElementById('botMessages');
+      const div=document.createElement('div');
+      if (role==='user') {
+        div.className='user-msg';
+        div.innerHTML=`<div class="user-bubble">${text}</div>`;
+      } else {
+        div.className='bot-msg';
+        div.innerHTML=`<div class="bot-avatar">🤖</div><div class="bot-bubble">${text.replace(/\n/g,'<br>')}</div>`;
+      }
+      container.appendChild(div);
+      scrollBot();
+    }
+    function scrollBot() { const c=document.getElementById('botMessages'); c.scrollTop=c.scrollHeight; }
+
+    document.getElementById('btnBotSend').addEventListener('click',sendBotMessage);
+    document.getElementById('botInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendBotMessage();});
+    document.getElementById('chatbotFab').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.toggle('open'));
+    document.getElementById('chatbotClose').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.remove('open'));
+
+    const sections=['projects','detail','invoices'];
+    function showSection(name){
+      sections.forEach(s=>{ document.getElementById('sec-'+s).style.display=s===name?'block':'none'; });
+      document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.section===name));
+    }
+    window.showSection=showSection;
+    document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>{
+      el.addEventListener('click',()=>showSection(el.dataset.section));
+    });
+
+    function showToast(msg,type='success'){
+      const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type+' show';
+      setTimeout(()=>t.classList.remove('show'),3500);
+    }
+    document.getElementById('sidebarToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+  </script>
+</body>
+</html>

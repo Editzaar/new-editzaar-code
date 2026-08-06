@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editzaar — Client Login</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="icon" type="image/png" href="../media/fav-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
+  <style>
+    .auth-bg-rings {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; z-index: 1;
+    }
+    .auth-ring {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(255,184,0,0.07);
+      animation: authRingPulse 4s ease-out infinite;
+    }
+    @keyframes authRingPulse {
+      0%{ transform: scale(0.9); opacity: 0.6; }
+      100%{ transform: scale(1.2); opacity: 0; }
+    }
+    .auth-ring:nth-child(1){ width:300px; height:300px; animation-delay:0s; }
+    .auth-ring:nth-child(2){ width:500px; height:500px; animation-delay:1.3s; }
+    .auth-ring:nth-child(3){ width:700px; height:700px; animation-delay:2.6s; }
+    .back-link { display:block; text-align:center; font-size:11px; color:var(--t3); margin-top:20px; letter-spacing:0.08em; transition:color 0.2s; }
+    .back-link:hover { color:var(--gold); }
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-bg-rings">
+      <div class="auth-ring"></div>
+      <div class="auth-ring"></div>
+      <div class="auth-ring"></div>
+    </div>
+
+    <div class="auth-box" style="position:relative;z-index:3;">
+      <span class="auth-logo">EDIT<em>ZAAR</em></span>
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to access your dashboard</div>
+
+      <div class="auth-error" id="authError"></div>
+
+      <div class="auth-field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="auth-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="auth-btn" id="loginBtn">Sign In →</button>
+
+      <a href="../pages/index.html" class="back-link">← Back to Editzaar.in</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
+                                     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc }
+                                     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain:        "editzaar-fa8d9.firebaseapp.com",
+      projectId:         "editzaar-fa8d9",
+      storageBucket:     "editzaar-fa8d9.firebasestorage.app",
+      messagingSenderId: "419930711716",
+      appId:             "1:419930711716:web:b1504f651e397a14726831",
+      measurementId:     "G-2S8JKL6FDZ"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    /* Auto-redirect if already logged in */
+    onAuthStateChanged(auth, async (user) => {
+      if (user) { await redirectByRole(user.uid); }
+    });
+
+    async function redirectByRole(uid) {
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (!snap.exists()) return;
+      const role = snap.data().role;
+      if      (role === 'admin')  location.href = '/dashboard/admin.html';
+      else if (role === 'editor') location.href = '/dashboard/editor.html';
+      else                        location.href = '/dashboard/client.html';
+    }
+
+    const loginBtn  = document.getElementById('loginBtn');
+    const emailEl   = document.getElementById('email');
+    const passEl    = document.getElementById('password');
+    const errorEl   = document.getElementById('authError');
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('show');
+    }
+
+    loginBtn.addEventListener('click', async () => {
+      const email = emailEl.value.trim();
+      const pass  = passEl.value;
+      if (!email || !pass) { showError('Please enter your email and password.'); return; }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in…';
+      errorEl.classList.remove('show');
+
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        await redirectByRole(cred.user.uid);
+      } catch (e) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In →';
+        const msgs = {
+          'auth/invalid-credential':     'Invalid email or password.',
+          'auth/user-not-found':         'No account found with this email.',
+          'auth/wrong-password':         'Incorrect password.',
+          'auth/too-many-requests':      'Too many attempts. Please wait and try again.',
+          'auth/invalid-email':          'Please enter a valid email address.',
+        };
+        showError(msgs[e.code] || 'Sign-in failed. Please try again.');
+      }
+    });
+
+    /* Allow pressing Enter */
+    [emailEl, passEl].forEach(el => {
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') loginBtn.click(); });
+    });
+  </script>
+</body>
+</html>

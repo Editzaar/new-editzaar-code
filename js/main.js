@@ -1,14 +1,11 @@
 /* ============================================================
    EDITZAAR — main.js
-   All interactive behaviour: cursor, typing, scroll reveal,
-   counters, filters, mobile nav, booking form → WhatsApp
+   Unified Master Interactive Engine with Carousel Handlers
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  /* ──────────────────────────────────────────────
-     1. CUSTOM CURSOR GLOW
-  ────────────────────────────────────────────── */
+  /* ── 1. Custom Cursor Glow ── */
   var glow = document.getElementById('cglow');
   var dot  = document.getElementById('cdot');
 
@@ -22,84 +19,81 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  /* ──────────────────────────────────────────────
-     2. TYPING HEADLINE EFFECT
-  ────────────────────────────────────────────── */
+  /* ── 2. Typing Headline Effect ── */
   var typingTarget = document.getElementById('typing-target');
-  var words = [
-    'unforgettable.',
-    'impossible to ignore.',
-    'worth watching.',
-    'go viral.',
-    'convert viewers.',
-    'tell your story.'
-  ];
-  var wordIndex  = 0;
-  var charIndex  = 0;
-  var isDeleting = false;
+  if (typingTarget) {
+    var words = [
+      'unforgettable.',
+      'impossible to ignore.',
+      'worth watching.',
+      'go viral.',
+      'convert viewers.',
+      'tell your story.'
+    ];
+    var wordIndex  = 0;
+    var charIndex  = 0;
+    var isDeleting = false;
 
-  function typeLoop() {
-    if (!typingTarget) return;
+    function typeLoop() {
+      if (!typingTarget) return;
 
-    var currentWord = words[wordIndex];
-    var cursor      = '<span class="cursor-blink"></span>';
+      var currentWord = words[wordIndex];
+      var cursor      = '<span class="cursor-blink"></span>';
 
-    if (!isDeleting) {
-      charIndex++;
-      typingTarget.innerHTML = currentWord.substring(0, charIndex) + cursor;
+      if (!isDeleting) {
+        charIndex++;
+        typingTarget.innerHTML = currentWord.substring(0, charIndex) + cursor;
 
-      if (charIndex === currentWord.length) {
-        isDeleting = true;
-        setTimeout(typeLoop, 2000);
-        return;
+        if (charIndex === currentWord.length) {
+          isDeleting = true;
+          setTimeout(typeLoop, 2000);
+          return;
+        }
+        setTimeout(typeLoop, 70);
+
+      } else {
+        charIndex--;
+        typingTarget.innerHTML = currentWord.substring(0, charIndex) + cursor;
+
+        if (charIndex === 0) {
+          isDeleting = false;
+          wordIndex  = (wordIndex + 1) % words.length;
+          setTimeout(typeLoop, 420);
+          return;
+        }
+        setTimeout(typeLoop, 36);
       }
-      setTimeout(typeLoop, 70);
+    }
 
+    setTimeout(typeLoop, 800);
+  }
+
+
+  /* ── 3. Scroll Reveal (IntersectionObserver) ── */
+  var revealEls = document.querySelectorAll('.reveal');
+
+  if (revealEls.length > 0) {
+    if ('IntersectionObserver' in window) {
+      var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      revealEls.forEach(function (el) {
+        revealObserver.observe(el);
+      });
     } else {
-      charIndex--;
-      typingTarget.innerHTML = currentWord.substring(0, charIndex) + cursor;
-
-      if (charIndex === 0) {
-        isDeleting = false;
-        wordIndex  = (wordIndex + 1) % words.length;
-        setTimeout(typeLoop, 420);
-        return;
-      }
-      setTimeout(typeLoop, 36);
+      revealEls.forEach(function (el) {
+        el.classList.add('visible');
+      });
     }
   }
 
-  setTimeout(typeLoop, 1000);
 
-
-  /* ──────────────────────────────────────────────
-     3. SCROLL REVEAL  (IntersectionObserver)
-  ────────────────────────────────────────────── */
-  var revealEls = document.querySelectorAll('.reveal');
-
-  if ('IntersectionObserver' in window) {
-    var revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1 });
-
-    revealEls.forEach(function (el) {
-      revealObserver.observe(el);
-    });
-  } else {
-    // Fallback: show all immediately
-    revealEls.forEach(function (el) {
-      el.classList.add('visible');
-    });
-  }
-
-
-  /* ──────────────────────────────────────────────
-     4. ANIMATED NUMBER COUNTERS
-  ────────────────────────────────────────────── */
+  /* ── 4. Animated Number Counters ── */
   var countEls = document.querySelectorAll('[data-count]');
 
   function animateCounter(el) {
@@ -112,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!startTime) startTime = timestamp;
       var elapsed  = timestamp - startTime;
       var progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       var eased = 1 - Math.pow(1 - progress, 3);
       el.textContent = Math.round(eased * target) + suffix;
       if (progress < 1) {
@@ -123,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(step);
   }
 
-  if ('IntersectionObserver' in window) {
+  if (countEls.length > 0 && 'IntersectionObserver' in window) {
     var counterObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -139,57 +132,39 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  /* ──────────────────────────────────────────────
-     5. VIDEO PORTFOLIO FILTER
-  ────────────────────────────────────────────── */
-  var filterBtns = document.querySelectorAll('#filters .filt');
-  var videoCards = document.querySelectorAll('#vgrid .vcard');
+  /* ── 5. Carousel Nav Buttons (Next / Prev) ── */
+  var carouselBtnBtns = document.querySelectorAll('.carousel-nav-btn');
 
-  filterBtns.forEach(function (btn) {
+  carouselBtnBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      // Update active button
-      filterBtns.forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
+      var targetId = btn.getAttribute('data-carousel');
+      var track = document.getElementById(targetId);
+      if (!track) return;
 
-      var filter = btn.getAttribute('data-f');
-
-      videoCards.forEach(function (card) {
-        var cat = card.getAttribute('data-cat');
-        if (filter === 'all' || cat === filter) {
-          card.style.display = '';
-          // Re-trigger subtle animation
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(12px)';
-          setTimeout(function () {
-            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          }, 20);
-        } else {
-          card.style.display = 'none';
-          var v = card.querySelector('video');
-          if(v) v.pause(); // Stop hidden videos from playing in the background
-        }
-      });
+      var scrollAmount = track.clientWidth * 0.85;
+      if (btn.classList.contains('prev')) {
+        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
     });
   });
 
-  /* ──────────────────────────────────────────────
-     6. BOOKING FORM — PLAN SELECTOR
-  ────────────────────────────────────────────── */
+
+  /* ── 6. Booking Form Plan Selector ── */
   var planOpts = document.querySelectorAll('#planSel .plan-opt');
 
-  planOpts.forEach(function (opt) {
-    opt.addEventListener('click', function () {
-      planOpts.forEach(function (o) { o.classList.remove('sel'); });
-      opt.classList.add('sel');
+  if (planOpts.length > 0) {
+    planOpts.forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        planOpts.forEach(function (o) { o.classList.remove('sel'); });
+        opt.classList.add('sel');
+      });
     });
-  });
+  }
 
 
-  /* ──────────────────────────────────────────────
-     7. BOOKING FORM — WHATSAPP SUBMIT
-  ────────────────────────────────────────────── */
+  /* ── 7. Booking Form WhatsApp Submit ── */
   var submitBtn = document.getElementById('submitBtn');
 
   if (submitBtn) {
@@ -202,7 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var selOpt = document.querySelector('#planSel .plan-opt.sel');
       if (selOpt) selectedPlan = selOpt.getAttribute('data-plan') || '';
 
-      // Basic validation
       if (!name) {
         alert('Please enter your name.');
         return;
@@ -217,15 +191,13 @@ document.addEventListener('DOMContentLoaded', function () {
       ].join('\n');
 
       var encoded  = encodeURIComponent(text);
-      var waNumber = '919476766340'; // ← Replace with your actual WhatsApp number (no + sign)
+      var waNumber = '919476766340';
       window.open('https://wa.me/' + waNumber + '?text=' + encoded, '_blank');
     });
   }
 
 
-  /* ──────────────────────────────────────────────
-     8. "BOOK SIMILAR" BUTTONS → WHATSAPP
-  ────────────────────────────────────────────── */
+  /* ── 8. "Book Similar" Buttons → WhatsApp ── */
   var bookSimilarBtns = document.querySelectorAll('.vbtn[data-wa]');
 
   bookSimilarBtns.forEach(function (btn) {
@@ -234,158 +206,20 @@ document.addEventListener('DOMContentLoaded', function () {
       var videoTitle = btn.getAttribute('data-wa') || '';
       var text = 'Hi Editzaar! I saw your work on your website and I want something similar to: "' + videoTitle + '". Can we discuss?';
       var encoded  = encodeURIComponent(text);
-      var waNumber = '919476766340'; // ← Replace with your actual WhatsApp number
-      window.open('https://wa.link/4g11ud' + waNumber + '?text=' + encoded, '_blank');
+      var waNumber = '919476766340';
+      window.open('https://wa.me/' + waNumber + '?text=' + encoded, '_blank');
     });
   });
 
 
+  /* ── 9. Mobile Navigation Toggle ── */
+  var navToggle = document.getElementById('navToggle');
+  var navLinks  = document.querySelector('.nav-links');
 
-  /* ──────────────────────────────────────────────
-     9. MOBILE NAV TOGGLE
-  ────────────────────────────────────────────── */
-    var navToggle = document.getElementById('navToggle');
-    var navLinks = document.querySelector('.nav-links');
-
-    if (navToggle && navLinks) {
-        navToggle.addEventListener('click', function (e) {
-            e.stopPropagation();
-            navLinks.classList.toggle('active');
-            navToggle.classList.toggle('active');
-        });
-
-        // Close menu when a link is clicked
-        navLinks.querySelectorAll('a').forEach(function (link) {
-            link.addEventListener('click', function () {
-                navLinks.classList.remove('active');
-                navToggle.classList.remove('active');
-            });
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function (e) {
-            if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
-                navLinks.classList.remove('active');
-                navToggle.classList.remove('active');
-            }
-        });
-    }
-
-    /* ──────────────────────────────────────────────
-       10. NAVBAR SCROLL SHADOW
-    ────────────────────────────────────────────── */
-    var navbar = document.getElementById('navbar');
-
-    window.addEventListener('scroll', function () {
-        if (!navbar) return;
-        
-        // Adds shadow when user scrolls down more than 40px
-        if (window.scrollY > 40) {
-            navbar.style.boxShadow = '0 1px 32px rgba(0,0,0,0.55)';
-        } else {
-            navbar.style.boxShadow = 'none';
-        }
-    });
-
-
-
-  /* ──────────────────────────────────────────────
-     11. SMOOTH SCROLL FOR ANCHOR LINKS
-  ────────────────────────────────────────────── */
-  document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
-    anchor.addEventListener('click', function (e) {
-      var targetId = this.getAttribute('href');
-      if (targetId === '#') return;
-      var targetEl = document.querySelector(targetId);
-      if (targetEl) {
-        e.preventDefault();
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-
-});
-
-
-/* ──────────────────────────────────────────────
-   14. AUTO-PLAY WITH AUDIO ON HOVER
-────────────────────────────────────────────── */
-let audioUnlocked = false;
-
-// Step 1: Unlock audio capability on the first click anywhere
-document.addEventListener('click', () => {
-    audioUnlocked = true;
-}, { once: true });
-
-document.querySelectorAll('.vcard').forEach(card => {
-    const video = card.querySelector('video');
-    if (!video) return;
-
-    card.addEventListener('mouseenter', () => {
-        // If user has clicked at least once, we can try to unmute
-        if (audioUnlocked) {
-            video.muted = false;
-        }
-        
-        video.play().catch(error => {
-            // If it fails, play it muted as a fallback
-            video.muted = true;
-            video.play();
-            console.log("Play with audio blocked; playing muted instead.");
-        });
-    });
-
-    card.addEventListener('mouseleave', () => {
-        video.pause();
-        video.muted = true; // Reset to muted for next hover
-    });
-});
-
-
-
-document.addEventListener("DOMContentLoaded", function() {
-  let selectedPlan = "Shorts — ₹1,000"; // Default selection matching active state
-
-  // 1. Handle Plan Selection Toggles
-  const planOptions = document.querySelectorAll(".plan-opt");
-  planOptions.forEach(option => {
-    option.addEventListener("click", function() {
-      // Strip highlights from options
-      planOptions.forEach(opt => opt.classList.remove("sel"));
-      // Highlight the choice clicked
-      this.classList.add("sel");
-      // Store current data plan attribute value
-      selectedPlan = this.getAttribute("data-plan");
-    });
-  });
-
-  // 2. Handle WhatsApp Form Redirect Pipeline
-  const submitBtn = document.getElementById("submitBtn");
-  if (submitBtn) {
-    submitBtn.addEventListener("click", function() {
-      const name = document.getElementById("fname").value.trim();
-      const clientPhone = document.getElementById("fphone").value.trim();
-      const message = document.getElementById("fmsg").value.trim();
-
-      if (!name || !clientPhone) {
-        alert("Please fill in your Name and WhatsApp Number so we can reach you.");
-        return;
-      }
-
-      // Enter your real phone number here (with 91 country code, no symbols/spaces)
-      const agencyPhoneNumber = "919476766340"; 
-
-      // Format custom enterprise presentation strings
-      const textMessage = `⚡ NEW PROJECT BRIEF — EDITZAAR ⚡%0A%0A` +
-                          `👤 *Client Name:* ${name}%0A` +
-                          `📱 *WhatsApp:* ${clientPhone}%0A` +
-                          `📦 *Selected Strategy:* ${selectedPlan}%0A%0A` +
-                          `📝 *Project Overview:* %0A${message || "No project overview provided yet."}`;
-
-      const whatsappUrl = `https://wa.me/${agencyPhoneNumber}?text=${textMessage}`;
-      window.open(whatsappUrl, '_blank');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', function () {
+      navLinks.classList.toggle('open');
     });
   }
+
 });
-
-
