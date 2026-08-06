@@ -9,9 +9,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.5"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.0"/>
 
   <style>
+    .welcome-banner {
+      background: linear-gradient(135deg, rgba(255,184,0,0.15) 0%, rgba(0,0,0,0.4) 100%);
+      border: 1px solid var(--gold-border);
+      border-radius: 14px; padding: 20px 24px;
+      margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .welcome-banner-title { font-family: var(--font-h); font-size: 1.4rem; color: var(--gold); margin-bottom: 4px; }
+    .welcome-banner-desc { font-size: 0.88rem; color: var(--t2); }
+
     .status-timeline {
       display: flex; align-items: flex-start;
       gap: 0; margin-bottom: 24px; overflow-x: auto;
@@ -73,25 +83,20 @@
       margin-bottom: 18px;
     }
 
-    /* Modal for New Project Booking */
     .modal-overlay {
       position:fixed; inset:0;
       background:rgba(0,0,0,0.85);
       z-index:900;
       display:flex; align-items:center; justify-content:center;
-      padding:20px;
-      display:none;
+      padding:20px; display:none;
     }
     .modal-overlay.open { display:flex; }
     .modal-box {
       background:var(--bg-card);
       border:1px solid var(--gold-border);
-      border-radius:16px;
-      padding:32px;
+      border-radius:16px; padding:32px;
       width:100%; max-width:620px;
-      max-height:92vh;
-      overflow-y:auto;
-      position:relative;
+      max-height:92vh; overflow-y:auto; position:relative;
     }
     .modal-title { font-family:var(--font-h); font-size:1.6rem; margin-bottom:20px; color:#fff; }
     .modal-close {
@@ -106,7 +111,6 @@
       display: inline-block; margin-top: 4px;
     }
 
-    /* Printable Tax Invoice Modal Layout */
     .tax-invoice-paper {
       background: #ffffff; color: #111111;
       border-radius: 12px; padding: 36px;
@@ -160,6 +164,15 @@
 
     <!-- MAIN -->
     <main class="dash-main">
+
+      <!-- WELCOME NOTIFICATION & ANNOUNCEMENTS BANNER -->
+      <div class="welcome-banner" id="clientWelcomeBanner">
+        <div>
+          <div class="welcome-banner-title" id="bannerTitle">🚀 Welcome to Editzaar Agency!</div>
+          <div class="welcome-banner-desc" id="bannerDesc">We're excited to partner with you on high-retention video post-production &amp; web scaling.</div>
+        </div>
+        <button class="btn-gold btn-sm" onclick="document.getElementById('modalClientNewProject').classList.add('open')">＋ Book Project →</button>
+      </div>
 
       <!-- ── SECTION: MY PROJECTS ── -->
       <section id="sec-projects">
@@ -389,7 +402,7 @@
       currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client',name:'Client'}) };
       document.getElementById('clientEmail').textContent = user.email;
       document.getElementById('clientName').textContent  = currentUser.name || 'there';
-      loadUsers(); listenRealtimeProjects();
+      loadUsers(); listenRealtimeProjects(); listenAnnouncements();
     });
 
     document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('/dashboard/index.html')));
@@ -397,6 +410,18 @@
     async function loadUsers() {
       const snap = await getDocs(collection(db,'users'));
       snap.forEach(d=>{ allUsers[d.id]=d.data(); });
+    }
+
+    /* Listen for Admin Broadcast Announcements & Welcome Notifications */
+    function listenAnnouncements() {
+      onSnapshot(query(collection(db,'announcements'), orderBy('createdAt','desc')), (snap) => {
+        const list = snap.docs.map(d=>({id:d.id,...d.data()}));
+        const myAnn = list.find(a=> a.target==='all' || a.target===currentUser.uid);
+        if (myAnn) {
+          document.getElementById('bannerTitle').textContent = myAnn.title || '📢 Agency Announcement';
+          document.getElementById('bannerDesc').textContent  = myAnn.message || '';
+        }
+      });
     }
 
     function listenRealtimeProjects() {
@@ -439,7 +464,6 @@
         </div>`).join('');
     }
 
-    /* Invoices List with Printable Modal */
     function renderInvoices(projects) {
       const container = document.getElementById('invoicesList');
       const withInv = projects.filter(p=>p.invoiceAmount>0);
@@ -451,7 +475,6 @@
         const base = p.invoiceAmount || 0;
         const gst = Math.round(base * 0.18);
         const total = base + gst;
-        const advance = Math.round(total * 0.5);
         const isOfficial = p.invoicePaid || false;
 
         return `
@@ -483,7 +506,7 @@
       const advance = Math.round(total * 0.5);
       const isOfficial = p.invoicePaid || false;
 
-      document.getElementById('invModalTypeBadge').textContent = isOfficial ? '✅ Official GST Tax Invoice' : '⏳ Acknowledgment Receipt (Pending Payment Confirmation)';
+      document.getElementById('invModalTypeBadge').textContent = isOfficial ? '✅ Official GST Tax Invoice' : '⏳ Acknowledgment Receipt';
       document.getElementById('invPaperHeaderTitle').textContent = isOfficial ? 'TAX INVOICE' : 'ACKNOWLEDGMENT RECEIPT';
       document.getElementById('invPaperNo').textContent = 'EDZ-' + pid.substring(0,6).toUpperCase();
       document.getElementById('invPaperDate').textContent = dateStr(p.createdAt);
@@ -505,7 +528,6 @@
       document.getElementById('modalInvoiceView').classList.add('open');
     };
 
-    /* Client New Project Booking Modal */
     const modalClientNewProject = document.getElementById('modalClientNewProject');
     document.getElementById('btnOpenNewProjectModal').addEventListener('click', ()=> modalClientNewProject.classList.add('open'));
     document.getElementById('btnCloseClientModal').addEventListener('click', ()=> modalClientNewProject.classList.remove('open'));
@@ -552,7 +574,6 @@
       document.getElementById('cnp-footage').value = '';
     });
 
-    /* Chat logic & Gemini AI */
     window.openProject = async (pid) => {
       const snap = await getDoc(doc(db,'projects',pid));
       if (!snap.exists()) return;

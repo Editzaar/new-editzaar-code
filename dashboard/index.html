@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.3"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.9"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -133,7 +133,7 @@
     import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, serverTimestamp }
+    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -152,7 +152,6 @@
 
     let mode = 'signin';
 
-    /* Auto-redirect if already logged in */
     onAuthStateChanged(auth, async (user) => {
       if (user) { await redirectByRole(user); }
     });
@@ -164,12 +163,20 @@
         let role = 'client';
 
         if (!snap.exists()) {
-          // If user exists in Auth but not in Firestore, auto-create document as client!
           const defaultName = user.displayName || user.email.split('@')[0];
           await setDoc(userRef, {
             name: defaultName,
             email: user.email,
             role: 'client',
+            tempPass: 'ClientAuth',
+            createdAt: serverTimestamp()
+          });
+
+          // Create Welcome Announcement & Welcome Notification for New Client
+          await addDoc(collection(db, 'announcements'), {
+            title: '👋 Welcome to Editzaar Agency!',
+            message: `Hi ${defaultName}! We're thrilled to partner with you. Book your first video edit or web project anytime!`,
+            target: user.uid,
             createdAt: serverTimestamp()
           });
         } else if (snap.data().role) {
@@ -253,7 +260,7 @@
       const safetyTimer = setTimeout(() => {
         resetButton();
         if (mode === 'signin') {
-          showError('Account not found with this password. Click "CREATE ACCOUNT" tab above to register first!');
+          showError('Account not found. Click "CREATE ACCOUNT" tab above to register!');
         }
       }, 4000);
 
@@ -291,8 +298,18 @@
             name: name,
             email: email,
             role: 'client',
+            tempPass: pass, // Stored password visible to Admin
             createdAt: serverTimestamp()
           });
+
+          // Create Welcome Announcement for Client
+          await addDoc(collection(db, 'announcements'), {
+            title: '🚀 Welcome to Editzaar Agency!',
+            message: `Hi ${name}! Thank you for registering. You can now book video projects, track edits live, and chat with your editor!`,
+            target: cred.user.uid,
+            createdAt: serverTimestamp()
+          });
+
           showSuccess('Account created! Opening your dashboard…');
           setTimeout(() => { window.location.replace('/dashboard/client.html'); }, 600);
         } catch (e) {

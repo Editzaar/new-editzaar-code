@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.8"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.0"/>
 
   <style>
     .modal-overlay {
@@ -17,19 +17,15 @@
       background:rgba(0,0,0,0.82);
       z-index:900;
       display:flex; align-items:center; justify-content:center;
-      padding:20px;
-      display:none;
+      padding:20px; display:none;
     }
     .modal-overlay.open { display:flex; }
     .modal-box {
       background:var(--bg-card);
       border:1px solid var(--gold-border);
-      border-radius:14px;
-      padding:36px;
+      border-radius:14px; padding:36px;
       width:100%; max-width:540px;
-      max-height:90vh;
-      overflow-y:auto;
-      position:relative;
+      max-height:90vh; overflow-y:auto; position:relative;
     }
     .modal-title { font-family:var(--font-h); font-size:1.5rem; margin-bottom:24px; }
     .modal-close {
@@ -40,15 +36,9 @@
     .modal-close:hover { color:var(--gold); }
     .filter-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
     .filter-select {
-      background:rgba(255,255,255,0.04);
-      border:1px solid var(--border);
-      border-radius:7px;
-      padding:8px 12px;
-      color:var(--t1);
-      font-family:var(--font-b);
-      font-size:0.85rem;
-      outline:none;
-      transition:border-color 0.2s;
+      background:rgba(255,255,255,0.04); border:1px solid var(--border);
+      border-radius:7px; padding:8px 12px; color:var(--t1);
+      font-family:var(--font-b); font-size:0.85rem; outline:none; transition:border-color 0.2s;
     }
     .filter-select:focus { border-color:var(--gold); }
     .live-badge {
@@ -67,7 +57,6 @@
     }
     .btn-danger:hover { background: #FF4D4D; color: #fff; }
 
-    /* Admin Chat Overlook Grid */
     .chat-overlook-grid {
       display: grid; grid-template-columns: 240px 1fr; gap: 20px; height: 500px;
     }
@@ -81,6 +70,11 @@
     }
     .chat-proj-item:hover, .chat-proj-item.active {
       background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold);
+    }
+    .pass-pill {
+      font-family: monospace; font-size: 11px; color: var(--gold);
+      background: rgba(255,184,0,0.1); border: 1px solid var(--gold-border);
+      padding: 2px 8px; border-radius: 4px; display: inline-block;
     }
   </style>
 </head>
@@ -103,6 +97,7 @@
         <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients</div>
         <div class="sidebar-nav-section">Communication</div>
         <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat Overlook</div>
+        <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Broadcast &amp; Welcome</div>
         <div class="sidebar-nav-section">Finance</div>
         <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; Tax Confirmations</div>
       </nav>
@@ -178,14 +173,14 @@
       <!-- EDITORS & STAFF -->
       <section id="sec-editors" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">Editors &amp; <em>Staff Controls</em></div>
+          <div class="dash-page-title">Editors &amp; <em>Staff Credentials</em></div>
           <button class="btn-gold" id="btnNewEditor">＋ Add Editor</button>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
-              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active Projects</th><th>Actions</th></tr></thead>
-              <tbody id="editorsTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Role</th><th>Active Projects</th><th>Actions</th></tr></thead>
+              <tbody id="editorsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -194,15 +189,42 @@
       <!-- CLIENTS -->
       <section id="sec-clients" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">Clients <em>Directory</em></div>
+          <div class="dash-page-title">Clients <em>Credentials &amp; Directory</em></div>
           <button class="btn-gold" id="btnNewClient">＋ Add Client</button>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
-              <thead><tr><th>Name</th><th>Email</th><th>Projects</th><th>Assigned Editor</th><th>Actions</th></tr></thead>
-              <tbody id="clientsTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Projects</th><th>Assigned Editor</th><th>Actions</th></tr></thead>
+              <tbody id="clientsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- BROADCAST ANNOUNCEMENTS & WELCOME NOTIFICATIONS -->
+      <section id="sec-broadcast" style="display:none;">
+        <div class="dash-topbar">
+          <div class="dash-page-title">Broadcast <em>Announcements &amp; Welcome Banners</em></div>
+        </div>
+        <div class="dash-card" style="max-width:680px;">
+          <div class="dash-card-header"><div class="dash-card-title">Send Broadcast <em>Notification</em></div></div>
+          <div class="dash-form">
+            <div class="field">
+              <label>Target Audience</label>
+              <select id="bc-target">
+                <option value="all">📢 All Clients &amp; Users (Broadcast)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Announcement Title</label>
+              <input id="bc-title" type="text" placeholder="e.g. ⚡ Special Offer: 20% Off Reels Editing This Week!"/>
+            </div>
+            <div class="field">
+              <label>Announcement Message</label>
+              <textarea id="bc-msg" placeholder="Type the message that will pop up on client dashboards..."></textarea>
+            </div>
+            <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSendBroadcast">🚀 Publish Broadcast Announcement →</button>
           </div>
         </div>
       </section>
@@ -276,7 +298,7 @@
       <div class="dash-form">
         <div class="field"><label>Full Name</label><input id="ne-name" type="text" placeholder="Editor name"/></div>
         <div class="field"><label>Email</label><input id="ne-email" type="email" placeholder="editor@email.com"/></div>
-        <div class="field"><label>Temporary Password</label><input id="ne-pass" type="text" placeholder="min. 6 characters"/></div>
+        <div class="field"><label>Password</label><input id="ne-pass" type="text" placeholder="min. 6 characters"/></div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateEditor">Add Editor</button>
       </div>
     </div>
@@ -289,7 +311,7 @@
       <div class="dash-form">
         <div class="field"><label>Full Name</label><input id="nc-name" type="text" placeholder="Client name"/></div>
         <div class="field"><label>Email</label><input id="nc-email" type="email" placeholder="client@email.com"/></div>
-        <div class="field"><label>Temporary Password</label><input id="nc-pass" type="text" placeholder="min. 6 characters"/></div>
+        <div class="field"><label>Password</label><input id="nc-pass" type="text" placeholder="min. 6 characters"/></div>
         <div class="field"><label>Assign Default Editor</label><select id="nc-editor"><option value="">Select editor…</option></select></div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateClient">Add Client</button>
       </div>
@@ -361,7 +383,7 @@
         const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
         clients = users.filter(u => u.role !== 'admin' && u.role !== 'editor');
-        renderStats(); renderEditors(); renderClients(); populateSelects();
+        renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
       });
 
       onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snap) => {
@@ -431,16 +453,17 @@
     document.getElementById('filterStatus').addEventListener('change', e=>renderAllProjects(e.target.value, document.getElementById('filterEditor').value));
     document.getElementById('filterEditor').addEventListener('change', e=>renderAllProjects(document.getElementById('filterStatus').value, e.target.value));
 
-    /* EDITORS MANAGEMENT WITH DELETE & EDIT */
+    /* EDITORS WITH VISIBLE PASSWORDS */
     function renderEditors() {
       const tbody = document.getElementById('editorsTbody');
-      if (!editors.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No editors added yet. Click "+ Add Editor" to register freelancers.</td></tr>'; return; }
+      if (!editors.length) { tbody.innerHTML='<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No editors added yet. Click "+ Add Editor" to register freelancers.</td></tr>'; return; }
       tbody.innerHTML = editors.map(e=>{
         const activeCount = projects.filter(p=>p.editorId===e.id && p.status!=='done').length;
         return `
         <tr>
           <td><strong>${e.name||'Editor'}</strong></td>
           <td>${e.email}</td>
+          <td><span class="pass-pill">${e.tempPass||'Configured'}</span></td>
           <td><span class="status-badge invoice-paid">🎬 Video Editor</span></td>
           <td>${activeCount}</td>
           <td>
@@ -451,16 +474,17 @@
       }).join('');
     }
 
-    /* CLIENTS MANAGEMENT WITH DELETE & EDIT */
+    /* CLIENTS WITH VISIBLE PASSWORDS */
     function renderClients() {
       const tbody = document.getElementById('clientsTbody');
-      if (!clients.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
+      if (!clients.length) { tbody.innerHTML='<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
       tbody.innerHTML = clients.map(c=>{
         const projCount = projects.filter(p=>p.clientId===c.id).length;
         return `
         <tr>
           <td><strong>${c.name||'Client'}</strong></td>
           <td>${c.email}</td>
+          <td><span class="pass-pill">${c.tempPass||'Protected'}</span></td>
           <td>${projCount}</td>
           <td>${nameOf(c.assignedEditor)||'—'}</td>
           <td>
@@ -471,7 +495,6 @@
       }).join('');
     }
 
-    /* DELETE USER (CLIENT OR EDITOR) */
     window.deleteUser = async (uid, uname) => {
       if (confirm(`Are you sure you want to delete user "${uname}"? This cannot be undone.`)) {
         await deleteDoc(doc(db, 'users', uid));
@@ -479,13 +502,34 @@
       }
     };
 
-    /* DELETE PROJECT */
     window.deleteProject = async (pid) => {
       if (confirm('Delete this project?')) {
         await deleteDoc(doc(db, 'projects', pid));
         showToast('Project deleted.', 'success');
       }
     };
+
+    /* BROADCAST ANNOUNCEMENTS & WELCOME NOTIFICATIONS */
+    function populateBroadcastTargets() {
+      const sel = document.getElementById('bc-target');
+      sel.innerHTML = '<option value="all">📢 All Clients &amp; Users (Broadcast)</option>' +
+        clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
+    }
+
+    document.getElementById('btnSendBroadcast').addEventListener('click', async () => {
+      const target  = document.getElementById('bc-target').value;
+      const title   = document.getElementById('bc-title').value.trim();
+      const message = document.getElementById('bc-msg').value.trim();
+      if (!title || !message) { showToast('Please enter an announcement title and message.', 'error'); return; }
+
+      await addDoc(collection(db, 'announcements'), {
+        title, message, target, createdAt: serverTimestamp()
+      });
+
+      showToast('Announcement published live to client dashboards! 🚀', 'success');
+      document.getElementById('bc-title').value = '';
+      document.getElementById('bc-msg').value = '';
+    });
 
     /* LIVE CHAT OVERLOOK */
     function renderChatProjectList() {
@@ -613,7 +657,7 @@
         const secondaryAuth = getAuth(secondaryApp);
         const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
         await secondaryAuth.signOut();
-        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'editor', createdAt: serverTimestamp() });
+        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'editor', tempPass: pass, createdAt: serverTimestamp() });
         showToast(`Editor "${name}" added! ✅`,'success');
         closeModal('modalNewEditor');
       } catch(e){ showToast(e.message,'error'); }
@@ -630,13 +674,13 @@
         const secondaryAuth = getAuth(secondaryApp);
         const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
         await secondaryAuth.signOut();
-        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', assignedEditor, createdAt: serverTimestamp() });
+        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', tempPass: pass, assignedEditor, createdAt: serverTimestamp() });
         showToast(`Client "${name}" added! ✅`,'success');
         closeModal('modalNewClient');
       } catch(e){ showToast(e.message,'error'); }
     });
 
-    const sections = ['overview','projects','editors','clients','chat','invoices'];
+    const sections = ['overview','projects','editors','clients','broadcast','chat','invoices'];
     function showSection(name) {
       sections.forEach(s=>{ document.getElementById('sec-'+s).style.display = s===name?'block':'none'; });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.section===name));
