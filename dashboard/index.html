@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Editzaar — Client Login</title>
+  <title>Editzaar — Login &amp; Client Portal</title>
   <meta name="robots" content="noindex,nofollow"/>
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -28,8 +28,33 @@
     .auth-ring:nth-child(1){ width:300px; height:300px; animation-delay:0s; }
     .auth-ring:nth-child(2){ width:500px; height:500px; animation-delay:1.3s; }
     .auth-ring:nth-child(3){ width:700px; height:700px; animation-delay:2.6s; }
-    .back-link { display:block; text-align:center; font-size:11px; color:var(--t3); margin-top:20px; letter-spacing:0.08em; transition:color 0.2s; }
-    .back-link:hover { color:var(--gold); }
+
+    .auth-links-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .back-link, .forgot-link {
+      font-size: 11px;
+      color: var(--t3);
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .back-link:hover, .forgot-link:hover { color: var(--gold); }
+
+    .auth-success {
+      background: rgba(40,200,64,0.1);
+      border: 1px solid rgba(40,200,64,0.3);
+      color: #28C840;
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .auth-success.show { display: block; }
   </style>
 </head>
 <body>
@@ -43,9 +68,10 @@
     <div class="auth-box" style="position:relative;z-index:3;">
       <span class="auth-logo">EDIT<em>ZAAR</em></span>
       <div class="auth-title">Welcome back</div>
-      <div class="auth-sub">Sign in to access your dashboard</div>
+      <div class="auth-sub">Sign in to access your portal</div>
 
       <div class="auth-error" id="authError"></div>
+      <div class="auth-success" id="authSuccess"></div>
 
       <div class="auth-field">
         <label for="email">Email address</label>
@@ -55,15 +81,19 @@
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
       </div>
+
       <button class="auth-btn" id="loginBtn">Sign In →</button>
 
-      <a href="../pages/index.html" class="back-link">← Back to Editzaar.in</a>
+      <div class="auth-links-row">
+        <a href="../index.html" class="back-link">← Back to Editzaar.in</a>
+        <span class="forgot-link" id="forgotBtn">Forgot password?</span>
+      </div>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -97,13 +127,22 @@
     }
 
     const loginBtn  = document.getElementById('loginBtn');
+    const forgotBtn = document.getElementById('forgotBtn');
     const emailEl   = document.getElementById('email');
     const passEl    = document.getElementById('password');
     const errorEl   = document.getElementById('authError');
+    const successEl = document.getElementById('authSuccess');
 
     function showError(msg) {
+      successEl.classList.remove('show');
       errorEl.textContent = msg;
       errorEl.classList.add('show');
+    }
+
+    function showSuccess(msg) {
+      errorEl.classList.remove('show');
+      successEl.textContent = msg;
+      successEl.classList.add('show');
     }
 
     loginBtn.addEventListener('click', async () => {
@@ -114,6 +153,7 @@
       loginBtn.disabled = true;
       loginBtn.textContent = 'Signing in…';
       errorEl.classList.remove('show');
+      successEl.classList.remove('show');
 
       try {
         const cred = await signInWithEmailAndPassword(auth, email, pass);
@@ -129,6 +169,22 @@
           'auth/invalid-email':          'Please enter a valid email address.',
         };
         showError(msgs[e.code] || 'Sign-in failed. Please try again.');
+      }
+    });
+
+    /* Forgot Password handler */
+    forgotBtn.addEventListener('click', async () => {
+      const email = emailEl.value.trim();
+      if (!email) {
+        showError('Please type your email address first, then click Forgot Password.');
+        emailEl.focus();
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showSuccess(`Password reset email sent to ${email}! Check your inbox to set a new password.`);
+      } catch (e) {
+        showError(e.message || 'Could not send reset email. Verify your email address.');
       }
     });
 
