@@ -9,13 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.6"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.8"/>
 
   <style>
     .modal-overlay {
       position:fixed; inset:0;
-      background:rgba(0,0,0,0.75);
-      z-index:500;
+      background:rgba(0,0,0,0.82);
+      z-index:900;
       display:flex; align-items:center; justify-content:center;
       padding:20px;
       display:none;
@@ -26,7 +26,7 @@
       border:1px solid var(--gold-border);
       border-radius:14px;
       padding:36px;
-      width:100%; max-width:520px;
+      width:100%; max-width:540px;
       max-height:90vh;
       overflow-y:auto;
       position:relative;
@@ -59,6 +59,29 @@
     }
     .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #28C840; animation: pulseDot 1.5s infinite; }
     @keyframes pulseDot { 0%,100%{ opacity: 1; } 50%{ opacity: 0.3; } }
+
+    .btn-danger {
+      background: rgba(255,77,77,0.15); border: 1px solid rgba(255,77,77,0.4);
+      color: #FF4D4D; font-size: 11px; padding: 4px 10px; border-radius: 4px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-danger:hover { background: #FF4D4D; color: #fff; }
+
+    /* Admin Chat Overlook Grid */
+    .chat-overlook-grid {
+      display: grid; grid-template-columns: 240px 1fr; gap: 20px; height: 500px;
+    }
+    .chat-proj-list {
+      background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+      border-radius: 8px; overflow-y: auto; padding: 10px;
+    }
+    .chat-proj-item {
+      padding: 10px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+      margin-bottom: 6px; border: 1px solid transparent; transition: all 0.2s;
+    }
+    .chat-proj-item:hover, .chat-proj-item.active {
+      background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold);
+    }
   </style>
 </head>
 <body>
@@ -76,8 +99,10 @@
         <div class="sidebar-nav-item active" data-section="overview"><span class="nav-icon">📊</span> Dashboard</div>
         <div class="sidebar-nav-section">Management</div>
         <div class="sidebar-nav-item" data-section="projects"><span class="nav-icon">📁</span> All Projects</div>
-        <div class="sidebar-nav-item" data-section="editors"><span class="nav-icon">🎬</span> Editors</div>
+        <div class="sidebar-nav-item" data-section="editors"><span class="nav-icon">🎬</span> Editors &amp; Staff</div>
         <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients</div>
+        <div class="sidebar-nav-section">Communication</div>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat Overlook</div>
         <div class="sidebar-nav-section">Finance</div>
         <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; Tax Confirmations</div>
       </nav>
@@ -150,17 +175,17 @@
         </div>
       </section>
 
-      <!-- EDITORS -->
+      <!-- EDITORS & STAFF -->
       <section id="sec-editors" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">Video <em>Editors</em></div>
+          <div class="dash-page-title">Editors &amp; <em>Staff Controls</em></div>
           <button class="btn-gold" id="btnNewEditor">＋ Add Editor</button>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
-              <thead><tr><th>Name</th><th>Email</th><th>Active Projects</th><th>Actions</th></tr></thead>
-              <tbody id="editorsTbody"><tr><td colspan="4" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active Projects</th><th>Actions</th></tr></thead>
+              <tbody id="editorsTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -169,7 +194,7 @@
       <!-- CLIENTS -->
       <section id="sec-clients" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">Clients <em>(Real-time)</em></div>
+          <div class="dash-page-title">Clients <em>Directory</em></div>
           <button class="btn-gold" id="btnNewClient">＋ Add Client</button>
         </div>
         <div class="dash-card">
@@ -178,6 +203,28 @@
               <thead><tr><th>Name</th><th>Email</th><th>Projects</th><th>Assigned Editor</th><th>Actions</th></tr></thead>
               <tbody id="clientsTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIVE CHAT OVERLOOK -->
+      <section id="sec-chat" style="display:none;">
+        <div class="dash-topbar">
+          <div class="dash-page-title">Live <em>Chat Overlook</em></div>
+        </div>
+        <div class="dash-card">
+          <div class="chat-overlook-grid">
+            <div class="chat-proj-list" id="adminChatProjList">
+              <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Select Project Chat</div>
+            </div>
+            <div class="chat-container">
+              <div style="font-size:0.9rem;font-weight:600;padding:12px;border-bottom:1px solid var(--border);color:var(--gold);" id="adminChatHeader">Select a project from the left to view &amp; chat</div>
+              <div class="chat-messages" id="adminChatMessages"></div>
+              <div class="chat-input-row">
+                <input class="chat-input" id="adminChatInput" placeholder="Send a message as Admin…"/>
+                <button class="btn-gold" id="btnAdminSendMsg">Send</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -280,7 +327,7 @@
     import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, setDoc,
+    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, setDoc,
              query, orderBy, onSnapshot, serverTimestamp }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -297,7 +344,7 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    let currentUser = null;
+    let currentUser = null, activeAdminChatPid = null, adminChatUnsub = null;
     let projects=[], editors=[], clients=[];
 
     onAuthStateChanged(auth, async (user) => {
@@ -310,7 +357,6 @@
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('/dashboard/index.html')));
 
     function initRealtimeListeners() {
-      // Real-time Users listener: non-admin and non-editor are treated as Clients so no client is EVER hidden!
       onSnapshot(collection(db, 'users'), (snap) => {
         const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
@@ -320,7 +366,7 @@
 
       onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snap) => {
         projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices();
+        renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices(); renderChatProjectList();
       });
     }
 
@@ -362,7 +408,7 @@
     }
 
     function renderAllProjects(filterStatus='', filterEditorId='') {
-      const tbody = document.getElementById('allProjectsTable').querySelector('tbody');
+      const tbody = document.getElementById('allProjectsTbody');
       let list = [...projects];
       if (filterStatus)   list = list.filter(p=>p.status===filterStatus);
       if (filterEditorId) list = list.filter(p=>p.editorId===filterEditorId);
@@ -375,30 +421,118 @@
           <td>${badge(p.status)}</td>
           <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ GST Invoice':'⏳ Receipt Only'}</span><br><small style="color:var(--t3);">₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</small></td>
           <td>${dateStr(p.deadline)}</td>
-          <td><button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Edit</button></td>
+          <td>
+            <button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false})">Edit</button>
+            <button class="btn-danger" onclick="deleteProject('${p.id}')">Delete</button>
+          </td>
         </tr>`).join('');
     }
 
     document.getElementById('filterStatus').addEventListener('change', e=>renderAllProjects(e.target.value, document.getElementById('filterEditor').value));
     document.getElementById('filterEditor').addEventListener('change', e=>renderAllProjects(document.getElementById('filterStatus').value, e.target.value));
 
+    /* EDITORS MANAGEMENT WITH DELETE & EDIT */
     function renderEditors() {
       const tbody = document.getElementById('editorsTbody');
-      if (!editors.length) { tbody.innerHTML='<tr><td colspan="4" style="color:var(--t3);text-align:center;padding:24px;">No editors added yet. Click "+ Add Editor" to register freelancers.</td></tr>'; return; }
+      if (!editors.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No editors added yet. Click "+ Add Editor" to register freelancers.</td></tr>'; return; }
       tbody.innerHTML = editors.map(e=>{
         const activeCount = projects.filter(p=>p.editorId===e.id && p.status!=='done').length;
-        return `<tr><td><strong>${e.name||'Editor'}</strong></td><td>${e.email}</td><td>${activeCount}</td><td>—</td></tr>`;
+        return `
+        <tr>
+          <td><strong>${e.name||'Editor'}</strong></td>
+          <td>${e.email}</td>
+          <td><span class="status-badge invoice-paid">🎬 Video Editor</span></td>
+          <td>${activeCount}</td>
+          <td>
+            <button class="btn-outline btn-sm" onclick="openModal('modalNewProject')">＋ Assign Project</button>
+            <button class="btn-danger" onclick="deleteUser('${e.id}','${e.name||e.email}')">Delete</button>
+          </td>
+        </tr>`;
       }).join('');
     }
 
+    /* CLIENTS MANAGEMENT WITH DELETE & EDIT */
     function renderClients() {
       const tbody = document.getElementById('clientsTbody');
       if (!clients.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
       tbody.innerHTML = clients.map(c=>{
         const projCount = projects.filter(p=>p.clientId===c.id).length;
-        return `<tr><td><strong>${c.name||'Client'}</strong></td><td>${c.email}</td><td>${projCount}</td><td>${nameOf(c.assignedEditor)||'—'}</td><td><button class="btn-gold btn-sm" onclick="openModal('modalNewProject');document.getElementById('np-client').value='${c.id}'">＋ Add Project</button></td></tr>`;
+        return `
+        <tr>
+          <td><strong>${c.name||'Client'}</strong></td>
+          <td>${c.email}</td>
+          <td>${projCount}</td>
+          <td>${nameOf(c.assignedEditor)||'—'}</td>
+          <td>
+            <button class="btn-gold btn-sm" onclick="openModal('modalNewProject');document.getElementById('np-client').value='${c.id}'">＋ Add Project</button>
+            <button class="btn-danger" onclick="deleteUser('${c.id}','${c.name||c.email}')">Delete</button>
+          </td>
+        </tr>`;
       }).join('');
     }
+
+    /* DELETE USER (CLIENT OR EDITOR) */
+    window.deleteUser = async (uid, uname) => {
+      if (confirm(`Are you sure you want to delete user "${uname}"? This cannot be undone.`)) {
+        await deleteDoc(doc(db, 'users', uid));
+        showToast(`User "${uname}" deleted.`, 'success');
+      }
+    };
+
+    /* DELETE PROJECT */
+    window.deleteProject = async (pid) => {
+      if (confirm('Delete this project?')) {
+        await deleteDoc(doc(db, 'projects', pid));
+        showToast('Project deleted.', 'success');
+      }
+    };
+
+    /* LIVE CHAT OVERLOOK */
+    function renderChatProjectList() {
+      const listEl = document.getElementById('adminChatProjList');
+      if (!projects.length) { listEl.innerHTML='<div style="color:var(--t3);padding:10px;">No active project chats</div>'; return; }
+      listEl.innerHTML = '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Select Project Chat</div>' +
+        projects.map(p=>`
+          <div class="chat-proj-item ${p.id===activeAdminChatPid?'active':''}" onclick="openAdminChat('${p.id}','${p.title}')">
+            <strong>${p.title||'Untitled'}</strong><br/>
+            <small style="color:var(--t3);">${nameOf(p.clientId)} ↔ ${nameOf(p.editorId)}</small>
+          </div>`).join('');
+    }
+
+    window.openAdminChat = (pid, title) => {
+      activeAdminChatPid = pid;
+      document.getElementById('adminChatHeader').textContent = `💬 Chat: ${title} (${nameOf(projects.find(p=>p.id===pid)?.clientId)})`;
+      renderChatProjectList();
+
+      if (adminChatUnsub) adminChatUnsub();
+      const q = query(collection(db,'projects',pid,'chat'),orderBy('timestamp','asc'));
+      adminChatUnsub = onSnapshot(q, snap => {
+        const container = document.getElementById('adminChatMessages');
+        container.innerHTML = '';
+        snap.docs.forEach(d => {
+          const m = d.data();
+          const div = document.createElement('div');
+          div.className = 'chat-msg ' + (m.senderId === currentUser.uid ? 'mine' : 'theirs');
+          div.innerHTML = `<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
+            <div class="chat-msg-bubble">${m.text}</div>`;
+          container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+      });
+    };
+
+    document.getElementById('btnAdminSendMsg').addEventListener('click', async () => {
+      const input = document.getElementById('adminChatInput');
+      const text  = input.value.trim();
+      if (!text || !activeAdminChatPid) return;
+      input.value = '';
+      await addDoc(collection(db, 'projects', activeAdminChatPid, 'chat'), {
+        senderId:   currentUser.uid,
+        senderName: '👑 Admin (Editzaar)',
+        text: text,
+        timestamp: serverTimestamp()
+      });
+    });
 
     function renderInvoices() {
       const tbody = document.getElementById('invoicesTbody');
@@ -502,7 +636,7 @@
       } catch(e){ showToast(e.message,'error'); }
     });
 
-    const sections = ['overview','projects','editors','clients','invoices'];
+    const sections = ['overview','projects','editors','clients','chat','invoices'];
     function showSection(name) {
       sections.forEach(s=>{ document.getElementById('sec-'+s).style.display = s===name?'block':'none'; });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.section===name));
