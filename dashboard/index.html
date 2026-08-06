@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.1"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=4.3"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -154,16 +154,28 @@
 
     /* Auto-redirect if already logged in */
     onAuthStateChanged(auth, async (user) => {
-      if (user) { await redirectByRole(user.uid); }
+      if (user) { await redirectByRole(user); }
     });
 
-    async function redirectByRole(uid) {
+    async function redirectByRole(user) {
       try {
-        const snap = await getDoc(doc(db, 'users', uid));
+        const userRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(userRef);
         let role = 'client';
-        if (snap.exists() && snap.data().role) {
+
+        if (!snap.exists()) {
+          // If user exists in Auth but not in Firestore, auto-create document as client!
+          const defaultName = user.displayName || user.email.split('@')[0];
+          await setDoc(userRef, {
+            name: defaultName,
+            email: user.email,
+            role: 'client',
+            createdAt: serverTimestamp()
+          });
+        } else if (snap.data().role) {
           role = snap.data().role;
         }
+
         if (role === 'admin')       window.location.replace('/dashboard/admin.html');
         else if (role === 'editor') window.location.replace('/dashboard/editor.html');
         else                        window.location.replace('/dashboard/client.html');
@@ -238,13 +250,12 @@
       const pass  = passEl.value;
       const name  = nameEl.value.trim();
 
-      // 3-second safety timer so button NEVER freezes
       const safetyTimer = setTimeout(() => {
         resetButton();
         if (mode === 'signin') {
-          showError('Sign in is taking longer than expected. If this email is new, please click "CREATE ACCOUNT" tab above to register first.');
+          showError('Account not found with this password. Click "CREATE ACCOUNT" tab above to register first!');
         }
-      }, 3500);
+      }, 4000);
 
       if (mode === 'signin') {
         if (!email || !pass) { clearTimeout(safetyTimer); showError('Please enter your email and password.'); return; }
@@ -254,11 +265,11 @@
         try {
           const cred = await signInWithEmailAndPassword(auth, email, pass);
           clearTimeout(safetyTimer);
-          await redirectByRole(cred.user.uid);
+          await redirectByRole(cred.user);
         } catch (e) {
           clearTimeout(safetyTimer);
           const msgs = {
-            'auth/invalid-credential': 'Account not found or password incorrect. If you are a new client, click "CREATE ACCOUNT" tab above to register!',
+            'auth/invalid-credential': 'Account not found or password incorrect. Click "CREATE ACCOUNT" tab above to register!',
             'auth/user-not-found':     'Account not found. Click "CREATE ACCOUNT" tab above to register!',
             'auth/wrong-password':     'Incorrect password. Click "Forgot password?" below to reset it.',
             'auth/invalid-email':      'Please enter a valid email address.',
@@ -287,7 +298,7 @@
         } catch (e) {
           clearTimeout(safetyTimer);
           const msgs = {
-            'auth/email-already-in-use': 'An account already exists with this email address. Click "Sign In" tab to log in.',
+            'auth/email-already-in-use': 'An account already exists with this email address. Click "Sign In" tab.',
             'auth/invalid-email':        'Please enter a valid email address.',
             'auth/weak-password':        'Password should be at least 6 characters.',
           };
