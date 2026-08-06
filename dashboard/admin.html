@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
 
   <style>
-    /* Modal */
     .modal-overlay {
       position:fixed; inset:0;
       background:rgba(0,0,0,0.75);
@@ -39,7 +38,6 @@
       font-size:1.4rem; cursor:pointer; transition:color 0.2s;
     }
     .modal-close:hover { color:var(--gold); }
-    /* Filter row */
     .filter-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
     .filter-select {
       background:rgba(255,255,255,0.04);
@@ -53,8 +51,14 @@
       transition:border-color 0.2s;
     }
     .filter-select:focus { border-color:var(--gold); }
-    /* Overview pills */
-    .income-display { font-family:var(--font-h); font-size:2rem; color:var(--gold); }
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 600; color: #28C840;
+      background: rgba(40,200,64,0.1); border: 1px solid rgba(40,200,64,0.3);
+      padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #28C840; animation: pulseDot 1.5s infinite; }
+    @keyframes pulseDot { 0%,100%{ opacity: 1; } 50%{ opacity: 0.3; } }
   </style>
 </head>
 <body>
@@ -86,20 +90,23 @@
     <!-- MAIN -->
     <main class="dash-main">
 
-      <!-- ── SECTION: OVERVIEW ── -->
+      <!-- OVERVIEW -->
       <section id="sec-overview">
         <div class="dash-topbar">
-          <div class="dash-page-title">Good morning, <em>Admin</em> 👋</div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div class="dash-page-title">Admin <em>Dashboard</em></div>
+            <div class="live-badge"><div class="live-dot"></div> Live Sync</div>
+          </div>
           <button class="btn-gold" id="btnNewProject">＋ New Project</button>
         </div>
 
         <div class="stats-row" id="statsRow">
-          <div class="stat-card"><div class="stat-card-label">Total Projects</div><div class="stat-card-value" id="statTotal">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Active</div><div class="stat-card-value" id="statActive">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Revenue (Paid)</div><div class="stat-card-value" id="statRevenue">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Editors</div><div class="stat-card-value" id="statEditors">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Clients</div><div class="stat-card-value" id="statClients">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Total Projects</div><div class="stat-card-value" id="statTotal">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Active</div><div class="stat-card-value" id="statActive">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Revenue (Paid)</div><div class="stat-card-value" id="statRevenue">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Editors</div><div class="stat-card-value" id="statEditors">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Clients</div><div class="stat-card-value" id="statClients">0</div></div>
         </div>
 
         <div class="dash-card">
@@ -110,13 +117,13 @@
           <div style="overflow-x:auto;">
             <table class="dash-table" id="recentProjectsTable">
               <thead><tr><th>Project</th><th>Client</th><th>Editor</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
-              <tbody id="recentProjectsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <tbody id="recentProjectsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Listening for live updates…</td></tr></tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- ── SECTION: ALL PROJECTS ── -->
+      <!-- ALL PROJECTS -->
       <section id="sec-projects" style="display:none;">
         <div class="dash-topbar">
           <div class="dash-page-title">All <em>Projects</em></div>
@@ -143,7 +150,7 @@
         </div>
       </section>
 
-      <!-- ── SECTION: EDITORS ── -->
+      <!-- EDITORS -->
       <section id="sec-editors" style="display:none;">
         <div class="dash-topbar">
           <div class="dash-page-title">Video <em>Editors</em></div>
@@ -159,10 +166,10 @@
         </div>
       </section>
 
-      <!-- ── SECTION: CLIENTS ── -->
+      <!-- CLIENTS -->
       <section id="sec-clients" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">Clients</div>
+          <div class="dash-page-title">Clients <em>(Real-time)</em></div>
           <button class="btn-gold" id="btnNewClient">＋ Add Client</button>
         </div>
         <div class="dash-card">
@@ -175,15 +182,15 @@
         </div>
       </section>
 
-      <!-- ── SECTION: INVOICES ── -->
+      <!-- INVOICES -->
       <section id="sec-invoices" style="display:none;">
         <div class="dash-topbar">
           <div class="dash-page-title"><em>Invoices</em></div>
         </div>
         <div class="stats-row" style="margin-bottom:24px;">
-          <div class="stat-card"><div class="stat-card-label">Total Invoiced</div><div class="stat-card-value" id="invTotal">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Collected</div><div class="stat-card-value" id="invPaid" style="color:var(--green);">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Outstanding</div><div class="stat-card-value" id="invUnpaid" style="color:var(--red);">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Total Invoiced</div><div class="stat-card-value" id="invTotal">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Collected</div><div class="stat-card-value" id="invPaid" style="color:var(--green);">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Outstanding</div><div class="stat-card-value" id="invUnpaid" style="color:var(--red);">₹0</div></div>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
@@ -198,7 +205,7 @@
     </main>
   </div>
 
-  <!-- ══ MODAL: New Project ══ -->
+  <!-- MODALS -->
   <div class="modal-overlay" id="modalNewProject">
     <div class="modal-box">
       <button class="modal-close" data-close="modalNewProject">✕</button>
@@ -215,7 +222,6 @@
     </div>
   </div>
 
-  <!-- ══ MODAL: New Editor ══ -->
   <div class="modal-overlay" id="modalNewEditor">
     <div class="modal-box">
       <button class="modal-close" data-close="modalNewEditor">✕</button>
@@ -229,7 +235,6 @@
     </div>
   </div>
 
-  <!-- ══ MODAL: New Client ══ -->
   <div class="modal-overlay" id="modalNewClient">
     <div class="modal-box">
       <button class="modal-close" data-close="modalNewClient">✕</button>
@@ -244,7 +249,6 @@
     </div>
   </div>
 
-  <!-- ══ MODAL: Edit Project Status ══ -->
   <div class="modal-overlay" id="modalEditStatus">
     <div class="modal-box">
       <button class="modal-close" data-close="modalEditStatus">✕</button>
@@ -276,8 +280,8 @@
     import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc,
-             query, where, orderBy, serverTimestamp }
+    import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, setDoc,
+             query, orderBy, onSnapshot, serverTimestamp }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -293,45 +297,35 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    /* ── Auth Guard ── */
     let currentUser = null;
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.replace('/dashboard/index.html'); return; }
-      const snap = await getDoc(doc(db, 'users', user.uid));
-      if (!snap.exists()) {
-        window.location.replace('/dashboard/client.html');
-        return;
-      }
-      const role = snap.data().role;
-      if (role !== 'admin') {
-        window.location.replace(role === 'editor' ? '/dashboard/editor.html' : '/dashboard/client.html');
-        return;
-      }
-      currentUser = user;
-      document.getElementById('adminEmail').textContent = user.email;
-      loadAll();
-    });
-
-    document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => location.href='/dashboard/index.html'));
-
-    /* ── Cache ── */
     let projects=[], editors=[], clients=[];
 
-    async function loadAll() {
-      const [pSnap, uSnap] = await Promise.all([
-        getDocs(query(collection(db,'projects'), orderBy('createdAt','desc'))),
-        getDocs(collection(db,'users'))
-      ]);
-      projects = pSnap.docs.map(d=>({id:d.id,...d.data()}));
-      const users = uSnap.docs.map(d=>({id:d.id,...d.data()}));
-      editors = users.filter(u=>u.role==='editor');
-      clients = users.filter(u=>u.role==='client');
-      renderStats(); renderRecentProjects(); renderAllProjects();
-      renderEditors(); renderClients(); renderInvoices();
-      populateSelects();
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.replace('/dashboard/index.html'); return; }
+      currentUser = user;
+      document.getElementById('adminEmail').textContent = user.email;
+      initRealtimeListeners();
+    });
+
+    document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('/dashboard/index.html')));
+
+    /* Real-Time Listeners */
+    function initRealtimeListeners() {
+      // Real-time Users listener
+      onSnapshot(collection(db, 'users'), (snap) => {
+        const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        editors = users.filter(u => u.role === 'editor');
+        clients = users.filter(u => u.role === 'client');
+        renderStats(); renderEditors(); renderClients(); populateSelects();
+      });
+
+      // Real-time Projects listener
+      onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snap) => {
+        projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices();
+      });
     }
 
-    /* ── Stats ── */
     function renderStats() {
       document.getElementById('statTotal').textContent   = projects.length;
       document.getElementById('statActive').textContent  = projects.filter(p=>p.status!=='done').length;
@@ -342,28 +336,22 @@
       document.getElementById('statClients').textContent = clients.length;
     }
 
-    /* ── Status Badge HTML ── */
     const STATUS_LABELS = {pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision',done:'Done'};
-    function badge(status) {
-      return `<span class="status-badge status-${status}">${STATUS_LABELS[status]||status}</span>`;
-    }
-
+    function badge(status) { return `<span class="status-badge status-${status}">${STATUS_LABELS[status]||status}</span>`; }
     function nameOf(uid) {
       const u = [...editors,...clients].find(u=>u.id===uid);
       return u ? u.name : (uid ? uid.substring(0,8)+'…' : '—');
     }
-
     function dateStr(ts) {
       if (!ts) return '—';
       const d = ts.toDate ? ts.toDate() : new Date(ts);
       return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
     }
 
-    /* ── Recent Projects ── */
     function renderRecentProjects() {
       const tbody = document.getElementById('recentProjectsTbody');
       const slice = projects.slice(0,8);
-      if (!slice.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No projects yet.</td></tr>'; return; }
+      if (!slice.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No projects yet. Click "+ New Project" to create one.</td></tr>'; return; }
       tbody.innerHTML = slice.map(p=>`
         <tr>
           <td><strong>${p.title||'Untitled'}</strong></td>
@@ -375,7 +363,6 @@
         </tr>`).join('');
     }
 
-    /* ── All Projects ── */
     function renderAllProjects(filterStatus='', filterEditorId='') {
       const tbody = document.getElementById('allProjectsTbody');
       let list = [...projects];
@@ -397,27 +384,24 @@
     document.getElementById('filterStatus').addEventListener('change', e=>renderAllProjects(e.target.value, document.getElementById('filterEditor').value));
     document.getElementById('filterEditor').addEventListener('change', e=>renderAllProjects(document.getElementById('filterStatus').value, e.target.value));
 
-    /* ── Editors ── */
     function renderEditors() {
       const tbody = document.getElementById('editorsTbody');
-      if (!editors.length) { tbody.innerHTML='<tr><td colspan="4" style="color:var(--t3);text-align:center;padding:24px;">No editors added yet.</td></tr>'; return; }
+      if (!editors.length) { tbody.innerHTML='<tr><td colspan="4" style="color:var(--t3);text-align:center;padding:24px;">No editors added yet. Click "+ Add Editor" to register freelancers.</td></tr>'; return; }
       tbody.innerHTML = editors.map(e=>{
         const activeCount = projects.filter(p=>p.editorId===e.id && p.status!=='done').length;
         return `<tr><td><strong>${e.name}</strong></td><td>${e.email}</td><td>${activeCount}</td><td>—</td></tr>`;
       }).join('');
     }
 
-    /* ── Clients ── */
     function renderClients() {
       const tbody = document.getElementById('clientsTbody');
-      if (!clients.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No clients added yet.</td></tr>'; return; }
+      if (!clients.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
       tbody.innerHTML = clients.map(c=>{
         const projCount = projects.filter(p=>p.clientId===c.id).length;
         return `<tr><td><strong>${c.name}</strong></td><td>${c.email}</td><td>${projCount}</td><td>${nameOf(c.assignedEditor)||'—'}</td><td>—</td></tr>`;
       }).join('');
     }
 
-    /* ── Invoices ── */
     function renderInvoices() {
       const tbody = document.getElementById('invoicesTbody');
       const withInv = projects.filter(p=>p.invoiceAmount>0);
@@ -438,9 +422,7 @@
         </tr>`).join('');
     }
 
-    /* ── Populate Selects ── */
     function populateSelects() {
-      ['np-client','nc-editor'].forEach(id=>{});
       const clientOpts  = clients.map(c=>`<option value="${c.id}">${c.name} (${c.email})</option>`).join('');
       const editorOpts  = editors.map(e=>`<option value="${e.id}">${e.name} (${e.email})</option>`).join('');
       const filterEdSel = document.getElementById('filterEditor');
@@ -450,7 +432,6 @@
       document.getElementById('nc-editor').innerHTML = '<option value="">Select editor…</option>' + editorOpts;
     }
 
-    /* ── Create Project ── */
     document.getElementById('btnCreateProject').addEventListener('click', async ()=>{
       const title    = document.getElementById('np-title').value.trim();
       const desc     = document.getElementById('np-desc').value.trim();
@@ -467,10 +448,8 @@
       });
       showToast('Project created! ✅','success');
       closeModal('modalNewProject');
-      loadAll();
     });
 
-    /* ── Edit Status ── */
     window.openEditStatus = (pid,status,amount,paid) => {
       document.getElementById('es-pid').value    = pid;
       document.getElementById('es-status').value = status;
@@ -487,32 +466,24 @@
       await updateDoc(doc(db,'projects',pid),{ status, invoiceAmount:amount, invoicePaid:paid });
       showToast('Project updated! ✅','success');
       closeModal('modalEditStatus');
-      loadAll();
     });
 
-    /* ── Create Editor (Firebase Auth + Firestore) ── */
     document.getElementById('btnCreateEditor').addEventListener('click', async ()=>{
       const name  = document.getElementById('ne-name').value.trim();
       const email = document.getElementById('ne-email').value.trim();
       const pass  = document.getElementById('ne-pass').value;
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       try {
-        // Note: This creates auth in context of admin — works with Admin SDK in prod
-        // For client-side, we use a secondary app instance
-        const secondaryApp  = initializeApp(firebaseConfig, 'secondary');
+        const secondaryApp  = initializeApp(firebaseConfig, 'sec_editor');
         const secondaryAuth = getAuth(secondaryApp);
         const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
         await secondaryAuth.signOut();
-        await doc(db,'users',cred.user.uid);
-        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
         await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'editor', createdAt: serverTimestamp() });
         showToast(`Editor "${name}" added! ✅`,'success');
         closeModal('modalNewEditor');
-        loadAll();
       } catch(e){ showToast(e.message,'error'); }
     });
 
-    /* ── Create Client ── */
     document.getElementById('btnCreateClient').addEventListener('click', async ()=>{
       const name         = document.getElementById('nc-name').value.trim();
       const email        = document.getElementById('nc-email').value.trim();
@@ -520,59 +491,38 @@
       const assignedEditor = document.getElementById('nc-editor').value;
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       try {
-        const secondaryApp  = initializeApp(firebaseConfig, 'secondary2');
+        const secondaryApp  = initializeApp(firebaseConfig, 'sec_client');
         const secondaryAuth = getAuth(secondaryApp);
         const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
         await secondaryAuth.signOut();
-        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
         await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', assignedEditor, createdAt: serverTimestamp() });
         showToast(`Client "${name}" added! ✅`,'success');
         closeModal('modalNewClient');
-        loadAll();
       } catch(e){ showToast(e.message,'error'); }
     });
 
-    /* ── Section Switching ── */
     const sections = ['overview','projects','editors','clients','invoices'];
     function showSection(name) {
-      sections.forEach(s=>{
-        document.getElementById('sec-'+s).style.display = s===name?'block':'none';
-      });
-      document.querySelectorAll('.sidebar-nav-item').forEach(el=>{
-        el.classList.toggle('active', el.dataset.section===name);
-      });
+      sections.forEach(s=>{ document.getElementById('sec-'+s).style.display = s===name?'block':'none'; });
+      document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.section===name));
     }
     window.showSection = showSection;
-    document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>{
-      el.addEventListener('click',()=>showSection(el.dataset.section));
-    });
+    document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
 
-    /* ── Modals ── */
     function openModal(id)  { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
     document.getElementById('btnNewProject').addEventListener('click',()=>openModal('modalNewProject'));
     document.getElementById('btnNewProject2').addEventListener('click',()=>openModal('modalNewProject'));
     document.getElementById('btnNewEditor').addEventListener('click',()=>openModal('modalNewEditor'));
     document.getElementById('btnNewClient').addEventListener('click',()=>openModal('modalNewClient'));
-    document.querySelectorAll('.modal-close').forEach(btn=>{
-      btn.addEventListener('click',()=>closeModal(btn.dataset.close));
-    });
-    document.querySelectorAll('.modal-overlay').forEach(m=>{
-      m.addEventListener('click',e=>{ if(e.target===m) closeModal(m.id); });
-    });
+    document.querySelectorAll('.modal-close').forEach(btn=>btn.addEventListener('click',()=>closeModal(btn.dataset.close)));
+    document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) closeModal(m.id); }));
 
-    /* ── Toast ── */
     function showToast(msg, type='success') {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast '+type+' show';
+      const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast '+type+' show';
       setTimeout(()=>t.classList.remove('show'), 3500);
     }
-
-    /* ── Mobile Sidebar ── */
-    document.getElementById('sidebarToggle').addEventListener('click',()=>{
-      document.getElementById('sidebar').classList.toggle('open');
-    });
+    document.getElementById('sidebarToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
   </script>
 </body>
 </html>

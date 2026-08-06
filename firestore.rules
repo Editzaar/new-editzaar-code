@@ -2,49 +2,28 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Helper functions ──
     function isSignedIn() {
       return request.auth != null;
     }
-    function userRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-    }
-    function isAdmin()  { return isSignedIn() && userRole() == 'admin'; }
-    function isEditor() { return isSignedIn() && userRole() == 'editor'; }
-    function isClient() { return isSignedIn() && userRole() == 'client'; }
 
     // ── Users collection ──
     match /users/{userId} {
-      // Admin: full access. Users: read their own profile only.
-      allow read:   if isAdmin() || request.auth.uid == userId;
-      allow write:  if isAdmin();
-      allow create: if isAdmin();
+      allow read:   if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update, delete: if isSignedIn() && (request.auth.uid == userId || resource.data.role == 'admin');
     }
 
     // ── Projects collection ──
     match /projects/{projectId} {
-      // Admin: full access
-      // Editor: read/update their assigned projects
-      // Client: read/update their own projects (for uploading footage)
-      allow read:   if isAdmin()
-                    || (isEditor() && resource.data.editorId == request.auth.uid)
-                    || (isClient() && resource.data.clientId == request.auth.uid);
-
-      allow create: if isAdmin();
-
-      allow update: if isAdmin()
-                    || (isEditor() && resource.data.editorId == request.auth.uid)
-                    || (isClient() && resource.data.clientId == request.auth.uid
-                        && request.resource.data.diff(resource.data).affectedKeys()
-                           .hasOnly(['rawFootageUrl']));
+      allow read:   if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
     }
 
-    // ── Chat messages (subcollection under projects) ──
+    // ── Chat messages ──
     match /projects/{projectId}/chat/{messageId} {
-      allow read, create: if isAdmin()
-        || (isEditor() && get(/databases/$(database)/documents/projects/$(projectId)).data.editorId == request.auth.uid)
-        || (isClient() && get(/databases/$(database)/documents/projects/$(projectId)).data.clientId == request.auth.uid);
-      allow update, delete: if false; // Messages are immutable
+      allow read, create: if isSignedIn();
+      allow update, delete: if false;
     }
   }
 }
