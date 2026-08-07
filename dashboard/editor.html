@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.7"/>
   <style>
     .link-input-box {
       background: rgba(255,255,255,0.03);
@@ -137,7 +137,7 @@
     import { getAuth, onAuthStateChanged, signOut }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc,
-             query, where, orderBy, onSnapshot, serverTimestamp }
+             query, where, onSnapshot, serverTimestamp }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -182,9 +182,10 @@
     }
 
     async function loadProjects() {
-      const q = query(collection(db,'projects'), where('editorId','==',currentUser.uid), orderBy('createdAt','desc'));
+      const q = query(collection(db,'projects'), where('editorId','==',currentUser.uid));
       const snap = await getDocs(q);
       const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
+      projects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
       document.getElementById('statTotal').textContent  = projects.length;
       document.getElementById('statActive').textContent = projects.filter(p=>p.status!=='done').length;
       document.getElementById('statDone').textContent   = projects.filter(p=>p.status==='done').length;
@@ -267,15 +268,16 @@
       showToast('Status updated to '+STATUS_LABELS[status],'success');
     };
 
-    /* Real-time Chat */
+    /* Real-time Chat with client-side sort */
     function loadChat(pid) {
       if (chatUnsub) chatUnsub();
-      const q = query(collection(db,'projects',pid,'chat'),orderBy('timestamp','asc'));
+      const q = collection(db,'projects',pid,'chat');
       chatUnsub = onSnapshot(q,snap=>{
         const container = document.getElementById('chatMessages');
         container.innerHTML='';
-        snap.docs.forEach(d=>{
-          const m=d.data();
+        const msgs = snap.docs.map(d=>d.data());
+        msgs.sort((a,b)=>(a.timestamp?.toMillis?a.timestamp.toMillis():0)-(b.timestamp?.toMillis?b.timestamp.toMillis():0));
+        msgs.forEach(m=>{
           const isMe=m.senderId===currentUser.uid;
           const div=document.createElement('div');
           div.className='chat-msg '+(isMe?'mine':'theirs');
