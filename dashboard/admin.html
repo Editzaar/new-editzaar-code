@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.6"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=6.0"/>
 
   <style>
     .modal-overlay {
@@ -354,7 +354,7 @@
   </div>
 
   <script type="module">
-    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, setDoc,
@@ -394,6 +394,7 @@
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('/dashboard/index.html')));
 
     function initRealtimeListeners() {
+      // Robust Users listener: Any user not explicitly an admin/editor is classified as Client
       onSnapshot(collection(db, 'users'), (snap) => {
         const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
@@ -401,6 +402,7 @@
         renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
       }, (err) => console.error('Users listener error:', err));
 
+      // Robust Projects listener: Client-side sorting eliminates missing composite index crashes
       onSnapshot(collection(db, 'projects'), (snap) => {
         projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         projects.sort((a, b) => {
@@ -517,7 +519,7 @@
         <tr>
           <td><strong>${c.name||'Client'}</strong></td>
           <td>${c.email}</td>
-          <td><span class="pass-pill">${c.tempPass||'password123'}</span></td>
+          <td><span class="pass-pill">${c.tempPass||'ClientPass123'}</span></td>
           <td>${projCount}</td>
           <td>
             <select class="editor-assign-select" onchange="assignClientEditor('${c.id}', this.value)">
@@ -687,7 +689,6 @@
       closeModal('modalEditStatus');
     });
 
-    /* FIX: Safe secondary app creation for manual editor addition */
     document.getElementById('btnCreateEditor').addEventListener('click', async ()=>{
       const name  = document.getElementById('ne-name').value.trim();
       const email = document.getElementById('ne-email').value.trim();
@@ -703,7 +704,6 @@
       } catch(e){ showToast(e.message,'error'); }
     });
 
-    /* FIX: Safe secondary app creation for manual client addition */
     document.getElementById('btnCreateClient').addEventListener('click', async ()=>{
       const name         = document.getElementById('nc-name').value.trim();
       const email        = document.getElementById('nc-email').value.trim();

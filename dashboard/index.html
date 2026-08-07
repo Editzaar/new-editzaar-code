@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.4"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=6.0"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -133,7 +133,7 @@
     import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, getDocs, serverTimestamp }
+    import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp }
                                      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -162,6 +162,7 @@
         const snap = await getDoc(userRef);
         let role = 'client';
 
+        // SELF-HEALING ENGINE: If Firestore document is missing, auto-create it immediately!
         if (!snap.exists()) {
           const defaultName = user.displayName || user.email.split('@')[0];
           role = user.email === 'editzaarbooking@gmail.com' ? 'admin' : 'client';
@@ -170,7 +171,7 @@
             name: defaultName,
             email: user.email,
             role: role,
-            tempPass: 'ClientAuth',
+            tempPass: 'ClientPass123',
             createdAt: serverTimestamp()
           });
 
@@ -182,10 +183,9 @@
               createdAt: serverTimestamp()
             });
 
-            // Create initial sample project so dashboard has real data
             const d = new Date(); d.setDate(d.getDate() + 3);
             await addDoc(collection(db, 'projects'), {
-              title: 'Shorts & Instagram Reels Pack — Tech & Growth',
+              title: 'Shorts & Instagram Reels Pack — Growth Launch',
               description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
               clientId: user.uid,
               clientGstin: '',
@@ -289,7 +289,7 @@
       } catch (e) {
         if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
           try {
-            submitBtn.textContent = 'Creating Account & Logging In…';
+            submitBtn.textContent = 'Initializing Account & Profile…';
             const newCred = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, 'users', newCred.user.uid), {
               name: name,
@@ -308,7 +308,7 @@
 
             const d = new Date(); d.setDate(d.getDate() + 3);
             await addDoc(collection(db, 'projects'), {
-              title: 'Shorts & Instagram Reels Pack — Tech & Growth',
+              title: 'Shorts & Instagram Reels Pack — Growth Launch',
               description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
               clientId: newCred.user.uid,
               clientGstin: '',
