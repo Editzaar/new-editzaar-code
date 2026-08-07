@@ -11,14 +11,63 @@
   </script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Core Agency Services | Editzaar — Video, Web & Paid Ads</title>
-  <meta name="description" content="Explore Editzaar's 4 core services: Video Post-Production, Website Development, Paid Advertising, and Social Media & Channel Growth."/>
-  <link rel="canonical" href="https://editzaar.in/pages/services.html"/>
-  <link rel="icon" type="image/png" href="../media/fav-logo.png">
+  <title>Core Agency Services | Editzaar — Video, Web &amp; Paid Ads</title>
+  <meta name="description" content="Explore Editzaar's 4 core services: Video Post-Production, Website Development, Paid Advertising, and Social Media &amp; Channel Growth."/>
+  <link rel="canonical" href="https://editzaar.in/services.html"/>
+  <link rel="icon" type="image/png" href="media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../css/style.css?v=3.0"/>
+  <link rel="stylesheet" href="css/style.css?v=3.2"/>
+  <style>
+    .srv-hero { padding: 110px 48px 50px; text-align: center; }
+    .srv-hero-h1 { font-size: clamp(2.5rem,5vw,4.2rem); font-weight: 300; margin-bottom: 20px; }
+    .srv-hero-sub { color: var(--t2); max-width: 650px; margin: 0 auto 36px; font-size: 1.05rem; line-height: 1.8; }
+    .srv-anchors { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .srv-anchor-btn {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--t1); padding: 8px 18px; border-radius: 20px; font-size: 12px;
+      letter-spacing: 0.06em; transition: all 0.25s;
+    }
+    .srv-anchor-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+    .srv-block-tag { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 600; }
+    .srv-block-title { font-size: 2.2rem; font-weight: 300; margin-bottom: 16px; line-height: 1.15; }
+    .srv-block-desc { color: var(--t2); font-size: 0.95rem; line-height: 1.8; margin-bottom: 24px; }
+    .srv-deliverables-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 14px; font-weight: 600; }
+    .srv-deliverables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 32px; }
+    .srv-deliv-item {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 6px; padding: 10px 14px; font-size: 0.85rem; color: var(--t2);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .srv-deliv-item::before { content: '✓'; color: var(--gold); font-weight: bold; }
+
+    /* Mockups */
+    .timeline-mockup, .browser-mockup {
+      background: #08080C; border: 1px solid var(--gold-border);
+      border-radius: 14px; overflow: hidden; padding: 20px;
+    }
+    .tm-topbar, .bm-topbar { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    .tm-dot, .bm-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .tm-dot.r { background: #FF5F57; } .tm-dot.y { background: #FEBC2E; } .tm-dot.g { background: #28C840; }
+    .tm-preview { height: 140px; background: rgba(255,184,0,0.04); border-radius: 8px; border: 1px dashed var(--gold-border); position: relative; overflow: hidden; margin-bottom: 14px; }
+    .tm-preview-scan { position: absolute; top:0; bottom:0; width: 2px; background: var(--gold); animation: scanLine 3s linear infinite; }
+    @keyframes scanLine { 0%{ left: 0%; } 100%{ left: 100%; } }
+    .tm-track-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .tm-track-label { font-size: 10px; color: var(--t3); width: 24px; }
+    .tm-track-bar { height: 16px; border-radius: 4px; flex: 1; }
+    .tm-bar-v1 { background: rgba(255,184,0,0.4); width: 85%; }
+    .tm-bar-v2 { background: rgba(74,144,226,0.4); width: 60%; }
+    .tm-bar-a1 { background: rgba(40,200,64,0.4); width: 92%; }
+    .tm-bar-a2 { background: rgba(155,81,224,0.4); width: 45%; }
+    .tm-bar-fx { background: rgba(242,153,74,0.4); width: 70%; }
+
+    .bm-url-bar { background: rgba(255,255,255,0.06); border-radius: 6px; padding: 4px 12px; font-size: 10px; color: var(--t2); flex: 1; text-align: center; }
+    .bm-speed-badge { background: rgba(40,200,64,0.15); border: 1px solid rgba(40,200,64,0.4); color: #28C840; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 12px; }
+    .bm-code { font-family: monospace; font-size: 11px; color: #A9B7C6; line-height: 1.7; background: #000; padding: 16px; border-radius: 8px; margin-bottom: 12px; }
+    .c-tag { color: #E8BF6A; } .c-attr { color: #BABABA; } .c-val { color: #6A8759; } .c-text { color: #FFF; }
+  </style>
 </head>
 <body>
 
@@ -33,9 +82,9 @@
       <li><a href="work.html">Work</a></li>
       <li><a href="pricing.html">Pricing</a></li>
       <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
-      <li><a href="../dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
+      <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
     </ul>
-    <a class="nav-cta" href="../dashboard/index.html">Client Login</a>
+    <a class="nav-cta" href="dashboard/index.html">Client Login</a>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
@@ -43,10 +92,10 @@
 
   <!-- HERO -->
   <section class="srv-hero">
-    <div class="eyebrow reveal">4 Core Service Pillars · Built to Scale</div>
-    <h1 class="srv-hero-h1 reveal reveal-d1">Everything your brand needs to <em>dominate.</em></h1>
-    <p class="srv-hero-sub reveal reveal-d2">We combine cinematic post-production, high-converting web systems, data-driven ad campaigns, and social media authority to turn your brand into an unstoppable growth engine.</p>
-    <div class="srv-anchors reveal reveal-d3">
+    <div class="eyebrow" style="justify-content:center;margin-bottom:16px;">4 Core Service Pillars · Built to Scale</div>
+    <h1 class="srv-hero-h1">Everything your brand needs to <em>dominate.</em></h1>
+    <p class="srv-hero-sub">We combine cinematic post-production, high-converting web systems, data-driven ad campaigns, and social media authority to turn your brand into an unstoppable growth engine.</p>
+    <div class="srv-anchors">
       <a href="#video-production" class="srv-anchor-btn">🎬 Video Production</a>
       <a href="#web-development" class="srv-anchor-btn">💻 Website Development</a>
       <a href="#paid-advertising" class="srv-anchor-btn">📈 Paid Advertising</a>
@@ -54,11 +103,9 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════
-       SERVICE 01 — VIDEO POST-PRODUCTION
-       ══════════════════════════════════════════════ -->
+  <!-- SERVICE 01 — VIDEO POST-PRODUCTION -->
   <section class="sec sec-alt" id="video-production">
-    <div class="srv-block reveal">
+    <div class="srv-block">
       <div>
         <div class="srv-block-tag">Core Service Pillar 01</div>
         <h2 class="srv-block-title">Video Post-Production &amp; <em>Motion VFX</em></h2>
@@ -74,10 +121,9 @@
           <div class="srv-deliv-item">3-Sec Hook Engineering</div>
           <div class="srv-deliv-item">48h Delivery Guarantee</div>
         </div>
-        <a href="https://wa.link/pz3w3p" target="_blank" class="btn-p">Book Your First Edit →</a>
+        <a href="pricing.html" class="btn-p">View Video Editing Pricing →</a>
       </div>
 
-      <!-- Animated Timeline NLE Mockup -->
       <div>
         <div class="timeline-mockup">
           <div class="tm-topbar">
@@ -90,40 +136,11 @@
             <div class="tm-preview-scan"></div>
           </div>
           <div class="tm-tracks">
-            <div class="tm-track-row">
-              <div class="tm-track-label">V1</div>
-              <div class="tm-track-bar tm-bar-v1"></div>
-            </div>
-            <div class="tm-track-row">
-              <div class="tm-track-label">V2</div>
-              <div class="tm-track-bar tm-bar-v2"></div>
-            </div>
-            <div class="tm-track-row">
-              <div class="tm-track-label">AUD</div>
-              <div class="tm-track-bar tm-bar-a1"></div>
-            </div>
-            <div class="tm-track-row">
-              <div class="tm-track-label">SFX</div>
-              <div class="tm-track-bar tm-bar-a2"></div>
-            </div>
-            <div class="tm-track-row">
-              <div class="tm-track-label">VFX</div>
-              <div class="tm-track-bar tm-bar-fx"></div>
-            </div>
-          </div>
-          <div class="waveform-eq">
-            <div class="weq-bar" style="--h:24px;--spd:0.5s;"></div>
-            <div class="weq-bar" style="--h:14px;--spd:0.7s;"></div>
-            <div class="weq-bar" style="--h:28px;--spd:0.4s;"></div>
-            <div class="weq-bar" style="--h:18px;--spd:0.6s;"></div>
-            <div class="weq-bar" style="--h:22px;--spd:0.55s;"></div>
-            <div class="weq-bar" style="--h:12px;--spd:0.8s;"></div>
-            <div class="weq-bar" style="--h:30px;--spd:0.45s;"></div>
-            <div class="weq-bar" style="--h:20px;--spd:0.65s;"></div>
-            <div class="weq-bar" style="--h:16px;--spd:0.7s;"></div>
-            <div class="weq-bar" style="--h:26px;--spd:0.5s;"></div>
-            <div class="weq-bar" style="--h:10px;--spd:0.9s;"></div>
-            <div class="weq-bar" style="--h:24px;--spd:0.48s;"></div>
+            <div class="tm-track-row"><div class="tm-track-label">V1</div><div class="tm-track-bar tm-bar-v1"></div></div>
+            <div class="tm-track-row"><div class="tm-track-label">V2</div><div class="tm-track-bar tm-bar-v2"></div></div>
+            <div class="tm-track-row"><div class="tm-track-label">AUD</div><div class="tm-track-bar tm-bar-a1"></div></div>
+            <div class="tm-track-row"><div class="tm-track-label">SFX</div><div class="tm-track-bar tm-bar-a2"></div></div>
+            <div class="tm-track-row"><div class="tm-track-label">VFX</div><div class="tm-track-bar tm-bar-fx"></div></div>
           </div>
           <div style="padding:8px 16px 12px;display:flex;justify-content:space-between;align-items:center;">
             <span style="font-size:10px;color:var(--t3);">00:00:00:00 → 00:03:28:14</span>
@@ -134,11 +151,9 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════
-       SERVICE 02 — WEBSITE DEVELOPMENT
-       ══════════════════════════════════════════════ -->
+  <!-- SERVICE 02 — WEBSITE DEVELOPMENT -->
   <section class="sec" id="web-development">
-    <div class="srv-block reveal" style="direction:ltr;">
+    <div class="srv-block">
       <div style="order:2;">
         <div class="srv-block-tag">Core Service Pillar 02</div>
         <h2 class="srv-block-title">Custom High-Converting <em>Web Development</em></h2>
@@ -157,7 +172,6 @@
         <a href="https://wa.link/pz3w3p" target="_blank" class="btn-p">Request a Website Quote →</a>
       </div>
 
-      <!-- Animated Browser Code Mockup -->
       <div style="order:1;">
         <div class="browser-mockup">
           <div class="bm-topbar">
@@ -171,7 +185,7 @@
           </div>
           <div class="bm-code">
             <div><span class="c-tag">&lt;section</span> <span class="c-attr">class</span>=<span class="c-val">"hero-conversion"</span><span class="c-tag">&gt;</span></div>
-            <div class="type-anim">  <span class="c-tag">&lt;h1&gt;</span><span class="c-text">Scale Your Brand Faster</span><span class="c-tag">&lt;/h1&gt;</span></div>
+            <div>  <span class="c-tag">&lt;h1&gt;</span><span class="c-text">Scale Your Brand Faster</span><span class="c-tag">&lt;/h1&gt;</span></div>
             <div>  <span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-val">"cta-convert"</span><span class="c-tag">&gt;</span></div>
             <div>    <span class="c-text">Book Now</span></div>
             <div>  <span class="c-tag">&lt;/button&gt;</span></div>
@@ -180,163 +194,46 @@
           <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;">
             <span style="font-size:9px;color:#28C840;font-weight:700;">⚡ 100/100 LIGHTHOUSE SPEED</span>
             <span style="font-size:9px;color:var(--gold);font-weight:700;">📱 MOBILE FIRST</span>
-            <span style="font-size:9px;color:#7B68EE;font-weight:700;">🔒 SSL + SEO READY</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════
-       SERVICE 03 — PAID ADVERTISING
-       ══════════════════════════════════════════════ -->
+  <!-- SERVICE 03 — PAID ADVERTISING -->
   <section class="sec sec-alt" id="paid-advertising">
-    <div class="srv-block reveal">
+    <div class="srv-block">
       <div>
         <div class="srv-block-tag">Core Service Pillar 03</div>
         <h2 class="srv-block-title">Paid Advertising &amp; <em>ROAS Optimization</em></h2>
         <p class="srv-block-desc">We architect full-funnel performance ad campaigns on Meta and Google that turn cold audiences into buyers. Our creative-first approach combines scroll-stopping video ads with precision audience targeting to maximize your return on ad spend.</p>
         <div class="srv-deliverables-title">Service Deliverables</div>
         <div class="srv-deliverables-grid">
-          <div class="srv-deliv-item">Meta &amp; Instagram Campaigns</div>
-          <div class="srv-deliv-item">Google Search &amp; Display</div>
-          <div class="srv-deliv-item">YouTube Pre-Roll Ads</div>
-          <div class="srv-deliv-item">Scroll-Stop Ad Creatives</div>
-          <div class="srv-deliv-item">A/B Creative Testing</div>
-          <div class="srv-deliv-item">ROAS Tracking Dashboard</div>
-          <div class="srv-deliv-item">Audience Retargeting</div>
-          <div class="srv-deliv-item">Monthly Performance Report</div>
+          <div class="srv-deliv-item">Meta &amp; Instagram Ad Campaigns</div>
+          <div class="srv-deliv-item">Google Video &amp; Search Ads</div>
+          <div class="srv-deliv-item">Direct Response Video Creatives</div>
+          <div class="srv-deliv-item">A/B Hook Variant Testing</div>
+          <div class="srv-deliv-item">Retargeting Funnels</div>
+          <div class="srv-deliv-item">ROAS Tracking &amp; Analytics</div>
         </div>
-        <a href="https://wa.link/pz3w3p" target="_blank" class="btn-p">Launch My Ad Campaign →</a>
+        <a href="https://wa.link/pz3w3p" target="_blank" class="btn-p">Book Ad Strategy Call →</a>
       </div>
 
-      <!-- Animated ROAS Chart Mockup -->
       <div>
-        <div class="chart-mockup">
-          <div class="chart-header">
-            <div class="chart-title">ROAS Performance</div>
-            <div class="chart-badge">🚀 +380% ROAS</div>
-          </div>
-          <div class="chart-bars">
-            <div class="chart-bar-wrap">
-              <div class="chart-bar" style="--target-h:25px;--d:0.2s;"></div>
-              <div class="chart-bar-label">W1</div>
+        <div class="browser-mockup" style="border-color:rgba(74,144,226,0.3);">
+          <div style="font-size:11px;color:#4A90E2;font-weight:700;letter-spacing:0.1em;margin-bottom:12px;text-transform:uppercase;">📊 META ADS PERFORMANCE</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+              <div style="font-size:9px;color:var(--t3);">ROAS</div>
+              <div style="font-family:var(--font-h);font-size:1.8rem;color:#28C840;">4.82x</div>
             </div>
-            <div class="chart-bar-wrap">
-              <div class="chart-bar" style="--target-h:38px;--d:0.4s;"></div>
-              <div class="chart-bar-label">W2</div>
-            </div>
-            <div class="chart-bar-wrap">
-              <div class="chart-bar" style="--target-h:52px;--d:0.6s;"></div>
-              <div class="chart-bar-label">W3</div>
-            </div>
-            <div class="chart-bar-wrap">
-              <div class="chart-bar" style="--target-h:45px;--d:0.8s;"></div>
-              <div class="chart-bar-label">W4</div>
-            </div>
-            <div class="chart-bar-wrap">
-              <div class="chart-bar" style="--target-h:68px;--d:1.0s;"></div>
-              <div class="chart-bar-label">W5</div>
-            </div>
-            <div class="chart-bar-wrap">
-              <div class="chart-bar" style="--target-h:82px;--d:1.2s;background:linear-gradient(to top,var(--gold),#FFD700);"></div>
-              <div class="chart-bar-label">W6</div>
+            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+              <div style="font-size:9px;color:var(--t3);">CTR (Click Rate)</div>
+              <div style="font-family:var(--font-h);font-size:1.8rem;color:var(--gold);">3.64%</div>
             </div>
           </div>
-          <div class="chart-line"></div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;">
-            <div style="text-align:center;">
-              <div style="font-family:var(--font-h);font-size:1.3rem;color:var(--gold);">3.8x</div>
-              <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;">Avg ROAS</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-family:var(--font-h);font-size:1.3rem;color:var(--gold);">₹2.4L</div>
-              <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;">Revenue Gen.</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-family:var(--font-h);font-size:1.3rem;color:var(--gold);">4.2%</div>
-              <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;">Avg CTR</div>
-            </div>
-          </div>
+          <div style="font-size:10px;color:var(--t2);">✓ High-Converting Video Ads Engineered for Direct Sales</div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════════
-       SERVICE 04 — SOCIAL MEDIA & CHANNEL GROWTH
-       ══════════════════════════════════════════════ -->
-  <section class="sec" id="social-growth">
-    <div class="srv-block reveal">
-      <div>
-        <div class="srv-block-tag">Core Service Pillar 04</div>
-        <h2 class="srv-block-title">Social Media &amp; <em>Channel Growth</em></h2>
-        <p class="srv-block-desc">We manage your complete YouTube and Instagram presence — from content calendars and script assistance to CTR-optimized custom thumbnails, channel SEO, and consistent posting systems that compound your audience growth month over month.</p>
-        <div class="srv-deliverables-title">Service Deliverables</div>
-        <div class="srv-deliverables-grid">
-          <div class="srv-deliv-item">Custom CTR Thumbnails</div>
-          <div class="srv-deliv-item">YouTube Channel SEO</div>
-          <div class="srv-deliv-item">Content Calendar Planning</div>
-          <div class="srv-deliv-item">Title &amp; Tag Optimization</div>
-          <div class="srv-deliv-item">Analytics Review</div>
-          <div class="srv-deliv-item">Hook Script Guidance</div>
-          <div class="srv-deliv-item">Instagram Reels Strategy</div>
-          <div class="srv-deliv-item">Monthly Growth Report</div>
-        </div>
-        <a href="https://wa.link/pz3w3p" target="_blank" class="btn-p">Grow My Channel →</a>
-      </div>
-
-      <!-- CTR Thumbnail Command Center Mockup -->
-      <div>
-        <div class="ctr-mockup">
-          <div class="ctr-header">
-            <div class="ctr-label">CTR Performance</div>
-            <div class="ctr-val">+45%</div>
-          </div>
-          <div style="font-size:9px;color:var(--t3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Thumbnail Optimization — 90-Day Result</div>
-          <div class="ctr-thumb-grid">
-            <div class="ctr-thumb">
-              <div class="ctr-thumb-shimmer" style="--sd:0s;"></div>
-              <div class="ctr-thumb-badge">7.2% CTR</div>
-            </div>
-            <div class="ctr-thumb">
-              <div class="ctr-thumb-shimmer" style="--sd:0.5s;"></div>
-              <div class="ctr-thumb-badge">9.1% CTR</div>
-            </div>
-            <div class="ctr-thumb">
-              <div class="ctr-thumb-shimmer" style="--sd:1.0s;"></div>
-              <div class="ctr-thumb-badge">12.4% CTR</div>
-            </div>
-            <div class="ctr-thumb">
-              <div class="ctr-thumb-shimmer" style="--sd:0.3s;"></div>
-              <div class="ctr-thumb-badge">8.8% CTR</div>
-            </div>
-            <div class="ctr-thumb">
-              <div class="ctr-thumb-shimmer" style="--sd:0.8s;"></div>
-              <div class="ctr-thumb-badge">11.2% CTR</div>
-            </div>
-            <div class="ctr-thumb">
-              <div class="ctr-thumb-shimmer" style="--sd:1.3s;"></div>
-              <div class="ctr-thumb-badge">14.8% CTR</div>
-            </div>
-          </div>
-          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
-            <span style="font-size:9px;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);padding:4px 10px;border-radius:3px;font-weight:600;">+45% CTR BOOST</span>
-            <span style="font-size:9px;background:rgba(40,200,64,0.1);border:1px solid rgba(40,200,64,0.3);color:#28C840;padding:4px 10px;border-radius:3px;font-weight:600;">+180% IMPRESSIONS</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINAL CTA -->
-  <section class="sec sec-alt" style="text-align:center;">
-    <div class="reveal" style="max-width:620px;margin:0 auto;">
-      <h2 style="font-size:2.6rem;margin-bottom:14px;">Not sure which service you need? <em>Let's talk.</em></h2>
-      <p style="color:var(--t2);margin-bottom:32px;font-size:1.05rem;line-height:1.7;">Book a free 20-minute discovery call. We'll tell you exactly what your brand needs and how we'd execute it.</p>
-      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-        <a href="https://wa.link/pz3w3p" target="_blank" class="btn-p ring-pulse">Book Free Call →</a>
-        <a href="pricing.html" class="btn-g">View Pricing Plans</a>
       </div>
     </div>
   </section>
@@ -345,17 +242,17 @@
   <footer>
     <div>
       <div class="foot-logo">EDIT<em>ZAAR</em></div>
-      <div class="foot-copy">© 2026 Editzaar · Hyderabad, India</div>
+      <div class="foot-copy">© 2026 Editzaar · Hyderabad, India · All rights reserved.</div>
     </div>
     <div class="foot-links">
-      <a href="https://www.instagram.com/editzaar.insta/" target="_blank">Instagram</a>
-      <a href="https://www.youtube.com/channel/UC10LSLGKMDMyj5odLUl6dgQ" target="_blank">YouTube</a>
-      <a href="https://wa.link/pz3w3p" target="_blank">WhatsApp</a>
-      <a href="https://editzaar.blogspot.com" target="_blank">Blog</a>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="work.html">Work</a>
       <a href="pricing.html">Pricing</a>
+      <a href="dashboard/index.html">Client Login</a>
     </div>
   </footer>
 
-  <script src="../js/main.js?v=3.0"></script>
+  <script src="js/main.js?v=3.2"></script>
 </body>
 </html>

@@ -18,19 +18,15 @@
   <meta property="og:type" content="website"/>
   <meta property="og:title" content="Editzaar | Premium Video Editing &amp; Growth Agency"/>
   <meta property="og:description" content="High-retention video editing, custom web systems, and performance ad campaigns."/>
-  <meta property="og:image" content="../media/fav-logo.png"/>
+  <meta property="og:image" content="media/fav-logo.png"/>
   <meta property="og:url" content="https://editzaar.in/"/>
-  <link rel="icon" type="image/png" href="../media/fav-logo.png">
+  <link rel="icon" type="image/png" href="media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../css/style.css?v=3.1"/>
+  <link rel="stylesheet" href="css/style.css?v=3.2"/>
 
   <style>
-    /* ══════════════════════════════════
-       PREMIUM HERO — SPLIT SCREEN V2
-       ══════════════════════════════════ */
-
     .hero-v2 {
       position: relative;
       min-height: 100vh;
@@ -38,8 +34,6 @@
       grid-template-columns: 1fr 1fr;
       overflow: hidden;
     }
-
-    /* LEFT PANEL */
     .hv2-left {
       display: flex;
       flex-direction: column;
@@ -48,8 +42,6 @@
       position: relative;
       z-index: 3;
     }
-
-    /* Right golden glow edge on left panel */
     .hv2-left::after {
       content: '';
       position: absolute;
@@ -58,7 +50,6 @@
       background: linear-gradient(to bottom, transparent 0%, var(--gold) 40%, var(--gold) 60%, transparent 100%);
       opacity: 0.4;
     }
-
     .hv2-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -79,7 +70,6 @@
       0%,100%{ opacity: 1; transform: scale(1); }
       50%    { opacity: 0.3; transform: scale(0.6); }
     }
-
     .hv2-headline {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(3.2rem, 5vw, 5.4rem);
@@ -98,7 +88,6 @@
       display: block;
       min-height: 1.1em;
     }
-
     .hv2-sub {
       font-size: 1rem;
       color: rgba(255,255,255,0.62);
@@ -106,15 +95,12 @@
       max-width: 400px;
       margin-bottom: 44px;
     }
-
     .hv2-btns {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
       margin-bottom: 56px;
     }
-
-    /* Stats row */
     .hv2-stats {
       display: flex;
       gap: 0;
@@ -147,15 +133,11 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.4);
     }
-
-    /* RIGHT PANEL — video reel showcase */
     .hv2-right {
       position: relative;
       overflow: hidden;
       background: #000;
     }
-
-    /* Stacked video reels visual */
     .hv2-right-bg {
       position: absolute;
       inset: 0;
@@ -163,8 +145,6 @@
         radial-gradient(ellipse at 30% 50%, rgba(255,184,0,0.14) 0%, transparent 55%),
         linear-gradient(135deg, #000 0%, #0A0A0C 100%);
     }
-
-    /* Floating card stack VFX */
     .hv2-card-stack {
       position: absolute;
       inset: 0;
@@ -172,7 +152,6 @@
       align-items: center;
       justify-content: center;
     }
-
     .hv2-card {
       position: absolute;
       border-radius: 16px;
@@ -180,8 +159,6 @@
       border: 1px solid rgba(255,184,0,0.25);
       box-shadow: 0 32px 80px rgba(0,0,0,0.85);
     }
-
-    /* Main center reel */
     .hv2-card-main {
       width: 220px;
       height: 380px;
@@ -195,8 +172,6 @@
       0%,100% { transform: translateY(0) rotate(-1deg); }
       50%      { transform: translateY(-14px) rotate(-1deg); }
     }
-
-    /* Left behind reel */
     .hv2-card-l {
       width: 160px;
       height: 280px;
@@ -212,8 +187,6 @@
       0%,100% { transform: translateY(-50%) rotate(-6deg); }
       50%      { transform: translateY(calc(-50% - 10px)) rotate(-6deg); }
     }
-
-    /* Right behind reel */
     .hv2-card-r {
       width: 160px;
       height: 280px;
@@ -229,13 +202,10 @@
       0%,100% { transform: translateY(-50%) rotate(5deg); }
       50%      { transform: translateY(calc(-50% - 8px)) rotate(5deg); }
     }
-
     .hv2-card video {
       width: 100%; height: 100%;
       object-fit: cover; display: block;
     }
-
-    /* Phone notch on main card */
     .hv2-notch {
       position: absolute;
       top: 10px; left: 50%;
@@ -246,8 +216,6 @@
       z-index: 10;
       border: 1px solid rgba(255,184,0,0.2);
     }
-
-    /* live indicator badge */
     .hv2-live-badge {
       position: absolute;
       bottom: 18px; left: 50%;
@@ -274,7 +242,6 @@
     }
     .hv2-live-text { font-size: 9px; color: #fff; letter-spacing: 0.1em; font-weight: 600; text-transform: uppercase; }
 
-    /* Gold ring VFX around main card */
     .hv2-ring {
       position: absolute;
       border-radius: 50%;
@@ -291,8 +258,6 @@
       0%   { opacity: 0.7; transform: translate(-50%,-50%) scale(0.8); }
       100% { opacity: 0; transform: translate(-50%,-50%) scale(1.15); }
     }
-
-    /* Bottom overlay gradient on hero */
     .hero-v2::after {
       content: '';
       position: absolute;
@@ -302,8 +267,6 @@
       z-index: 10;
       pointer-events: none;
     }
-
-    /* Animated service pills (floating) */
     .hv2-pill {
       position: absolute;
       background: rgba(10,10,14,0.92);
@@ -328,14 +291,12 @@
     .hv2-pill-3 { bottom: 22%; left: 6%; --pd:4.5s; --pdy:0.4s; }
     .hv2-pill-4 { bottom: 30%; right: 6%; --pd:5.5s; --pdy:1.2s; }
 
-    /* ── Gradient divider line below hero ── */
     .gold-divider {
       height: 1px;
       background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold) 60%, transparent 100%);
       opacity: 0.35;
     }
 
-    /* ── Pricing banner upgrade ── */
     .pricing-cta-banner {
       background: linear-gradient(135deg, var(--bg-card) 0%, #0F0F14 100%);
       border: 1px solid var(--gold-border);
@@ -373,21 +334,11 @@
       text-transform: uppercase;
     }
 
-    /* ── Mobile Responsive for new hero ── */
     @media (max-width: 900px) {
-      .hero-v2 {
-        grid-template-columns: 1fr;
-        min-height: auto;
-      }
-      .hv2-left {
-        padding: 70px 24px 40px;
-        order: 1;
-      }
+      .hero-v2 { grid-template-columns: 1fr; min-height: auto; }
+      .hv2-left { padding: 70px 24px 40px; order: 1; }
       .hv2-left::after { display: none; }
-      .hv2-right {
-        height: 420px;
-        order: 2;
-      }
+      .hv2-right { height: 420px; order: 2; }
       .hv2-headline { font-size: 2.8rem; }
       .hv2-pill-2, .hv2-pill-4 { display: none; }
       .hv2-stats { gap: 0; }
@@ -412,9 +363,9 @@
       <li><a href="work.html">Work</a></li>
       <li><a href="pricing.html">Pricing</a></li>
       <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
-      <li><a href="../dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
+      <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
     </ul>
-    <a class="nav-cta" href="../dashboard/index.html">Client Login</a>
+    <a class="nav-cta" href="dashboard/index.html">Client Login</a>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
@@ -472,28 +423,23 @@
     <div class="hv2-right">
       <div class="hv2-right-bg"></div>
 
-      <!-- Expanding rings VFX -->
       <div class="hv2-ring hv2-ring-1"></div>
       <div class="hv2-ring hv2-ring-2"></div>
       <div class="hv2-ring hv2-ring-3"></div>
 
-      <!-- Floating service pills -->
       <div class="hv2-pill hv2-pill-1">🎬 Video Editing</div>
       <div class="hv2-pill hv2-pill-2">🚀 +380% ROAS</div>
-      <div class="hv2-pill hv2-pill-3">📱 Reels & Shorts</div>
+      <div class="hv2-pill hv2-pill-3">📱 Reels &amp; Shorts</div>
       <div class="hv2-pill hv2-pill-4">⚡ 48h Delivery</div>
 
-      <!-- Card Stack -->
       <div class="hv2-card-stack">
 
-        <!-- Left card -->
         <div class="hv2-card hv2-card-l">
           <video muted loop autoplay playsinline>
             <source src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" type="video/mp4">
           </video>
         </div>
 
-        <!-- Main center card with notch -->
         <div class="hv2-card hv2-card-main">
           <div class="hv2-notch"></div>
           <video muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;">
@@ -505,7 +451,6 @@
           </div>
         </div>
 
-        <!-- Right card -->
         <div class="hv2-card hv2-card-r">
           <video muted loop autoplay playsinline>
             <source src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" type="video/mp4">
@@ -630,14 +575,12 @@
   <!-- PRICING BANNER -->
   <section class="sec sec-alt">
     <div class="pricing-cta-banner reveal">
-      <div class="eyebrow" style="justify-content:center;margin-bottom:18px;">
-        03 / Pricing Plans
-      </div>
+      <div class="eyebrow" style="justify-content:center;margin-bottom:18px;">03 / Pricing Plans</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;margin-bottom:14px;line-height:1.15;">
         Transparent pricing for <em>every stage of growth.</em>
       </h2>
       <p style="color:rgba(255,255,255,0.6);max-width:580px;margin:0 auto 32px;font-size:1rem;line-height:1.75;">
-        Shorts, Animated Videos, Long-Form YouTube content, and Monthly Creator Partnerships. No hidden fees. No surprises.
+        Shorts, Animated Videos, Long-Form YouTube content, and Monthly Creator Partnerships. No hidden fees.
       </p>
       <a href="pricing.html" class="btn-p">View All Plans &amp; Pricing →</a>
       <div class="trust-badges">
@@ -736,6 +679,6 @@
     </div>
   </footer>
 
-  <script src="../js/main.js?v=3.1"></script>
+  <script src="js/main.js?v=3.2"></script>
 </body>
 </html>
