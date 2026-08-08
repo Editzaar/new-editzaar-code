@@ -1,16 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Our Work &amp; Portfolio | Editzaar</title>
-  <link rel="icon" type="image/png" href="media/fav-logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/style.css?v=6.0"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Editzaar - Our Work & Portfolio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="media/fav-logo.png">
+    <link rel="stylesheet" href="css/style.css?v=6.0">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Portfolio Filter Tabs */
+        .portfolio-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 3rem 0;
+            padding: 0 1rem;
+        }
+        
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--t2);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            font-family: var(--font-b);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gold);
+            color: var(--bg);
+            border-color: var(--gold);
+            font-weight: 500;
+        }
+
+        /* Portfolio Sections Base */
+        .portfolio-section {
+            display: none;
+            padding: 4rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .portfolio-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h3 {
+            font-family: var(--font-h);
+            font-size: 2.5rem;
+            color: var(--t1);
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            color: var(--t2);
+            font-family: var(--font-b);
+        }
+
+        /* Video Grid (Vertical 9:16) */
+        .video-grid-vertical {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .phone-frame {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 12px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .phone-frame:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-border);
+        }
+        
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background: var(--bg);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9/16;
+            border-radius: 30px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Video Grid (Horizontal 16:9) */
+        .video-grid-horizontal {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .monitor-frame {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .monitor-frame:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-border);
+        }
+
+        .monitor-frame .video-container {
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .video-container:hover .video-overlay {
+            opacity: 0;
+        }
+
+        .play-icon {
+            color: var(--gold);
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
+        }
+
+        .mute-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border);
+            color: var(--t1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 15;
+            transition: all 0.2s;
+        }
+
+        .mute-btn:hover {
+            background: var(--gold);
+            color: var(--bg);
+        }
+
+        .card-label {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .card-label h4 {
+            font-family: var(--font-h);
+            font-size: 1.5rem;
+            color: var(--t1);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Web Dev Portfolio */
+        .web-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .browser-frame {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .browser-frame:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-border);
+        }
+
+        .browser-header {
+            background: rgba(255,255,255,0.05);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .browser-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .browser-dots span:nth-child(1) { background: #ff5f56; }
+        .browser-dots span:nth-child(2) { background: #ffbd2e; }
+        .browser-dots span:nth-child(3) { background: #27c93f; }
+
+        .browser-content {
+            height: 250px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .browser-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .browser-frame:hover .browser-content img {
+            opacity: 1;
+        }
+
+        .web-info {
+            padding: 1.5rem;
+        }
+
+        .web-info h4 {
+            font-family: var(--font-h);
+            font-size: 1.8rem;
+            color: var(--t1);
+            margin-bottom: 0.5rem;
+        }
+
+        .web-info a {
+            color: var(--gold);
+            font-family: var(--font-b);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .web-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-badge {
+            background: rgba(255, 184, 0, 0.1);
+            color: var(--gold);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: var(--font-b);
+        }
+
+        .speed-metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #27c93f;
+            font-family: var(--font-b);
+            font-size: 0.9rem;
+        }
+
+        /* Generic Cards (Brand / Social) */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .data-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-border);
+        }
+
+        .data-icon {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .data-card h4 {
+            font-family: var(--font-h);
+            font-size: 1.8rem;
+            color: var(--t1);
+            margin-bottom: 1rem;
+        }
+
+        .data-metric {
+            font-family: var(--font-b);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .data-card p {
+            color: var(--t2);
+            font-family: var(--font-b);
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
+
   <nav id="navbar">
     <a href="index.html" class="logo">EDIT<em>ZAAR</em></a>
     <ul class="nav-links">
@@ -24,34 +389,362 @@
     <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
   </nav>
 
-  <section class="sec">
-    <div class="sec-hdr">
-      <div class="sec-title">Selected <em>Works</em></div>
-      <div class="sec-tag">Portfolio</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;">
-      <div class="srv-service-card" style="padding:0;overflow:hidden;height:480px;">
-        <video muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;">
-          <source src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="srv-service-card" style="padding:0;overflow:hidden;height:480px;">
-        <video muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;">
-          <source src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="srv-service-card" style="padding:0;overflow:hidden;height:480px;">
-        <video muted loop autoplay playsinline style="width:100%;height:100%;object-fit:cover;">
-          <source src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" type="video/mp4">
-        </video>
-      </div>
-    </div>
-  </section>
+    <!-- Hero Section -->
+    <section class="sec" style="padding-top: 120px; text-align: center;">
+        <div class="sec-hdr reveal">
+            <span class="sec-tag">PORTFOLIO</span>
+            <h1 class="sec-title" style="font-size: 4rem;">Our Work & Portfolio</h1>
+            <p style="color: var(--t2); font-family: var(--font-b); max-width: 600px; margin: 1rem auto 0; font-size: 1.2rem;">
+                From vertical reels to cinematic long-form — see the work that drives results.
+            </p>
+        </div>
+    </section>
 
-  <footer>
-    <div><div class="foot-logo">EDIT<em>ZAAR</em></div><div class="foot-copy">© 2026 Editzaar</div></div>
-    <div class="foot-links"><a href="index.html">Home</a><a href="services.html">Services</a><a href="pricing.html">Pricing</a><a href="dashboard/index.html">Client Login</a></div>
-  </footer>
-  <script src="js/main.js?v=3.2"></script>
+    <!-- Filters -->
+    <div class="portfolio-filters reveal">
+        <button class="filter-btn active" data-filter="all">All Work</button>
+        <button class="filter-btn" data-filter="video">Video Editing</button>
+        <button class="filter-btn" data-filter="web">Website Development</button>
+        <button class="filter-btn" data-filter="brand">Brand Promotions</button>
+        <button class="filter-btn" data-filter="social">Social Media</button>
+    </div>
+
+    <!-- MAIN PORTFOLIO WRAPPER -->
+    <div id="portfolio-wrapper">
+        
+        <!-- Video Editing Section -->
+        <section class="portfolio-section active reveal" data-category="video">
+            <div class="section-header">
+                <h3>Vertical Reels</h3>
+                <p>High-retention 9:16 content built for Instagram Reels & YouTube Shorts.</p>
+            </div>
+            
+            <div class="video-grid-vertical">
+                <!-- Video 1 -->
+                <div>
+                    <div class="phone-frame">
+                        <div class="video-container">
+                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
+                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-label">
+                        <h4>Music Video Reel</h4>
+                        <span class="tech-badge">Creative / Music</span>
+                    </div>
+                </div>
+                <!-- Video 2 -->
+                <div>
+                    <div class="phone-frame">
+                        <div class="video-container">
+                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
+                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-label">
+                        <h4>Medical/Healthcare Reel</h4>
+                        <span class="tech-badge">Corporate / Health</span>
+                    </div>
+                </div>
+                <!-- Video 3 -->
+                <div>
+                    <div class="phone-frame">
+                        <div class="video-container">
+                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
+                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-label">
+                        <h4>Real Estate Reel</h4>
+                        <span class="tech-badge">Commercial / Property</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header" style="margin-top: 5rem;">
+                <h3>Cinematic Long-Form</h3>
+                <p>Widescreen 16:9 videos for YouTube, Ads, and Corporate Presentations.</p>
+            </div>
+
+            <div class="video-grid-horizontal">
+                <!-- Video 1 -->
+                <div>
+                    <div class="monitor-frame">
+                        <div class="video-container">
+                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
+                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-label">
+                        <h4>Music Video - Widescreen</h4>
+                    </div>
+                </div>
+                <!-- Video 2 -->
+                <div>
+                    <div class="monitor-frame">
+                        <div class="video-container">
+                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
+                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-label">
+                        <h4>Healthcare Documentary Style</h4>
+                    </div>
+                </div>
+                <!-- Video 3 -->
+                <div>
+                    <div class="monitor-frame">
+                        <div class="video-container">
+                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
+                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-label">
+                        <h4>Real Estate Showcase</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Web Dev Section -->
+        <section class="portfolio-section active reveal" data-category="web">
+            <div class="section-header">
+                <h3>Website Development</h3>
+                <p>High-performance, beautifully designed web experiences.</p>
+            </div>
+            
+            <div class="web-grid">
+                <!-- Web 1 -->
+                <div class="browser-frame">
+                    <div class="browser-header">
+                        <div class="browser-dots"><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="browser-content">
+                        <!-- Placeholder Gradient -->
+                    </div>
+                    <div class="web-info">
+                        <h4>D Plus Cure</h4>
+                        <a href="https://dpluscure.com" target="_blank">dpluscure.com</a>
+                        <div class="web-tech">
+                            <span class="tech-badge">WordPress</span>
+                            <span class="tech-badge">WooCommerce</span>
+                            <span class="tech-badge">PHP</span>
+                        </div>
+                        <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">Healthcare E-commerce Platform</p>
+                        <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 92/100</div>
+                    </div>
+                </div>
+                
+                <!-- Web 2 -->
+                <div class="browser-frame">
+                    <div class="browser-header">
+                        <div class="browser-dots"><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="browser-content">
+                        <!-- Placeholder Gradient -->
+                    </div>
+                    <div class="web-info">
+                        <h4>Editzaar</h4>
+                        <a href="#" target="_blank">editzaar.in</a>
+                        <div class="web-tech">
+                            <span class="tech-badge">HTML5</span>
+                            <span class="tech-badge">CSS3</span>
+                            <span class="tech-badge">Firebase</span>
+                        </div>
+                        <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">Digital Media Agency Portfolio</p>
+                        <div class="speed-metric" style="color: var(--gold);"><i class="fas fa-tachometer-alt"></i> Speed: 98/100</div>
+                    </div>
+                </div>
+
+                <!-- Web 3 -->
+                <div class="browser-frame">
+                    <div class="browser-header">
+                        <div class="browser-dots"><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="browser-content">
+                        <!-- Placeholder Gradient -->
+                    </div>
+                    <div class="web-info">
+                        <h4>Brand Landing Page</h4>
+                        <a href="#" target="_blank">client-landing.com</a>
+                        <div class="web-tech">
+                            <span class="tech-badge">React</span>
+                            <span class="tech-badge">Tailwind CSS</span>
+                        </div>
+                        <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">Custom high-converting funnel page</p>
+                        <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 95/100</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Brand Promotions Section -->
+        <section class="portfolio-section active reveal" data-category="brand">
+            <div class="section-header">
+                <h3>Brand Promotions & Paid Ads</h3>
+                <p>Data-driven campaigns that scale businesses.</p>
+            </div>
+            
+            <div class="card-grid">
+                <div class="data-card">
+                    <i class="fab fa-meta data-icon"></i>
+                    <h4>Finance Niche</h4>
+                    <span class="data-metric">+380% ROAS</span>
+                    <p>Meta Ads Campaign optimization leading to 2.1M targeted impressions and massive ROI scaling within 60 days.</p>
+                </div>
+                <div class="data-card">
+                    <i class="fab fa-google data-icon"></i>
+                    <h4>Real Estate</h4>
+                    <span class="data-metric">340+ Leads</span>
+                    <p>Google Search & Display Ads campaign targeting high-net-worth individuals, achieving a 28% CTR.</p>
+                </div>
+                <div class="data-card">
+                    <i class="fab fa-instagram data-icon"></i>
+                    <h4>D2C Brand</h4>
+                    <span class="data-metric">12K → 89K</span>
+                    <p>Instagram Growth strategy through viral reels and targeted influencer promotions over a 90-day period.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Media Section -->
+        <section class="portfolio-section active reveal" data-category="social">
+            <div class="section-header">
+                <h3>Social Media Management</h3>
+                <p>Building communities and dominating feeds.</p>
+            </div>
+            
+            <div class="card-grid">
+                <div class="data-card">
+                    <i class="fab fa-youtube data-icon"></i>
+                    <h4>YouTube Channel Growth</h4>
+                    <span class="data-metric">0 to 50K Subs</span>
+                    <p>Comprehensive management including script optimization, A/B testing CTR-optimized thumbnails, and retention editing.</p>
+                </div>
+                <div class="data-card">
+                    <i class="fab fa-instagram data-icon" style="color: #E1306C;"></i>
+                    <h4>Instagram Page Handling</h4>
+                    <span class="data-metric">Full Stack</span>
+                    <p>End-to-end management: Content planning, creative carousel posts, daily stories, and engaging reels strategy.</p>
+                </div>
+                <div class="data-card">
+                    <i class="fas fa-chart-line data-icon"></i>
+                    <h4>Content Strategy</h4>
+                    <span class="data-metric">SEO-Driven</span>
+                    <p>Developing analytics-backed posting calendars that align with search trends to maximize organic reach and growth.</p>
+                </div>
+            </div>
+        </section>
+        
+    </div>
+
+    <!-- CTA Section -->
+    <section class="sec reveal" style="text-align: center; background: linear-gradient(0deg, rgba(255,184,0,0.05) 0%, transparent 100%); margin-top: 4rem;">
+        <div class="sec-hdr">
+            <h2 class="sec-title">Ready to create something extraordinary?</h2>
+            <p style="color: var(--t2); font-family: var(--font-b); margin: 1rem auto 2rem; max-width: 500px;">
+                Let's discuss your project and how Editzaar can help you achieve your digital goals.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#" class="btn-p"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+                <a href="pricing.html" class="btn-g">View Pricing</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div style="text-align: center;">
+            <h2 style="font-family: var(--font-h); font-size: 2rem; color: var(--gold); margin-bottom: 1rem;">EDITZAAR</h2>
+            <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 2rem;">Elevating digital presence from Hyderabad to the world.</p>
+            
+            <div style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2rem;">
+                <a href="#" style="color: var(--t1); font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="color: var(--t1); font-size: 1.5rem;"><i class="fab fa-youtube"></i></a>
+                <a href="#" style="color: var(--t1); font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
+            </div>
+            
+            <p style="color: var(--t3); font-family: var(--font-b); font-size: 0.9rem;">
+                &copy; 2026 Editzaar. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Video Hover Play/Pause
+        const videoContainers = document.querySelectorAll('.video-container');
+        
+        videoContainers.forEach(container => {
+            const video = container.querySelector('video');
+            const muteBtn = container.querySelector('.mute-btn');
+            
+            container.addEventListener('mouseenter', () => {
+                video.play();
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                video.pause();
+                // Optional: reset video to start
+                // video.currentTime = 0; 
+            });
+            
+            if(muteBtn) {
+                muteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // prevent other events
+                    video.muted = !video.muted;
+                    const icon = muteBtn.querySelector('i');
+                    if(video.muted) {
+                        icon.classList.remove('fa-volume-up');
+                        icon.classList.add('fa-volume-mute');
+                    } else {
+                        icon.classList.remove('fa-volume-mute');
+                        icon.classList.add('fa-volume-up');
+                    }
+                });
+            }
+        });
+
+        // Portfolio Filtering
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const portfolioSections = document.querySelectorAll('.portfolio-section');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active to clicked button
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                portfolioSections.forEach(section => {
+                    if (filterValue === 'all') {
+                        section.style.display = 'block';
+                        // small delay for animation
+                        setTimeout(() => section.classList.add('active'), 10);
+                    } else {
+                        if (section.getAttribute('data-category') === filterValue) {
+                            section.style.display = 'block';
+                            setTimeout(() => section.classList.add('active'), 10);
+                        } else {
+                            section.style.display = 'none';
+                            section.classList.remove('active');
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Initial setup for 'all'
+        // portfolioSections already have .active from HTML
+    </script>
+    <script src="js/main.js?v=3.2"></script>
 </body>
 </html>

@@ -174,29 +174,6 @@
             tempPass: 'ClientPass123',
             createdAt: serverTimestamp()
           });
-
-          if (role === 'client') {
-            await addDoc(collection(db, 'announcements'), {
-              title: '👋 Welcome to Editzaar Agency!',
-              message: `Hi ${defaultName}! We're thrilled to partner with you. Book your first video edit or web project anytime!`,
-              target: user.uid,
-              createdAt: serverTimestamp()
-            });
-
-            const d = new Date(); d.setDate(d.getDate() + 3);
-            await addDoc(collection(db, 'projects'), {
-              title: 'Shorts & Instagram Reels Pack — Growth Launch',
-              description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
-              clientId: user.uid,
-              clientGstin: '',
-              editorId: '',
-              status: 'in_progress',
-              invoiceAmount: 2500,
-              invoicePaid: true,
-              createdAt: serverTimestamp(),
-              deadline: d
-            });
-          }
         } else if (snap.data().role) {
           role = snap.data().role;
         }
@@ -270,6 +247,23 @@
       submitBtn.textContent = mode === 'signin' ? 'Sign In →' : 'Create Account →';
     }
 
+    function getAuthErrorMessage(code, fallbackMsg) {
+      switch (code) {
+        case 'auth/email-already-in-use':
+          return 'An account already exists with this email address. Please sign in instead.';
+        case 'auth/wrong-password':
+          return 'Incorrect password. Please check your credentials and try again.';
+        case 'auth/invalid-credential':
+          return 'Invalid credentials provided. Please check your email and password.';
+        case 'auth/user-not-found':
+          return 'No account found with this email address. Please check your email or create an account.';
+        case 'auth/too-many-requests':
+          return 'Access temporarily disabled due to too many failed attempts. Please try again later or reset your password.';
+        default:
+          return fallbackMsg || 'An error occurred during authentication. Please try again.';
+      }
+    }
+
     submitBtn.addEventListener('click', async () => {
       const email = emailEl.value.trim();
       const pass  = passEl.value;
@@ -282,51 +276,37 @@
       submitBtn.textContent = 'Authenticating…';
       errorEl.classList.remove('show');
 
-      try {
-        const cred = await signInWithEmailAndPassword(auth, email, pass);
-        showSuccess('Sign in successful! Loading your dashboard…');
-        await redirectByRole(cred.user);
-      } catch (e) {
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-          try {
-            submitBtn.textContent = 'Initializing Account & Profile…';
-            const newCred = await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, 'users', newCred.user.uid), {
-              name: name,
-              email: email,
-              role: 'client',
-              tempPass: pass,
-              createdAt: serverTimestamp()
-            });
+      if (mode === 'signin') {
+        try {
+          const cred = await signInWithEmailAndPassword(auth, email, pass);
+          showSuccess('Sign in successful! Loading your dashboard…');
+          await redirectByRole(cred.user);
+        } catch (e) {
+          showError(getAuthErrorMessage(e.code, e.message));
+        }
+      } else {
+        try {
+          submitBtn.textContent = 'Creating Account…';
+          const newCred = await createUserWithEmailAndPassword(auth, email, pass);
+          await setDoc(doc(db, 'users', newCred.user.uid), {
+            name: name,
+            email: email,
+            role: 'client',
+            tempPass: pass,
+            createdAt: serverTimestamp()
+          });
 
-            await addDoc(collection(db, 'announcements'), {
-              title: '🚀 Welcome to Editzaar Agency!',
-              message: `Hi ${name}! Thank you for logging in. You can now track your projects and chat live with your video editor!`,
-              target: newCred.user.uid,
-              createdAt: serverTimestamp()
-            });
+          await addDoc(collection(db, 'announcements'), {
+            title: '🚀 Welcome to Editzaar Agency!',
+            message: `Hi ${name}! Thank you for creating an account. You can now track your projects and chat live with your video editor!`,
+            target: newCred.user.uid,
+            createdAt: serverTimestamp()
+          });
 
-            const d = new Date(); d.setDate(d.getDate() + 3);
-            await addDoc(collection(db, 'projects'), {
-              title: 'Shorts & Instagram Reels Pack — Growth Launch',
-              description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
-              clientId: newCred.user.uid,
-              clientGstin: '',
-              editorId: '',
-              status: 'in_progress',
-              invoiceAmount: 2500,
-              invoicePaid: true,
-              createdAt: serverTimestamp(),
-              deadline: d
-            });
-
-            showSuccess('Account initialized! Opening your dashboard…');
-            await redirectByRole(newCred.user);
-          } catch (createErr) {
-            showError('Incorrect password or invalid email format. Please check your credentials.');
-          }
-        } else {
-          showError('Incorrect password or invalid email format. Please check your credentials.');
+          showSuccess('Account created successfully! Opening your dashboard…');
+          await redirectByRole(newCred.user);
+        } catch (e) {
+          showError(getAuthErrorMessage(e.code, e.message));
         }
       }
     });
@@ -342,7 +322,7 @@
         await sendPasswordResetEmail(auth, email);
         showSuccess(`Password reset link sent to ${email}! Check your inbox.`);
       } catch (e) {
-        showError('Could not send reset email. Please verify your email address.');
+        showError(getAuthErrorMessage(e.code, e.message));
       }
     });
 
