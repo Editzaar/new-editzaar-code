@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Client Dashboard â€” Editzaar</title>
+  <title>Client Dashboard — Editzaar</title>
   <meta name="robots" content="noindex,nofollow"/>
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=5.5"/>
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.5"/>
 
   <style>
     .welcome-banner {
@@ -139,25 +139,25 @@
 </head>
 <body>
 
-  <button class="sidebar-toggle" id="sidebarToggle">â˜°</button>
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   <div class="toast" id="toast"></div>
 
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <a href="../index.html" class="sidebar-logo" title="Back to Home Page">EDIT<em>ZAAR</em> â†—</a>
-      <div class="sidebar-role-badge">ðŸ‘¤ Client Portal</div>
+      <a href="../index.html" class="sidebar-logo" title="Back to Home Page">EDIT<em>ZAAR</em> ↗</a>
+      <div class="sidebar-role-badge">👤 Client Portal</div>
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">Navigation</div>
-        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">ðŸ“</span> My Projects</div>
+        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
         <div class="sidebar-nav-section">Account</div>
-        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">ðŸ’°</span> Invoices &amp; GST Receipts</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; GST Receipts</div>
         <div class="sidebar-nav-section">Main Site</div>
-        <a href="../index.html" class="sidebar-nav-item"><span class="nav-icon">ðŸ </span> Home Page</a>
-        <a href="../pricing.html" class="sidebar-nav-item"><span class="nav-icon">ðŸŽ¬</span> Services &amp; Pricing</a>
+        <a href="../index.html" class="sidebar-nav-item"><span class="nav-icon">🏠</span> Home Page</a>
+        <a href="../pricing.html" class="sidebar-nav-item"><span class="nav-icon">🎬</span> Services &amp; Pricing</a>
       </nav>
       <div class="sidebar-footer">
-        <div class="sidebar-user-info" id="clientEmail">Loadingâ€¦</div>
+        <div class="sidebar-user-info" id="clientEmail">Loading…</div>
         <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
       </div>
     </aside>
@@ -168,25 +168,25 @@
       <!-- WELCOME NOTIFICATION & ANNOUNCEMENTS BANNER -->
       <div class="welcome-banner" id="clientWelcomeBanner">
         <div>
-          <div class="welcome-banner-title" id="bannerTitle">ðŸš€ Welcome to Editzaar Agency!</div>
+          <div class="welcome-banner-title" id="bannerTitle">🚀 Welcome to Editzaar Agency!</div>
           <div class="welcome-banner-desc" id="bannerDesc">We're excited to partner with you on high-retention video post-production &amp; web scaling.</div>
         </div>
-        <button class="btn-gold btn-sm" onclick="document.getElementById('modalClientNewProject').classList.add('open')">ï¼‹ Book Project â†’</button>
+        <button class="btn-gold btn-sm" onclick="document.getElementById('modalClientNewProject').classList.add('open')">＋ Book Project →</button>
       </div>
 
-      <!-- â”€â”€ SECTION: MY PROJECTS â”€â”€ -->
+      <!-- ── SECTION: MY PROJECTS ── -->
       <section id="sec-projects">
         <div class="dash-topbar">
-          <div class="dash-page-title">Welcome, <em id="clientName">â€¦</em> ðŸ‘‹</div>
-          <button class="btn-gold" id="btnOpenNewProjectModal">ï¼‹ Start New Project</button>
+          <div class="dash-page-title">Welcome, <em id="clientName">…</em> 👋</div>
+          <button class="btn-gold" id="btnOpenNewProjectModal">＋ Start New Project</button>
         </div>
         <div id="projectsList"></div>
       </section>
 
-      <!-- â”€â”€ SECTION: PROJECT DETAIL â”€â”€ -->
+      <!-- ── SECTION: PROJECT DETAIL ── -->
       <section id="sec-detail" style="display:none;">
         <div class="dash-topbar">
-          <button class="btn-outline" onclick="showSection('projects')">â† Back to My Projects</button>
+          <button class="btn-outline" onclick="showSection('projects')">← Back to My Projects</button>
           <div id="detailStatus"></div>
         </div>
         <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;">
@@ -195,16 +195,16 @@
             <div class="dash-card">
               <div class="dash-card-header"><div class="dash-card-title">Project <em>Progress</em></div></div>
               <div class="status-timeline" id="statusTimeline"></div>
-              <div style="font-size:1.1rem;font-weight:600;margin-bottom:6px;" id="detailTitle">â€”</div>
-              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:18px;" id="detailDesc">â€”</div>
+              <div style="font-size:1.1rem;font-weight:600;margin-bottom:6px;" id="detailTitle">—</div>
+              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:18px;" id="detailDesc">—</div>
               <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
-                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Your Assigned Editor</div><div style="font-size:0.9rem;color:var(--gold);" id="detailEditor">â€”</div></div>
-                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">â€”</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Your Assigned Editor</div><div style="font-size:0.9rem;color:var(--gold);" id="detailEditor">—</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">—</div></div>
               </div>
 
               <!-- Raw Footage Link Input -->
               <div class="link-input-box">
-                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">ðŸ“ Raw Footage Link (Google Drive / WeTransfer / Dropbox)</div>
+                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Raw Footage Link (Google Drive / WeTransfer / Dropbox)</div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                   <input type="url" id="rawFootageInput" placeholder="https://drive.google.com/..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:#fff;font-size:0.88rem;outline:none;"/>
                   <button class="btn-gold btn-sm" id="btnSaveFootageLink">Save Link</button>
@@ -214,9 +214,9 @@
 
               <!-- Download Final Delivery -->
               <div id="deliverySection" style="display:none;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--r);padding:20px;">
-                <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">ðŸŽ‰ Final Video Delivered!</div>
+                <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎉 Final Video Delivered!</div>
                 <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;" id="detailDeliveryNote">Your editor has delivered your final edit.</div>
-                <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold">ðŸŽ¬ Open Delivered Video / Drive â†’</a>
+                <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold">🎬 Open Delivered Video / Drive →</a>
               </div>
             </div>
           </div>
@@ -227,7 +227,7 @@
             <div class="chat-container">
               <div class="chat-messages" id="chatMessages"></div>
               <div class="chat-input-row">
-                <input class="chat-input" id="chatInput" placeholder="Type a message or paste a linkâ€¦"/>
+                <input class="chat-input" id="chatInput" placeholder="Type a message or paste a link…"/>
                 <button class="btn-gold" id="btnSendMsg">Send</button>
               </div>
             </div>
@@ -235,21 +235,21 @@
         </div>
       </section>
 
-      <!-- â”€â”€ SECTION: INVOICES & GST RECEIPTS â”€â”€ -->
+      <!-- ── SECTION: INVOICES & GST RECEIPTS ── -->
       <section id="sec-invoices" style="display:none;">
         <div class="dash-topbar"><div class="dash-page-title">Invoices &amp; <em>GST Tax Receipts</em></div></div>
         <div class="dash-card">
-          <div id="invoicesList"><div class="empty-state"><div class="empty-icon">ðŸ’°</div><div class="empty-text">No invoices yet.</div></div></div>
+          <div id="invoicesList"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices yet.</div></div></div>
         </div>
       </section>
 
     </main>
   </div>
 
-  <!-- â•â• MODAL: NEW PROJECT BOOKING â•â• -->
+  <!-- ══ MODAL: NEW PROJECT BOOKING ══ -->
   <div class="modal-overlay" id="modalClientNewProject">
     <div class="modal-box">
-      <button class="modal-close" id="btnCloseClientModal">âœ•</button>
+      <button class="modal-close" id="btnCloseClientModal">✕</button>
       <div class="modal-title">Book New Project</div>
       <div class="dash-form">
         <div class="field">
@@ -259,37 +259,37 @@
         <div class="field">
           <label>Select Service Package</label>
           <select id="cnp-service">
-            <option value="Shorts &amp; Reels (â‚¹1,000 / video)|1000">ðŸ“± Shorts &amp; Instagram Reels â€” â‚¹1,000 / video</option>
-            <option value="Motion Graphic &amp; Animated (â‚¹2,500 / video)|2500">ðŸŽ¨ Motion Graphic &amp; Animated Video â€” â‚¹2,500 / video</option>
-            <option value="Long Form YouTube Edit (â‚¹5,000 / video)|5000">ðŸŽ¬ Long Form YouTube Video Edit â€” â‚¹5,000 / video</option>
-            <option value="Custom Brand Partnership|0">â­ Custom Brand Partnership / Agency Retainer</option>
+            <option value="Shorts &amp; Reels (₹1,000 / video)|1000">📱 Shorts &amp; Instagram Reels — ₹1,000 / video</option>
+            <option value="Motion Graphic &amp; Animated (₹2,500 / video)|2500">🎨 Motion Graphic &amp; Animated Video — ₹2,500 / video</option>
+            <option value="Long Form YouTube Edit (₹5,000 / video)|5000">🎬 Long Form YouTube Video Edit — ₹5,000 / video</option>
+            <option value="Custom Brand Partnership|0">⭐ Custom Brand Partnership / Agency Retainer</option>
           </select>
-          <div class="service-price-pill" id="cnpPriceTag">Est. Price: â‚¹1,000 (+ 18% GST)</div>
+          <div class="service-price-pill" id="cnpPriceTag">Est. Price: ₹1,000 (+ 18% GST)</div>
         </div>
         <div class="field">
-          <label>Client GSTIN Number (Optional â€” For Tax Input Credit)</label>
+          <label>Client GSTIN Number (Optional — For Tax Input Credit)</label>
           <input id="cnp-gstin" type="text" placeholder="e.g. 36AAAAA0000A1Z5 (Optional)"/>
         </div>
         <div class="field">
           <label>Project Brief / Instructions</label>
-          <textarea id="cnp-desc" placeholder="Describe your video style, reference links, hook preferences, audio instructionsâ€¦"></textarea>
+          <textarea id="cnp-desc" placeholder="Describe your video style, reference links, hook preferences, audio instructions…"></textarea>
         </div>
         <div class="field">
           <label>Raw Footage Link (Google Drive / WeTransfer / Dropbox)</label>
           <input id="cnp-footage" type="url" placeholder="https://drive.google.com/..."/>
         </div>
-        <button class="btn-gold" style="width:100%;justify-content:center;margin-top:8px;" id="btnSubmitClientProject">Submit Project Request â†’</button>
+        <button class="btn-gold" style="width:100%;justify-content:center;margin-top:8px;" id="btnSubmitClientProject">Submit Project Request →</button>
       </div>
     </div>
   </div>
 
-  <!-- â•â• MODAL: PRINTABLE GST TAX INVOICE VIEWER â•â• -->
+  <!-- ══ MODAL: PRINTABLE GST TAX INVOICE VIEWER ══ -->
   <div class="modal-overlay" id="modalInvoiceView">
     <div class="modal-box" style="max-width:760px;background:#111;">
-      <button class="modal-close" onclick="document.getElementById('modalInvoiceView').classList.remove('open')">âœ•</button>
+      <button class="modal-close" onclick="document.getElementById('modalInvoiceView').classList.remove('open')">✕</button>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <div style="color:var(--gold);font-weight:700;" id="invModalTypeBadge">â³ Acknowledgment Receipt</div>
-        <button class="btn-gold btn-sm" onclick="window.print()">ðŸ–¨ Print / Download PDF</button>
+        <div style="color:var(--gold);font-weight:700;" id="invModalTypeBadge">⏳ Acknowledgment Receipt</div>
+        <button class="btn-gold btn-sm" onclick="window.print()">🖨 Print / Download PDF</button>
       </div>
 
       <div class="tax-invoice-paper" id="printablePaper">
@@ -320,8 +320,8 @@
               <th>Description / Service</th>
               <th>HSN/SAC</th>
               <th>Qty</th>
-              <th>Rate (â‚¹)</th>
-              <th>Amount (â‚¹)</th>
+              <th>Rate (₹)</th>
+              <th>Amount (₹)</th>
             </tr>
           </thead>
           <tbody id="invPaperItemsTbody">
@@ -329,45 +329,45 @@
               <td id="invItemName">Video Post-Production Service</td>
               <td>998313</td>
               <td>1</td>
-              <td id="invItemRate">â‚¹1,000</td>
-              <td id="invItemAmt">â‚¹1,000</td>
+              <td id="invItemRate">₹1,000</td>
+              <td id="invItemAmt">₹1,000</td>
             </tr>
           </tbody>
         </table>
 
         <div class="inv-summary-box">
-          <div class="inv-sum-row"><span>Subtotal:</span><span id="invSumSubtotal">â‚¹1,000</span></div>
-          <div class="inv-sum-row"><span>CGST (9%):</span><span id="invSumCgst">â‚¹90</span></div>
-          <div class="inv-sum-row"><span>SGST (9%):</span><span id="invSumSgst">â‚¹90</span></div>
-          <div class="inv-sum-row grand"><span>Total Amount:</span><span id="invSumTotal">â‚¹1,180</span></div>
-          <div class="inv-sum-row" style="color:#28C840;margin-top:6px;font-weight:700;"><span>50% Paid Advance:</span><span id="invSumPaid">â‚¹590</span></div>
+          <div class="inv-sum-row"><span>Subtotal:</span><span id="invSumSubtotal">₹1,000</span></div>
+          <div class="inv-sum-row"><span>CGST (9%):</span><span id="invSumCgst">₹90</span></div>
+          <div class="inv-sum-row"><span>SGST (9%):</span><span id="invSumSgst">₹90</span></div>
+          <div class="inv-sum-row grand"><span>Total Amount:</span><span id="invSumTotal">₹1,180</span></div>
+          <div class="inv-sum-row" style="color:#28C840;margin-top:6px;font-weight:700;"><span>50% Paid Advance:</span><span id="invSumPaid">₹590</span></div>
         </div>
 
         <div class="inv-footer-note">
-          This is a computer-generated tax invoice issued by Editzaar Agency Â· Support: +91 9476766340
+          This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340
         </div>
       </div>
     </div>
   </div>
 
-  <!-- â”€â”€ GEMINI AI CHATBOT â”€â”€ -->
-  <button class="chatbot-fab" id="chatbotFab" title="Ask AI Assistant">ðŸ¤–</button>
+  <!-- ── GEMINI AI CHATBOT ── -->
+  <button class="chatbot-fab" id="chatbotFab" title="Ask AI Assistant">🤖</button>
 
   <div class="chatbot-panel" id="chatbotPanel">
     <div class="chatbot-header">
-      <div class="chatbot-title"><span>ðŸ¤–</span> Editzaar AI Assistant</div>
-      <button class="chatbot-close-btn" id="chatbotClose">âœ•</button>
+      <div class="chatbot-title"><span>🤖</span> Editzaar AI Assistant</div>
+      <button class="chatbot-close-btn" id="chatbotClose">✕</button>
     </div>
     <div class="chatbot-container" style="padding:12px;">
       <div class="chatbot-messages" id="botMessages">
         <div class="bot-msg">
-          <div class="bot-avatar">ðŸ¤–</div>
+          <div class="bot-avatar">🤖</div>
           <div class="bot-bubble">Hi! I'm Editzaar AI. Contact us on WhatsApp/Phone: <strong>+91 9476766340</strong>. What can I answer for you?</div>
         </div>
       </div>
       <div class="chat-input-row" style="padding-top:12px;">
-        <input class="chat-input" id="botInput" placeholder="Ask about services, pricing, contactâ€¦"/>
-        <button class="btn-gold btn-sm" id="btnBotSend">â†‘</button>
+        <input class="chat-input" id="botInput" placeholder="Ask about services, pricing, contact…"/>
+        <button class="btn-gold btn-sm" id="btnBotSend">↑</button>
       </div>
     </div>
   </div>
@@ -397,7 +397,7 @@
     let allUsers = {};
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.replace('index.html'); return; }
+      if (!user) { window.location.replace('/dashboard/index.html'); return; }
       const snap = await getDoc(doc(db,'users',user.uid));
       currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client',name:'Client'}) };
       document.getElementById('clientEmail').textContent = user.email;
@@ -405,7 +405,7 @@
       loadUsers(); listenRealtimeProjects(); listenAnnouncements();
     });
 
-    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('index.html')));
+    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('/dashboard/index.html')));
 
     async function loadUsers() {
       const snap = await getDocs(collection(db,'users'));
@@ -418,7 +418,7 @@
         list.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
         const myAnn = list.find(a=> a.target==='all' || a.target===currentUser.uid);
         if (myAnn) {
-          document.getElementById('bannerTitle').textContent = myAnn.title || 'ðŸ“¢ Agency Announcement';
+          document.getElementById('bannerTitle').textContent = myAnn.title || '📢 Agency Announcement';
           document.getElementById('bannerDesc').textContent  = myAnn.message || '';
         }
       });
@@ -434,18 +434,18 @@
       });
     }
 
-    const STATUS_LABELS= {pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed âœ“'};
+    const STATUS_LABELS= {pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
     function badge(s){ return `<span class="status-badge status-${s}">${STATUS_LABELS[s]||s}</span>`; }
-    function dateStr(ts){ if(!ts) return 'â€”'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+    function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
 
     function renderProjects(projects) {
       const container = document.getElementById('projectsList');
       if (!projects.length) {
         container.innerHTML = `<div class="dash-card" style="text-align:center;padding:52px 24px;">
-          <div style="font-size:3rem;margin-bottom:16px;">ðŸŽ¬</div>
+          <div style="font-size:3rem;margin-bottom:16px;">🎬</div>
           <div style="font-family:var(--font-h);font-size:1.6rem;margin-bottom:10px;">No active projects</div>
           <div style="color:var(--t2);margin-bottom:24px;">Click the button below to book your video project with us!</div>
-          <button class="btn-gold" onclick="document.getElementById('modalClientNewProject').classList.add('open')">ï¼‹ Book a New Project â†’</button>
+          <button class="btn-gold" onclick="document.getElementById('modalClientNewProject').classList.add('open')">＋ Book a New Project →</button>
         </div>`;
         return;
       }
@@ -455,12 +455,12 @@
             <div class="project-card-title">${p.title||'Untitled Project'}</div>
             ${badge(p.status)}
           </div>
-          <div class="project-card-meta">Editor: ${allUsers[p.editorId]?.name||'Being assigned'} Â· Estimated Deadline: ${dateStr(p.deadline)}</div>
-          <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;">${(p.description||'').substring(0,140)}${p.description?.length>140?'â€¦':''}</div>
-          ${p.deliveryUrl ? `<div style="margin-bottom:12px;"><a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">ðŸŽ¬ Open Delivered Video Link â†’</a></div>`:''}
+          <div class="project-card-meta">Editor: ${allUsers[p.editorId]?.name||'Being assigned'} · Estimated Deadline: ${dateStr(p.deadline)}</div>
+          <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;">${(p.description||'').substring(0,140)}${p.description?.length>140?'…':''}</div>
+          ${p.deliveryUrl ? `<div style="margin-bottom:12px;"><a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">🎬 Open Delivered Video Link →</a></div>`:''}
           <div class="project-card-actions">
-            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">View Details &amp; Chat â†’</button>
-            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'âœ… GST Invoice Issued':'â³ Acknowledgment Receipt'}</span>
+            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">View Details &amp; Chat →</button>
+            <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ GST Invoice Issued':'⏳ Acknowledgment Receipt'}</span>
           </div>
         </div>`).join('');
     }
@@ -469,7 +469,7 @@
       const container = document.getElementById('invoicesList');
       const withInv = projects.filter(p=>p.invoiceAmount>0);
       if (!withInv.length) {
-        container.innerHTML = '<div class="empty-state"><div class="empty-icon">ðŸ’°</div><div class="empty-text">No invoices or receipts yet.</div></div>';
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices or receipts yet.</div></div>';
         return;
       }
       container.innerHTML = withInv.map(p=>{
@@ -482,13 +482,13 @@
         <div class="invoice-row">
           <div>
             <div style="font-weight:700;font-size:1.05rem;margin-bottom:4px;">${p.title||'Untitled Project'}</div>
-            <div style="font-size:12px;color:var(--t3);">Invoice Ref #${p.id.substring(0,8).toUpperCase()} Â· Client GSTIN: ${p.clientGstin||'N/A'}</div>
+            <div style="font-size:12px;color:var(--t3);">Invoice Ref #${p.id.substring(0,8).toUpperCase()} · Client GSTIN: ${p.clientGstin||'N/A'}</div>
           </div>
           <div style="text-align:right;">
-            <div style="font-family:var(--font-h);font-size:1.4rem;color:var(--gold);">â‚¹${total.toLocaleString()} <small style="font-size:10px;color:var(--t3);">(incl. GST)</small></div>
+            <div style="font-family:var(--font-h);font-size:1.4rem;color:var(--gold);">₹${total.toLocaleString()} <small style="font-size:10px;color:var(--t3);">(incl. GST)</small></div>
             <div style="margin-top:6px;display:flex;gap:8px;justify-content:flex-end;align-items:center;">
-              <span class="status-badge ${isOfficial?'invoice-paid':'invoice-unpaid'}">${isOfficial?'âœ… Official GST Invoice':'â³ Acknowledgment Receipt'}</span>
-              <button class="btn-gold btn-sm" onclick="openInvoiceModal('${p.id}')">View / Print Invoice â†’</button>
+              <span class="status-badge ${isOfficial?'invoice-paid':'invoice-unpaid'}">${isOfficial?'✅ Official GST Invoice':'⏳ Acknowledgment Receipt'}</span>
+              <button class="btn-gold btn-sm" onclick="openInvoiceModal('${p.id}')">View / Print Invoice →</button>
             </div>
           </div>
         </div>`;
@@ -507,24 +507,24 @@
       const advance = Math.round(total * 0.5);
       const isOfficial = p.invoicePaid || false;
 
-      document.getElementById('invModalTypeBadge').textContent = isOfficial ? 'âœ… Official GST Tax Invoice' : 'â³ Acknowledgment Receipt';
+      document.getElementById('invModalTypeBadge').textContent = isOfficial ? '✅ Official GST Tax Invoice' : '⏳ Acknowledgment Receipt';
       document.getElementById('invPaperHeaderTitle').textContent = isOfficial ? 'TAX INVOICE' : 'ACKNOWLEDGMENT RECEIPT';
       document.getElementById('invPaperNo').textContent = 'EDZ-' + pid.substring(0,6).toUpperCase();
       document.getElementById('invPaperDate').textContent = dateStr(p.createdAt);
       document.getElementById('invPaperClientName').textContent = currentUser.name || 'Client';
       document.getElementById('invPaperClientEmail').textContent = currentUser.email;
       document.getElementById('invPaperClientGst').textContent = p.clientGstin || 'N/A (Individual)';
-      document.getElementById('invPaperPayStatus').textContent = isOfficial ? 'âœ… Paid in Full' : '50% Booking Deposit Pending';
+      document.getElementById('invPaperPayStatus').textContent = isOfficial ? '✅ Paid in Full' : '50% Booking Deposit Pending';
 
       document.getElementById('invItemName').textContent = p.title || 'Video Post-Production';
-      document.getElementById('invItemRate').textContent = 'â‚¹' + base.toLocaleString();
-      document.getElementById('invItemAmt').textContent = 'â‚¹' + base.toLocaleString();
+      document.getElementById('invItemRate').textContent = '₹' + base.toLocaleString();
+      document.getElementById('invItemAmt').textContent = '₹' + base.toLocaleString();
 
-      document.getElementById('invSumSubtotal').textContent = 'â‚¹' + base.toLocaleString();
-      document.getElementById('invSumCgst').textContent = 'â‚¹' + cgst.toLocaleString();
-      document.getElementById('invSumSgst').textContent = 'â‚¹' + sgst.toLocaleString();
-      document.getElementById('invSumTotal').textContent = 'â‚¹' + total.toLocaleString();
-      document.getElementById('invSumPaid').textContent = 'â‚¹' + advance.toLocaleString();
+      document.getElementById('invSumSubtotal').textContent = '₹' + base.toLocaleString();
+      document.getElementById('invSumCgst').textContent = '₹' + cgst.toLocaleString();
+      document.getElementById('invSumSgst').textContent = '₹' + sgst.toLocaleString();
+      document.getElementById('invSumTotal').textContent = '₹' + total.toLocaleString();
+      document.getElementById('invSumPaid').textContent = '₹' + advance.toLocaleString();
 
       document.getElementById('modalInvoiceView').classList.add('open');
     };
@@ -536,7 +536,7 @@
     const cnpServiceSelect = document.getElementById('cnp-service');
     cnpServiceSelect.addEventListener('change', (e)=>{
       const [name, price] = e.target.value.split('|');
-      document.getElementById('cnpPriceTag').textContent = price === '0' ? 'Custom Quote' : `Est. Price: â‚¹${parseInt(price).toLocaleString()} (+ 18% GST)`;
+      document.getElementById('cnpPriceTag').textContent = price === '0' ? 'Custom Quote' : `Est. Price: ₹${parseInt(price).toLocaleString()} (+ 18% GST)`;
     });
 
     document.getElementById('btnSubmitClientProject').addEventListener('click', async () => {
@@ -568,7 +568,7 @@
         deadline: deadline
       });
 
-      showToast('Project booked! Acknowledgment receipt created âœ…','success');
+      showToast('Project booked! Acknowledgment receipt created ✅','success');
       modalClientNewProject.classList.remove('open');
       document.getElementById('cnp-title').value = '';
       document.getElementById('cnp-desc').value = '';
@@ -590,7 +590,7 @@
       const footDisp  = document.getElementById('footageLinkDisplay');
       if (currentProject.rawFootageUrl) {
         footInput.value = currentProject.rawFootageUrl;
-        footDisp.innerHTML = `<span style="color:var(--green);">âœ“ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link â†—</a>`;
+        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
       } else {
         footInput.value = '';
         footDisp.innerHTML = '<span style="color:var(--t3);">No drive link saved yet. Paste your Google Drive link above!</span>';
@@ -603,7 +603,7 @@
     function renderTimeline(currentStatus) {
       const steps = ['pending','in_progress','review','done'];
       const labels = {pending:'Pending',in_progress:'In Progress',review:'In Review',done:'Done'};
-      const icons  = {pending:'â³',in_progress:'ðŸ”„',review:'ðŸ‘',done:'âœ…'};
+      const icons  = {pending:'⏳',in_progress:'🔄',review:'👁',done:'✅'};
       const curIdx = steps.indexOf(currentStatus==='revision'?'review':currentStatus);
       let html='';
       steps.forEach((s,i)=>{
@@ -611,7 +611,7 @@
         const isActive = i === curIdx;
         if (i>0) html += `<div class="sts-line ${isDone?'done':''}"></div>`;
         html += `<div class="sts-step">
-          <div class="sts-dot ${isDone?'done':(isActive?'active':'')}">${isDone?'âœ“':icons[s]}</div>
+          <div class="sts-dot ${isDone?'done':(isActive?'active':'')}">${isDone?'✓':icons[s]}</div>
           <div class="sts-label ${isDone?'done':(isActive?'active':'')}">${labels[s]}</div>
         </div>`;
       });
@@ -623,8 +623,8 @@
       if (!url || !currentProject) { showToast('Please enter a valid link.','error'); return; }
       await updateDoc(doc(db,'projects',currentProject.id),{ rawFootageUrl: url });
       currentProject.rawFootageUrl = url;
-      document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">âœ“ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Link â†—</a>`;
-      showToast('Footage link saved! âœ…','success');
+      document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Link ↗</a>`;
+      showToast('Footage link saved! ✅','success');
     });
 
     function loadChat(pid) {
@@ -640,7 +640,7 @@
           const div=document.createElement('div');
           div.className='chat-msg '+(isMe?'mine':'theirs');
           let formattedText = m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
-          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} Â· ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
+          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
             <div class="chat-msg-bubble">${formattedText}</div>`;
           container.appendChild(div);
         });
@@ -683,6 +683,3 @@
   </script>
 </body>
 </html>
-
-
-
