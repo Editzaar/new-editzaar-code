@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=6.0"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=6.0"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -201,12 +201,12 @@
           role = snap.data().role;
         }
 
-        if (role === 'admin')       window.location.replace('/dashboard/admin.html');
-        else if (role === 'editor') window.location.replace('/dashboard/editor.html');
-        else                        window.location.replace('/dashboard/client.html');
+        if (role === 'admin')       window.location.replace('admin.html');
+        else if (role === 'editor') window.location.replace('editor.html');
+        else                        window.location.replace('client.html');
       } catch(err) {
         console.error('Role redirect error:', err);
-        window.location.replace('/dashboard/client.html');
+        window.location.replace('client.html');
       }
     }
 

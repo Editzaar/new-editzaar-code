@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=5.5"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=5.5"/>
 
   <style>
     .welcome-banner {
@@ -397,7 +397,7 @@
     let allUsers = {};
 
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.replace('/dashboard/index.html'); return; }
+      if (!user) { window.location.replace('index.html'); return; }
       const snap = await getDoc(doc(db,'users',user.uid));
       currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client',name:'Client'}) };
       document.getElementById('clientEmail').textContent = user.email;
@@ -405,7 +405,7 @@
       loadUsers(); listenRealtimeProjects(); listenAnnouncements();
     });
 
-    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('/dashboard/index.html')));
+    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('index.html')));
 
     async function loadUsers() {
       const snap = await getDocs(collection(db,'users'));
