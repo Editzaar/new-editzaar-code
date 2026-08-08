@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Editor Dashboard — Editzaar</title>
+  <title>Editor Dashboard â€” Editzaar</title>
   <meta name="robots" content="noindex,nofollow"/>
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -22,22 +22,22 @@
 </head>
 <body>
 
-  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  <button class="sidebar-toggle" id="sidebarToggle">â˜°</button>
   <div class="toast" id="toast"></div>
 
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <a href="../index.html" class="sidebar-logo" title="Back to Main Website">EDIT<em>ZAAR</em> ↗</a>
-      <div class="sidebar-role-badge">🎬 Editor</div>
+      <a href="/" class="sidebar-logo" title="Back to Main Website">EDIT<em>ZAAR</em> â†—</a>
+      <div class="sidebar-role-badge">ðŸŽ¬ Editor</div>
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">My Work</div>
-        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
+        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">ðŸ“</span> My Projects</div>
         <div class="sidebar-nav-section">Communication</div>
-        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Messages</div>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">ðŸ’¬</span> Messages</div>
       </nav>
       <div class="sidebar-footer">
-        <div class="sidebar-user-info" id="editorEmail">Loading…</div>
+        <div class="sidebar-user-info" id="editorEmail">Loadingâ€¦</div>
         <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
       </div>
     </aside>
@@ -45,46 +45,46 @@
     <!-- MAIN -->
     <main class="dash-main">
 
-      <!-- ── SECTION: MY PROJECTS ── -->
+      <!-- â”€â”€ SECTION: MY PROJECTS â”€â”€ -->
       <section id="sec-projects">
         <div class="dash-topbar">
           <div class="dash-page-title">My <em>Projects</em></div>
         </div>
         <div class="stats-row">
-          <div class="stat-card"><div class="stat-card-label">Total Assigned</div><div class="stat-card-value" id="statTotal">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">In Progress</div><div class="stat-card-value" id="statActive">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">—</div></div>
+          <div class="stat-card"><div class="stat-card-label">Total Assigned</div><div class="stat-card-value" id="statTotal">â€”</div></div>
+          <div class="stat-card"><div class="stat-card-label">In Progress</div><div class="stat-card-value" id="statActive">â€”</div></div>
+          <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">â€”</div></div>
         </div>
         <div id="projectsList"></div>
       </section>
 
-      <!-- ── SECTION: PROJECT DETAIL ── -->
+      <!-- â”€â”€ SECTION: PROJECT DETAIL â”€â”€ -->
       <section id="sec-detail" style="display:none;">
         <div class="dash-topbar">
-          <button class="btn-outline" onclick="showSection('projects')">← Back to Projects</button>
+          <button class="btn-outline" onclick="showSection('projects')">â† Back to Projects</button>
           <div id="detailStatus"></div>
         </div>
         <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;">
           <div>
             <div class="dash-card">
               <div class="dash-card-header">
-                <div class="dash-card-title" id="detailTitle">—</div>
+                <div class="dash-card-title" id="detailTitle">â€”</div>
               </div>
-              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;line-height:1.7;" id="detailDesc">—</div>
+              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;line-height:1.7;" id="detailDesc">â€”</div>
               <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
-                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Client</div><div style="font-size:0.9rem;" id="detailClient">—</div></div>
-                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">—</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Client</div><div style="font-size:0.9rem;" id="detailClient">â€”</div></div>
+                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">â€”</div></div>
               </div>
 
               <!-- Raw Footage Link View -->
               <div style="margin-bottom:20px;background:rgba(255,184,0,0.05);border:1px solid var(--gold-border);border-radius:var(--r);padding:16px;">
-                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Client's Raw Footage Link</div>
+                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">ðŸ“ Client's Raw Footage Link</div>
                 <div id="rawFootageLink" style="font-size:0.88rem;color:var(--t2);">No link saved by client yet.</div>
               </div>
 
               <!-- Submit Final Delivery Link -->
               <div class="link-input-box">
-                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎬 Final Delivered Video Link (Google Drive / Frame.io / Vimeo)</div>
+                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">ðŸŽ¬ Final Delivered Video Link (Google Drive / Frame.io / Vimeo)</div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                   <input type="url" id="deliveryLinkInput" placeholder="https://drive.google.com/..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:#fff;font-size:0.88rem;outline:none;"/>
                   <button class="btn-gold btn-sm" id="btnSaveDeliveryLink">Save Delivery Link</button>
@@ -97,9 +97,9 @@
             <div class="dash-card">
               <div class="dash-card-header"><div class="dash-card-title">Update <em>Status</em></div></div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn-outline btn-sm" onclick="updateStatus('in_progress')">🔄 In Progress</button>
-                <button class="btn-outline btn-sm" onclick="updateStatus('review')">👁 Submit for Review</button>
-                <button class="btn-outline btn-sm" onclick="updateStatus('done')">✅ Mark Done</button>
+                <button class="btn-outline btn-sm" onclick="updateStatus('in_progress')">ðŸ”„ In Progress</button>
+                <button class="btn-outline btn-sm" onclick="updateStatus('review')">ðŸ‘ Submit for Review</button>
+                <button class="btn-outline btn-sm" onclick="updateStatus('done')">âœ… Mark Done</button>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@
             <div class="chat-container">
               <div class="chat-messages" id="chatMessages"></div>
               <div class="chat-input-row">
-                <input class="chat-input" id="chatInput" placeholder="Type a message or paste a link…"/>
+                <input class="chat-input" id="chatInput" placeholder="Type a message or paste a linkâ€¦"/>
                 <button class="btn-gold" id="btnSendMsg">Send</button>
               </div>
             </div>
@@ -118,12 +118,12 @@
         </div>
       </section>
 
-      <!-- ── SECTION: MESSAGES ── -->
+      <!-- â”€â”€ SECTION: MESSAGES â”€â”€ -->
       <section id="sec-chat" style="display:none;">
         <div class="dash-topbar"><div class="dash-page-title">Messages</div></div>
         <div class="dash-card">
           <div class="empty-state">
-            <div class="empty-icon">💬</div>
+            <div class="empty-icon">ðŸ’¬</div>
             <div class="empty-text">Open a project from "My Projects" to chat with your client.</div>
           </div>
         </div>
@@ -192,14 +192,14 @@
       renderProjects(projects);
     }
 
-    const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
+    const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed âœ“'};
     function badge(s){ return `<span class="status-badge status-${s}">${STATUS_LABELS[s]||s}</span>`; }
-    function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+    function dateStr(ts){ if(!ts) return 'â€”'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
 
     function renderProjects(projects) {
       const container = document.getElementById('projectsList');
       if (!projects.length) {
-        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-text">No projects assigned to you yet.</div></div>';
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">ðŸ“</div><div class="empty-text">No projects assigned to you yet.</div></div>';
         return;
       }
       container.innerHTML = projects.map(p=>`
@@ -208,10 +208,10 @@
             <div class="project-card-title">${p.title||'Untitled'}</div>
             ${badge(p.status)}
           </div>
-          <div class="project-card-meta">Client: ${allUsers[p.clientId]?.name||'—'} · Deadline: ${dateStr(p.deadline)}</div>
-          <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
+          <div class="project-card-meta">Client: ${allUsers[p.clientId]?.name||'â€”'} Â· Deadline: ${dateStr(p.deadline)}</div>
+          <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'â€¦':''}</div>
           <div class="project-card-actions">
-            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">Open Project →</button>
+            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">Open Project â†’</button>
           </div>
         </div>`).join('');
     }
@@ -223,14 +223,14 @@
 
       document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
       document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
-      document.getElementById('detailClient').textContent   = allUsers[currentProject.clientId]?.name||'—';
+      document.getElementById('detailClient').textContent   = allUsers[currentProject.clientId]?.name||'â€”';
       document.getElementById('detailDeadline').textContent = dateStr(currentProject.deadline);
       document.getElementById('detailStatus').innerHTML     = badge(currentProject.status);
 
       // Raw footage view
       const rawEl = document.getElementById('rawFootageLink');
       if (currentProject.rawFootageUrl) {
-        rawEl.innerHTML = `<span style="color:var(--green);">✓ Link saved by client:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:underline;">Open Raw Footage Drive Link ↗</a>`;
+        rawEl.innerHTML = `<span style="color:var(--green);">âœ“ Link saved by client:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:underline;">Open Raw Footage Drive Link â†—</a>`;
       } else { rawEl.textContent = 'No drive link provided by client yet.'; }
 
       // Delivery link view/input
@@ -238,7 +238,7 @@
       const delDisp  = document.getElementById('deliveryLinkDisplay');
       if (currentProject.deliveryUrl) {
         delInput.value = currentProject.deliveryUrl;
-        delDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.deliveryUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
+        delDisp.innerHTML = `<span style="color:var(--green);">âœ“ Saved:</span> <a href="${currentProject.deliveryUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link â†—</a>`;
       } else {
         delInput.value = '';
         delDisp.innerHTML = '<span style="color:var(--t3);">No delivery link saved yet.</span>';
@@ -256,8 +256,8 @@
       currentProject.deliveryUrl = url;
       currentProject.status = 'review';
       document.getElementById('detailStatus').innerHTML = badge('review');
-      document.getElementById('deliveryLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
-      showToast('Delivery link saved & status updated to In Review! ✅','success');
+      document.getElementById('deliveryLinkDisplay').innerHTML = `<span style="color:var(--green);">âœ“ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link â†—</a>`;
+      showToast('Delivery link saved & status updated to In Review! âœ…','success');
     });
 
     window.updateStatus = async (status) => {
@@ -282,7 +282,7 @@
           const div=document.createElement('div');
           div.className='chat-msg '+(isMe?'mine':'theirs');
           let formattedText = m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
-          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
+          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} Â· ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
             <div class="chat-msg-bubble">${formattedText}</div>`;
           container.appendChild(div);
         });
@@ -320,3 +320,4 @@
   </script>
 </body>
 </html>
+

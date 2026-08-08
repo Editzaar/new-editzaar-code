@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Editzaar — Sign In or Create Account</title>
+  <title>Editzaar â€” Sign In or Create Account</title>
   <meta name="robots" content="noindex,nofollow"/>
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -117,13 +117,13 @@
 
       <div class="auth-field">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+        <input type="password" id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"/>
       </div>
 
-      <button class="auth-btn" id="submitBtn">Sign In →</button>
+      <button class="auth-btn" id="submitBtn">Sign In â†’</button>
 
       <div class="auth-links-row">
-        <a href="../index.html" class="back-link">← Back to Editzaar.in</a>
+        <a href="/" class="back-link">â† Back to Editzaar.in</a>
         <span class="forgot-link" id="forgotBtn">Forgot password?</span>
       </div>
     </div>
@@ -162,7 +162,6 @@
         const snap = await getDoc(userRef);
         let role = 'client';
 
-        // SELF-HEALING ENGINE: If Firestore document is missing, auto-create it immediately!
         if (!snap.exists()) {
           const defaultName = user.displayName || user.email.split('@')[0];
           role = user.email === 'editzaarbooking@gmail.com' ? 'admin' : 'client';
@@ -171,32 +170,8 @@
             name: defaultName,
             email: user.email,
             role: role,
-            tempPass: 'ClientPass123',
             createdAt: serverTimestamp()
           });
-
-          if (role === 'client') {
-            await addDoc(collection(db, 'announcements'), {
-              title: '👋 Welcome to Editzaar Agency!',
-              message: `Hi ${defaultName}! We're thrilled to partner with you. Book your first video edit or web project anytime!`,
-              target: user.uid,
-              createdAt: serverTimestamp()
-            });
-
-            const d = new Date(); d.setDate(d.getDate() + 3);
-            await addDoc(collection(db, 'projects'), {
-              title: 'Shorts & Instagram Reels Pack — Growth Launch',
-              description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
-              clientId: user.uid,
-              clientGstin: '',
-              editorId: '',
-              status: 'in_progress',
-              invoiceAmount: 2500,
-              invoicePaid: true,
-              createdAt: serverTimestamp(),
-              deadline: d
-            });
-          }
         } else if (snap.data().role) {
           role = snap.data().role;
         }
@@ -237,7 +212,7 @@
         authTitle.textContent = 'Welcome back';
         authSub.textContent = 'Sign in to access your portal';
         fieldFullname.style.display = 'none';
-        submitBtn.textContent = 'Sign In →';
+        submitBtn.textContent = 'Sign In â†’';
         submitBtn.disabled = false;
         forgotBtn.style.display = 'inline';
       } else {
@@ -246,7 +221,7 @@
         authTitle.textContent = 'Create Client Account';
         authSub.textContent = 'Register to track projects and chat with editors';
         fieldFullname.style.display = 'block';
-        submitBtn.textContent = 'Create Account →';
+        submitBtn.textContent = 'Create Account â†’';
         submitBtn.disabled = false;
         forgotBtn.style.display = 'none';
       }
@@ -267,7 +242,7 @@
 
     function resetButton() {
       submitBtn.disabled = false;
-      submitBtn.textContent = mode === 'signin' ? 'Sign In →' : 'Create Account →';
+      submitBtn.textContent = mode === 'signin' ? 'Sign In â†’' : 'Create Account â†’';
     }
 
     submitBtn.addEventListener('click', async () => {
@@ -279,36 +254,10 @@
       if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Authenticating…';
+      submitBtn.textContent = 'Authenticatingâ€¦';
       errorEl.classList.remove('show');
 
       try {
-        const cred = await signInWithEmailAndPassword(auth, email, pass);
-        showSuccess('Sign in successful! Loading your dashboard…');
-        await redirectByRole(cred.user);
-      } catch (e) {
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
-          try {
-            submitBtn.textContent = 'Initializing Account & Profile…';
-            const newCred = await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, 'users', newCred.user.uid), {
-              name: name,
-              email: email,
-              role: 'client',
-              tempPass: pass,
-              createdAt: serverTimestamp()
-            });
-
-            await addDoc(collection(db, 'announcements'), {
-              title: '🚀 Welcome to Editzaar Agency!',
-              message: `Hi ${name}! Thank you for logging in. You can now track your projects and chat live with your video editor!`,
-              target: newCred.user.uid,
-              createdAt: serverTimestamp()
-            });
-
-            const d = new Date(); d.setDate(d.getDate() + 3);
-            await addDoc(collection(db, 'projects'), {
-              title: 'Shorts & Instagram Reels Pack — Growth Launch',
               description: 'Kinetic caption styling, sound FX, lower thirds, and 3-second hook optimization.',
               clientId: newCred.user.uid,
               clientGstin: '',
@@ -320,7 +269,7 @@
               deadline: d
             });
 
-            showSuccess('Account initialized! Opening your dashboard…');
+            showSuccess('Account initialized! Opening your dashboardâ€¦');
             await redirectByRole(newCred.user);
           } catch (createErr) {
             showError('Incorrect password or invalid email format. Please check your credentials.');
@@ -352,3 +301,4 @@
   </script>
 </body>
 </html>
+

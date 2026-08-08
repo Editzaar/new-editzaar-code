@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard — Editzaar</title>
+  <title>Admin Dashboard â€” Editzaar</title>
   <meta name="robots" content="noindex,nofollow"/>
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -85,29 +85,29 @@
 </head>
 <body>
 
-  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  <button class="sidebar-toggle" id="sidebarToggle">â˜°</button>
   <div class="toast" id="toast"></div>
 
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <a href="../index.html" class="sidebar-logo" title="Back to Main Website">EDIT<em>ZAAR</em> ↗</a>
-      <div class="sidebar-role-badge">👑 Admin</div>
+      <a href="/" class="sidebar-logo" title="Back to Main Website">EDIT<em>ZAAR</em> â†—</a>
+      <div class="sidebar-role-badge">ðŸ‘‘ Admin</div>
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">Overview</div>
-        <div class="sidebar-nav-item active" data-section="overview"><span class="nav-icon">📊</span> Dashboard</div>
+        <div class="sidebar-nav-item active" data-section="overview"><span class="nav-icon">ðŸ“Š</span> Dashboard</div>
         <div class="sidebar-nav-section">Management</div>
-        <div class="sidebar-nav-item" data-section="projects"><span class="nav-icon">📁</span> All Projects</div>
-        <div class="sidebar-nav-item" data-section="editors"><span class="nav-icon">🎬</span> Editors &amp; Staff</div>
-        <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients</div>
+        <div class="sidebar-nav-item" data-section="projects"><span class="nav-icon">ðŸ“</span> All Projects</div>
+        <div class="sidebar-nav-item" data-section="editors"><span class="nav-icon">ðŸŽ¬</span> Editors &amp; Staff</div>
+        <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">ðŸ‘¤</span> Clients</div>
         <div class="sidebar-nav-section">Communication</div>
-        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat Overlook</div>
-        <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Broadcast &amp; Welcome</div>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">ðŸ’¬</span> Live Chat Overlook</div>
+        <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">ðŸ“¢</span> Broadcast &amp; Welcome</div>
         <div class="sidebar-nav-section">Finance</div>
-        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; Tax Confirmations</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">ðŸ’°</span> Invoices &amp; Tax Confirmations</div>
       </nav>
       <div class="sidebar-footer">
-        <div class="sidebar-user-info" id="adminEmail">Loading…</div>
+        <div class="sidebar-user-info" id="adminEmail">Loadingâ€¦</div>
         <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
       </div>
     </aside>
@@ -123,7 +123,7 @@
             <div class="live-badge"><div class="live-dot"></div> Live Sync</div>
           </div>
           <div style="display:flex;gap:10px;">
-            <button class="btn-gold" id="btnNewProject">＋ New Project</button>
+            <button class="btn-gold" id="btnNewProject">ï¼‹ New Project</button>
           </div>
         </div>
 
@@ -131,7 +131,7 @@
           <div class="stat-card"><div class="stat-card-label">Total Projects</div><div class="stat-card-value" id="statTotal">0</div></div>
           <div class="stat-card"><div class="stat-card-label">Active</div><div class="stat-card-value" id="statActive">0</div></div>
           <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">0</div></div>
-          <div class="stat-card"><div class="stat-card-label">Revenue (Paid)</div><div class="stat-card-value" id="statRevenue">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Revenue (Paid)</div><div class="stat-card-value" id="statRevenue">â‚¹0</div></div>
           <div class="stat-card"><div class="stat-card-label">Editors</div><div class="stat-card-value" id="statEditors">0</div></div>
           <div class="stat-card"><div class="stat-card-label">Clients</div><div class="stat-card-value" id="statClients">0</div></div>
         </div>
@@ -144,7 +144,7 @@
           <div style="overflow-x:auto;">
             <table class="dash-table" id="recentProjectsTable">
               <thead><tr><th>Project</th><th>Client</th><th>Assigned Editor</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
-              <tbody id="recentProjectsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Listening for live updates…</td></tr></tbody>
+              <tbody id="recentProjectsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Listening for live updatesâ€¦</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -154,7 +154,7 @@
       <section id="sec-projects" style="display:none;">
         <div class="dash-topbar">
           <div class="dash-page-title">All <em>Projects</em></div>
-          <button class="btn-gold" id="btnNewProject2">＋ New Project</button>
+          <button class="btn-gold" id="btnNewProject2">ï¼‹ New Project</button>
         </div>
         <div class="filter-row">
           <select class="filter-select" id="filterStatus">
@@ -171,7 +171,7 @@
           <div style="overflow-x:auto;">
             <table class="dash-table" id="allProjectsTable">
               <thead><tr><th>Project</th><th>Client</th><th>Assigned Editor (Manual)</th><th>Status</th><th>Invoice</th><th>Deadline</th><th>Actions</th></tr></thead>
-              <tbody id="allProjectsTbody"><tr><td colspan="7" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <tbody id="allProjectsTbody"><tr><td colspan="7" style="color:var(--t3);text-align:center;padding:24px;">Loadingâ€¦</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -181,13 +181,13 @@
       <section id="sec-editors" style="display:none;">
         <div class="dash-topbar">
           <div class="dash-page-title">Editors &amp; <em>Staff Credentials</em></div>
-          <button class="btn-gold" id="btnNewEditor">＋ Add Editor</button>
+          <button class="btn-gold" id="btnNewEditor">ï¼‹ Add Editor</button>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
               <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Role</th><th>Active Projects</th><th>Actions</th></tr></thead>
-              <tbody id="editorsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <tbody id="editorsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loadingâ€¦</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -197,13 +197,13 @@
       <section id="sec-clients" style="display:none;">
         <div class="dash-topbar">
           <div class="dash-page-title">Clients <em>Credentials &amp; Directory</em></div>
-          <button class="btn-gold" id="btnNewClient">＋ Add Client</button>
+          <button class="btn-gold" id="btnNewClient">ï¼‹ Add Client</button>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
               <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Projects</th><th>Assign Editor (Manual)</th><th>Actions</th></tr></thead>
-              <tbody id="clientsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <tbody id="clientsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loadingâ€¦</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -220,18 +220,18 @@
             <div class="field">
               <label>Target Audience</label>
               <select id="bc-target">
-                <option value="all">📢 All Clients &amp; Users (Broadcast)</option>
+                <option value="all">ðŸ“¢ All Clients &amp; Users (Broadcast)</option>
               </select>
             </div>
             <div class="field">
               <label>Announcement Title</label>
-              <input id="bc-title" type="text" placeholder="e.g. ⚡ Special Offer: 20% Off Reels Editing This Week!"/>
+              <input id="bc-title" type="text" placeholder="e.g. âš¡ Special Offer: 20% Off Reels Editing This Week!"/>
             </div>
             <div class="field">
               <label>Announcement Message</label>
               <textarea id="bc-msg" placeholder="Type the message that will pop up on client dashboards..."></textarea>
             </div>
-            <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSendBroadcast">🚀 Publish Broadcast Announcement →</button>
+            <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSendBroadcast">ðŸš€ Publish Broadcast Announcement â†’</button>
           </div>
         </div>
       </section>
@@ -250,7 +250,7 @@
               <div style="font-size:0.9rem;font-weight:600;padding:12px;border-bottom:1px solid var(--border);color:var(--gold);" id="adminChatHeader">Select a project from the left to view &amp; chat</div>
               <div class="chat-messages" id="adminChatMessages"></div>
               <div class="chat-input-row">
-                <input class="chat-input" id="adminChatInput" placeholder="Send a message as Admin…"/>
+                <input class="chat-input" id="adminChatInput" placeholder="Send a message as Adminâ€¦"/>
                 <button class="btn-gold" id="btnAdminSendMsg">Send</button>
               </div>
             </div>
@@ -264,15 +264,15 @@
           <div class="dash-page-title">Invoices &amp; <em>Tax Confirmations</em></div>
         </div>
         <div class="stats-row" style="margin-bottom:24px;">
-          <div class="stat-card"><div class="stat-card-label">Total Invoiced</div><div class="stat-card-value" id="invTotal">₹0</div></div>
-          <div class="stat-card"><div class="stat-card-label">Collected</div><div class="stat-card-value" id="invPaid" style="color:var(--green);">₹0</div></div>
-          <div class="stat-card"><div class="stat-card-label">Outstanding</div><div class="stat-card-value" id="invUnpaid" style="color:var(--red);">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Total Invoiced</div><div class="stat-card-value" id="invTotal">â‚¹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Collected</div><div class="stat-card-value" id="invPaid" style="color:var(--green);">â‚¹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Outstanding</div><div class="stat-card-value" id="invUnpaid" style="color:var(--red);">â‚¹0</div></div>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
               <thead><tr><th>Project</th><th>Client &amp; GSTIN</th><th>Amount (+18% GST)</th><th>Tax Status</th><th>Actions</th></tr></thead>
-              <tbody id="invoicesTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <tbody id="invoicesTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loadingâ€¦</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -284,15 +284,15 @@
   <!-- MODALS -->
   <div class="modal-overlay" id="modalNewProject">
     <div class="modal-box">
-      <button class="modal-close" data-close="modalNewProject">✕</button>
+      <button class="modal-close" data-close="modalNewProject">âœ•</button>
       <div class="modal-title">Create New Project</div>
       <div class="dash-form">
         <div class="field"><label>Project Title</label><input id="np-title" type="text" placeholder="e.g. Finance Reel - March"/></div>
-        <div class="field"><label>Description / Brief</label><textarea id="np-desc" placeholder="Project details, style, references…"></textarea></div>
-        <div class="field"><label>Assign Client</label><select id="np-client"><option value="">Select client…</option></select></div>
-        <div class="field"><label>Assign Editor (Manual)</label><select id="np-editor"><option value="">Select editor…</option></select></div>
+        <div class="field"><label>Description / Brief</label><textarea id="np-desc" placeholder="Project details, style, referencesâ€¦"></textarea></div>
+        <div class="field"><label>Assign Client</label><select id="np-client"><option value="">Select clientâ€¦</option></select></div>
+        <div class="field"><label>Assign Editor (Manual)</label><select id="np-editor"><option value="">Select editorâ€¦</option></select></div>
         <div class="field"><label>Deadline</label><input id="np-deadline" type="date"/></div>
-        <div class="field"><label>Invoice Amount (₹)</label><input id="np-invoice" type="number" placeholder="5000"/></div>
+        <div class="field"><label>Invoice Amount (â‚¹)</label><input id="np-invoice" type="number" placeholder="5000"/></div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateProject">Create Project</button>
       </div>
     </div>
@@ -300,7 +300,7 @@
 
   <div class="modal-overlay" id="modalNewEditor">
     <div class="modal-box">
-      <button class="modal-close" data-close="modalNewEditor">✕</button>
+      <button class="modal-close" data-close="modalNewEditor">âœ•</button>
       <div class="modal-title">Add Video Editor</div>
       <div class="dash-form">
         <div class="field"><label>Full Name</label><input id="ne-name" type="text" placeholder="Editor name"/></div>
@@ -313,13 +313,13 @@
 
   <div class="modal-overlay" id="modalNewClient">
     <div class="modal-box">
-      <button class="modal-close" data-close="modalNewClient">✕</button>
+      <button class="modal-close" data-close="modalNewClient">âœ•</button>
       <div class="modal-title">Add Client</div>
       <div class="dash-form">
         <div class="field"><label>Full Name</label><input id="nc-name" type="text" placeholder="Client name"/></div>
         <div class="field"><label>Email</label><input id="nc-email" type="email" placeholder="client@email.com"/></div>
         <div class="field"><label>Password</label><input id="nc-pass" type="text" placeholder="min. 6 characters"/></div>
-        <div class="field"><label>Assign Default Editor (Manual)</label><select id="nc-editor"><option value="">Select editor…</option></select></div>
+        <div class="field"><label>Assign Default Editor (Manual)</label><select id="nc-editor"><option value="">Select editorâ€¦</option></select></div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateClient">Add Client</button>
       </div>
     </div>
@@ -327,7 +327,7 @@
 
   <div class="modal-overlay" id="modalEditStatus">
     <div class="modal-box">
-      <button class="modal-close" data-close="modalEditStatus">✕</button>
+      <button class="modal-close" data-close="modalEditStatus">âœ•</button>
       <div class="modal-title">Update Project &amp; Issue Tax Invoice</div>
       <div class="dash-form">
         <div class="field"><label>Status</label>
@@ -336,15 +336,15 @@
             <option value="in_progress">In Progress</option>
             <option value="review">Client Review</option>
             <option value="revision">Revision Requested</option>
-            <option value="done">Done ✓</option>
+            <option value="done">Done âœ“</option>
           </select>
         </div>
-        <div class="field"><label>Assign / Change Editor</label><select id="es-editor"><option value="">Select editor…</option></select></div>
-        <div class="field"><label>Base Amount (₹)</label><input id="es-invoice" type="number"/></div>
+        <div class="field"><label>Assign / Change Editor</label><select id="es-editor"><option value="">Select editorâ€¦</option></select></div>
+        <div class="field"><label>Base Amount (â‚¹)</label><input id="es-invoice" type="number"/></div>
         <div class="field"><label>Tax Status / Issue Official GST Invoice?</label>
           <select id="es-paid">
-            <option value="false">⏳ Acknowledgment Receipt Only (Unconfirmed)</option>
-            <option value="true">✅ Issue Official GST Tax Invoice (Confirmed)</option>
+            <option value="false">â³ Acknowledgment Receipt Only (Unconfirmed)</option>
+            <option value="true">âœ… Issue Official GST Tax Invoice (Confirmed)</option>
           </select>
         </div>
         <input type="hidden" id="es-pid"/>
@@ -419,7 +419,7 @@
       document.getElementById('statActive').textContent  = projects.filter(p=>p.status!=='done').length;
       document.getElementById('statDone').textContent    = projects.filter(p=>p.status==='done').length;
       const rev = projects.filter(p=>p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
-      document.getElementById('statRevenue').textContent = '₹'+rev.toLocaleString();
+      document.getElementById('statRevenue').textContent = 'â‚¹'+rev.toLocaleString();
       document.getElementById('statEditors').textContent = editors.length;
       document.getElementById('statClients').textContent = clients.length;
     }
@@ -428,10 +428,10 @@
     function badge(status) { return `<span class="status-badge status-${status}">${STATUS_LABELS[status]||status}</span>`; }
     function nameOf(uid) {
       const u = [...editors,...clients].find(u=>u.id===uid);
-      return u ? (u.name || u.email) : (uid ? uid.substring(0,8)+'…' : 'Unassigned');
+      return u ? (u.name || u.email) : (uid ? uid.substring(0,8)+'â€¦' : 'Unassigned');
     }
     function dateStr(ts) {
-      if (!ts) return '—';
+      if (!ts) return 'â€”';
       const d = ts.toDate ? ts.toDate() : new Date(ts);
       return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
     }
@@ -468,7 +468,7 @@
             </select>
           </td>
           <td>${badge(p.status)}</td>
-          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ GST Invoice':'⏳ Receipt Only'}</span><br><small style="color:var(--t3);">₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</small></td>
+          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'âœ… GST Invoice':'â³ Receipt Only'}</span><br><small style="color:var(--t3);">â‚¹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</small></td>
           <td>${dateStr(p.deadline)}</td>
           <td>
             <button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'${p.editorId||''}')">Edit</button>
@@ -479,12 +479,12 @@
 
     window.assignProjectEditor = async (pid, editorId) => {
       await updateDoc(doc(db, 'projects', pid), { editorId });
-      showToast('Editor assigned to project! ✅', 'success');
+      showToast('Editor assigned to project! âœ…', 'success');
     };
 
     window.assignClientEditor = async (clientId, assignedEditor) => {
       await updateDoc(doc(db, 'users', clientId), { assignedEditor });
-      showToast('Default editor assigned to client! ✅', 'success');
+      showToast('Default editor assigned to client! âœ…', 'success');
     };
 
     document.getElementById('filterStatus').addEventListener('change', e=>renderAllProjects(e.target.value, document.getElementById('filterEditor').value));
@@ -500,10 +500,10 @@
           <td><strong>${e.name||'Editor'}</strong></td>
           <td>${e.email}</td>
           <td><span class="pass-pill">${e.tempPass||'Configured'}</span></td>
-          <td><span class="status-badge invoice-paid">🎬 Video Editor</span></td>
+          <td><span class="status-badge invoice-paid">ðŸŽ¬ Video Editor</span></td>
           <td>${activeCount}</td>
           <td>
-            <button class="btn-outline btn-sm" onclick="openModal('modalNewProject')">＋ Assign Project</button>
+            <button class="btn-outline btn-sm" onclick="openModal('modalNewProject')">ï¼‹ Assign Project</button>
             <button class="btn-danger" onclick="deleteUser('${e.id}','${e.name||e.email}')">Delete</button>
           </td>
         </tr>`;
@@ -528,7 +528,7 @@
             </select>
           </td>
           <td>
-            <button class="btn-gold btn-sm" onclick="openModal('modalNewProject');document.getElementById('np-client').value='${c.id}'">＋ Add Project</button>
+            <button class="btn-gold btn-sm" onclick="openModal('modalNewProject');document.getElementById('np-client').value='${c.id}'">ï¼‹ Add Project</button>
             <button class="btn-danger" onclick="deleteUser('${c.id}','${c.name||c.email}')">Delete</button>
           </td>
         </tr>`;
@@ -551,8 +551,8 @@
 
     function populateBroadcastTargets() {
       const sel = document.getElementById('bc-target');
-      sel.innerHTML = '<option value="all">📢 All Clients &amp; Users (Broadcast)</option>' +
-        clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
+      sel.innerHTML = '<option value="all">ðŸ“¢ All Clients &amp; Users (Broadcast)</option>' +
+        clients.map(c => `<option value="${c.id}">ðŸ‘¤ ${c.name || c.email} (${c.email})</option>`).join('');
     }
 
     document.getElementById('btnSendBroadcast').addEventListener('click', async () => {
@@ -565,7 +565,7 @@
         title, message, target, createdAt: serverTimestamp()
       });
 
-      showToast('Announcement published live to client dashboards! 🚀', 'success');
+      showToast('Announcement published live to client dashboards! ðŸš€', 'success');
       document.getElementById('bc-title').value = '';
       document.getElementById('bc-msg').value = '';
     });
@@ -577,13 +577,13 @@
         projects.map(p=>`
           <div class="chat-proj-item ${p.id===activeAdminChatPid?'active':''}" onclick="openAdminChat('${p.id}','${p.title}')">
             <strong>${p.title||'Untitled'}</strong><br/>
-            <small style="color:var(--t3);">${nameOf(p.clientId)} ↔ ${nameOf(p.editorId)}</small>
+            <small style="color:var(--t3);">${nameOf(p.clientId)} â†” ${nameOf(p.editorId)}</small>
           </div>`).join('');
     }
 
     window.openAdminChat = (pid, title) => {
       activeAdminChatPid = pid;
-      document.getElementById('adminChatHeader').textContent = `💬 Chat: ${title} (${nameOf(projects.find(p=>p.id===pid)?.clientId)})`;
+      document.getElementById('adminChatHeader').textContent = `ðŸ’¬ Chat: ${title} (${nameOf(projects.find(p=>p.id===pid)?.clientId)})`;
       renderChatProjectList();
 
       if (adminChatUnsub) adminChatUnsub();
@@ -596,7 +596,7 @@
         msgs.forEach(m => {
           const div = document.createElement('div');
           div.className = 'chat-msg ' + (m.senderId === currentUser.uid ? 'mine' : 'theirs');
-          div.innerHTML = `<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
+          div.innerHTML = `<div class="chat-msg-meta">${m.senderName} Â· ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
             <div class="chat-msg-bubble">${m.text}</div>`;
           container.appendChild(div);
         });
@@ -611,7 +611,7 @@
       input.value = '';
       await addDoc(collection(db, 'projects', activeAdminChatPid, 'chat'), {
         senderId:   currentUser.uid,
-        senderName: '👑 Admin (Editzaar)',
+        senderName: 'ðŸ‘‘ Admin (Editzaar)',
         text: text,
         timestamp: serverTimestamp()
       });
@@ -623,9 +623,9 @@
       const total = withInv.reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
       const paid  = withInv.filter(p=>p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
       const unpaid = total - paid;
-      document.getElementById('invTotal').textContent  = '₹'+total.toLocaleString();
-      document.getElementById('invPaid').textContent   = '₹'+paid.toLocaleString();
-      document.getElementById('invUnpaid').textContent = '₹'+unpaid.toLocaleString();
+      document.getElementById('invTotal').textContent  = 'â‚¹'+total.toLocaleString();
+      document.getElementById('invPaid').textContent   = 'â‚¹'+paid.toLocaleString();
+      document.getElementById('invUnpaid').textContent = 'â‚¹'+unpaid.toLocaleString();
       if (!withInv.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No invoices yet.</td></tr>'; return; }
       tbody.innerHTML = withInv.map(p=>{
         const tot = Math.round((p.invoiceAmount||0)*1.18);
@@ -633,8 +633,8 @@
         <tr>
           <td><strong>${p.title||'Untitled'}</strong></td>
           <td>${nameOf(p.clientId)}<br/><small style="color:var(--gold);">GSTIN: ${p.clientGstin||'N/A (Individual)'}</small></td>
-          <td>₹${tot.toLocaleString()} <small style="color:var(--t3);">(Base ₹${(p.invoiceAmount||0).toLocaleString()})</small></td>
-          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Official GST Invoice':'⏳ Receipt Only'}</span></td>
+          <td>â‚¹${tot.toLocaleString()} <small style="color:var(--t3);">(Base â‚¹${(p.invoiceAmount||0).toLocaleString()})</small></td>
+          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'âœ… Official GST Invoice':'â³ Receipt Only'}</span></td>
           <td><button class="btn-gold btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'${p.editorId||''}')">Confirm &amp; Issue GST Invoice</button></td>
         </tr>`;
       }).join('');
@@ -645,10 +645,10 @@
       const editorOpts  = editors.map(e=>`<option value="${e.id}">${e.name || e.email} (${e.email})</option>`).join('');
       const filterEdSel = document.getElementById('filterEditor');
       filterEdSel.innerHTML = '<option value="">All Editors</option>' + editors.map(e=>`<option value="${e.id}">${e.name || e.email}</option>`).join('');
-      document.getElementById('np-client').innerHTML = '<option value="">Select client…</option>' + clientOpts;
-      document.getElementById('np-editor').innerHTML = '<option value="">Select editor (Manual)…</option>' + editorOpts;
-      document.getElementById('nc-editor').innerHTML = '<option value="">Select editor (Manual)…</option>' + editorOpts;
-      document.getElementById('es-editor').innerHTML = '<option value="">Select editor (Manual)…</option>' + editorOpts;
+      document.getElementById('np-client').innerHTML = '<option value="">Select clientâ€¦</option>' + clientOpts;
+      document.getElementById('np-editor').innerHTML = '<option value="">Select editor (Manual)â€¦</option>' + editorOpts;
+      document.getElementById('nc-editor').innerHTML = '<option value="">Select editor (Manual)â€¦</option>' + editorOpts;
+      document.getElementById('es-editor').innerHTML = '<option value="">Select editor (Manual)â€¦</option>' + editorOpts;
     }
 
     document.getElementById('btnCreateProject').addEventListener('click', async ()=>{
@@ -665,7 +665,7 @@
         invoiceAmount: invoice, invoicePaid: false,
         status: 'pending', createdAt: serverTimestamp()
       });
-      showToast('Project created! ✅','success');
+      showToast('Project created! âœ…','success');
       closeModal('modalNewProject');
     });
 
@@ -685,7 +685,7 @@
       const paid     = document.getElementById('es-paid').value === 'true';
       const editorId = document.getElementById('es-editor').value;
       await updateDoc(doc(db,'projects',pid),{ status, invoiceAmount:amount, invoicePaid:paid, editorId });
-      showToast('Project & Tax Status updated! ✅','success');
+      showToast('Project & Tax Status updated! âœ…','success');
       closeModal('modalEditStatus');
     });
 
@@ -699,7 +699,7 @@
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
         await secAuth.signOut();
         await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'editor', tempPass: pass, createdAt: serverTimestamp() });
-        showToast(`Editor "${name}" added! ✅`,'success');
+        showToast(`Editor "${name}" added! âœ…`,'success');
         closeModal('modalNewEditor');
       } catch(e){ showToast(e.message,'error'); }
     });
@@ -715,7 +715,7 @@
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
         await secAuth.signOut();
         await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', tempPass: pass, assignedEditor: assignedEditor || '', createdAt: serverTimestamp() });
-        showToast(`Client "${name}" added! ✅`,'success');
+        showToast(`Client "${name}" added! âœ…`,'success');
         closeModal('modalNewClient');
       } catch(e){ showToast(e.message,'error'); }
     });
@@ -745,3 +745,4 @@
   </script>
 </body>
 </html>
+
