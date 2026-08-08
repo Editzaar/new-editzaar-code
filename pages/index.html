@@ -680,5 +680,49 @@
   </footer>
 
   <script src="js/main.js?v=3.2"></script>
+  <script>
+    // Hero Live Edit Preview Continuous Video Loop & Rotation
+    (function() {
+      const mainVid = document.querySelector('.hv2-card-main video');
+      const leftVid = document.querySelector('.hv2-card-l video');
+      const rightVid = document.querySelector('.hv2-card-r video');
+      if (!mainVid) return;
+
+      const playlist = [
+        'https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4',
+        'https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4',
+        'https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4'
+      ];
+
+      let currentIndex = 0;
+      let isChanging = false;
+
+      function rotateHeroVideos() {
+        if (isChanging) return;
+        isChanging = true;
+
+        currentIndex = (currentIndex + 1) % playlist.length;
+        const leftIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+        const rightIndex = (currentIndex + 1) % playlist.length;
+
+        const mainCard = document.querySelector('.hv2-card-main');
+        if (mainCard) mainCard.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        if (mainCard) mainCard.style.opacity = '0.4';
+
+        setTimeout(() => {
+          if (mainVid) { mainVid.src = playlist[currentIndex]; mainVid.load(); mainVid.play().catch(() => {}); }
+          if (leftVid) { leftVid.src = playlist[leftIndex]; leftVid.load(); leftVid.play().catch(() => {}); }
+          if (rightVid) { rightVid.src = playlist[rightIndex]; rightVid.load(); rightVid.play().catch(() => {}); }
+
+          if (mainCard) mainCard.style.opacity = '1';
+          isChanging = false;
+        }, 400);
+      }
+
+      // Automatically rotate every 7 seconds in a continuous loop
+      setInterval(rotateHeroVideos, 7000);
+    })();
+  </script>
+
 </body>
 </html>

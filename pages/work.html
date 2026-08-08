@@ -372,6 +372,106 @@
             font-family: var(--font-b);
             line-height: 1.6;
         }
+    
+        /* Carousel / Slider Layout for Portfolio */
+        .carousel-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .carousel-track {
+            display: flex !important;
+            gap: 1.8rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            padding: 15px 5px 25px;
+            width: 100%;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) rgba(255,255,255,0.05);
+        }
+
+        .carousel-track::-webkit-scrollbar {
+            height: 6px;
+        }
+        .carousel-track::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+        }
+        .carousel-track::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 10px;
+        }
+
+        .carousel-track > div {
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+        }
+
+        .video-grid-vertical > div {
+            width: 280px;
+        }
+        .video-grid-horizontal > div {
+            width: 420px;
+        }
+        .web-grid > div {
+            width: 360px;
+        }
+        .card-grid > div {
+            width: 330px;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 45%;
+            transform: translateY(-50%);
+            z-index: 25;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(10, 10, 12, 0.9);
+            border: 1px solid var(--gold-border);
+            color: var(--gold);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+        }
+
+        .carousel-btn:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255,184,0,0.6);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-btn.prev-btn {
+            left: -18px;
+        }
+        .carousel-btn.next-btn {
+            right: -18px;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-btn {
+                display: none;
+            }
+            .video-grid-horizontal > div {
+                width: 300px;
+            }
+            .web-grid > div {
+                width: 300px;
+            }
+            .card-grid > div {
+                width: 280px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -419,7 +519,9 @@
                 <p>High-retention 9:16 content built for Instagram Reels & YouTube Shorts.</p>
             </div>
             
-            <div class="video-grid-vertical">
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
+                <div class="carousel-track video-grid-vertical">
                 <!-- Video 1 -->
                 <div>
                     <div class="phone-frame">
@@ -463,13 +565,17 @@
                     </div>
                 </div>
             </div>
+                <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
+            </div>
 
             <div class="section-header" style="margin-top: 5rem;">
                 <h3>Cinematic Long-Form</h3>
                 <p>Widescreen 16:9 videos for YouTube, Ads, and Corporate Presentations.</p>
             </div>
 
-            <div class="video-grid-horizontal">
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
+                <div class="carousel-track video-grid-horizontal">
                 <!-- Video 1 -->
                 <div>
                     <div class="monitor-frame">
@@ -510,6 +616,8 @@
                     </div>
                 </div>
             </div>
+                <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
+            </div>
         </section>
 
         <!-- Web Dev Section -->
@@ -519,7 +627,9 @@
                 <p>High-performance, beautifully designed web experiences.</p>
             </div>
             
-            <div class="web-grid">
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
+                <div class="carousel-track web-grid">
                 <!-- Web 1 -->
                 <div class="browser-frame">
                     <div class="browser-header">
@@ -582,6 +692,8 @@
                     </div>
                 </div>
             </div>
+                <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
+            </div>
         </section>
 
         <!-- Brand Promotions Section -->
@@ -591,7 +703,9 @@
                 <p>Data-driven campaigns that scale businesses.</p>
             </div>
             
-            <div class="card-grid">
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
+                <div class="carousel-track card-grid">
                 <div class="data-card">
                     <i class="fab fa-meta data-icon"></i>
                     <h4>Finance Niche</h4>
@@ -611,6 +725,8 @@
                     <p>Instagram Growth strategy through viral reels and targeted influencer promotions over a 90-day period.</p>
                 </div>
             </div>
+                <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
+            </div>
         </section>
 
         <!-- Social Media Section -->
@@ -620,7 +736,9 @@
                 <p>Building communities and dominating feeds.</p>
             </div>
             
-            <div class="card-grid">
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
+                <div class="carousel-track card-grid">
                 <div class="data-card">
                     <i class="fab fa-youtube data-icon"></i>
                     <h4>YouTube Channel Growth</h4>
@@ -639,6 +757,8 @@
                     <span class="data-metric">SEO-Driven</span>
                     <p>Developing analytics-backed posting calendars that align with search trends to maximize organic reach and growth.</p>
                 </div>
+            </div>
+                <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
             </div>
         </section>
         
