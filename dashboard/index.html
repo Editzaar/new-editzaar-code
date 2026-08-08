@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Editzaar â€” Sign In or Create Account</title>
+  <title>Editzaar Ã¢â‚¬â€ Sign In or Create Account</title>
   <meta name="robots" content="noindex,nofollow"/>
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/dashboard/css/dashboard.css?v=6.0"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=6.0"/>
   <style>
     .auth-bg-rings {
       position: fixed; inset: 0;
@@ -117,13 +117,13 @@
 
       <div class="auth-field">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"/>
+        <input type="password" id="password" placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢" autocomplete="current-password"/>
       </div>
 
-      <button class="auth-btn" id="submitBtn">Sign In â†’</button>
+      <button class="auth-btn" id="submitBtn">Sign In Ã¢â€ â€™</button>
 
       <div class="auth-links-row">
-        <a href="/" class="back-link">â† Back to Editzaar.in</a>
+        <a href="../index.html" class="back-link">Ã¢â€ Â Back to Editzaar.in</a>
         <span class="forgot-link" id="forgotBtn">Forgot password?</span>
       </div>
     </div>
@@ -176,12 +176,12 @@
           role = snap.data().role;
         }
 
-        if (role === 'admin')       window.location.replace('/dashboard/admin.html');
-        else if (role === 'editor') window.location.replace('/dashboard/editor.html');
-        else                        window.location.replace('/dashboard/client.html');
+        if (role === 'admin')       window.location.replace('admin.html');
+        else if (role === 'editor') window.location.replace('editor.html');
+        else                        window.location.replace('client.html');
       } catch(err) {
         console.error('Role redirect error:', err);
-        window.location.replace('/dashboard/client.html');
+        window.location.replace('client.html');
       }
     }
 
@@ -212,7 +212,7 @@
         authTitle.textContent = 'Welcome back';
         authSub.textContent = 'Sign in to access your portal';
         fieldFullname.style.display = 'none';
-        submitBtn.textContent = 'Sign In â†’';
+        submitBtn.textContent = 'Sign In Ã¢â€ â€™';
         submitBtn.disabled = false;
         forgotBtn.style.display = 'inline';
       } else {
@@ -221,7 +221,7 @@
         authTitle.textContent = 'Create Client Account';
         authSub.textContent = 'Register to track projects and chat with editors';
         fieldFullname.style.display = 'block';
-        submitBtn.textContent = 'Create Account â†’';
+        submitBtn.textContent = 'Create Account Ã¢â€ â€™';
         submitBtn.disabled = false;
         forgotBtn.style.display = 'none';
       }
@@ -242,7 +242,7 @@
 
     function resetButton() {
       submitBtn.disabled = false;
-      submitBtn.textContent = mode === 'signin' ? 'Sign In â†’' : 'Create Account â†’';
+      submitBtn.textContent = mode === 'signin' ? 'Sign In Ã¢â€ â€™' : 'Create Account Ã¢â€ â€™';
     }
 
     submitBtn.addEventListener('click', async () => {
@@ -254,7 +254,7 @@
       if (pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Authenticatingâ€¦';
+      submitBtn.textContent = 'AuthenticatingÃ¢â‚¬Â¦';
       errorEl.classList.remove('show');
 
       try {
@@ -269,7 +269,7 @@
               deadline: d
             });
 
-            showSuccess('Account initialized! Opening your dashboardâ€¦');
+            showSuccess('Account initialized! Opening your dashboardÃ¢â‚¬Â¦');
             await redirectByRole(newCred.user);
           } catch (createErr) {
             showError('Incorrect password or invalid email format. Please check your credentials.');
@@ -301,4 +301,5 @@
   </script>
 </body>
 </html>
+
 
