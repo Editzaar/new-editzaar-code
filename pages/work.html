@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Editzaar - Our Work & Portfolio</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <link rel="icon" type="image/png" href="media/fav-logo.png">
     <link rel="stylesheet" href="css/style.css?v=6.0">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         /* Portfolio Filter Tabs */
         .portfolio-filters {
@@ -23,7 +26,7 @@
             margin: 3rem 0;
             padding: 0 1rem;
         }
-        
+
         .filter-btn {
             background: transparent;
             border: 1px solid var(--border);
@@ -35,8 +38,9 @@
             transition: all 0.3s ease;
             font-size: 1rem;
         }
-        
-        .filter-btn:hover, .filter-btn.active {
+
+        .filter-btn:hover,
+        .filter-btn.active {
             background: var(--gold);
             color: var(--bg);
             border-color: var(--gold);
@@ -57,8 +61,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .section-header {
@@ -72,7 +83,7 @@
             color: var(--t1);
             margin-bottom: 1rem;
         }
-        
+
         .section-header p {
             color: var(--t2);
             font-family: var(--font-b);
@@ -85,22 +96,22 @@
             gap: 2rem;
             margin-bottom: 4rem;
         }
-        
+
         .phone-frame {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 40px;
             padding: 12px;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease;
         }
-        
+
         .phone-frame:hover {
             transform: translateY(-10px);
             border-color: var(--gold-border);
         }
-        
+
         .phone-frame::before {
             content: '';
             position: absolute;
@@ -162,7 +173,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -179,14 +190,14 @@
         .play-icon {
             color: var(--gold);
             font-size: 3rem;
-            filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.8));
         }
 
         .mute-btn {
             position: absolute;
             bottom: 15px;
             right: 15px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--border);
             color: var(--t1);
             width: 40px;
@@ -209,7 +220,7 @@
             margin-top: 1.5rem;
             text-align: center;
         }
-        
+
         .card-label h4 {
             font-family: var(--font-h);
             font-size: 1.5rem;
@@ -238,7 +249,7 @@
         }
 
         .browser-header {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             padding: 10px 15px;
             display: flex;
             align-items: center;
@@ -256,9 +267,17 @@
             border-radius: 50%;
         }
 
-        .browser-dots span:nth-child(1) { background: #ff5f56; }
-        .browser-dots span:nth-child(2) { background: #ffbd2e; }
-        .browser-dots span:nth-child(3) { background: #27c93f; }
+        .browser-dots span:nth-child(1) {
+            background: #ff5f56;
+        }
+
+        .browser-dots span:nth-child(2) {
+            background: #ffbd2e;
+        }
+
+        .browser-dots span:nth-child(3) {
+            background: #27c93f;
+        }
 
         .browser-content {
             height: 250px;
@@ -268,7 +287,7 @@
             justify-content: center;
             position: relative;
         }
-        
+
         .browser-content img {
             width: 100%;
             height: 100%;
@@ -276,7 +295,7 @@
             opacity: 0.7;
             transition: opacity 0.3s;
         }
-        
+
         .browser-frame:hover .browser-content img {
             opacity: 1;
         }
@@ -331,7 +350,7 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
         }
-        
+
         .data-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -366,13 +385,13 @@
             margin-bottom: 1rem;
             display: block;
         }
-        
+
         .data-card p {
             color: var(--t2);
             font-family: var(--font-b);
             line-height: 1.6;
         }
-    
+
         /* Carousel / Slider Layout for Portfolio */
         .carousel-wrapper {
             position: relative;
@@ -390,36 +409,41 @@
             padding: 15px 5px 25px;
             width: 100%;
             scrollbar-width: thin;
-            scrollbar-color: var(--gold) rgba(255,255,255,0.05);
+            scrollbar-color: var(--gold) rgba(255, 255, 255, 0.05);
         }
 
         .carousel-track::-webkit-scrollbar {
             height: 6px;
         }
+
         .carousel-track::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 10px;
         }
+
         .carousel-track::-webkit-scrollbar-thumb {
             background: var(--gold);
             border-radius: 10px;
         }
 
-        .carousel-track > div {
+        .carousel-track>div {
             flex: 0 0 auto;
             scroll-snap-align: start;
         }
 
-        .video-grid-vertical > div {
+        .video-grid-vertical>div {
             width: 280px;
         }
-        .video-grid-horizontal > div {
+
+        .video-grid-horizontal>div {
             width: 420px;
         }
-        .web-grid > div {
+
+        .web-grid>div {
             width: 360px;
         }
-        .card-grid > div {
+
+        .card-grid>div {
             width: 330px;
         }
 
@@ -440,19 +464,20 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
         }
 
         .carousel-btn:hover {
             background: var(--gold);
             color: #000;
-            box-shadow: 0 0 20px rgba(255,184,0,0.6);
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.6);
             transform: translateY(-50%) scale(1.1);
         }
 
         .carousel-btn.prev-btn {
             left: -18px;
         }
+
         .carousel-btn.next-btn {
             right: -18px;
         }
@@ -461,18 +486,21 @@
             .carousel-btn {
                 display: none;
             }
-            .video-grid-horizontal > div {
+
+            .video-grid-horizontal>div {
                 width: 300px;
             }
-            .web-grid > div {
+
+            .web-grid>div {
                 width: 300px;
             }
-            .card-grid > div {
+
+            .card-grid>div {
                 width: 280px;
             }
         }
 
-    
+
         /* Live Browser Iframe Preview Styles */
         .browser-content {
             height: 250px;
@@ -503,7 +531,7 @@
         .browser-preview-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -520,36 +548,37 @@
             font-size: 0.85rem;
             font-weight: 600;
             font-family: var(--font-b);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
         }
 
         .browser-frame:hover .browser-preview-overlay {
             opacity: 1;
         }
-
     </style>
 </head>
+
 <body>
 
-  <nav id="navbar">
-    <a href="index.html" class="logo">EDIT<em>ZAAR</em></a>
-    <ul class="nav-links">
-      <li><a href="services.html">Services</a></li>
-      <li><a href="work.html" class="active">Work</a></li>
-      <li><a href="pricing.html">Pricing</a></li>
-      <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
-      <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
-    </ul>
-    <a class="nav-cta" href="dashboard/index.html">Client Login</a>
-    <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
-  </nav>
+    <nav id="navbar">
+        <a href="index.html" class="logo">EDIT<em>ZAAR</em></a>
+        <ul class="nav-links">
+            <li><a href="services.html">Services</a></li>
+            <li><a href="work.html" class="active">Work</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
+            <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
+        </ul>
+        <a class="nav-cta" href="dashboard/index.html">Client Login</a>
+        <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+    </nav>
 
     <!-- Hero Section -->
     <section class="sec" style="padding-top: 120px; text-align: center;">
         <div class="sec-hdr reveal">
             <span class="sec-tag">PORTFOLIO</span>
             <h1 class="sec-title" style="font-size: 4rem;">Our Work & Portfolio</h1>
-            <p style="color: var(--t2); font-family: var(--font-b); max-width: 600px; margin: 1rem auto 0; font-size: 1.2rem;">
+            <p
+                style="color: var(--t2); font-family: var(--font-b); max-width: 600px; margin: 1rem auto 0; font-size: 1.2rem;">
                 From vertical reels to cinematic long-form — see the work that drives results.
             </p>
         </div>
@@ -566,158 +595,178 @@
 
     <!-- MAIN PORTFOLIO WRAPPER -->
     <div id="portfolio-wrapper">
-        
+
         <!-- Video Editing Section -->
         <section class="portfolio-section active reveal" data-category="video">
             <div class="section-header">
                 <h3>Vertical Reels</h3>
                 <p>High-retention 9:16 content built for Instagram Reels & YouTube Shorts.</p>
             </div>
-            
+
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
                 <div class="carousel-track video-grid-vertical">
-                <!-- Video 1 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 1 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1780290578/The_relentless_groundstroke_of_India_s_No._1_Sumit_Nagal_echoes_with_quiet_intensity.A_game_of_g_1_dhnors.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Music Video Reel</h4>
+                            <span class="tech-badge">Creative / Music</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Music Video Reel</h4>
-                        <span class="tech-badge">Creative / Music</span>
-                    </div>
-                </div>
-                <!-- Video 2 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 2 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Medical/Healthcare Reel</h4>
+                            <span class="tech-badge">Corporate / Health</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Medical/Healthcare Reel</h4>
-                        <span class="tech-badge">Corporate / Health</span>
-                    </div>
-                </div>
-                <!-- Video 3 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 3 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Real Estate Reel</h4>
+                            <span class="tech-badge">Commercial / Property</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Real Estate Reel</h4>
-                        <span class="tech-badge">Commercial / Property</span>
-                    </div>
-                </div>
-                <!-- Video 4 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 4 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779559074/Sequence_04_2_1_myba1j.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Finance & Crypto Reel</h4>
+                            <span class="tech-badge">Finance / Investing</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Finance & Crypto Reel</h4>
-                        <span class="tech-badge">Finance / Investing</span>
-                    </div>
-                </div>
-                <!-- Video 5 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 5 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Fitness & Wellness Reel</h4>
+                            <span class="tech-badge">Health & Lifestyle</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Fitness & Wellness Reel</h4>
-                        <span class="tech-badge">Health & Lifestyle</span>
-                    </div>
-                </div>
-                <!-- Video 6 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 6 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Tech & AI Product Reel</h4>
+                            <span class="tech-badge">SaaS / Technology</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Tech & AI Product Reel</h4>
-                        <span class="tech-badge">SaaS / Technology</span>
-                    </div>
-                </div>
-                <!-- Video 7 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 7 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>D2C Brand Promo Reel</h4>
+                            <span class="tech-badge">E-Commerce / Ads</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>D2C Brand Promo Reel</h4>
-                        <span class="tech-badge">E-Commerce / Ads</span>
-                    </div>
-                </div>
-                <!-- Video 8 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 8 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Podcast Highlights Reel</h4>
+                            <span class="tech-badge">Podcast / Interview</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Podcast Highlights Reel</h4>
-                        <span class="tech-badge">Podcast / Interview</span>
-                    </div>
-                </div>
-                <!-- Video 9 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 9 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Luxury Hospitality Reel</h4>
+                            <span class="tech-badge">Travel / Hospitality</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Luxury Hospitality Reel</h4>
-                        <span class="tech-badge">Travel / Hospitality</span>
-                    </div>
-                </div>
-                <!-- Video 10 -->
-                <div>
-                    <div class="phone-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 10 -->
+                    <div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Educational Content Reel</h4>
+                            <span class="tech-badge">EdTech / Explainer</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Educational Content Reel</h4>
-                        <span class="tech-badge">EdTech / Explainer</span>
-                    </div>
                 </div>
-            </div>
                 <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
             </div>
 
@@ -729,233 +778,265 @@
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
                 <div class="carousel-track video-grid-horizontal">
-                <!-- Video 1 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 1 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Music Video - Widescreen</h4>
+                            <span class="tech-badge">4K Music Video</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Music Video - Widescreen</h4>
-                        <span class="tech-badge">4K Music Video</span>
-                    </div>
-                </div>
-                <!-- Video 2 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 2 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Healthcare Documentary Style</h4>
+                            <span class="tech-badge">Documentary / Medical</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Healthcare Documentary Style</h4>
-                        <span class="tech-badge">Documentary / Medical</span>
-                    </div>
-                </div>
-                <!-- Video 3 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 3 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Real Estate Showcase</h4>
+                            <span class="tech-badge">Property Tour / 4K</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Real Estate Showcase</h4>
-                        <span class="tech-badge">Property Tour / 4K</span>
-                    </div>
-                </div>
-                <!-- Video 4 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 4 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Tech SaaS Masterclass Video</h4>
+                            <span class="tech-badge">YouTube Long-Form</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Tech SaaS Masterclass Video</h4>
-                        <span class="tech-badge">YouTube Long-Form</span>
-                    </div>
-                </div>
-                <!-- Video 5 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 5 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Corporate Brand Story</h4>
+                            <span class="tech-badge">Corporate Identity</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Corporate Brand Story</h4>
-                        <span class="tech-badge">Corporate Identity</span>
-                    </div>
-                </div>
-                <!-- Video 6 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 6 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Finance & Stock Market Breakdown</h4>
+                            <span class="tech-badge">Finance / Educational</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Finance & Stock Market Breakdown</h4>
-                        <span class="tech-badge">Finance / Educational</span>
-                    </div>
-                </div>
-                <!-- Video 7 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 7 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>E-Commerce Brand Commercial</h4>
+                            <span class="tech-badge">Ad Commercial / 16:9</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>E-Commerce Brand Commercial</h4>
-                        <span class="tech-badge">Ad Commercial / 16:9</span>
-                    </div>
-                </div>
-                <!-- Video 8 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 8 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504197/hostital_1_hot7al.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Fitness & Gym Promo Video</h4>
+                            <span class="tech-badge">Sports / Fitness</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Fitness & Gym Promo Video</h4>
-                        <span class="tech-badge">Sports / Fitness</span>
-                    </div>
-                </div>
-                <!-- Video 9 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 9 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/dw7qyjkm0/video/upload/v1779504866/plot_buy-_lrljqq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Travel & Culture Documentary</h4>
+                            <span class="tech-badge">Cinematic Travel</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Travel & Culture Documentary</h4>
-                        <span class="tech-badge">Cinematic Travel</span>
-                    </div>
-                </div>
-                <!-- Video 10 -->
-                <div>
-                    <div class="monitor-frame">
-                        <div class="video-container">
-                            <video src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4" muted loop playsinline></video>
-                            <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
-                            <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                    <!-- Video 10 -->
+                    <div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>Full Podcast Episode Edit</h4>
+                            <span class="tech-badge">Multi-Cam Podcast</span>
                         </div>
                     </div>
-                    <div class="card-label">
-                        <h4>Full Podcast Episode Edit</h4>
-                        <span class="tech-badge">Multi-Cam Podcast</span>
-                    </div>
                 </div>
-            </div>
                 <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
             </div>
         </section>
 
-                <!-- Web Dev Section -->
+        <!-- Web Dev Section -->
         <section class="portfolio-section active reveal" data-category="web">
             <div class="section-header">
                 <h3>Website Development</h3>
                 <p>High-performance, beautifully designed web experiences.</p>
             </div>
-            
+
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
                 <div class="carousel-track web-grid">
-                <!-- Web 1 -->
-                <div class="browser-frame">
-                    <div class="browser-header">
-                        <div class="browser-dots"><span></span><span></span><span></span></div>
-                    </div>
-                    <div class="browser-content">
-                        <a href="https://dpluscure.com" target="_blank" class="browser-content-link" title="Open D Plus Cure">
-                            <iframe src="https://dpluscure.com" loading="lazy" tabindex="-1"></iframe>
-                            <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
-                        </a>
-                    </div>
-                    <div class="web-info">
-                        <h4>D Plus Cure</h4>
-                        <a href="https://dpluscure.com" target="_blank">dpluscure.com ↗</a>
-                        <div class="web-tech">
-                            <span class="tech-badge">WordPress</span>
-                            <span class="tech-badge">WooCommerce</span>
-                            <span class="tech-badge">PHP</span>
+                    <!-- Web 1 -->
+                    <div class="browser-frame">
+                        <div class="browser-header">
+                            <div class="browser-dots"><span></span><span></span><span></span></div>
                         </div>
-                        <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">Healthcare E-commerce Platform</p>
-                        <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 92/100</div>
-                    </div>
-                </div>
-                
-                <!-- Web 2 -->
-                <div class="browser-frame">
-                    <div class="browser-header">
-                        <div class="browser-dots"><span></span><span></span><span></span></div>
-                    </div>
-                    <div class="browser-content">
-                        <a href="https://editzaar.in" target="_blank" class="browser-content-link" title="Open Editzaar">
-                            <iframe src="https://editzaar.in" loading="lazy" tabindex="-1"></iframe>
-                            <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
-                        </a>
-                    </div>
-                    <div class="web-info">
-                        <h4>Editzaar</h4>
-                        <a href="https://editzaar.in" target="_blank">editzaar.in ↗</a>
-                        <div class="web-tech">
-                            <span class="tech-badge">HTML5</span>
-                            <span class="tech-badge">CSS3</span>
-                            <span class="tech-badge">Firebase</span>
+                        <div class="browser-content">
+                            <a href="https://dpluscure.com" target="_blank" class="browser-content-link"
+                                title="Open D Plus Cure">
+                                <iframe src="https://dpluscure.com" loading="lazy" tabindex="-1"></iframe>
+                                <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
+                            </a>
                         </div>
-                        <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">Digital Media Agency Portfolio</p>
-                        <div class="speed-metric" style="color: var(--gold);"><i class="fas fa-tachometer-alt"></i> Speed: 98/100</div>
+                        <div class="web-info">
+                            <h4>D Plus Cure</h4>
+                            <a href="https://dpluscure.com" target="_blank">dpluscure.com ↗</a>
+                            <div class="web-tech">
+                                <span class="tech-badge">WordPress</span>
+                                <span class="tech-badge">WooCommerce</span>
+                                <span class="tech-badge">PHP</span>
+                            </div>
+                            <p
+                                style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                Healthcare E-commerce Platform</p>
+                            <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 92/100</div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Web 3 -->
-                <div class="browser-frame">
-                    <div class="browser-header">
-                        <div class="browser-dots"><span></span><span></span><span></span></div>
-                    </div>
-                    <div class="browser-content">
-                        <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html" target="_blank" class="browser-content-link" title="Open Raja Priya Group">
-                            <iframe src="https://editzaar.github.io/rajapriyagroup-creator/index.html" loading="lazy" tabindex="-1"></iframe>
-                            <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
-                        </a>
-                    </div>
-                    <div class="web-info">
-                        <h4>Raja Priya Group</h4>
-                        <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html" target="_blank">editzaar.github.io/rajapriyagroup-creator ↗</a>
-                        <div class="web-tech">
-                            <span class="tech-badge">HTML5</span>
-                            <span class="tech-badge">CSS3</span>
-                            <span class="tech-badge">JavaScript</span>
+                    <!-- Web 2 -->
+                    <div class="browser-frame">
+                        <div class="browser-header">
+                            <div class="browser-dots"><span></span><span></span><span></span></div>
                         </div>
-                        <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">Real Estate & Construction Group Platform</p>
-                        <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 96/100</div>
+                        <div class="browser-content">
+                            <a href="https://editzaar.in" target="_blank" class="browser-content-link"
+                                title="Open Editzaar">
+                                <iframe src="https://editzaar.in" loading="lazy" tabindex="-1"></iframe>
+                                <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
+                            </a>
+                        </div>
+                        <div class="web-info">
+                            <h4>Editzaar</h4>
+                            <a href="https://editzaar.in" target="_blank">editzaar.in ↗</a>
+                            <div class="web-tech">
+                                <span class="tech-badge">HTML5</span>
+                                <span class="tech-badge">CSS3</span>
+                                <span class="tech-badge">Firebase</span>
+                            </div>
+                            <p
+                                style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                Digital Media Agency Portfolio</p>
+                            <div class="speed-metric" style="color: var(--gold);"><i class="fas fa-tachometer-alt"></i>
+                                Speed: 98/100</div>
+                        </div>
+                    </div>
+
+                    <!-- Web 3 -->
+                    <div class="browser-frame">
+                        <div class="browser-header">
+                            <div class="browser-dots"><span></span><span></span><span></span></div>
+                        </div>
+                        <div class="browser-content">
+                            <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html" target="_blank"
+                                class="browser-content-link" title="Open Raja Priya Group">
+                                <iframe src="https://editzaar.github.io/rajapriyagroup-creator/index.html"
+                                    loading="lazy" tabindex="-1"></iframe>
+                                <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
+                            </a>
+                        </div>
+                        <div class="web-info">
+                            <h4>Raja Priya Group</h4>
+                            <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html"
+                                target="_blank">editzaar.github.io/rajapriyagroup-creator ↗</a>
+                            <div class="web-tech">
+                                <span class="tech-badge">HTML5</span>
+                                <span class="tech-badge">CSS3</span>
+                                <span class="tech-badge">JavaScript</span>
+                            </div>
+                            <p
+                                style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                Real Estate & Construction Group Platform</p>
+                            <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 96/100</div>
+                        </div>
                     </div>
                 </div>
-            </div>
                 <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
             </div>
         </section>
@@ -966,29 +1047,32 @@
                 <h3>Brand Promotions & Paid Ads</h3>
                 <p>Data-driven campaigns that scale businesses.</p>
             </div>
-            
+
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
                 <div class="carousel-track card-grid">
-                <div class="data-card">
-                    <i class="fab fa-meta data-icon"></i>
-                    <h4>Finance Niche</h4>
-                    <span class="data-metric">+380% ROAS</span>
-                    <p>Meta Ads Campaign optimization leading to 2.1M targeted impressions and massive ROI scaling within 60 days.</p>
+                    <div class="data-card">
+                        <i class="fab fa-meta data-icon"></i>
+                        <h4>Finance Niche</h4>
+                        <span class="data-metric">+380% ROAS</span>
+                        <p>Meta Ads Campaign optimization leading to 2.1M targeted impressions and massive ROI scaling
+                            within 60 days.</p>
+                    </div>
+                    <div class="data-card">
+                        <i class="fab fa-google data-icon"></i>
+                        <h4>Real Estate</h4>
+                        <span class="data-metric">340+ Leads</span>
+                        <p>Google Search & Display Ads campaign targeting high-net-worth individuals, achieving a 28%
+                            CTR.</p>
+                    </div>
+                    <div class="data-card">
+                        <i class="fab fa-instagram data-icon"></i>
+                        <h4>D2C Brand</h4>
+                        <span class="data-metric">12K → 89K</span>
+                        <p>Instagram Growth strategy through viral reels and targeted influencer promotions over a
+                            90-day period.</p>
+                    </div>
                 </div>
-                <div class="data-card">
-                    <i class="fab fa-google data-icon"></i>
-                    <h4>Real Estate</h4>
-                    <span class="data-metric">340+ Leads</span>
-                    <p>Google Search & Display Ads campaign targeting high-net-worth individuals, achieving a 28% CTR.</p>
-                </div>
-                <div class="data-card">
-                    <i class="fab fa-instagram data-icon"></i>
-                    <h4>D2C Brand</h4>
-                    <span class="data-metric">12K → 89K</span>
-                    <p>Instagram Growth strategy through viral reels and targeted influencer promotions over a 90-day period.</p>
-                </div>
-            </div>
                 <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
             </div>
         </section>
@@ -999,37 +1083,41 @@
                 <h3>Social Media Management</h3>
                 <p>Building communities and dominating feeds.</p>
             </div>
-            
+
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
                 <div class="carousel-track card-grid">
-                <div class="data-card">
-                    <i class="fab fa-youtube data-icon"></i>
-                    <h4>YouTube Channel Growth</h4>
-                    <span class="data-metric">0 to 50K Subs</span>
-                    <p>Comprehensive management including script optimization, A/B testing CTR-optimized thumbnails, and retention editing.</p>
+                    <div class="data-card">
+                        <i class="fab fa-youtube data-icon"></i>
+                        <h4>YouTube Channel Growth</h4>
+                        <span class="data-metric">0 to 50K Subs</span>
+                        <p>Comprehensive management including script optimization, A/B testing CTR-optimized thumbnails,
+                            and retention editing.</p>
+                    </div>
+                    <div class="data-card">
+                        <i class="fab fa-instagram data-icon" style="color: #E1306C;"></i>
+                        <h4>Instagram Page Handling</h4>
+                        <span class="data-metric">Full Stack</span>
+                        <p>End-to-end management: Content planning, creative carousel posts, daily stories, and engaging
+                            reels strategy.</p>
+                    </div>
+                    <div class="data-card">
+                        <i class="fas fa-chart-line data-icon"></i>
+                        <h4>Content Strategy</h4>
+                        <span class="data-metric">SEO-Driven</span>
+                        <p>Developing analytics-backed posting calendars that align with search trends to maximize
+                            organic reach and growth.</p>
+                    </div>
                 </div>
-                <div class="data-card">
-                    <i class="fab fa-instagram data-icon" style="color: #E1306C;"></i>
-                    <h4>Instagram Page Handling</h4>
-                    <span class="data-metric">Full Stack</span>
-                    <p>End-to-end management: Content planning, creative carousel posts, daily stories, and engaging reels strategy.</p>
-                </div>
-                <div class="data-card">
-                    <i class="fas fa-chart-line data-icon"></i>
-                    <h4>Content Strategy</h4>
-                    <span class="data-metric">SEO-Driven</span>
-                    <p>Developing analytics-backed posting calendars that align with search trends to maximize organic reach and growth.</p>
-                </div>
-            </div>
                 <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
             </div>
         </section>
-        
+
     </div>
 
     <!-- CTA Section -->
-    <section class="sec reveal" style="text-align: center; background: linear-gradient(0deg, rgba(255,184,0,0.05) 0%, transparent 100%); margin-top: 4rem;">
+    <section class="sec reveal"
+        style="text-align: center; background: linear-gradient(0deg, rgba(255,184,0,0.05) 0%, transparent 100%); margin-top: 4rem;">
         <div class="sec-hdr">
             <h2 class="sec-title">Ready to create something extraordinary?</h2>
             <p style="color: var(--t2); font-family: var(--font-b); margin: 1rem auto 2rem; max-width: 500px;">
@@ -1045,15 +1133,17 @@
     <!-- Footer -->
     <footer>
         <div style="text-align: center;">
-            <h2 style="font-family: var(--font-h); font-size: 2rem; color: var(--gold); margin-bottom: 1rem;">EDITZAAR</h2>
-            <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 2rem;">Elevating digital presence from Hyderabad to the world.</p>
-            
+            <h2 style="font-family: var(--font-h); font-size: 2rem; color: var(--gold); margin-bottom: 1rem;">EDITZAAR
+            </h2>
+            <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 2rem;">Elevating digital presence
+                from Hyderabad to the world.</p>
+
             <div style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2rem;">
                 <a href="#" style="color: var(--t1); font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
                 <a href="#" style="color: var(--t1); font-size: 1.5rem;"><i class="fab fa-youtube"></i></a>
                 <a href="#" style="color: var(--t1); font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
             </div>
-            
+
             <p style="color: var(--t3); font-family: var(--font-b); font-size: 0.9rem;">
                 &copy; 2026 Editzaar. All rights reserved.
             </p>
@@ -1064,27 +1154,27 @@
     <script>
         // Video Hover Play/Pause
         const videoContainers = document.querySelectorAll('.video-container');
-        
+
         videoContainers.forEach(container => {
             const video = container.querySelector('video');
             const muteBtn = container.querySelector('.mute-btn');
-            
+
             container.addEventListener('mouseenter', () => {
                 video.play();
             });
-            
+
             container.addEventListener('mouseleave', () => {
                 video.pause();
                 // Optional: reset video to start
                 // video.currentTime = 0; 
             });
-            
-            if(muteBtn) {
+
+            if (muteBtn) {
                 muteBtn.addEventListener('click', (e) => {
                     e.stopPropagation(); // prevent other events
                     video.muted = !video.muted;
                     const icon = muteBtn.querySelector('i');
-                    if(video.muted) {
+                    if (video.muted) {
                         icon.classList.remove('fa-volume-up');
                         icon.classList.add('fa-volume-mute');
                     } else {
@@ -1125,10 +1215,11 @@
                 });
             });
         });
-        
+
         // Initial setup for 'all'
         // portfolioSections already have .active from HTML
     </script>
     <script src="js/main.js?v=3.2"></script>
 </body>
+
 </html>
