@@ -202,7 +202,7 @@
         <div class="dash-card">
           <div style="overflow-x:auto;">
             <table class="dash-table">
-              <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Projects</th><th>Assign Editor (Manual)</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Password</th><th>Projects</th><th>Assign Editor (Manual)</th><th>Actions</th></tr></thead>
               <tbody id="clientsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
           </div>
@@ -517,14 +517,16 @@
 
     function renderClients() {
       const tbody = document.getElementById('clientsTbody');
-      if (!clients.length) { tbody.innerHTML='<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
+      if (!clients.length) { tbody.innerHTML='<tr><td colspan="7" style="color:var(--t3);text-align:center;padding:24px;">No clients registered yet. New clients will appear here automatically when they sign up!</td></tr>'; return; }
       tbody.innerHTML = clients.map(c=>{
         const projCount = projects.filter(p=>p.clientId===c.id).length;
+        const mobileDisplay = c.mobile ? c.mobile : (c.phone || '—');
         return `
         <tr>
-          <td><strong>${c.name||'Client'}</strong></td>
-          <td>${c.email}</td>
-          <td><span class="pass-pill">${c.tempPass||'ClientPass123'}</span></td>
+          <td><strong>${c.name||'Client'}</strong><br/><small style="color:var(--t3);font-size:10px;">UID: ${c.id.substring(0,8)}…</small></td>
+          <td>${c.email||'—'}</td>
+          <td><span style="color:var(--gold);font-size:0.85rem;">${mobileDisplay}</span></td>
+          <td><span class="pass-pill">${c.tempPass||'—'}</span></td>
           <td>${projCount}</td>
           <td>
             <select class="editor-assign-select" onchange="assignClientEditor('${c.id}', this.value)">
