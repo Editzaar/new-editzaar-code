@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=7.0"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=8.0"/>
 
   <style>
     .modal-overlay {
@@ -87,7 +87,9 @@
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   <div class="toast" id="toast"></div>
+  <div class="push-notif" id="pushNotif"><div class="push-notif-icon" id="pushNotifIcon">🔔</div><div class="push-notif-body"><div class="push-notif-title" id="pushNotifTitle"></div><div class="push-notif-text" id="pushNotifText"></div></div></div>
 
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
@@ -141,7 +143,7 @@
             <div class="dash-card-title">Recent <em>Projects</em></div>
             <button class="btn-outline btn-sm" onclick="showSection('projects')">View All</button>
           </div>
-          <div style="overflow-x:auto;">
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
             <table class="dash-table" id="recentProjectsTable">
               <thead><tr><th>Project</th><th>Client</th><th>Assigned Editor</th><th>Status</th><th>Deadline</th><th>Actions</th></tr></thead>
               <tbody id="recentProjectsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Listening for live updates…</td></tr></tbody>
@@ -168,7 +170,7 @@
           <select class="filter-select" id="filterEditor"><option value="">All Editors</option></select>
         </div>
         <div class="dash-card">
-          <div style="overflow-x:auto;">
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
             <table class="dash-table" id="allProjectsTable">
               <thead><tr><th>Project</th><th>Client</th><th>Assigned Editor (Manual)</th><th>Status</th><th>Invoice</th><th>Deadline</th><th>Actions</th></tr></thead>
               <tbody id="allProjectsTbody"><tr><td colspan="7" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
@@ -184,7 +186,7 @@
           <button class="btn-gold" id="btnNewEditor">＋ Add Editor</button>
         </div>
         <div class="dash-card">
-          <div style="overflow-x:auto;">
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
             <table class="dash-table">
               <thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Role</th><th>Active Projects</th><th>Actions</th></tr></thead>
               <tbody id="editorsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
@@ -208,7 +210,7 @@
           <br/><small style="color:var(--t3);">These users exist in Firebase Auth but have no Firestore profile. They will NOT appear in this dashboard until their profile is created. Click "Sync Missing Users" to fix.</small>
         </div>
         <div class="dash-card">
-          <div style="overflow-x:auto;">
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
             <table class="dash-table">
               <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Password</th><th>Projects</th><th>Assign Editor (Manual)</th><th>Actions</th></tr></thead>
               <tbody id="clientsTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
@@ -259,7 +261,7 @@
               <div class="chat-messages" id="adminChatMessages"></div>
               <div class="chat-input-row">
                 <input class="chat-input" id="adminChatInput" placeholder="Send a message as Admin…"/>
-                <button class="btn-gold" id="btnAdminSendMsg">Send</button>
+                <button class="chat-send-btn" id="btnAdminSendMsg" title="Send">Send</button>
               </div>
             </div>
           </div>
@@ -277,7 +279,7 @@
           <div class="stat-card"><div class="stat-card-label">Outstanding</div><div class="stat-card-value" id="invUnpaid" style="color:var(--red);">₹0</div></div>
         </div>
         <div class="dash-card">
-          <div style="overflow-x:auto;">
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
             <table class="dash-table">
               <thead><tr><th>Project</th><th>Client &amp; GSTIN</th><th>Amount (+18% GST)</th><th>Tax Status</th><th>Actions</th></tr></thead>
               <tbody id="invoicesTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
@@ -802,7 +804,73 @@
       const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast '+type+' show';
       setTimeout(()=>t.classList.remove('show'), 3500);
     }
-    document.getElementById('sidebarToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+    // Sidebar handled by overlay JS below
+  
+    // Sidebar overlay for mobile
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      const isOpen = sidebar.classList.toggle('open');
+      sidebarOverlay.classList.toggle('active', isOpen);
+    });
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+      });
+    }
+    // Push Notification system
+    function showPushNotif(icon, title, text, duration=4000) {
+      const el    = document.getElementById('pushNotif');
+      const iEl   = document.getElementById('pushNotifIcon');
+      const tEl   = document.getElementById('pushNotifTitle');
+      const dEl   = document.getElementById('pushNotifText');
+      if (!el) return;
+      iEl.textContent = icon;
+      tEl.textContent = title;
+      dEl.textContent = text;
+      el.classList.add('show');
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => el.classList.remove('show'), duration);
+    }
+    window.showPushNotif = showPushNotif;
+    // Bottom nav helper
+    function setActiveBottomNav(id) {
+      document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+    }
+
+    // Push notif when new client registers
+    let _prevClientCount = -1;
+    const _origRenderClients = renderClients;
+    function renderClientsWrapped() {
+      _origRenderClients();
+      if (_prevClientCount >= 0 && clients.length > _prevClientCount) {
+        const newest = clients[0];
+        showPushNotif('🆕', 'New Client Registered!', (newest.name || newest.email) + ' just created an account.');
+      }
+      _prevClientCount = clients.length;
+    }
   </script>
+
+  <!-- BOTTOM NAVIGATION (Mobile) -->
+  <nav class="bottom-nav" id="adminBottomNav">
+    <div class="bottom-nav-item active" id="bnav-overview" onclick="showSection('overview');setActiveBottomNav('bnav-overview')">
+      <span class="bnav-icon">📊</span>Overview
+    </div>
+    <div class="bottom-nav-item" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')">
+      <span class="bnav-icon">📁</span>Projects
+    </div>
+    <div class="bottom-nav-item" id="bnav-clients" onclick="showSection('clients');setActiveBottomNav('bnav-clients')">
+      <span class="bnav-icon">👤</span>Clients
+    </div>
+    <div class="bottom-nav-item" id="bnav-chat" onclick="showSection('chat');setActiveBottomNav('bnav-chat')">
+      <span class="bnav-icon">💬</span>Chat
+    </div>
+    <div class="bottom-nav-item" id="bnav-invoices" onclick="showSection('invoices');setActiveBottomNav('bnav-invoices')">
+      <span class="bnav-icon">💰</span>Finance
+    </div>
+  </nav>
 </body>
 </html>

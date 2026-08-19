@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=7.0"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=8.0"/>
   <style>
     .link-input-box {
       background: rgba(255,255,255,0.03);
@@ -24,7 +24,9 @@
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   <div class="toast" id="toast"></div>
+  <div class="push-notif" id="pushNotif"><div class="push-notif-icon" id="pushNotifIcon">🔔</div><div class="push-notif-body"><div class="push-notif-title" id="pushNotifTitle"></div><div class="push-notif-text" id="pushNotifText"></div></div></div>
 
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
@@ -111,7 +113,7 @@
               <div class="chat-messages" id="chatMessages"></div>
               <div class="chat-input-row">
                 <input class="chat-input" id="chatInput" placeholder="Type a message or paste a link…"/>
-                <button class="btn-gold" id="btnSendMsg">Send</button>
+                <button class="chat-send-btn" id="btnSendMsg" title="Send message">➤</button>
               </div>
             </div>
           </div>
@@ -322,7 +324,70 @@
       const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type+' show';
       setTimeout(()=>t.classList.remove('show'),3500);
     }
-    document.getElementById('sidebarToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+    // Sidebar handled by overlay JS below
+  
+    // Sidebar overlay for mobile
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      const isOpen = sidebar.classList.toggle('open');
+      sidebarOverlay.classList.toggle('active', isOpen);
+    });
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+      });
+    }
+    // Push Notification system
+    function showPushNotif(icon, title, text, duration=4000) {
+      const el    = document.getElementById('pushNotif');
+      const iEl   = document.getElementById('pushNotifIcon');
+      const tEl   = document.getElementById('pushNotifTitle');
+      const dEl   = document.getElementById('pushNotifText');
+      if (!el) return;
+      iEl.textContent = icon;
+      tEl.textContent = title;
+      dEl.textContent = text;
+      el.classList.add('show');
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => el.classList.remove('show'), duration);
+    }
+    window.showPushNotif = showPushNotif;
+    // Bottom nav helper
+    function setActiveBottomNav(id) {
+      document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+    }
+
+    // Show project detail tab in bottom nav when opened
+    const _origOpenProject = window.openProject;
+    window.openProject = function(pid) {
+      document.getElementById('bnav-detail').style.display = 'flex';
+      setActiveBottomNav('bnav-detail');
+      return _origOpenProject(pid);
+    };
+
+    // Chat badge + push notif for new messages
+    function showNewMsgNotif(senderName) {
+      const badge = document.getElementById('chatBadge');
+      if (badge) badge.style.display = 'flex';
+      showPushNotif('💬', 'New Message from Client', senderName + ' sent a new message in the project chat.');
+    }
   </script>
+
+  <!-- BOTTOM NAVIGATION (Mobile) -->
+  <nav class="bottom-nav" id="editorBottomNav">
+    <div class="bottom-nav-item active" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')">
+      <span class="bnav-icon">📁</span>Projects
+    </div>
+    <div class="bottom-nav-item" id="bnav-detail" style="display:none;" onclick="showSection('detail');setActiveBottomNav('bnav-detail')">
+      <span class="bnav-icon">🎬</span>Edit
+    </div>
+    <div class="bottom-nav-item" id="bnav-chat" onclick="showSection('chat');setActiveBottomNav('bnav-chat')">
+      <span class="bnav-icon" style="position:relative;">💬<span class="notif-badge" id="chatBadge" style="display:none;">!</span></span>Msgs
+    </div>
+  </nav>
 </body>
 </html>
