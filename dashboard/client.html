@@ -400,6 +400,9 @@
       if (!user) { window.location.replace('index.html'); return; }
       const snap = await getDoc(doc(db,'users',user.uid));
       currentUser = { uid: user.uid, ...(snap.exists()?snap.data():{role:'client',name:'Client'}) };
+      // ROLE GUARD: Redirect admins and editors away from the client portal
+      if (currentUser.role === 'admin')  { window.location.replace('admin.html');  return; }
+      if (currentUser.role === 'editor') { window.location.replace('editor.html'); return; }
       document.getElementById('clientEmail').textContent = user.email;
       document.getElementById('clientName').textContent  = currentUser.name || 'there';
       loadUsers(); listenRealtimeProjects(); listenAnnouncements();
