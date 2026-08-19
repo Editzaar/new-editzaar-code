@@ -399,6 +399,11 @@
         const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
         clients = users.filter(u => u.role !== 'admin' && u.role !== 'editor');
+        clients.sort((a, b) => {
+          const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+          const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+          return tB - tA;
+        });
         renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
       }, (err) => console.error('Users listener error:', err));
 
