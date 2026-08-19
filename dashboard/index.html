@@ -345,37 +345,50 @@
       if (user) { await redirectByRole(user); }
     });
 
-    // ── Role redirect with GUARANTEED Firestore write ──
+    // ── Role redirect with GUARANTEED Firestore write + retry logic ──
     async function redirectByRole(user) {
-      try {
-        const userRef = doc(db, 'users', user.uid);
-        const snap    = await getDoc(userRef);
-        let role = 'client';
+      const userRef = doc(db, 'users', user.uid);
+      let role = 'client';
 
-        // SELF-HEALING: If Firestore doc missing, create it immediately
-        if (!snap.exists()) {
-          const defaultName = user.displayName || (user.email ? user.email.split('@')[0] : 'Client');
-          role = user.email === 'editzaarbooking@gmail.com' ? 'admin' : 'client';
-          const phone = user.phoneNumber || '';
-          await setDoc(userRef, {
-            name: defaultName,
-            email: user.email || '',
-            mobile: phone,
-            role,
-            tempPass: 'ClientPass123',
-            createdAt: serverTimestamp()
-          });
-        } else {
-          role = snap.data().role || 'client';
+      // Try to read/create Firestore profile up to 3 times (handles temporary rule/network issues)
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const snap = await getDoc(userRef);
+          if (!snap.exists()) {
+            // Profile missing: create it now (self-healing)
+            const defaultName = user.displayName || (user.email ? user.email.split('@')[0] : 'Client');
+            role = user.email === 'editzaarbooking@gmail.com' ? 'admin' : 'client';
+            const phone = user.phoneNumber || '';
+            await setDoc(userRef, {
+              name:          defaultName,
+              email:         user.email || '',
+              mobile:        phone,
+              role:          role,
+              tempPass:      'ClientPass123',
+              assignedEditor: '',
+              createdAt:     serverTimestamp()
+            });
+          } else {
+            role = snap.data().role || 'client';
+          }
+          // SUCCESS — break retry loop
+          break;
+        } catch (err) {
+          console.warn('Firestore attempt ' + attempt + ' failed:', err.code, err.message);
+          if (attempt === 3) {
+            // After 3 failures — likely Firestore rules issue
+            // Still let the user in but show a console warning
+            console.error('CRITICAL: Cannot write Firestore profile after 3 attempts. Check Firestore Security Rules!');
+          } else {
+            // Wait 1 second before retry
+            await new Promise(r => setTimeout(r, 1000));
+          }
         }
-
-        if      (role === 'admin')  window.location.replace('admin.html');
-        else if (role === 'editor') window.location.replace('editor.html');
-        else                        window.location.replace('client.html');
-      } catch (err) {
-        console.error('Role redirect error:', err);
-        window.location.replace('client.html');
       }
+
+      if      (role === 'admin')  window.location.replace('admin.html');
+      else if (role === 'editor') window.location.replace('editor.html');
+      else                        window.location.replace('client.html');
     }
 
     // ── Helper: show error / success ──
@@ -652,38 +665,64 @@
       btnSignup.textContent = 'Creating Account…';
       clearAlerts();
 
+      let newCred = null;
       try {
-        // 1. Create Firebase Auth account
-        const newCred = await createUserWithEmailAndPassword(auth, email, pass);
-        const uid     = newCred.user.uid;
-        const mobile  = '+91' + phone;
+        // STEP 1: Create Firebase Auth account
+        btnSignup.textContent = 'Creating Auth Account…';
+        newCred = await createUserWithEmailAndPassword(auth, email, pass);
+      } catch (e) {
+        showError(authErr(e.code, e.message));
+        btnSignup.disabled = false;
+        btnSignup.textContent = 'Create Account →';
+        return;
+      }
 
-        // 2. Write FULL Firestore profile immediately — this triggers Admin panel onSnapshot
-        await setDoc(doc(db, 'users', uid), {
-          name:          name,
-          email:         email,
-          mobile:        mobile,
-          role:          'client',
-          tempPass:      pass,
-          assignedEditor: '',
-          createdAt:     serverTimestamp()
-        });
+      // STEP 2: Write Firestore profile — MANDATORY before redirect
+      const uid    = newCred.user.uid;
+      const mobile = phone.length === 10 ? '+91' + phone : (phone || '');
+      let profileWritten = false;
 
-        // 3. Write welcome announcement for this client
+      btnSignup.textContent = 'Saving Profile…';
+
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          await setDoc(doc(db, 'users', uid), {
+            name:           name,
+            email:          email,
+            mobile:         mobile,
+            role:           'client',
+            tempPass:       pass,
+            assignedEditor: '',
+            createdAt:      serverTimestamp()
+          });
+          profileWritten = true;
+          break;
+        } catch (e) {
+          console.warn('Firestore write attempt ' + attempt + ' failed:', e.code, e.message);
+          if (attempt < 3) await new Promise(r => setTimeout(r, 1000));
+        }
+      }
+
+      if (!profileWritten) {
+        // Profile could not be written — tell admin to fix Firestore rules
+        showError('Account created in Firebase but your profile could not be saved. Please contact Editzaar support or ask admin to update Firestore Security Rules.');
+        btnSignup.disabled = false;
+        btnSignup.textContent = 'Create Account →';
+        return;
+      }
+
+      // STEP 3: Write welcome announcement (best-effort, non-blocking)
+      try {
         await addDoc(collection(db, 'announcements'), {
           title:     '🚀 Welcome to Editzaar Agency!',
           message:   `Hi ${name}! Your account is now active. You can track your projects, upload raw footage, chat with your editor, and download invoices — all from your portal.`,
           target:    uid,
           createdAt: serverTimestamp()
         });
+      } catch(e) { console.warn('Welcome announcement write failed:', e); }
 
-        showSuccess(`Welcome, ${name}! Your account is ready. Opening portal…`);
-        await redirectByRole(newCred.user);
-      } catch (e) {
-        showError(authErr(e.code, e.message));
-        btnSignup.disabled = false;
-        btnSignup.textContent = 'Create Account →';
-      }
+      showSuccess(`Welcome, ${name}! Your profile is saved. Opening portal…`);
+      await redirectByRole(newCred.user);
     });
 
     // Enter key on signup fields

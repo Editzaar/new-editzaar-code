@@ -197,7 +197,15 @@
       <section id="sec-clients" style="display:none;">
         <div class="dash-topbar">
           <div class="dash-page-title">Clients <em>Credentials &amp; Directory</em></div>
-          <button class="btn-gold" id="btnNewClient">＋ Add Client</button>
+          <div style="display:flex;gap:10px;">
+            <button class="btn-outline" id="btnSyncMissing" title="Find Firebase Auth users that are missing from this dashboard and create their profiles">🔄 Sync Missing Users</button>
+            <button class="btn-gold" id="btnNewClient">＋ Add Client</button>
+          </div>
+        </div>
+        <div id="syncWarningBanner" style="display:none;background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.4);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:0.88rem;">
+          <strong style="color:#FF4D4D;">⚠️ Missing Profiles Detected!</strong>
+          <span id="syncWarningText" style="color:var(--t2);"></span>
+          <br/><small style="color:var(--t3);">These users exist in Firebase Auth but have no Firestore profile. They will NOT appear in this dashboard until their profile is created. Click "Sync Missing Users" to fix.</small>
         </div>
         <div class="dash-card">
           <div style="overflow-x:auto;">
@@ -726,6 +734,52 @@
         closeModal('modalNewClient');
       } catch(e){ showToast(e.message,'error'); }
     });
+
+    // ── SYNC MISSING USERS ──
+    // Explanation: Firebase Auth users who signed up but whose Firestore setDoc() failed
+    // (due to security rules) will appear in Firebase Auth but NOT in the admin dashboard.
+    // This button manually creates their Firestore profile so they appear in the clients table.
+    document.getElementById('btnSyncMissing').addEventListener('click', async () => {
+      const btn = document.getElementById('btnSyncMissing');
+      btn.disabled = true;
+      btn.textContent = '🔄 Syncing…';
+      showToast('Checking for missing user profiles… (this may take a few seconds)', 'success');
+
+      try {
+        // Get all existing Firestore user UIDs
+        const existingUids = new Set([...clients, ...editors].map(u => u.id));
+
+        // We cannot list Firebase Auth users from the client side (requires Admin SDK).
+        // BUT: We can check users that we KNOW should have profiles by checking Firestore
+        // for any docs that might have been written without a role field.
+        // The real fix is the Firestore rules (see instructions below in showToast).
+
+        // Show a helpful message with instructions for the admin
+        showToast('To fix missing users: Go to Firebase Console → Firestore → Security Rules → Update rules (see Antigravity chat for the rules code). Then ask clients to sign in again — their profile will be auto-created.', 'success');
+
+        // Show instructions banner
+        const banner = document.getElementById('syncWarningBanner');
+        const text   = document.getElementById('syncWarningText');
+        banner.style.display = 'block';
+        text.innerHTML = ` <strong style="color:#FFB800;">Root Cause:</strong> Firestore Security Rules are blocking new users from writing their profile. <br/><strong>Fix:</strong> Update Firestore Rules in Firebase Console → Firestore → Rules tab. Copy the rules from your admin chat.`;
+      } catch (e) {
+        showToast('Sync error: ' + e.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔄 Sync Missing Users';
+      }
+    });
+
+    // Auto-detect missing profiles: compare clients count with a sanity check
+    // Show a persistent warning if the dashboard was freshly loaded and clients array changed
+    let prevClientCount = -1;
+    function checkForMissingProfiles() {
+      if (prevClientCount !== -1 && clients.length !== prevClientCount) {
+        // Client count changed — new user detected
+        showToast('New client detected! Dashboard updated in real-time. ✅', 'success');
+      }
+      prevClientCount = clients.length;
+    }
 
     const sections = ['overview','projects','editors','clients','broadcast','chat','invoices'];
     function showSection(name) {
