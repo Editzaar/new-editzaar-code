@@ -670,6 +670,113 @@
     document.getElementById('chatbotFab').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.toggle('open'));
     document.getElementById('chatbotClose').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.remove('open'));
 
+    
+    /* ── INTELLIGENT AI CHATBOT ENGINE ── */
+    const botInput = document.getElementById('botInput');
+    const btnBotSend = document.getElementById('btnBotSend');
+    const botMessages = document.getElementById('botMessages');
+
+    function appendBotMsg(sender, textHtml) {
+      const isUser = sender === 'user';
+      const div = document.createElement('div');
+      div.className = isUser ? 'user-msg' : 'bot-msg';
+      div.style.marginBottom = '10px';
+      if (isUser) {
+        div.innerHTML = `<div class="user-bubble">${textHtml}</div>`;
+      } else {
+        div.innerHTML = `<div class="bot-avatar">🤖</div><div class="bot-bubble">${textHtml}</div>`;
+      }
+      botMessages.appendChild(div);
+      botMessages.scrollTop = botMessages.scrollHeight;
+    }
+
+    function askBot(query) {
+      appendBotMsg('user', query);
+
+      // Typing indicator
+      const typing = document.createElement('div');
+      typing.className = 'bot-msg';
+      typing.id = 'botTyping';
+      typing.innerHTML = `<div class="bot-avatar">🤖</div><div class="bot-bubble"><span style="color:var(--gold);">Thinking…</span></div>`;
+      botMessages.appendChild(typing);
+      botMessages.scrollTop = botMessages.scrollHeight;
+
+      setTimeout(() => {
+        const ind = document.getElementById('botTyping');
+        if (ind) ind.remove();
+        const ans = generateBotAnswer(query.toLowerCase());
+        appendBotMsg('bot', ans);
+      }, 350);
+    }
+
+    function generateBotAnswer(q) {
+      if (q.includes('price') || q.includes('cost') || q.includes('rate') || q.includes('package') || q.includes('charge')) {
+        return `📊 <strong>Editzaar Pricing:</strong><br/>` +
+               `• <strong>Shorts &amp; Reels (9:16):</strong> ₹1,000 / video (48h)<br/>` +
+               `• <strong>Motion Graphics:</strong> ₹2,500 / video (48h)<br/>` +
+               `• <strong>Long-Form YouTube:</strong> ₹5,000 / video (48-72h)<br/>` +
+               `• <strong>Creator Retainer:</strong> ₹15,000 / month<br/>` +
+               `• <strong>Landing Page:</strong> ₹4,999 (3 days)<br/><br/>` +
+               `Click <strong>"＋ Start New Project"</strong> above to book!`;
+      }
+
+      if (q.includes('time') || q.includes('turnaround') || q.includes('delivery') || q.includes('how long')) {
+        return `⏱ <strong>Turnaround Times:</strong><br/>` +
+               `• <strong>Reels &amp; Shorts:</strong> 24–48 Hours<br/>` +
+               `• <strong>Long-Form Videos:</strong> 48–72 Hours<br/>` +
+               `• <strong>Websites:</strong> 3 Business Days<br/>` +
+               `Need urgent delivery? WhatsApp Bikram Nath at <a href="https://wa.me/919476766340" target="_blank" style="color:var(--gold);text-decoration:underline;">+91 9476766340 ↗</a>`;
+      }
+
+      if (q.includes('upi') || q.includes('pay') || q.includes('advance') || q.includes('invoice') || q.includes('gst')) {
+        return `💳 <strong>Payment &amp; Invoices:</strong><br/>` +
+               `• <strong>50% Advance:</strong> Required to start project via UPI (<span class="pass-pill">nbikram704@okhdfcbank</span>).<br/>` +
+               `• <strong>Final 50%:</strong> Upon completed delivery review.<br/>` +
+               `• <strong>Invoices:</strong> View and print official GST Tax Receipts under the <strong>"Invoices &amp; GST Receipts"</strong> tab on the left!`;
+      }
+
+      if (q.includes('footage') || q.includes('upload') || q.includes('drive') || q.includes('dropbox') || q.includes('raw')) {
+        return `📁 <strong>Footage Upload:</strong><br/>` +
+               `Open your project from <strong>"My Projects"</strong> and paste your Google Drive, Dropbox, or WeTransfer link directly into the <strong>"Raw Footage Drive Link"</strong> box! Your assigned editor will immediately receive it.`;
+      }
+
+      if (q.includes('contact') || q.includes('founder') || q.includes('bikram') || q.includes('whatsapp') || q.includes('phone') || q.includes('call')) {
+        return `📞 <strong>Direct Contact &amp; Support:</strong><br/>` +
+               `• <strong>Founder / Lead:</strong> Bikram Nath<br/>` +
+               `• <strong>WhatsApp:</strong> <a href="https://wa.me/919476766340" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:underline;">+91 9476766340 ↗</a><br/>` +
+               `• <strong>Email:</strong> <a href="mailto:editzaarbooking@gmail.com" style="color:var(--gold);text-decoration:underline;">editzaarbooking@gmail.com</a><br/>` +
+               `• <strong>Live Editor Chat:</strong> Open any project to chat 1-on-1 with your editor!`;
+      }
+
+      if (q.includes('revision') || q.includes('change') || q.includes('tweak')) {
+        return `✨ <strong>Revisions:</strong><br/>` +
+               `Standard plans include 1 to 4 free revision rounds. You can request changes anytime by chatting directly with your editor in the project detail view!`;
+      }
+
+      return `💡 <strong>Editzaar Support:</strong><br/>` +
+             `I can help with prices, delivery times, uploading footage, tracking status, and invoices.<br/><br/>` +
+             `Need direct assistance? WhatsApp Bikram Nath at <a href="https://wa.me/919476766340" target="_blank" style="color:var(--gold);text-decoration:underline;">+91 9476766340 ↗</a>`;
+    }
+
+    if (btnBotSend && botInput) {
+      btnBotSend.addEventListener('click', () => {
+        const text = botInput.value.trim();
+        if (text) {
+          botInput.value = '';
+          askBot(text);
+        }
+      });
+      botInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const text = botInput.value.trim();
+          if (text) {
+            botInput.value = '';
+            askBot(text);
+          }
+        }
+      });
+    }
+
     const sections=['projects','detail','invoices'];
     function showSection(name){
       sections.forEach(s=>{ document.getElementById('sec-'+s).style.display=s===name?'block':'none'; });
