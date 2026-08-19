@@ -176,20 +176,26 @@
 
     document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>location.href='/dashboard/index.html'));
 
-    async function loadUsers() {
-      const snap = await getDocs(collection(db,'users'));
-      snap.forEach(d=>{ allUsers[d.id]=d.data(); });
+    function loadUsers() {
+      onSnapshot(collection(db,'users'), (snap) => {
+        snap.forEach(d=>{ allUsers[d.id]=d.data(); });
+      }, (err) => console.error('Users listener error:', err));
     }
 
-    async function loadProjects() {
-      const q = query(collection(db,'projects'), where('editorId','==',currentUser.uid));
-      const snap = await getDocs(q);
-      const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
-      projects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
-      document.getElementById('statTotal').textContent  = projects.length;
-      document.getElementById('statActive').textContent = projects.filter(p=>p.status!=='done').length;
-      document.getElementById('statDone').textContent   = projects.filter(p=>p.status==='done').length;
-      renderProjects(projects);
+    let projectsUnsub = null;
+    function loadProjects() {
+      if (projectsUnsub) projectsUnsub();
+      // Listen for all projects assigned strictly to this editor
+      onSnapshot(collection(db,'projects'), (snap) => {
+        const allProj = snap.docs.map(d=>({id:d.id,...d.data()}));
+        // Strict Security Filter: Editor ONLY sees projects explicitly assigned to them OR assigned to clients assigned to them
+        const projects = allProj.filter(p => p.editorId === currentUser.uid || (allUsers[p.clientId] && allUsers[p.clientId].assignedEditor === currentUser.uid));
+        projects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
+        document.getElementById('statTotal').textContent  = projects.length;
+        document.getElementById('statActive').textContent = projects.filter(p=>p.status!=='done').length;
+        document.getElementById('statDone').textContent   = projects.filter(p=>p.status==='done').length;
+        renderProjects(projects);
+      }, (err) => console.error('Projects listener error:', err));
     }
 
     const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
