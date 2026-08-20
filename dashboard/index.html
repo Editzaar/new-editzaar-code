@@ -33,33 +33,33 @@
     /* ── Auth Box ── */
     .auth-box { max-width: 440px; width: 100%; }
 
-    /* ── Tabs (3 tabs: Sign In / Phone OTP / Create Account) ── */
+    /* ── Clean 2-Tab Selector ── */
     .auth-tabs {
       display: flex;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 3px;
+      border-radius: 10px;
+      padding: 4px;
       margin-bottom: 24px;
-      gap: 2px;
+      gap: 4px;
     }
     .auth-tab {
       flex: 1;
       text-align: center;
-      padding: 9px 6px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      padding: 11px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--t2);
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 7px;
       transition: all 0.25s;
-      white-space: nowrap;
     }
     .auth-tab.active {
       background: var(--gold);
       color: #000;
+      box-shadow: 0 4px 16px rgba(255,184,0,0.35);
     }
 
     /* ── Phone Number Input with +91 prefix ── */
@@ -87,36 +87,6 @@
       flex: 1;
     }
 
-    /* ── OTP boxes ── */
-    .otp-row {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 12px 0;
-    }
-    .otp-box {
-      width: 48px; height: 52px;
-      text-align: center;
-      font-size: 1.4rem;
-      font-weight: 700;
-      background: rgba(255,255,255,0.05);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      color: var(--gold);
-      outline: none;
-      transition: border-color 0.2s;
-      font-family: var(--font-b);
-    }
-    .otp-box:focus { border-color: var(--gold); }
-    .otp-box.filled { border-color: rgba(255,184,0,0.5); }
-
-    /* ── Timer badge ── */
-    .otp-timer {
-      font-size: 11px; color: var(--t3);
-      text-align: center; margin-bottom: 12px;
-    }
-    .otp-timer span { color: var(--gold); font-weight: 700; }
-
     /* ── Links row ── */
     .auth-links-row {
       display: flex;
@@ -139,35 +109,28 @@
       background: rgba(40,200,64,0.1);
       border: 1px solid rgba(40,200,64,0.3);
       color: #28C840;
-      border-radius: 7px;
-      padding: 10px 14px;
+      border-radius: 8px;
+      padding: 11px 14px;
       font-size: 0.88rem;
       margin-bottom: 16px;
       display: none;
+      line-height: 1.5;
     }
     .auth-success.show { display: block; }
-
-    /* ── reCAPTCHA container (invisible verifier) ── */
-    #recaptcha-container { display: none; }
-
-    /* ── Divider ── */
-    .auth-divider {
-      display: flex; align-items: center; gap: 12px;
-      margin: 16px 0; color: var(--t3); font-size: 11px;
-    }
-    .auth-divider::before, .auth-divider::after {
-      content: ''; flex: 1; height: 1px;
-      background: var(--border);
-    }
 
     /* ── Info note ── */
     .auth-note {
       font-size: 10px; color: var(--t3);
-      text-align: center; margin-top: 12px; line-height: 1.6;
+      text-align: center; margin-top: 14px; line-height: 1.6;
     }
 
-    /* ── Phone section screens ── */
-    #phoneScreen1, #phoneScreen2 { display: block; }
+    .login-helper-text {
+      font-size: 11px;
+      color: var(--t3);
+      margin-top: -10px;
+      margin-bottom: 16px;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -181,10 +144,9 @@
     <div class="auth-box" style="position:relative;z-index:3;">
       <span class="auth-logo">EDIT<em>ZAAR</em></span>
 
-      <!-- ── TABS ── -->
+      <!-- ── 2 MAIN TABS ── -->
       <div class="auth-tabs">
         <div class="auth-tab active" id="tabSignin">Sign In</div>
-        <div class="auth-tab" id="tabPhone">📱 OTP Login</div>
         <div class="auth-tab" id="tabSignup">Create Account</div>
       </div>
 
@@ -193,20 +155,21 @@
       <div class="auth-success" id="authSuccess"></div>
 
       <!-- ══════════════════════════════════
-           PANEL A: EMAIL SIGN IN
+           PANEL 1: SIGN IN (EMAIL OR MOBILE WITH SAME PASSWORD)
            ══════════════════════════════════ -->
       <div id="panelSignin">
         <div class="auth-title">Welcome back</div>
-        <div class="auth-sub">Sign in to access your portal</div>
+        <div class="auth-sub">Sign in to access your portal with Email or Mobile</div>
 
         <div class="auth-field">
-          <label for="siEmail">Email address</label>
-          <input type="email" id="siEmail" placeholder="you@example.com" autocomplete="email"/>
+          <label for="siIdentifier">Email Address or Mobile Number</label>
+          <input type="text" id="siIdentifier" placeholder="you@example.com or 9876543210" autocomplete="username" required/>
         </div>
+        <span class="login-helper-text">💡 You can enter either your registered Email or 10-digit Mobile number</span>
 
         <div class="auth-field">
           <label for="siPass">Password</label>
-          <input type="password" id="siPass" placeholder="••••••••" autocomplete="current-password"/>
+          <input type="password" id="siPass" placeholder="••••••••" autocomplete="current-password" required/>
         </div>
 
         <button class="auth-btn" id="btnSignin">Sign In →</button>
@@ -218,86 +181,44 @@
       </div>
 
       <!-- ══════════════════════════════════
-           PANEL B: PHONE OTP LOGIN
-           ══════════════════════════════════ -->
-      <div id="panelPhone" style="display:none;">
-        <div class="auth-title">Mobile OTP <em>Login</em></div>
-        <div class="auth-sub">Enter your registered mobile number to receive an OTP</div>
-
-        <!-- Screen 1: Enter phone number -->
-        <div id="phoneScreen1">
-          <div class="auth-field">
-            <label>Mobile Number</label>
-            <div class="phone-input-wrap">
-              <div class="phone-prefix">🇮🇳 +91</div>
-              <input type="tel" id="phoneInput" placeholder="9876543210" maxlength="10" autocomplete="tel"/>
-            </div>
-          </div>
-          <!-- Invisible reCAPTCHA anchor -->
-          <div id="recaptcha-container"></div>
-          <button class="auth-btn" id="btnSendOTP">Send OTP →</button>
-          <div class="auth-note">An OTP will be sent via SMS to your +91 number. Standard SMS rates apply.</div>
-        </div>
-
-        <!-- Screen 2: Enter OTP -->
-        <div id="phoneScreen2" style="display:none;">
-          <div class="auth-field">
-            <label>Enter 6-digit OTP sent to <span id="otpSentTo" style="color:var(--gold);"></span></label>
-            <div class="otp-row">
-              <input class="otp-box" type="text" maxlength="1" id="otp0" inputmode="numeric"/>
-              <input class="otp-box" type="text" maxlength="1" id="otp1" inputmode="numeric"/>
-              <input class="otp-box" type="text" maxlength="1" id="otp2" inputmode="numeric"/>
-              <input class="otp-box" type="text" maxlength="1" id="otp3" inputmode="numeric"/>
-              <input class="otp-box" type="text" maxlength="1" id="otp4" inputmode="numeric"/>
-              <input class="otp-box" type="text" maxlength="1" id="otp5" inputmode="numeric"/>
-            </div>
-          </div>
-          <div class="otp-timer" id="otpTimerEl">Resend OTP in <span id="otpTimerCount">60</span>s</div>
-          <button class="auth-btn" id="btnVerifyOTP">Verify OTP & Login →</button>
-          <button class="auth-btn" id="btnResendOTP" style="display:none;background:rgba(255,184,0,0.12);color:var(--gold);border:1px solid var(--gold-border);">Resend OTP</button>
-          <button class="auth-btn" style="background:transparent;color:var(--t2);margin-top:8px;" id="btnChangePhone">← Change Number</button>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════
-           PANEL C: CREATE ACCOUNT
+           PANEL 2: CREATE ACCOUNT (NAME + EMAIL + MOBILE + PASSWORD)
            ══════════════════════════════════ -->
       <div id="panelSignup" style="display:none;">
         <div class="auth-title">Create <em>Client Account</em></div>
-        <div class="auth-sub">Register to track projects, chat with editors & receive invoices</div>
+        <div class="auth-sub">Register to track projects, chat with editors &amp; receive invoices</div>
 
         <div class="auth-field">
           <label for="suName">Full Name <span style="color:#FF4D4D;">*</span></label>
-          <input type="text" id="suName" placeholder="e.g. Rahul Sharma" autocomplete="name"/>
+          <input type="text" id="suName" placeholder="e.g. Rahul Sharma" autocomplete="name" required/>
         </div>
 
         <div class="auth-field">
           <label for="suEmail">Email Address <span style="color:#FF4D4D;">*</span></label>
-          <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email"/>
+          <input type="email" id="suEmail" placeholder="you@example.com" autocomplete="email" required/>
         </div>
 
         <div class="auth-field">
           <label for="suPhone">Mobile Number <span style="color:#FF4D4D;">*</span></label>
           <div class="phone-input-wrap">
             <div class="phone-prefix">🇮🇳 +91</div>
-            <input type="tel" id="suPhone" placeholder="9876543210" maxlength="10" autocomplete="tel"/>
+            <input type="tel" id="suPhone" placeholder="9876543210" maxlength="10" autocomplete="tel" required/>
           </div>
         </div>
 
         <div class="auth-field">
           <label for="suPass">Password <span style="color:#FF4D4D;">*</span> <small style="color:var(--t3);font-size:10px;">(min. 6 characters)</small></label>
-          <input type="password" id="suPass" placeholder="Create a strong password" autocomplete="new-password"/>
+          <input type="password" id="suPass" placeholder="Create a strong password" autocomplete="new-password" required/>
         </div>
 
         <button class="auth-btn" id="btnSignup">Create Account →</button>
 
         <div class="auth-links-row">
           <a href="../index.html" class="back-link">← Back to Editzaar.in</a>
-          <span class="forgot-link" style="cursor:pointer;" id="goToSignin">Already have an account?</span>
+          <span class="forgot-link" style="cursor:pointer;" id="goToSignin">Already have an account? Sign In</span>
         </div>
         <div class="auth-note">
           By creating an account you agree to Editzaar's Terms of Service.<br/>
-          Your data is securely stored and never shared.
+          Your credentials allow instant login via either Email or Mobile.
         </div>
       </div>
 
@@ -311,11 +232,7 @@
       signInWithEmailAndPassword,
       createUserWithEmailAndPassword,
       sendPasswordResetEmail,
-      onAuthStateChanged,
-      signInWithPhoneNumber,
-      RecaptchaVerifier,
-      PhoneAuthProvider,
-      signInWithCredential
+      onAuthStateChanged
     }                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import {
       getFirestore, doc, getDoc, setDoc, addDoc, collection, query,
@@ -350,39 +267,29 @@
       const userRef = doc(db, 'users', user.uid);
       let role = 'client';
 
-      // Try to read/create Firestore profile up to 3 times (handles temporary rule/network issues)
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
           const snap = await getDoc(userRef);
           if (!snap.exists()) {
-            // Profile missing: create it now (self-healing)
             const defaultName = user.displayName || (user.email ? user.email.split('@')[0] : 'Client');
             role = user.email === 'editzaarbooking@gmail.com' ? 'admin' : 'client';
             const phone = user.phoneNumber || '';
             await setDoc(userRef, {
-              name:          defaultName,
-              email:         user.email || '',
-              mobile:        phone,
-              role:          role,
-              tempPass:      'ClientPass123',
+              name:           defaultName,
+              email:          user.email || '',
+              mobile:         phone,
+              role:           role,
+              tempPass:       'ClientPass123',
               assignedEditor: '',
-              createdAt:     serverTimestamp()
+              createdAt:      serverTimestamp()
             });
           } else {
             role = snap.data().role || 'client';
           }
-          // SUCCESS — break retry loop
           break;
         } catch (err) {
           console.warn('Firestore attempt ' + attempt + ' failed:', err.code, err.message);
-          if (attempt === 3) {
-            // After 3 failures — likely Firestore rules issue
-            // Still let the user in but show a console warning
-            console.error('CRITICAL: Cannot write Firestore profile after 3 attempts. Check Firestore Security Rules!');
-          } else {
-            // Wait 1 second before retry
-            await new Promise(r => setTimeout(r, 1000));
-          }
+          if (attempt < 3) await new Promise(r => setTimeout(r, 800));
         }
       }
 
@@ -410,63 +317,124 @@
     // ── Auth error messages ──
     function authErr(code, fallback) {
       const map = {
-        'auth/email-already-in-use':  'An account already exists with this email. Please sign in instead.',
-        'auth/wrong-password':         'Incorrect password. Please try again.',
-        'auth/invalid-credential':     'Invalid email or password. Please check and try again.',
-        'auth/user-not-found':         'No account found with this email. Please create an account first.',
-        'auth/too-many-requests':      'Too many failed attempts. Please try again later or reset your password.',
-        'auth/invalid-phone-number':   'Invalid mobile number. Please enter a valid 10-digit Indian mobile number.',
-        'auth/invalid-verification-code': 'Incorrect OTP. Please check the code sent to your phone.',
-        'auth/session-expired':        'OTP session expired. Please request a new OTP.',
-        'auth/code-expired':           'OTP has expired. Please request a new OTP.',
-        'auth/quota-exceeded':         'SMS quota exceeded. Please try email login or contact support.',
+        'auth/email-already-in-use':   'An account already exists with this email. Please sign in instead.',
+        'auth/wrong-password':          'Incorrect password. Please check and try again.',
+        'auth/invalid-credential':      'Invalid email/mobile or password. Please check your credentials.',
+        'auth/user-not-found':          'No account found with this email. Please create an account first.',
+        'auth/too-many-requests':       'Too many failed attempts. Please try again later or reset your password.',
+        'auth/invalid-email':           'Please enter a valid email address.',
+        'auth/network-request-failed':  'Network connection error. Please check your internet connection.',
       };
       return map[code] || fallback || 'An error occurred. Please try again.';
     }
 
     // ═══════════════════════════════════════
-    // TAB SWITCHING
+    // 2 TABS SWITCHING
     // ═══════════════════════════════════════
-    const tabs = {
-      signin: document.getElementById('panelSignin'),
-      phone:  document.getElementById('panelPhone'),
-      signup: document.getElementById('panelSignup'),
-    };
-    const tabBtns = {
-      signin: document.getElementById('tabSignin'),
-      phone:  document.getElementById('tabPhone'),
-      signup: document.getElementById('tabSignup'),
-    };
+    const tabSignin = document.getElementById('tabSignin');
+    const tabSignup = document.getElementById('tabSignup');
+    const panelSignin = document.getElementById('panelSignin');
+    const panelSignup = document.getElementById('panelSignup');
 
-    function activateTab(name) {
+    function setTab(tab) {
       clearAlerts();
-      Object.entries(tabs).forEach(([k, el]) => el.style.display = k === name ? 'block' : 'none');
-      Object.entries(tabBtns).forEach(([k, el]) => el.classList.toggle('active', k === name));
-      if (name === 'phone' && !recaptchaReady) initRecaptcha();
+      if (tab === 'signin') {
+        tabSignin.classList.add('active');
+        tabSignup.classList.remove('active');
+        panelSignin.style.display = 'block';
+        panelSignup.style.display = 'none';
+      } else {
+        tabSignup.classList.add('active');
+        tabSignin.classList.remove('active');
+        panelSignup.style.display = 'block';
+        panelSignin.style.display = 'none';
+      }
     }
 
-    document.getElementById('tabSignin').addEventListener('click', () => activateTab('signin'));
-    document.getElementById('tabPhone').addEventListener('click',  () => activateTab('phone'));
-    document.getElementById('tabSignup').addEventListener('click', () => activateTab('signup'));
-    document.getElementById('goToSignin').addEventListener('click', () => activateTab('signin'));
+    tabSignin.addEventListener('click', () => setTab('signin'));
+    tabSignup.addEventListener('click', () => setTab('signup'));
+    document.getElementById('goToSignin').addEventListener('click', () => setTab('signin'));
 
     // ═══════════════════════════════════════
-    // PANEL A: EMAIL SIGN IN
+    // PANEL 1: SIGN IN WITH EMAIL OR MOBILE (SAME PASSWORD)
     // ═══════════════════════════════════════
-    const btnSignin = document.getElementById('btnSignin');
-    const siEmail   = document.getElementById('siEmail');
-    const siPass    = document.getElementById('siPass');
+    const btnSignin    = document.getElementById('btnSignin');
+    const siIdentifier = document.getElementById('siIdentifier');
+    const siPass       = document.getElementById('siPass');
 
     btnSignin.addEventListener('click', async () => {
-      const email = siEmail.value.trim();
-      const pass  = siPass.value;
-      if (!email || !pass) { showError('Please enter your email and password.'); return; }
+      const identifier = siIdentifier.value.trim();
+      const pass       = siPass.value;
+
+      if (!identifier || !pass) {
+        showError('Please enter your Email or Mobile Number and Password.');
+        return;
+      }
+
       btnSignin.disabled = true;
       btnSignin.textContent = 'Signing in…';
       clearAlerts();
+
+      let targetEmail = identifier;
+
+      // Check if user entered a phone number (digits only or starts with +)
+      const digitsOnly = identifier.replace(/\D/g, '');
+      const isPhone = !identifier.includes('@') && digitsOnly.length >= 10;
+
+      if (isPhone) {
+        btnSignin.textContent = 'Looking up Mobile…';
+        try {
+          const formatted10 = digitsOnly.slice(-10);
+          const withPlus91  = '+91' + formatted10;
+
+          // Query Firestore for user with this mobile number
+          const usersRef = collection(db, 'users');
+          let q = query(usersRef, where('mobile', '==', withPlus91));
+          let snap = await getDocs(q);
+
+          if (snap.empty) {
+            // Also check raw 10 digits format
+            q = query(usersRef, where('mobile', '==', formatted10));
+            snap = await getDocs(q);
+          }
+
+          if (snap.empty) {
+            // Also check phone field name
+            q = query(usersRef, where('phone', '==', withPlus91));
+            snap = await getDocs(q);
+          }
+
+          if (snap.empty) {
+            showError(`No registered account found with mobile number +91 ${formatted10}. Please check your number or sign in with your email.`);
+            btnSignin.disabled = false;
+            btnSignin.textContent = 'Sign In →';
+            return;
+          }
+
+          // Found registered user document!
+          const userData = snap.docs[0].data();
+          if (!userData.email) {
+            showError('Account found for this mobile number, but no email is associated. Please contact support.');
+            btnSignin.disabled = false;
+            btnSignin.textContent = 'Sign In →';
+            return;
+          }
+
+          targetEmail = userData.email;
+          btnSignin.textContent = 'Authenticating…';
+        } catch (e) {
+          console.error('Mobile lookup error:', e);
+          showError('Could not verify mobile number. Please sign in with your email address.');
+          btnSignin.disabled = false;
+          btnSignin.textContent = 'Sign In →';
+          return;
+        }
+      }
+
+      // Authenticate with Firebase using targetEmail + pass
       try {
-        const cred = await signInWithEmailAndPassword(auth, email, pass);
-        showSuccess('Sign in successful! Loading your dashboard…');
+        const cred = await signInWithEmailAndPassword(auth, targetEmail, pass);
+        showSuccess('Sign in successful! Opening your portal…');
         await redirectByRole(cred.user);
       } catch (e) {
         showError(authErr(e.code, e.message));
@@ -477,175 +445,30 @@
 
     // Forgot password
     document.getElementById('forgotBtn').addEventListener('click', async () => {
-      const email = siEmail.value.trim();
-      if (!email) { showError('Please enter your email address first, then click Forgot Password.'); siEmail.focus(); return; }
+      const identifier = siIdentifier.value.trim();
+      if (!identifier) {
+        showError('Please enter your email address above, then click Forgot Password.');
+        siIdentifier.focus();
+        return;
+      }
+
+      if (!identifier.includes('@')) {
+        showError('Please enter your registered Email address to receive the password reset link.');
+        return;
+      }
+
       try {
-        await sendPasswordResetEmail(auth, email);
-        showSuccess(`Password reset link sent to ${email}! Check your inbox.`);
+        await sendPasswordResetEmail(auth, identifier);
+        showSuccess(`Password reset link sent to ${identifier}! Please check your email inbox.`);
       } catch (e) {
         showError(authErr(e.code, e.message));
       }
     });
 
-    [siEmail, siPass].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') btnSignin.click(); }));
+    [siIdentifier, siPass].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') btnSignin.click(); }));
 
     // ═══════════════════════════════════════
-    // PANEL B: PHONE OTP LOGIN
-    // ═══════════════════════════════════════
-    let confirmationResult = null;
-    let recaptchaVerifier  = null;
-    let recaptchaReady     = false;
-    let otpTimer           = null;
-
-    function initRecaptcha() {
-      if (recaptchaReady) return;
-      try {
-        recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: 'invisible',
-          callback: () => {}
-        });
-        recaptchaVerifier.render().then(() => { recaptchaReady = true; });
-      } catch (e) {
-        console.warn('reCAPTCHA init error:', e);
-      }
-    }
-
-    document.getElementById('btnSendOTP').addEventListener('click', async () => {
-      const rawPhone = document.getElementById('phoneInput').value.trim().replace(/\D/g, '');
-      if (rawPhone.length !== 10) { showError('Please enter a valid 10-digit Indian mobile number.'); return; }
-
-      const phoneNumber = '+91' + rawPhone;
-      const btn = document.getElementById('btnSendOTP');
-      btn.disabled = true;
-      btn.textContent = 'Sending OTP…';
-      clearAlerts();
-
-      try {
-        if (!recaptchaReady) initRecaptcha();
-        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
-        // Show OTP entry screen
-        document.getElementById('phoneScreen1').style.display = 'none';
-        document.getElementById('phoneScreen2').style.display = 'block';
-        document.getElementById('otpSentTo').textContent = '+91 ' + rawPhone;
-        document.getElementById('otp0').focus();
-        startOTPTimer();
-        showSuccess('OTP sent! Check your SMS inbox.');
-      } catch (e) {
-        showError(authErr(e.code, e.message));
-        btn.disabled = false;
-        btn.textContent = 'Send OTP →';
-        // Reset recaptcha on failure
-        recaptchaReady = false;
-        if (recaptchaVerifier) { recaptchaVerifier.clear(); recaptchaVerifier = null; }
-        initRecaptcha();
-      }
-    });
-
-    // OTP box auto-advance
-    for (let i = 0; i < 6; i++) {
-      const box = document.getElementById('otp' + i);
-      box.addEventListener('input', () => {
-        box.value = box.value.replace(/\D/g, '').slice(-1);
-        box.classList.toggle('filled', !!box.value);
-        if (box.value && i < 5) document.getElementById('otp' + (i + 1)).focus();
-      });
-      box.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !box.value && i > 0) document.getElementById('otp' + (i - 1)).focus();
-        if (e.key === 'Enter') document.getElementById('btnVerifyOTP').click();
-      });
-    }
-
-    document.getElementById('btnVerifyOTP').addEventListener('click', async () => {
-      const code = [0,1,2,3,4,5].map(i => document.getElementById('otp'+i).value).join('');
-      if (code.length < 6) { showError('Please enter all 6 digits of the OTP.'); return; }
-      if (!confirmationResult) { showError('OTP session expired. Please request a new OTP.'); return; }
-
-      const btn = document.getElementById('btnVerifyOTP');
-      btn.disabled = true;
-      btn.textContent = 'Verifying…';
-      clearAlerts();
-
-      try {
-        const cred = await confirmationResult.confirm(code);
-        showSuccess('OTP verified! Loading your portal…');
-
-        // After phone login: ensure Firestore profile has mobile stored
-        const userRef = doc(db, 'users', cred.user.uid);
-        const snap = await getDoc(userRef);
-        if (snap.exists()) {
-          // Already has profile — just redirect
-          await redirectByRole(cred.user);
-        } else {
-          // Phone-only user — create basic profile
-          const phone = cred.user.phoneNumber || '';
-          await setDoc(userRef, {
-            name: 'Client',
-            email: '',
-            mobile: phone,
-            role: 'client',
-            tempPass: '',
-            createdAt: serverTimestamp()
-          });
-          window.location.replace('client.html');
-        }
-      } catch (e) {
-        showError(authErr(e.code, e.message));
-        btn.disabled = false;
-        btn.textContent = 'Verify OTP & Login →';
-      }
-    });
-
-    // OTP timer countdown
-    function startOTPTimer() {
-      let seconds = 60;
-      clearInterval(otpTimer);
-      document.getElementById('otpTimerEl').style.display = 'block';
-      document.getElementById('btnResendOTP').style.display = 'none';
-      document.getElementById('btnVerifyOTP').style.display = 'block';
-      otpTimer = setInterval(() => {
-        seconds--;
-        document.getElementById('otpTimerCount').textContent = seconds;
-        if (seconds <= 0) {
-          clearInterval(otpTimer);
-          document.getElementById('otpTimerEl').style.display = 'none';
-          document.getElementById('btnResendOTP').style.display = 'block';
-        }
-      }, 1000);
-    }
-
-    document.getElementById('btnResendOTP').addEventListener('click', async () => {
-      const rawPhone = document.getElementById('phoneInput').value.trim().replace(/\D/g, '');
-      const phoneNumber = '+91' + rawPhone;
-      clearAlerts();
-      document.getElementById('btnResendOTP').style.display = 'none';
-      try {
-        recaptchaReady = false;
-        if (recaptchaVerifier) { recaptchaVerifier.clear(); recaptchaVerifier = null; }
-        initRecaptcha();
-        // Small delay for recaptcha init
-        await new Promise(r => setTimeout(r, 800));
-        confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
-        startOTPTimer();
-        showSuccess('OTP resent! Check your SMS inbox.');
-        for (let i = 0; i < 6; i++) { document.getElementById('otp'+i).value = ''; document.getElementById('otp'+i).classList.remove('filled'); }
-        document.getElementById('otp0').focus();
-      } catch (e) {
-        showError(authErr(e.code, e.message));
-        document.getElementById('btnResendOTP').style.display = 'block';
-      }
-    });
-
-    document.getElementById('btnChangePhone').addEventListener('click', () => {
-      clearInterval(otpTimer);
-      confirmationResult = null;
-      document.getElementById('phoneScreen1').style.display = 'block';
-      document.getElementById('phoneScreen2').style.display = 'none';
-      for (let i = 0; i < 6; i++) { document.getElementById('otp'+i).value = ''; document.getElementById('otp'+i).classList.remove('filled'); }
-      clearAlerts();
-    });
-
-    // ═══════════════════════════════════════
-    // PANEL C: CREATE ACCOUNT (EMAIL + MOBILE + NAME)
+    // PANEL 2: CREATE ACCOUNT (NAME + EMAIL + MOBILE + PASSWORD)
     // ═══════════════════════════════════════
     const btnSignup = document.getElementById('btnSignup');
 
@@ -655,10 +478,10 @@
       const phone = document.getElementById('suPhone').value.trim().replace(/\D/g, '');
       const pass  = document.getElementById('suPass').value;
 
-      if (!name)              { showError('Please enter your full name.'); return; }
-      if (!email)             { showError('Please enter your email address.'); return; }
-      if (!email.includes('@')){ showError('Please enter a valid email address.'); return; }
-      if (phone.length !== 10){ showError('Please enter a valid 10-digit mobile number.'); return; }
+      if (!name)               { showError('Please enter your full name.'); return; }
+      if (!email)              { showError('Please enter your email address.'); return; }
+      if (!email.includes('@')) { showError('Please enter a valid email address.'); return; }
+      if (phone.length !== 10) { showError('Please enter a valid 10-digit Indian mobile number.'); return; }
       if (!pass || pass.length < 6) { showError('Password must be at least 6 characters.'); return; }
 
       btnSignup.disabled = true;
@@ -668,7 +491,6 @@
       let newCred = null;
       try {
         // STEP 1: Create Firebase Auth account
-        btnSignup.textContent = 'Creating Auth Account…';
         newCred = await createUserWithEmailAndPassword(auth, email, pass);
       } catch (e) {
         showError(authErr(e.code, e.message));
@@ -677,9 +499,9 @@
         return;
       }
 
-      // STEP 2: Write Firestore profile — MANDATORY before redirect
+      // STEP 2: Write Firestore profile immediately with Name, Email, Mobile, Password
       const uid    = newCred.user.uid;
-      const mobile = phone.length === 10 ? '+91' + phone : (phone || '');
+      const mobile = '+91' + phone;
       let profileWritten = false;
 
       btnSignup.textContent = 'Saving Profile…';
@@ -699,37 +521,34 @@
           break;
         } catch (e) {
           console.warn('Firestore write attempt ' + attempt + ' failed:', e.code, e.message);
-          if (attempt < 3) await new Promise(r => setTimeout(r, 1000));
+          if (attempt < 3) await new Promise(r => setTimeout(r, 800));
         }
       }
 
       if (!profileWritten) {
-        // Profile could not be written — tell admin to fix Firestore rules
-        showError('Account created in Firebase but your profile could not be saved. Please contact Editzaar support or ask admin to update Firestore Security Rules.');
+        showError('Account created in Firebase Auth, but profile write was blocked. Please contact support.');
         btnSignup.disabled = false;
         btnSignup.textContent = 'Create Account →';
         return;
       }
 
-      // STEP 3: Write welcome announcement (best-effort, non-blocking)
+      // STEP 3: Write welcome announcement
       try {
         await addDoc(collection(db, 'announcements'), {
           title:     '🚀 Welcome to Editzaar Agency!',
-          message:   `Hi ${name}! Your account is now active. You can track your projects, upload raw footage, chat with your editor, and download invoices — all from your portal.`,
+          message:   `Hi ${name}! Your account is now active. You can track projects, upload footage, chat with editors, and download tax receipts!`,
           target:    uid,
           createdAt: serverTimestamp()
         });
       } catch(e) { console.warn('Welcome announcement write failed:', e); }
 
-      showSuccess(`Welcome, ${name}! Your profile is saved. Opening portal…`);
+      showSuccess(`Welcome, ${name}! Your account is ready. Opening your portal…`);
       await redirectByRole(newCred.user);
     });
 
-    // Enter key on signup fields
     ['suName','suEmail','suPhone','suPass'].forEach(id => {
       document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') btnSignup.click(); });
     });
-
   </script>
 </body>
 </html>
