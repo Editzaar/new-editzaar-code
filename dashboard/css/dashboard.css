@@ -840,3 +840,62 @@ a { text-decoration: none; color: inherit; }
   min-height: 84px !important;
   resize: vertical !important;
 }
+
+.push-notif { display: none !important; opacity: 0; pointer-events: none; }
+.push-notif.show { display: flex !important; opacity: 1; pointer-events: auto; }
+
+
+/* ── Project Detail Grid Responsive Layout ── */
+.project-detail-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.flex-input-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: center;
+}
+.flex-input-row input {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .project-detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+  }
+  .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+  }
+  .welcome-banner button {
+    width: 100%;
+    justify-content: center;
+  }
+  .chatbot-fab {
+    bottom: calc(var(--bottom-nav-h) + 16px + var(--safe-bottom)) !important;
+    right: 16px !important;
+    z-index: 400 !important;
+  }
+  .chatbot-panel {
+    bottom: calc(var(--bottom-nav-h) + 76px + var(--safe-bottom)) !important;
+    right: 16px !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 360px !important;
+  }
+  .flex-input-row button {
+    width: 100%;
+    justify-content: center;
+  }
+}

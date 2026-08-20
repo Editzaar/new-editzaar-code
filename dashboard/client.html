@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=9.0"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=10.0"/>
 
   <style>
     .welcome-banner {
@@ -49,10 +49,10 @@
     .invoice-row:last-child { border-bottom: none; }
 
     .chatbot-fab {
-      position: fixed; bottom: 28px; right: 28px; z-index: 500;
+      position: fixed; bottom: calc(var(--bottom-nav-h) + 16px + var(--safe-bottom)); right: 16px; z-index: 400;
       background: var(--gold); color: #000;
       border: none; border-radius: 50%;
-      width: 54px; height: 54px; font-size: 1.5rem;
+      width: 50px; height: 50px; font-size: 1.4rem;
       cursor: pointer; box-shadow: 0 8px 28px rgba(255,184,0,0.4);
       display: flex; align-items: center; justify-content: center;
       transition: transform 0.2s, background 0.2s;
@@ -60,8 +60,8 @@
     .chatbot-fab:hover { transform: scale(1.1); background: var(--gold-light); }
 
     .chatbot-panel {
-      position: fixed; bottom: 92px; right: 28px; z-index: 499;
-      width: 360px; max-width: calc(100vw - 40px);
+      position: fixed; bottom: calc(var(--bottom-nav-h) + 74px + var(--safe-bottom)); right: 16px; z-index: 401;
+      width: 350px; max-width: calc(100vw - 32px);
       background: var(--bg-card); border: 1px solid var(--gold-border);
       border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.85);
       display: none; flex-direction: column; overflow: hidden;
@@ -141,7 +141,7 @@
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   <div class="toast" id="toast"></div>
-  <div class="push-notif" id="pushNotif"><div class="push-notif-icon" id="pushNotifIcon">🔔</div><div class="push-notif-body"><div class="push-notif-title" id="pushNotifTitle"></div><div class="push-notif-text" id="pushNotifText"></div></div></div>
+  </div>
 
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <div class="dash-shell">
@@ -191,7 +191,7 @@
           <button class="btn-outline" onclick="showSection('projects')">← Back to My Projects</button>
           <div id="detailStatus"></div>
         </div>
-        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;">
+        <div class="project-detail-grid">
           <div>
             <!-- Status Timeline -->
             <div class="dash-card">
@@ -207,7 +207,7 @@
               <!-- Raw Footage Link Input -->
               <div class="link-input-box">
                 <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Raw Footage Link (Google Drive / WeTransfer / Dropbox)</div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <div class="flex-input-row">
                   <input type="url" id="rawFootageInput" placeholder="https://drive.google.com/..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:#fff;font-size:0.88rem;outline:none;"/>
                   <button class="btn-gold btn-sm" id="btnSaveFootageLink">Save Link</button>
                 </div>
