@@ -1660,3 +1660,138 @@ html[data-theme="light"] body,
     font-size: 0.75rem;
   }
 }
+
+
+/* ============================================================
+   APPLE-INSPIRED PREMIUM GLASSMORPHIC MOBILE MENU & NAVBAR
+   ============================================================ */
+
+/* ── Navbar Glassmorphic Base ── */
+#navbar, nav {
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  transition: background 0.3s ease, border-color 0.3s ease !important;
+}
+
+/* ── Dark Mode Mobile Menu Glass ── */
+@media (max-width: 900px) {
+  .nav-links {
+    position: fixed;
+    top: 64px;
+    left: 12px;
+    right: 12px;
+    width: calc(100% - 24px);
+    background: rgba(10, 10, 14, 0.88) !important;
+    backdrop-filter: blur(32px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(190%) !important;
+    border: 1px solid rgba(255, 184, 0, 0.22) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.80), 0 0 30px rgba(255, 184, 0, 0.10) !important;
+    flex-direction: column;
+    padding: 22px 18px 26px !important;
+    gap: 10px !important;
+    z-index: 99999;
+  }
+
+  .nav-links li {
+    width: 100%;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 0.95rem !important;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85) !important;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    background: rgba(255, 184, 0, 0.12) !important;
+    border-color: rgba(255, 184, 0, 0.30) !important;
+    color: #FFB800 !important;
+    transform: translateX(4px);
+  }
+
+  .nav-links .nav-cta-mobile {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(135deg, #FFB800 0%, #E6A100 100%) !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 0.92rem !important;
+    border-radius: 12px !important;
+    padding: 14px 20px !important;
+    box-shadow: 0 6px 20px rgba(255, 184, 0, 0.35) !important;
+    border: none !important;
+  }
+
+  .nav-links .mobile-install-link {
+    background: rgba(255, 184, 0, 0.08) !important;
+    border: 1px dashed rgba(255, 184, 0, 0.40) !important;
+    color: #FFB800 !important;
+  }
+}
+
+/* ── Light Mode Mobile Menu Apple Liquid Glass ── */
+[data-theme="light"] #navbar,
+[data-theme="light"] nav {
+  background: rgba(245, 245, 248, 0.82) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+@media (max-width: 900px) {
+  [data-theme="light"] .nav-links {
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(36px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(36px) saturate(200%) !important;
+    border: 1px solid rgba(0, 0, 0, 0.10) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.14), 0 6px 16px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  [data-theme="light"] .nav-links a {
+    color: #111116 !important;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="light"] .nav-links a:hover,
+  [data-theme="light"] .nav-links a.active {
+    background: rgba(184, 130, 0, 0.10) !important;
+    border-color: rgba(184, 130, 0, 0.30) !important;
+    color: #b88200 !important;
+    transform: translateX(4px);
+  }
+
+  [data-theme="light"] .nav-links .nav-cta-mobile {
+    background: linear-gradient(135deg, #b88200 0%, #a07200 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(184, 130, 0, 0.30) !important;
+  }
+
+  [data-theme="light"] .nav-links .mobile-install-link {
+    background: rgba(184, 130, 0, 0.08) !important;
+    border: 1px dashed rgba(184, 130, 0, 0.40) !important;
+    color: #b88200 !important;
+  }
+}
+
+/* ── Hamburger Toggle Styling ── */
+.nav-toggle span {
+  background: var(--gold) !important;
+  transition: all 0.3s ease;
+}
+[data-theme="light"] .nav-toggle span {
+  background: #111116 !important;
+}
