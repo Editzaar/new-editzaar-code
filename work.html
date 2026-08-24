@@ -9,12 +9,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap?v=80.0"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="media/fav-logo.png">
-    <link rel="stylesheet" href="css/style.css?v=7.1">
+    <link rel="stylesheet" href="css/style.css?v=80.0">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=80.0">
 
     <style>
         /* Portfolio Filter Tabs */
@@ -80,7 +80,7 @@
         .section-header h3 {
             font-family: var(--font-h);
             font-size: 2.5rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 1rem;
         }
 
@@ -199,7 +199,7 @@
             right: 15px;
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--border);
-            color: var(--t1);
+            color: inherit;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -224,7 +224,7 @@
         .card-label h4 {
             font-family: var(--font-h);
             font-size: 1.5rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 0.5rem;
         }
 
@@ -307,7 +307,7 @@
         .web-info h4 {
             font-family: var(--font-h);
             font-size: 1.8rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 0.5rem;
         }
 
@@ -373,7 +373,7 @@
         .data-card h4 {
             font-family: var(--font-h);
             font-size: 1.8rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 1rem;
         }
 
@@ -504,7 +504,7 @@
         /* Live Browser Iframe Preview Styles */
         .browser-content {
             height: 250px;
-            background: #0a0a0c;
+            background: var(--bg-card);
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid var(--border);
@@ -555,6 +555,15 @@
             opacity: 1;
         }
     </style>
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Editzaar">
+  <link rel="apple-touch-icon" href="/media/fav-logo.png">
+  <meta name="theme-color" content="#FFB800">
+  <script src="js/theme.js?v=80.0"></script>
 </head>
 
 <body>
@@ -567,8 +576,11 @@
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
             <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
-        </ul>
+          <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
+    </ul>
         <a class="nav-cta" href="dashboard/index.html">Client Login</a>
+    <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
+    <button class="pwa-install-nav-btn" onclick="window._triggerInstall()" aria-label="Download App"><span style="font-size:13px">&#11015;</span> <span class="pwa-btn-text">App</span></button>
         <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
     </nav>
 
@@ -1216,7 +1228,43 @@
         // Initial setup for 'all'
         // portfolioSections already have .active from HTML
     </script>
-    <script src="js/main.js?v=7.0"></script>
+    <script src="js/main.js?v=80.0"></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+        .catch(function(err) { console.warn('[SW] Error:', err); });
+    }
+    let _deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      _deferredInstallPrompt = e;
+    });
+    window._triggerInstall = function() {
+      if (_deferredInstallPrompt) {
+        _deferredInstallPrompt.prompt();
+        _deferredInstallPrompt.userChoice.then(function(choice) {
+          console.log('[PWA] User choice:', choice.outcome);
+          _deferredInstallPrompt = null;
+        });
+      } else {
+        const m = document.getElementById('ios-install-modal');
+        if (m) m.style.display = 'flex';
+      }
+    };
+  </script>
+  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
+    <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:12px">&#128241;</div>
+      <h3 style="color:#FFB800;font-family:'Outfit',sans-serif;margin-bottom:8px">Install Editzaar App</h3>
+      <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
+      <div style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
+        <div>1. Tap <strong style="color:#FFB800">Share</strong> &#127758; at bottom of Safari</div>
+        <div>2. Tap <strong style="color:#FFB800">Add to Home Screen</strong></div>
+      </div>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
+    </div>
+  </div>
 </body>
 
 </html>

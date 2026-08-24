@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/style.css?v=7.0"/>
+  <link rel="stylesheet" href="css/style.css?v=80.0"/>
   <style>
     .catalog-tabs {
       display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap;
@@ -44,7 +44,7 @@
     .pc-feat { font-size: 0.88rem; color: var(--t2); display: flex; align-items: center; gap: 10px; }
     .pc-feat.pc-dim { color: var(--t3); }
     .pc-check { color: var(--gold); font-size: 11px; }
-    .pc-cross { color: rgba(255,255,255,0.25); font-size: 11px; }
+    .pc-cross { color: var(--t3); font-size: 11px; }
     .pc-gst { font-size: 11px; color: var(--t3); margin-top: -6px; margin-bottom: 16px; }
 
     /* Interactive Checkout Modal */
@@ -78,7 +78,7 @@
     }
     .summary-row.total {
       border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px;
-      font-weight: 700; color: #fff; font-size: 1.1rem;
+      font-weight: 700; color: inherit; font-size: 1.1rem;
     }
     .summary-row.advance {
       background: rgba(40,200,64,0.1); border: 1px solid rgba(40,200,64,0.3);
@@ -90,7 +90,7 @@
     .field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 6px; font-weight: 600; }
     .field input, .field textarea, .field select {
       width: 100%; background: rgba(0,0,0,0.6); border: 1px solid var(--border);
-      border-radius: 8px; padding: 12px 14px; color: #fff; font-family: var(--font-b);
+      border-radius: 8px; padding: 12px 14px; color: inherit; font-family: var(--font-b);
       font-size: 0.9rem; outline: none; transition: border-color 0.2s;
     }
     .field input:focus, .field textarea:focus { border-color: var(--gold); }
@@ -137,7 +137,28 @@
       .payment-box { grid-template-columns: 1fr; justify-items: center; text-align: center; }
       .checkout-box { padding: 24px 18px; }
     }
-  </style>
+  
+    /* ── LIGHT MODE OVERRIDES ── */
+    [data-theme="light"] .pc-cross {
+      color: rgba(17,17,22,0.30) !important;
+    }
+    [data-theme="light"] .pc-name,
+    [data-theme="light"] .pc-price,
+    [data-theme="light"] .pc-price-sub,
+    [data-theme="light"] .pc-gst,
+    [data-theme="light"] .pc-feat,
+    [data-theme="light"] .pc-feat-label,
+    [data-theme="light"] .pc-btn,
+    [data-theme="light"] .pricing-card,
+    [data-theme="light"] .pricing-card * {
+      color: #111116 !important;
+    }
+    [data-theme="light"] .pc-check,
+    [data-theme="light"] .pricing-card .btn-gold,
+    [data-theme="light"] .pricing-card .btn-gold * {
+      color: #b88200 !important;
+    }
+</style>
 </head>
 <body>
 
@@ -153,6 +174,7 @@
       <li><a href="pricing.html" class="active">Pricing</a></li>
       <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
       <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
+      <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
     </ul>
     <a class="nav-cta" href="dashboard/index.html">Client Login</a>
     <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
@@ -412,7 +434,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=7.0"></script>
+  <script src="js/main.js?v=80.0"></script>
   <script>
     // Tab switching
     const tabs = document.querySelectorAll('.catalog-tab');

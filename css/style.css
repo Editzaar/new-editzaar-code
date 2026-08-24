@@ -1614,3 +1614,891 @@ footer {
   .ai-chatbot-panel { right: 12px; bottom: 84px; width: calc(100vw - 24px); height: calc(100vh - 110px); }
   .ai-chatbot-fab { bottom: 18px; right: 18px; width: 52px; height: 52px; font-size: 1.4rem; }
 }
+
+
+/* ============================================================
+   LIGHT / DARK THEME SYSTEM — Additive Only (v1.0)
+   Zero changes to existing dark mode. Light mode purely appended.
+   ============================================================ */
+
+/* Toggle Button UI */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,184,0,0.10);
+  border: 1px solid rgba(255,184,0,0.30);
+  color: var(--gold);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
+  margin-left: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.theme-toggle-btn:hover {
+  background: rgba(255,184,0,0.20);
+  transform: rotate(20deg);
+}
+.theme-toggle-btn .icon-sun,
+.theme-toggle-btn .icon-moon {
+  position: absolute;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Dark mode: show moon */
+.theme-toggle-btn .icon-sun  { opacity: 0; transform: translateY(10px); }
+.theme-toggle-btn .icon-moon { opacity: 1; transform: translateY(0); }
+/* Light mode: show sun */
+[data-theme="light"] .theme-toggle-btn .icon-sun  { opacity: 1; transform: translateY(0); }
+[data-theme="light"] .theme-toggle-btn .icon-moon { opacity: 0; transform: translateY(-10px); }
+
+/* Light Mode Root Variable Overrides */
+[data-theme="light"] {
+  --gold:        #c48a00;
+  --gold-light:  #d4a520;
+  --gold-dim:    rgba(180,130,0,0.10);
+  --gold-border: rgba(180,130,0,0.25);
+  --gold-glow:   rgba(180,130,0,0.15);
+  --gold-glow2:  rgba(180,130,0,0.06);
+  --bg:          #f4f4f7;
+  --bg-card:     #ffffff;
+  --bg-card2:    #f9f9fc;
+  --bg-alt:      #ebebef;
+  --t1:          #111116;
+  --t2:          rgba(17,17,22,0.72);
+  --t3:          rgba(17,17,22,0.42);
+  --border:      rgba(0,0,0,0.10);
+}
+
+/* Light mode specific overrides */
+[data-theme="light"] body { background: var(--bg); color: var(--t1); }
+
+[data-theme="light"] .nav-inner,
+[data-theme="light"] nav,
+[data-theme="light"] header {
+  background: rgba(244,244,247,0.96) !important;
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .nav-logo em { color: var(--gold) !important; }
+
+[data-theme="light"] .nav-link { color: rgba(17,17,22,0.70) !important; }
+[data-theme="light"] .nav-link:hover { color: var(--gold) !important; }
+
+[data-theme="light"] .btn-g {
+  background: rgba(0,0,0,0.06) !important;
+  color: #111116 !important;
+  border-color: rgba(0,0,0,0.10) !important;
+}
+[data-theme="light"] .btn-g:hover { background: rgba(0,0,0,0.10) !important; }
+
+[data-theme="light"] .sec-alt { background: #ededf1 !important; }
+
+[data-theme="light"] .srv-service-card,
+[data-theme="light"] .rev,
+[data-theme="light"] .pstep {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .mi { color: rgba(17,17,22,0.65); }
+
+[data-theme="light"] footer {
+  background: #e8e8ec !important;
+  border-top-color: rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .foot-copy,
+[data-theme="light"] .foot-links a { color: rgba(17,17,22,0.55) !important; }
+[data-theme="light"] .foot-links a:hover { color: var(--gold) !important; }
+
+[data-theme="light"] body::before { opacity: 0.12 !important; }
+
+/* Prevent cursor glow from being too harsh in light mode */
+[data-theme="light"] .cursor-glow { opacity: 0.4 !important; }
+
+
+/* ============================================================
+   LIGHT MODE OVERRIDES — Full High-Contrast Palette (v2.0)
+   ============================================================ */
+
+[data-theme="light"] {
+  --gold:        #b88200;
+  --gold-light:  #d49a00;
+  --gold-dim:    rgba(184,130,0,0.08);
+  --gold-border: rgba(184,130,0,0.25);
+  --gold-glow:   rgba(184,130,0,0.15);
+  --gold-glow2:  rgba(184,130,0,0.05);
+  --bg:          #f4f4f7;
+  --bg-card:     #ffffff;
+  --bg-card2:    #f9f9fc;
+  --bg-alt:      #ebebef;
+  --t1:          #111116;
+  --t2:          #33333d;
+  --t3:          #555562;
+  --border:      rgba(0,0,0,0.10);
+}
+
+/* Base Body & Layout */
+[data-theme="light"] body {
+  background: var(--bg) !important;
+  color: var(--t1) !important;
+}
+
+/* Text & Headings */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] .sec-title,
+[data-theme="light"] .hero-left h1,
+[data-theme="light"] .pname,
+[data-theme="light"] .srv-block-title,
+[data-theme="light"] .web-card-title,
+[data-theme="light"] .ad-card-title,
+[data-theme="light"] .perk-title,
+[data-theme="light"] .pc-name,
+[data-theme="light"] .pc-price,
+[data-theme="light"] .book-title,
+[data-theme="light"] .vtitle,
+[data-theme="light"] .rev-name {
+  color: #111116 !important;
+}
+
+/* Paragraphs, Subtitles & Labels */
+[data-theme="light"] p,
+[data-theme="light"] span:not(.gold-italic):not(.c-val):not(.live-badge),
+[data-theme="light"] .hero-sub,
+[data-theme="light"] .pdesc,
+[data-theme="light"] .srv-block-desc,
+[data-theme="light"] .web-card-desc,
+[data-theme="light"] .ad-card-desc,
+[data-theme="light"] .perk-desc,
+[data-theme="light"] .rev-q,
+[data-theme="light"] .vdesc,
+[data-theme="light"] .book-sub,
+[data-theme="light"] .sec-tag,
+[data-theme="light"] .eyebrow,
+[data-theme="light"] .pc-feat,
+[data-theme="light"] .hstat-l {
+  color: #33333d !important;
+}
+
+/* Header & Navigation */
+[data-theme="light"] nav,
+[data-theme="light"] header,
+[data-theme="light"] .nav-inner {
+  background: rgba(244,244,247,0.96) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+}
+[data-theme="light"] .logo,
+[data-theme="light"] .nav-logo { color: #111116 !important; }
+[data-theme="light"] .nav-link { color: #33333d !important; }
+[data-theme="light"] .nav-link:hover,
+[data-theme="light"] .nav-link.active { color: var(--gold) !important; }
+
+/* Section Backgrounds */
+[data-theme="light"] .sec,
+[data-theme="light"] .hero { background: var(--bg) !important; }
+[data-theme="light"] .sec-alt,
+[data-theme="light"] .logo-strip,
+[data-theme="light"] .marquee-bar { background: #eaeaef !important; border-color: rgba(0,0,0,0.08) !important; }
+
+/* Cards & Containers */
+[data-theme="light"] .srv-service-card,
+[data-theme="light"] .rev,
+[data-theme="light"] .pstep,
+[data-theme="light"] .pricing-card,
+[data-theme="light"] .web-card,
+[data-theme="light"] .ad-card,
+[data-theme="light"] .vcard,
+[data-theme="light"] .summary-card,
+[data-theme="light"] .browser-mockup,
+[data-theme="light"] .chart-mockup,
+[data-theme="light"] .ctr-mockup,
+[data-theme="light"] .timeline-mockup,
+[data-theme="light"] .perk {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05) !important;
+}
+
+/* Modals & Checkout */
+[data-theme="light"] .checkout-modal,
+[data-theme="light"] .ai-chatbot-panel,
+[data-theme="light"] #ios-install-modal > div {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #111116 !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15) !important;
+}
+
+[data-theme="light"] .ai-chat-header {
+  background: #f0f0f5 !important;
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .ai-msg.them .ai-bubble {
+  background: #ededf2 !important;
+  color: #111116 !important;
+}
+
+/* Buttons */
+[data-theme="light"] .btn-g,
+[data-theme="light"] .btn-outline {
+  background: rgba(0,0,0,0.05) !important;
+  color: #111116 !important;
+  border-color: rgba(0,0,0,0.12) !important;
+}
+[data-theme="light"] .btn-g:hover,
+[data-theme="light"] .btn-outline:hover {
+  background: rgba(0,0,0,0.09) !important;
+  border-color: var(--gold) !important;
+}
+
+/* Inputs & Form Elements */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select,
+[data-theme="light"] .filter-select {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  color: #111116 !important;
+}
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: #777785 !important;
+}
+
+/* Footer */
+[data-theme="light"] footer {
+  background: #e5e5ea !important;
+  border-top: 1px solid rgba(0,0,0,0.08) !important;
+  color: #111116 !important;
+}
+[data-theme="light"] .foot-copy,
+[data-theme="light"] .foot-links a {
+  color: #44444f !important;
+}
+[data-theme="light"] .foot-links a:hover {
+  color: var(--gold) !important;
+}
+
+/* Toggle Button Styling */
+.theme-toggle-btn,
+.dash-theme-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: rgba(255,184,0,0.12) !important;
+  border: 1px solid rgba(255,184,0,0.35) !important;
+  color: var(--gold) !important;
+  font-size: 1.1rem !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+.theme-toggle-btn:hover,
+.dash-theme-toggle:hover {
+  transform: scale(1.08) rotate(15deg) !important;
+  background: rgba(255,184,0,0.22) !important;
+}
+.icon-sun  { opacity: 0; transform: translateY(10px); transition: all 0.3s; position: absolute; }
+.icon-moon { opacity: 1; transform: translateY(0); transition: all 0.3s; position: absolute; }
+
+[data-theme="light"] .icon-sun  { opacity: 1 !important; transform: translateY(0) !important; }
+[data-theme="light"] .icon-moon { opacity: 0 !important; transform: translateY(-10px) !important; }
+
+
+/* ============================================================
+   LIGHT MODE PERFECT FIXES — Images 1-5 Contrast & Backgrounds
+   ============================================================ */
+
+/* 1. HERO SECTION (Image 1) */
+[data-theme="light"] .hv2-headline,
+[data-theme="light"] .hv2-headline span:not(.gold-italic) {
+  color: #111116 !important;
+}
+[data-theme="light"] .hv2-sub {
+  color: #33333d !important;
+}
+[data-theme="light"] .hv2-right {
+  background: #e5e5ea !important;
+}
+[data-theme="light"] .hv2-right-bg {
+  background: radial-gradient(ellipse at 30% 50%, rgba(184,130,0,0.15) 0%, transparent 60%), linear-gradient(135deg, #e5e5ea 0%, #f0f0f5 100%) !important;
+}
+
+/* 2. PRICING BANNER & BADGES (Image 2) */
+[data-theme="light"] .sec-alt .reveal > div[style*="background"],
+[data-theme="light"] div[style*="linear-gradient(135deg, #000"],
+[data-theme="light"] div[style*="linear-gradient(135deg, #0A0A0C"] {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] .tbadge,
+[data-theme="light"] span[style*="background:rgba(255"],
+[data-theme="light"] span[style*="border:1px solid"] {
+  background: rgba(0,0,0,0.04) !important;
+  border-color: rgba(184,130,0,0.35) !important;
+  color: #22222b !important;
+}
+
+/* 3. READY TO BUILD EXTRAORDINARY CTA (Image 3) */
+[data-theme="light"] .sec h2,
+[data-theme="light"] section h2,
+[data-theme="light"] h2 {
+  color: #111116 !important;
+}
+[data-theme="light"] .sec p,
+[data-theme="light"] section p,
+[data-theme="light"] p {
+  color: #33333d !important;
+}
+
+/* 4. CORE SERVICE PILLARS (Image 4) */
+[data-theme="light"] .sec-hdr h2,
+[data-theme="light"] #services-overview h2 {
+  color: #111116 !important;
+}
+[data-theme="light"] .srv-block-tag,
+[data-theme="light"] .sec-tag,
+[data-theme="light"] div[style*="border-radius:30px"] span,
+[data-theme="light"] div[style*="border-radius:20px"] span {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #111116 !important;
+}
+
+/* 5. VERTICAL REELS CAROUSEL LABELS (Image 5) */
+[data-theme="light"] .vtitle,
+[data-theme="light"] .vdesc,
+[data-theme="light"] .vcard-reel-label,
+[data-theme="light"] .carousel-item span,
+[data-theme="light"] .carousel-item p,
+[data-theme="light"] div[style*="font-family:'Cormorant Garamond'"] {
+  color: #111116 !important;
+}
+
+
+/* ============================================================
+   BULLETPROOF LIGHT MODE UNIVERSAL TEXT & BACKGROUND RULE (v20.0)
+   Guarantees NO white text on light backgrounds anywhere on page.
+   ============================================================ */
+
+/* 1. Global Light Background */
+html[data-theme="light"],
+html[data-theme="light"] body,
+[data-theme="light"] .sec,
+[data-theme="light"] .hero,
+[data-theme="light"] .hero-v2,
+[data-theme="light"] main,
+[data-theme="light"] .dash-main,
+[data-theme="light"] .auth-page {
+  background-color: #f4f4f7 !important;
+  color: #111116 !important;
+}
+
+/* 2. Universal Dark Text on Light Mode (Excluding Gold & Status Badges) */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] p,
+[data-theme="light"] span:not(.gold-italic):not(.c-val):not(.live-badge):not(.live-dot):not(.status-badge):not(.btn-gold):not(.btn-p):not(.ai-chat-send):not(.fab-badge),
+[data-theme="light"] div:not(.btn-gold):not(.btn-p):not(.auth-ring):not(.live-dot),
+[data-theme="light"] li,
+[data-theme="light"] label,
+[data-theme="light"] td,
+[data-theme="light"] th,
+[data-theme="light"] a:not(.btn-gold):not(.btn-p):not(.nav-cta),
+[data-theme="light"] strong:not(.gold-italic),
+[data-theme="light"] em:not(.gold-italic) {
+  color: #111116 !important;
+}
+
+/* 3. Subtitles & Secondary Text */
+[data-theme="light"] .hero-sub,
+[data-theme="light"] .hv2-sub,
+[data-theme="light"] .pdesc,
+[data-theme="light"] .srv-block-desc,
+[data-theme="light"] .web-card-desc,
+[data-theme="light"] .ad-card-desc,
+[data-theme="light"] .perk-desc,
+[data-theme="light"] .rev-q,
+[data-theme="light"] .vdesc,
+[data-theme="light"] .book-sub,
+[data-theme="light"] .sec-tag,
+[data-theme="light"] .eyebrow,
+[data-theme="light"] .pc-feat,
+[data-theme="light"] .stat-card-label,
+[data-theme="light"] .stat-card-sub,
+[data-theme="light"] .project-card-meta,
+[data-theme="light"] .auth-sub,
+[data-theme="light"] .auth-field label,
+[data-theme="light"] .dash-table th,
+[data-theme="light"] .foot-copy,
+[data-theme="light"] .foot-links a {
+  color: #33333d !important;
+}
+
+/* 4. Gold Accent Text Preservation */
+[data-theme="light"] .gold-italic,
+[data-theme="light"] em,
+[data-theme="light"] .c-val,
+[data-theme="light"] .nav-logo em,
+[data-theme="light"] .sidebar-logo em,
+[data-theme="light"] .auth-logo em,
+[data-theme="light"] .dash-card-title em,
+[data-theme="light"] .dash-page-title em {
+  color: #b88200 !important;
+}
+
+/* 5. Clean White Cards & Containers */
+[data-theme="light"] .srv-service-card,
+[data-theme="light"] .rev,
+[data-theme="light"] .pstep,
+[data-theme="light"] .pricing-card,
+[data-theme="light"] .web-card,
+[data-theme="light"] .ad-card,
+[data-theme="light"] .vcard,
+[data-theme="light"] .summary-card,
+[data-theme="light"] .browser-mockup,
+[data-theme="light"] .chart-mockup,
+[data-theme="light"] .ctr-mockup,
+[data-theme="light"] .timeline-mockup,
+[data-theme="light"] .perk,
+[data-theme="light"] .dash-card,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .project-card,
+[data-theme="light"] .auth-box,
+[data-theme="light"] .notif-item,
+[data-theme="light"] .modal-box,
+[data-theme="light"] .checkout-modal,
+[data-theme="light"] .ai-chatbot-panel {
+  background-color: #ffffff !important;
+  border-color: rgba(0,0,0,0.10) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+}
+
+/* 6. Section Alt Background */
+[data-theme="light"] .sec-alt,
+[data-theme="light"] .logo-strip,
+[data-theme="light"] .marquee-bar,
+[data-theme="light"] .hv2-right,
+[data-theme="light"] .sidebar {
+  background-color: #eaeaef !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* 7. Input Controls */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.15) !important;
+  color: #111116 !important;
+}
+
+
+/* ============================================================
+   BULLETPROOF LIGHT MODE UNIVERSAL TEXT & BACKGROUND RULE (v20.0)
+   Guarantees NO white text on light backgrounds anywhere on page.
+   ============================================================ */
+
+/* 1. Global Light Background */
+html[data-theme="light"],
+html[data-theme="light"] body,
+[data-theme="light"] .sec,
+[data-theme="light"] .hero,
+[data-theme="light"] .hero-v2,
+[data-theme="light"] main,
+[data-theme="light"] .dash-main,
+[data-theme="light"] .auth-page {
+  background-color: #f4f4f7 !important;
+  color: #111116 !important;
+}
+
+/* 2. Universal Dark Text on Light Mode (Excluding Gold & Status Badges) */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] p,
+[data-theme="light"] span:not(.gold-italic):not(.c-val):not(.live-badge):not(.live-dot):not(.status-badge):not(.btn-gold):not(.btn-p):not(.ai-chat-send):not(.fab-badge),
+[data-theme="light"] div:not(.btn-gold):not(.btn-p):not(.auth-ring):not(.live-dot),
+[data-theme="light"] li,
+[data-theme="light"] label,
+[data-theme="light"] td,
+[data-theme="light"] th,
+[data-theme="light"] a:not(.btn-gold):not(.btn-p):not(.nav-cta),
+[data-theme="light"] strong:not(.gold-italic),
+[data-theme="light"] em:not(.gold-italic) {
+  color: #111116 !important;
+}
+
+/* 3. Subtitles & Secondary Text */
+[data-theme="light"] .hero-sub,
+[data-theme="light"] .hv2-sub,
+[data-theme="light"] .pdesc,
+[data-theme="light"] .srv-block-desc,
+[data-theme="light"] .web-card-desc,
+[data-theme="light"] .ad-card-desc,
+[data-theme="light"] .perk-desc,
+[data-theme="light"] .rev-q,
+[data-theme="light"] .vdesc,
+[data-theme="light"] .book-sub,
+[data-theme="light"] .sec-tag,
+[data-theme="light"] .eyebrow,
+[data-theme="light"] .pc-feat,
+[data-theme="light"] .stat-card-label,
+[data-theme="light"] .stat-card-sub,
+[data-theme="light"] .project-card-meta,
+[data-theme="light"] .auth-sub,
+[data-theme="light"] .auth-field label,
+[data-theme="light"] .dash-table th,
+[data-theme="light"] .foot-copy,
+[data-theme="light"] .foot-links a {
+  color: #33333d !important;
+}
+
+/* 4. Gold Accent Text Preservation */
+[data-theme="light"] .gold-italic,
+[data-theme="light"] em,
+[data-theme="light"] .c-val,
+[data-theme="light"] .nav-logo em,
+[data-theme="light"] .sidebar-logo em,
+[data-theme="light"] .auth-logo em,
+[data-theme="light"] .dash-card-title em,
+[data-theme="light"] .dash-page-title em {
+  color: #b88200 !important;
+}
+
+/* 5. Clean White Cards & Containers */
+[data-theme="light"] .srv-service-card,
+[data-theme="light"] .rev,
+[data-theme="light"] .pstep,
+[data-theme="light"] .pricing-card,
+[data-theme="light"] .web-card,
+[data-theme="light"] .ad-card,
+[data-theme="light"] .vcard,
+[data-theme="light"] .summary-card,
+[data-theme="light"] .browser-mockup,
+[data-theme="light"] .chart-mockup,
+[data-theme="light"] .ctr-mockup,
+[data-theme="light"] .timeline-mockup,
+[data-theme="light"] .perk,
+[data-theme="light"] .dash-card,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .project-card,
+[data-theme="light"] .auth-box,
+[data-theme="light"] .notif-item,
+[data-theme="light"] .modal-box,
+[data-theme="light"] .checkout-modal,
+[data-theme="light"] .ai-chatbot-panel {
+  background-color: #ffffff !important;
+  border-color: rgba(0,0,0,0.10) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+}
+
+/* 6. Section Alt Background */
+[data-theme="light"] .sec-alt,
+[data-theme="light"] .logo-strip,
+[data-theme="light"] .marquee-bar,
+[data-theme="light"] .hv2-right,
+[data-theme="light"] .sidebar {
+  background-color: #eaeaef !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* 7. Input Controls */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.15) !important;
+  color: #111116 !important;
+}
+
+
+/* ============================================================
+   ELEGANT LIGHT SHADOWS & SERVICES PAGE PERFECT CONTRAST (v21.0)
+   ============================================================ */
+
+/* 1. Services Page Hero & Headings (Fix for Image 2) */
+[data-theme="light"] .srv-hero-h1 {
+  color: #111116 !important;
+}
+[data-theme="light"] .srv-hero-h1 em {
+  color: #b88200 !important;
+}
+[data-theme="light"] .srv-hero-sub {
+  color: #33333d !important;
+}
+[data-theme="light"] .srv-anchor-btn {
+  background: #ffffff !important;
+  color: #111116 !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
+}
+[data-theme="light"] .srv-anchor-btn:hover {
+  background: #b88200 !important;
+  color: #ffffff !important;
+  border-color: #b88200 !important;
+}
+
+/* 2. Service Deliverables Cards & Items (Fix for Image 1) */
+[data-theme="light"] .srv-block,
+[data-theme="light"] .srv-service-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.02) !important;
+}
+
+[data-theme="light"] .srv-block:hover,
+[data-theme="light"] .srv-service-card:hover {
+  border-color: rgba(184,130,0,0.4) !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08), 0 0 24px rgba(184,130,0,0.12) !important;
+  transform: translateY(-4px) !important;
+}
+
+[data-theme="light"] .srv-deliv-item {
+  background: #f8f8fc !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  color: #111116 !important;
+}
+[data-theme="light"] .srv-deliv-item:hover {
+  border-color: rgba(184,130,0,0.4) !important;
+  background: rgba(184,130,0,0.08) !important;
+}
+
+/* 3. Universal Soft Elegant Drop Shadows for All Light Mode Cards */
+[data-theme="light"] .pricing-card,
+[data-theme="light"] .web-card,
+[data-theme="light"] .ad-card,
+[data-theme="light"] .vcard,
+[data-theme="light"] .summary-card,
+[data-theme="light"] .browser-mockup,
+[data-theme="light"] .chart-mockup,
+[data-theme="light"] .ctr-mockup,
+[data-theme="light"] .timeline-mockup,
+[data-theme="light"] .perk,
+[data-theme="light"] .dash-card,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .project-card,
+[data-theme="light"] .auth-box,
+[data-theme="light"] .modal-box,
+[data-theme="light"] .checkout-modal {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+[data-theme="light"] .pricing-card:hover,
+[data-theme="light"] .web-card:hover,
+[data-theme="light"] .ad-card:hover,
+[data-theme="light"] .vcard:hover,
+[data-theme="light"] .dash-card:hover,
+[data-theme="light"] .project-card:hover {
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.07), 0 0 20px rgba(184, 130, 0, 0.10) !important;
+}
+
+
+/* ============================================================
+   PRESERVED RICH DROP SHADOWS, HOVER ANIMATIONS & BRAND TEXT (v35.0)
+   ============================================================ */
+
+/* 1. Rich Drop Shadows across ALL Cards & Sections (Matches Image 1 style) */
+[data-theme="light"] .srv-block,
+[data-theme="light"] .srv-service-card,
+[data-theme="light"] .pricing-card,
+[data-theme="light"] .web-card,
+[data-theme="light"] .ad-card,
+[data-theme="light"] .vcard,
+[data-theme="light"] .summary-card,
+[data-theme="light"] .browser-mockup,
+[data-theme="light"] .chart-mockup,
+[data-theme="light"] .ctr-mockup,
+[data-theme="light"] .timeline-mockup,
+[data-theme="light"] .perk,
+[data-theme="light"] .rev,
+[data-theme="light"] .pstep,
+[data-theme="light"] .dash-card,
+[data-theme="light"] .stat-card,
+[data-theme="light"] .project-card,
+[data-theme="light"] .auth-box,
+[data-theme="light"] .modal-box,
+[data-theme="light"] .checkout-modal {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.14), 0 8px 20px rgba(0,0,0,0.08) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease, border-color 0.35s ease !important;
+}
+
+/* 2. Same Smooth Hover Lifting Animation & Brand Gold Glow across ALL Cards */
+[data-theme="light"] .srv-block:hover,
+[data-theme="light"] .srv-service-card:hover,
+[data-theme="light"] .pricing-card:hover,
+[data-theme="light"] .web-card:hover,
+[data-theme="light"] .ad-card:hover,
+[data-theme="light"] .vcard:hover,
+[data-theme="light"] .summary-card:hover,
+[data-theme="light"] .perk:hover,
+[data-theme="light"] .rev:hover,
+[data-theme="light"] .pstep:hover,
+[data-theme="light"] .dash-card:hover,
+[data-theme="light"] .stat-card:hover,
+[data-theme="light"] .project-card:hover {
+  transform: translateY(-6px) !important;
+  border-color: #b88200 !important;
+  box-shadow: 0 30px 65px rgba(0,0,0,0.20), 0 0 30px rgba(184,130,0,0.25) !important;
+}
+
+/* 3. Black (#111116) and Brand Gold (#b88200) Text Overrides */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] .srv-hero-h1,
+[data-theme="light"] .hv2-headline,
+[data-theme="light"] .sec-hdr h2,
+[data-theme="light"] .sec-title,
+[data-theme="light"] .dash-page-title,
+[data-theme="light"] .dash-card-title {
+  color: #111116 !important;
+}
+
+[data-theme="light"] em,
+[data-theme="light"] .gold-italic,
+[data-theme="light"] .c-val,
+[data-theme="light"] .srv-hero-h1 em,
+[data-theme="light"] .hv2-headline .gold-italic,
+[data-theme="light"] .nav-logo em,
+[data-theme="light"] .sidebar-logo em,
+[data-theme="light"] .auth-logo em {
+  color: #b88200 !important;
+}
+
+[data-theme="light"] .srv-deliv-item {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  color: #111116 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+}
+[data-theme="light"] .srv-deliv-item:hover {
+  border-color: #b88200 !important;
+  background: rgba(184,130,0,0.08) !important;
+}
+
+
+/* ============================================================
+   HERO TYPING HEADLINE & ALL WHITE TEXT LIGHT OVERRIDES (v50.0)
+   ============================================================ */
+
+/* 1. Hero Headline & Typing Target (Image Fix) */
+[data-theme="light"] .hv2-headline,
+[data-theme="light"] .hv2-headline *,
+[data-theme="light"] #typing-target,
+[data-theme="light"] #typing-target *,
+[data-theme="light"] .typing-wrap,
+[data-theme="light"] .typing-wrap *,
+[data-theme="light"] .srv-hero-h1,
+[data-theme="light"] .srv-hero-h1 * {
+  color: #111116 !important;
+}
+
+/* 2. Preserve Brand Gold Accent Colors */
+[data-theme="light"] .hv2-headline .gold-italic,
+[data-theme="light"] .srv-hero-h1 em,
+[data-theme="light"] .gold-italic,
+[data-theme="light"] em.gold-italic {
+  color: #b88200 !important;
+}
+
+/* 3. Cursor Blink in Light Mode */
+[data-theme="light"] .cursor-blink {
+  border-right-color: #111116 !important;
+  color: #111116 !important;
+}
+
+/* 4. Universal Catch-all for Any Heading, Span, or Paragraph inside Light Mode */
+[data-theme="light"] h1, [data-theme="light"] h1 *,
+[data-theme="light"] h2, [data-theme="light"] h2 *,
+[data-theme="light"] h3, [data-theme="light"] h3 *,
+[data-theme="light"] h4, [data-theme="light"] h4 *,
+[data-theme="light"] h5, [data-theme="light"] h5 *,
+[data-theme="light"] h6, [data-theme="light"] h6 * {
+  color: #111116 !important;
+}
+
+/* Exception for Gold Accent Classes */
+[data-theme="light"] .gold-italic,
+[data-theme="light"] em,
+[data-theme="light"] .c-val,
+[data-theme="light"] .sec-title em,
+[data-theme="light"] .dash-card-title em,
+[data-theme="light"] .dash-page-title em,
+[data-theme="light"] .logo em,
+[data-theme="light"] .nav-logo em,
+[data-theme="light"] .sidebar-logo em,
+[data-theme="light"] .auth-logo em {
+  color: #b88200 !important;
+}
+
+/* ============================================================
+   ALWAYS-VISIBLE PWA APP DOWNLOAD BUTTON
+   ============================================================ */
+.pwa-install-nav-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 184, 0, 0.12);
+  border: 1px solid rgba(255, 184, 0, 0.35);
+  border-radius: 8px;
+  color: var(--gold);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.25s ease;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+.pwa-install-nav-btn:hover {
+  background: var(--gold);
+  color: #000 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255, 184, 0, 0.3);
+}
+[data-theme="light"] .pwa-install-nav-btn {
+  background: rgba(184, 130, 0, 0.10);
+  border-color: rgba(184, 130, 0, 0.35);
+  color: #b88200;
+}
+[data-theme="light"] .pwa-install-nav-btn:hover {
+  background: #b88200;
+  color: #fff !important;
+}
+@media (max-width: 768px) {
+  .pwa-install-nav-btn {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+}

@@ -12,7 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="media/fav-logo.png">
-    <link rel="stylesheet" href="css/style.css?v=7.1">
+    <link rel="stylesheet" href="css/style.css?v=80.0">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -80,7 +80,7 @@
         .section-header h3 {
             font-family: var(--font-h);
             font-size: 2.5rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 1rem;
         }
 
@@ -199,7 +199,7 @@
             right: 15px;
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--border);
-            color: var(--t1);
+            color: inherit;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -224,7 +224,7 @@
         .card-label h4 {
             font-family: var(--font-h);
             font-size: 1.5rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 0.5rem;
         }
 
@@ -307,7 +307,7 @@
         .web-info h4 {
             font-family: var(--font-h);
             font-size: 1.8rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 0.5rem;
         }
 
@@ -373,7 +373,7 @@
         .data-card h4 {
             font-family: var(--font-h);
             font-size: 1.8rem;
-            color: var(--t1);
+            color: inherit;
             margin-bottom: 1rem;
         }
 
@@ -504,7 +504,7 @@
         /* Live Browser Iframe Preview Styles */
         .browser-content {
             height: 250px;
-            background: #0a0a0c;
+            background: var(--bg-card);
             position: relative;
             overflow: hidden;
             border-bottom: 1px solid var(--border);
@@ -567,7 +567,8 @@
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
             <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
-        </ul>
+          <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
+    </ul>
         <a class="nav-cta" href="dashboard/index.html">Client Login</a>
         <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
     </nav>
@@ -1216,7 +1217,7 @@
         // Initial setup for 'all'
         // portfolioSections already have .active from HTML
     </script>
-    <script src="js/main.js?v=7.0"></script>
+    <script src="js/main.js?v=80.0"></script>
 </body>
 
 </html>
