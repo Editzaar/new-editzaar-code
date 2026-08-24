@@ -1795,3 +1795,27 @@ html[data-theme="light"] body,
 [data-theme="light"] .nav-toggle span {
   background: #111116 !important;
 }
+
+/* ============================================================
+   LIGHT MODE DEEP BLUE HEADLINE & HIGH VISIBILITY OVERRIDES (v100.0)
+   ============================================================ */
+[data-theme="light"] .hv2-headline,
+[data-theme="light"] .hv2-headline *,
+[data-theme="light"] #typing-target,
+[data-theme="light"] #typing-target *,
+[data-theme="light"] .typing-wrap,
+[data-theme="light"] .typing-wrap *,
+[data-theme="light"] .srv-hero-h1,
+[data-theme="light"] .srv-hero-h1 * {
+  color: #0A2540 !important;
+}
+
+[data-theme="light"] .hv2-headline .gold-italic,
+[data-theme="light"] .srv-hero-h1 em,
+[data-theme="light"] .gold-italic {
+  color: #b88200 !important;
+}
+
+[data-theme="light"] .cursor-blink {
+  border-right-color: #0A2540 !important;
+}
