@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -575,10 +575,10 @@
             <li><a href="work.html" class="active">Work</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
-            <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
+            <li><a href="dashboard/index.html" class="nav-cta-mobile">Login</a></li>
           <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
     </ul>
-        <a class="nav-cta" href="dashboard/index.html">Client Login</a>
+        <a class="nav-cta" id="nav-auth-btn" href="dashboard/index.html">Login</a>
     <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
     <button class="pwa-install-nav-btn" onclick="window._triggerInstall()" aria-label="Download App"><span style="font-size:13px">&#11015;</span> <span class="pwa-btn-text">App</span></button>
         <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
@@ -1265,6 +1265,40 @@
       <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
     </div>
   </div>
+
+  <!-- Firebase Auth: Nav profile -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    const firebaseConfig = {
+      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain: "editzaar-fa8d9.firebaseapp.com",
+      projectId: "editzaar-fa8d9",
+      storageBucket: "editzaar-fa8d9.firebasestorage.app",
+      messagingSenderId: "419930711716",
+      appId: "1:419930711716:web:b1504f651e397a14726831"
+    };
+    try {
+      const app = initializeApp(firebaseConfig, 'nav-app');
+      const auth = getAuth(app);
+      onAuthStateChanged(auth, function(user) {
+        const btn = document.getElementById('nav-auth-btn');
+        if (!btn) return;
+        if (user) {
+          const name = user.displayName || user.email || 'Client';
+          const initials = name.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+          btn.href = 'dashboard/index.html';
+          btn.innerHTML = `<span style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#000;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0">${initials}</span><span style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name.split(' ')[0]}</span>`;
+          btn.style.display = 'inline-flex';
+          btn.style.alignItems = 'center';
+        } else {
+          btn.href = 'dashboard/index.html';
+          btn.textContent = 'Login';
+          btn.style.display = '';
+        }
+      });
+    } catch(e) { console.warn('[Nav Auth]', e); }
+  </script>
 </body>
 
 </html>
