@@ -2144,3 +2144,26 @@ html[data-theme="light"] body,
   font-weight: 600;
 }
 
+/* Privacy Mask Badge (Anti-Poaching & Client Protection) */
+.privacy-mask {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 184, 0, 0.12);
+  border: 1px dashed var(--gold-border);
+  color: var(--gold);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+.privacy-mask:hover {
+  background: rgba(255, 184, 0, 0.22);
+  border-style: solid;
+}
+
+

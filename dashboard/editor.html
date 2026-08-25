@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=160.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=160.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=170.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=170.0"/>
   <style>
     .link-input-box {
       background: rgba(255,255,255,0.03);
@@ -27,7 +27,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=160.0"></script>
+  <script src="../js/theme.js?v=170.0"></script>
 </head>
 <body>
 
@@ -214,6 +214,21 @@
     function badge(s){ return `<span class="status-badge status-${s}">${STATUS_LABELS[s]||s}</span>`; }
     function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
 
+    function filterChatPrivacy(text) {
+      if (!text) return '';
+      let filtered = text;
+      // Mask 10-digit Indian & international phone numbers (+91, spaces, dashes)
+      filtered = filtered.replace(/(\+?91[\-\s]?)?[6-9]\d{9}/g, '<span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [Phone/WhatsApp Hidden]</span>');
+      filtered = filtered.replace(/\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/g, '<span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [Contact Number Hidden]</span>');
+      // Mask email addresses
+      filtered = filtered.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '<span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [Email Hidden]</span>');
+      // Mask direct social handles (@username)
+      filtered = filtered.replace(/(?:^|\s)@([a-zA-Z0-9._]{4,})/g, ' <span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [@handle Hidden]</span>');
+      // Format safe links
+      filtered = filtered.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+      return filtered;
+    }
+
     function renderProjects(projects) {
       const container = document.getElementById('projectsList');
       if (!projects.length) {
@@ -226,10 +241,10 @@
             <div class="project-card-title">${p.title||'Untitled'}</div>
             ${badge(p.status)}
           </div>
-          <div class="project-card-meta">Client: ${allUsers[p.clientId]?.name||'—'} · Deadline: ${dateStr(p.deadline)}</div>
+          <div class="project-card-meta">Client: <span style="color:var(--gold);font-weight:600;">Client Ref #${p.id.substring(0,6).toUpperCase()}</span> · Deadline: ${dateStr(p.deadline)}</div>
           <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
           <div class="project-card-actions">
-            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">Open Project →</button>
+            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">Open Project &amp; Chat →</button>
           </div>
         </div>`).join('');
     }
@@ -241,7 +256,7 @@
 
       document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
       document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
-      document.getElementById('detailClient').textContent   = allUsers[currentProject.clientId]?.name||'—';
+      document.getElementById('detailClient').innerHTML     = `<span style="color:var(--gold);font-weight:600;">Client Ref #${currentProject.id.substring(0,6).toUpperCase()} (Privacy Protected)</span>`;
       document.getElementById('detailDeadline').textContent = dateStr(currentProject.deadline);
       document.getElementById('detailStatus').innerHTML     = badge(currentProject.status);
 
@@ -286,7 +301,7 @@
       showToast('Status updated to '+STATUS_LABELS[status],'success');
     };
 
-    /* Real-time Chat with client-side sort */
+    /* Real-time Chat with Client Privacy Anti-Poaching Filter */
     function loadChat(pid) {
       if (chatUnsub) chatUnsub();
       const q = collection(db,'projects',pid,'chat');
@@ -299,7 +314,7 @@
           const isMe=m.senderId===currentUser.uid;
           const div=document.createElement('div');
           div.className='chat-msg '+(isMe?'mine':'theirs');
-          let formattedText = m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+          let formattedText = filterChatPrivacy(m.text);
           div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
             <div class="chat-msg-bubble">${formattedText}</div>`;
           container.appendChild(div);
