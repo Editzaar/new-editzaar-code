@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=210.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=210.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=220.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=220.0"/>
 
   <style>
     .modal-overlay {
@@ -153,7 +153,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=210.0"></script>
+  <script src="../js/theme.js?v=220.0"></script>
 </head>
 <body>
 
@@ -683,6 +683,7 @@
         </div>
         <div class="field"><label>Assign / Change Editor</label><select id="es-editor"><option value="">Select editor…</option></select></div>
         <div class="field"><label>Base Amount (₹)</label><input id="es-invoice" type="number"/></div>
+        <div class="field"><label>Estimated Deadline Date</label><input id="es-deadline" type="date"/></div>
         <div class="field"><label>Tax Status / Issue Official GST Invoice?</label>
           <select id="es-paid">
             <option value="false">⏳ Acknowledgment Receipt Only (Unconfirmed)</option>
@@ -690,7 +691,7 @@
           </select>
         </div>
         <input type="hidden" id="es-pid"/>
-        <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSaveStatus">Save &amp; Update Tax Status</button>
+        <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSaveStatus">Save &amp; Update Project</button>
       </div>
     </div>
   </div>
@@ -1039,11 +1040,22 @@
     });
 
     window.openEditStatus = (pid,status,amount,paid,editorId) => {
+      const p = projects.find(x => x.id === pid) || {};
       document.getElementById('es-pid').value    = pid;
-      document.getElementById('es-status').value = status;
-      document.getElementById('es-invoice').value= amount;
-      document.getElementById('es-paid').value   = String(paid);
-      document.getElementById('es-editor').value = editorId || '';
+      document.getElementById('es-status').value = status || p.status || 'pending';
+      document.getElementById('es-invoice').value= amount !== undefined ? amount : (p.invoiceAmount || 0);
+      document.getElementById('es-paid').value   = String(paid !== undefined ? paid : (p.invoicePaid || false));
+      document.getElementById('es-editor').value = editorId || p.editorId || '';
+
+      let dVal = '';
+      const dl = p.deadline;
+      if (dl) {
+        const dObj = dl.toDate ? dl.toDate() : new Date(dl);
+        if (!isNaN(dObj.getTime())) {
+          dVal = dObj.toISOString().split('T')[0];
+        }
+      }
+      document.getElementById('es-deadline').value = dVal;
       openModal('modalEditStatus');
     };
 
@@ -1053,8 +1065,14 @@
       const amount   = parseFloat(document.getElementById('es-invoice').value)||0;
       const paid     = document.getElementById('es-paid').value === 'true';
       const editorId = document.getElementById('es-editor').value;
-      await updateDoc(doc(db,'projects',pid),{ status, invoiceAmount:amount, invoicePaid:paid, editorId });
-      showToast('Project & Tax Status updated! ✅','success');
+      const deadVal  = document.getElementById('es-deadline').value;
+
+      const upData = { status, invoiceAmount:amount, invoicePaid:paid, editorId };
+      if (deadVal) {
+        upData.deadline = new Date(deadVal);
+      }
+      await updateDoc(doc(db,'projects',pid), upData);
+      showToast('Project, deadline & tax status updated! ✅','success');
       closeModal('modalEditStatus');
     });
 

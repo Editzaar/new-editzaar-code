@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=210.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=210.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=220.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=220.0"/>
   <style>
     .link-input-box {
       background: rgba(255,255,255,0.03);
@@ -27,7 +27,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=210.0"></script>
+  <script src="../js/theme.js?v=220.0"></script>
 </head>
 <body>
 
@@ -85,7 +85,13 @@
               <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;line-height:1.7;" id="detailDesc">—</div>
               <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
                 <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Client</div><div style="font-size:0.9rem;" id="detailClient">—</div></div>
-                <div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Deadline</div><div style="font-size:0.9rem;" id="detailDeadline">—</div></div>
+                <div>
+                  <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline (Change Date)</div>
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <input type="date" id="editorDeadlineInput" style="background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:6px;padding:5px 10px;color:var(--gold);font-family:var(--font-b);font-size:0.85rem;outline:none;cursor:pointer;"/>
+                    <button class="btn-gold btn-sm" id="btnUpdateEditorDeadline" style="padding:5px 12px;font-size:11px;">Update Date 📅</button>
+                  </div>
+                </div>
               </div>
 
               <!-- Raw Footage Link View -->
@@ -256,7 +262,14 @@
 
       document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
       document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
-      document.getElementById('detailClient').innerHTML     = `<span style="color:var(--gold);font-weight:600;">Client Ref #${currentProject.id.substring(0,6).toUpperCase()} (Privacy Protected)</span>`;
+      if (currentProject.deadline) {
+        const dObj = currentProject.deadline.toDate ? currentProject.deadline.toDate() : new Date(currentProject.deadline);
+        if (!isNaN(dObj.getTime())) {
+          document.getElementById('editorDeadlineInput').value = dObj.toISOString().split('T')[0];
+        }
+      } else {
+        document.getElementById('editorDeadlineInput').value = '';
+      }
       function formatExternalUrl(url) {
         if (!url) return '';
         url = url.trim();
@@ -288,6 +301,15 @@
       showSection('detail');
       loadChat(pid);
     };
+
+    document.getElementById('btnUpdateEditorDeadline').addEventListener('click', async () => {
+      const dVal = document.getElementById('editorDeadlineInput').value;
+      if (!dVal || !currentProject) { showToast('Please select a deadline date.', 'error'); return; }
+      const newD = new Date(dVal);
+      await updateDoc(doc(db, 'projects', currentProject.id), { deadline: newD });
+      currentProject.deadline = newD;
+      showToast('Project deadline updated! 📅✅', 'success');
+    });
 
     /* Save Final Delivery Link */
     document.getElementById('btnSaveDeliveryLink').addEventListener('click', async ()=>{
