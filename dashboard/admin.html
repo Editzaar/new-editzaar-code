@@ -1171,7 +1171,7 @@
 
     window.generateReport = (type) => {
       const el = document.getElementById('reportContainer');
-      let html = `<table class="dash-table" style="width:100%">`;
+      let html = `<div class="table-scroll-wrap"><table class="dash-table" style="width:100%">`;
       if (type === 'revenue') {
         html += `<thead><tr><th>Project</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>` +
           projects.filter(p=>p.invoiceAmount>0).map(p=>`<tr><td>${p.title}</td><td>${nameOf(p.clientId)}</td><td>₹${Math.round(p.invoiceAmount*1.18)}</td><td>${p.invoicePaid?'Paid':'Unpaid'}</td></tr>`).join('') + `</tbody>`;
@@ -1179,7 +1179,7 @@
         html += `<thead><tr><th>Client</th><th>Projects</th></tr></thead><tbody>` +
           clients.map(c=>`<tr><td>${c.name}</td><td>${projects.filter(p=>p.clientId===c.id).length}</td></tr>`).join('') + `</tbody>`;
       } else { html += `<tr><td>Report type: ${type}</td></tr>`; }
-      html += `</table>`;
+      html += `</table></div>`;
       el.innerHTML = html;
     };
 
