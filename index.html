@@ -550,13 +550,14 @@
         font-size: 1.8rem;
       }
     }
-  
+
     /* ── LIGHT MODE TEXT OVERRIDES ── */
     [data-theme="light"] .hv2-headline {
       color: #b88200 !important;
       -webkit-text-fill-color: #b88200 !important;
       background: none !important;
     }
+
     [data-theme="light"] .hv2-headline .typing-wrap,
     [data-theme="light"] #typing-target,
     [data-theme="light"] #typing-target * {
@@ -564,29 +565,36 @@
       -webkit-text-fill-color: #b88200 !important;
       background: none !important;
     }
+
     [data-theme="light"] .hv2-headline .gold-italic {
       color: #b88200 !important;
       -webkit-text-fill-color: #b88200 !important;
     }
+
     [data-theme="light"] .hv2-sub {
-      color: rgba(17,17,22,0.72) !important;
+      color: rgba(17, 17, 22, 0.72) !important;
     }
+
     [data-theme="light"] .hv2-eyebrow {
       color: #b88200 !important;
     }
+
     [data-theme="light"] .hv2-stat-l {
-      color: rgba(17,17,22,0.50) !important;
+      color: rgba(17, 17, 22, 0.50) !important;
     }
+
     [data-theme="light"] .hv2-stat-n {
       color: #b88200 !important;
     }
+
     [data-theme="light"] .hv2-left::after {
       background: linear-gradient(to bottom, transparent 0%, #b88200 40%, #b88200 60%, transparent 100%) !important;
     }
+
     [data-theme="light"] .cursor-blink {
       border-right: 2px solid #b88200 !important;
     }
-</style>
+  </style>
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="/manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
@@ -611,11 +619,13 @@
       <li><a href="work.html">Work</a></li>
       <li><a href="pricing.html">Pricing</a></li>
       <li><a href="https://blog.editzaar.in" target="_blank">Blogs</a></li>
-      <li><a href="dashboard/index.html" class="nav-cta-mobile">Client Login</a></li>
-      <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
+      <li><a href="dashboard/index.html" class="nav-cta-mobile">Login</a></li>
+      <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link"
+          style="color:var(--gold);font-weight:600;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
     </ul>
     <a class="nav-cta" id="nav-auth-btn" href="dashboard/index.html">Client Login</a>
-    <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
+    <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span
+        class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
       <span></span><span></span><span></span>
     </button>
@@ -984,21 +994,21 @@
     })();
   </script>
 
-    <script>
+  <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
-        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
-        .catch(function(err) { console.warn('[SW] Error:', err); });
+        .then(function (reg) { console.log('[SW] Registered:', reg.scope); })
+        .catch(function (err) { console.warn('[SW] Error:', err); });
     }
     let _deferredInstallPrompt = null;
-    window.addEventListener('beforeinstallprompt', function(e) {
+    window.addEventListener('beforeinstallprompt', function (e) {
       e.preventDefault();
       _deferredInstallPrompt = e;
     });
-    window._triggerInstall = function() {
+    window._triggerInstall = function () {
       if (_deferredInstallPrompt) {
         _deferredInstallPrompt.prompt();
-        _deferredInstallPrompt.userChoice.then(function(choice) {
+        _deferredInstallPrompt.userChoice.then(function (choice) {
           console.log('[PWA] User choice:', choice.outcome);
           _deferredInstallPrompt = null;
         });
@@ -1008,44 +1018,49 @@
       }
     };
   </script>
-  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
-    <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
+  <div id="ios-install-modal"
+    style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
+    <div
+      style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
       <div style="font-size:2rem;margin-bottom:12px">&#128241;</div>
       <h3 style="color:#FFB800;font-family:'Outfit',sans-serif;margin-bottom:8px">Install Editzaar App</h3>
       <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
-      <div style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
+      <div
+        style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
         <div>1. Tap <strong style="color:#FFB800">Share</strong> &#127758; at bottom of Safari</div>
         <div>2. Tap <strong style="color:#FFB800">Add to Home Screen</strong></div>
       </div>
-      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'"
+        style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got
+        it!</button>
     </div>
-</div>
+  </div>
 
   <!-- Firebase Auth: Nav profile (module) -->
   <script type="module">
-    import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
     const firebaseConfig = {
-      apiKey:            "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
-      authDomain:        "editzaar-fa8d9.firebaseapp.com",
-      projectId:         "editzaar-fa8d9",
-      storageBucket:     "editzaar-fa8d9.firebasestorage.app",
+      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain: "editzaar-fa8d9.firebaseapp.com",
+      projectId: "editzaar-fa8d9",
+      storageBucket: "editzaar-fa8d9.firebasestorage.app",
       messagingSenderId: "419930711716",
-      appId:             "1:419930711716:web:b1504f651e397a14726831"
+      appId: "1:419930711716:web:b1504f651e397a14726831"
     };
 
     try {
-      const app  = initializeApp(firebaseConfig, 'nav-app');
+      const app = initializeApp(firebaseConfig, 'nav-app');
       const auth = getAuth(app);
 
-      onAuthStateChanged(auth, function(user) {
+      onAuthStateChanged(auth, function (user) {
         const btn = document.getElementById('nav-auth-btn');
         if (!btn) return;
         if (user) {
-          const name     = user.displayName || user.email || 'Client';
+          const name = user.displayName || user.email || 'Client';
           const initials = name.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-          btn.href      = 'dashboard/index.html';
+          btn.href = 'dashboard/index.html';
           btn.innerHTML = `
             <span style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#000;
               font-size:11px;font-weight:700;display:inline-flex;align-items:center;
@@ -1053,15 +1068,15 @@
             <span style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
               ${name.split(' ')[0]}
             </span>`;
-          btn.style.display    = 'inline-flex';
+          btn.style.display = 'inline-flex';
           btn.style.alignItems = 'center';
         } else {
-          btn.href          = 'dashboard/index.html';
-          btn.textContent   = 'Client Login';
+          btn.href = 'dashboard/index.html';
+          btn.textContent = 'Client Login';
           btn.style.display = '';
         }
       });
-    } catch(e) { console.warn('[Nav Auth]', e); }
+    } catch (e) { console.warn('[Nav Auth]', e); }
   </script>
 </body>
 
