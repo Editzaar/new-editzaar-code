@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=180.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=180.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=190.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=190.0"/>
 
   <style>
     .modal-overlay {
@@ -58,7 +58,7 @@
     .btn-danger:hover { background: #FF4D4D; color: inherit; }
 
     .chat-overlook-grid {
-      display: grid; grid-template-columns: 240px 1fr; gap: 20px; height: 500px;
+      display: grid; grid-template-columns: 260px 1fr; gap: 16px; height: 520px;
     }
     .chat-proj-list {
       background: rgba(0,0,0,0.4); border: 1px solid var(--border);
@@ -70,6 +70,23 @@
     }
     .chat-proj-item:hover, .chat-proj-item.active {
       background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold);
+    }
+
+    @media (max-width: 768px) {
+      .dash-page-title {
+        padding-left: 46px; /* Offset for floating hamburger icon */
+      }
+      .chat-overlook-grid {
+        grid-template-columns: 1fr !important;
+        height: auto !important;
+        gap: 12px !important;
+      }
+      .chat-proj-list {
+        max-height: 140px !important;
+      }
+      .chat-container {
+        height: 420px !important;
+      }
     }
     .pass-pill {
       font-family: monospace; font-size: 11px; color: var(--gold);
@@ -118,7 +135,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=180.0"></script>
+  <script src="../js/theme.js?v=190.0"></script>
 </head>
 <body>
 
