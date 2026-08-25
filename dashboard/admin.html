@@ -1007,17 +1007,25 @@
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
 
-      const secAuth = getSecondaryAuth('sec_editor_' + Date.now());
+      const appName = 'sec_editor_' + Date.now();
+      let secApp = getApps().find(a => a.name === appName);
+      if (!secApp) secApp = initializeApp(firebaseConfig, appName);
+      const secAuth = getAuth(secApp);
+      const secDb   = getFirestore(secApp);
+
       let uid = null;
+      let isSelfAuth = false;
 
       try {
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
         uid = cred.user.uid;
+        isSelfAuth = true;
       } catch(authErr) {
         if (authErr.code === 'auth/email-already-in-use') {
           try {
             const signCred = await signInWithEmailAndPassword(secAuth, email, pass);
             uid = signCred.user.uid;
+            isSelfAuth = true;
           } catch(signErr) {
             const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
             if (!userSnap.empty) {
@@ -1038,28 +1046,48 @@
         }
       }
 
+      const userData = {
+        name: name,
+        email: email,
+        role: 'editor',
+        tempPass: pass,
+        createdAt: serverTimestamp()
+      };
+
+      let writeSuccess = false;
+
+      // 1. Try writing while authenticated as the new editor (satisfies request.auth.uid == userId rule)
+      if (isSelfAuth) {
+        try {
+          await setDoc(doc(secDb, 'users', uid), userData, { merge: true });
+          writeSuccess = true;
+        } catch(e1) {
+          console.warn('secDb write error, trying admin db:', e1);
+        }
+      }
+
+      // 2. Try writing with primary admin db
+      if (!writeSuccess) {
+        try {
+          await setDoc(doc(db, 'users', uid), userData, { merge: true });
+          writeSuccess = true;
+        } catch(e2) {
+          console.error('admin db write error:', e2);
+        }
+      }
+
       try {
         await secAuth.signOut();
       } catch(e){}
 
-      if (uid) {
-        try {
-          await setDoc(doc(db, 'users', uid), {
-            name: name,
-            email: email,
-            role: 'editor',
-            tempPass: pass,
-            createdAt: serverTimestamp()
-          }, { merge: true });
-
-          showToast(`Editor "${name}" saved & active! ✅`, 'success');
-          document.getElementById('ne-name').value = '';
-          document.getElementById('ne-email').value = '';
-          document.getElementById('ne-pass').value = '';
-          closeModal('modalNewEditor');
-        } catch(storeErr) {
-          showToast('Firestore error: ' + storeErr.message, 'error');
-        }
+      if (writeSuccess) {
+        showToast(`Editor "${name}" added successfully! ✅`, 'success');
+        document.getElementById('ne-name').value = '';
+        document.getElementById('ne-email').value = '';
+        document.getElementById('ne-pass').value = '';
+        closeModal('modalNewEditor');
+      } else {
+        showToast('Permission error: Firestore rules may be blocking writes. Update rules in Firebase Console.', 'error');
       }
     });
 
@@ -1071,17 +1099,25 @@
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
 
-      const secAuth = getSecondaryAuth('sec_client_' + Date.now());
+      const appName = 'sec_client_' + Date.now();
+      let secApp = getApps().find(a => a.name === appName);
+      if (!secApp) secApp = initializeApp(firebaseConfig, appName);
+      const secAuth = getAuth(secApp);
+      const secDb   = getFirestore(secApp);
+
       let uid = null;
+      let isSelfAuth = false;
 
       try {
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
         uid = cred.user.uid;
+        isSelfAuth = true;
       } catch(authErr) {
         if (authErr.code === 'auth/email-already-in-use') {
           try {
             const signCred = await signInWithEmailAndPassword(secAuth, email, pass);
             uid = signCred.user.uid;
+            isSelfAuth = true;
           } catch(signErr) {
             const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
             if (!userSnap.empty) {
@@ -1102,29 +1138,47 @@
         }
       }
 
+      const userData = {
+        name: name,
+        email: email,
+        role: 'client',
+        tempPass: pass,
+        assignedEditor: assignedEditor || '',
+        createdAt: serverTimestamp()
+      };
+
+      let writeSuccess = false;
+
+      if (isSelfAuth) {
+        try {
+          await setDoc(doc(secDb, 'users', uid), userData, { merge: true });
+          writeSuccess = true;
+        } catch(e1) {
+          console.warn('secDb write error, trying admin db:', e1);
+        }
+      }
+
+      if (!writeSuccess) {
+        try {
+          await setDoc(doc(db, 'users', uid), userData, { merge: true });
+          writeSuccess = true;
+        } catch(e2) {
+          console.error('admin db write error:', e2);
+        }
+      }
+
       try {
         await secAuth.signOut();
       } catch(e){}
 
-      if (uid) {
-        try {
-          await setDoc(doc(db, 'users', uid), {
-            name: name,
-            email: email,
-            role: 'client',
-            tempPass: pass,
-            assignedEditor: assignedEditor || '',
-            createdAt: serverTimestamp()
-          }, { merge: true });
-
-          showToast(`Client "${name}" saved & active! ✅`, 'success');
-          document.getElementById('nc-name').value = '';
-          document.getElementById('nc-email').value = '';
-          document.getElementById('nc-pass').value = '';
-          closeModal('modalNewClient');
-        } catch(storeErr) {
-          showToast('Firestore error: ' + storeErr.message, 'error');
-        }
+      if (writeSuccess) {
+        showToast(`Client "${name}" added successfully! ✅`, 'success');
+        document.getElementById('nc-name').value = '';
+        document.getElementById('nc-email').value = '';
+        document.getElementById('nc-pass').value = '';
+        closeModal('modalNewClient');
+      } else {
+        showToast('Permission error: Firestore rules may be blocking writes. Update rules in Firebase Console.', 'error');
       }
     });
 
