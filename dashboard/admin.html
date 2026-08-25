@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=250.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=250.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=260.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=260.0"/>
 
   <style>
     .modal-overlay {
@@ -142,8 +142,82 @@
     .tab-btn.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
     
     .perf-bar { height: 10px; border-radius: 5px; display: inline-block; }
-    
     .report-container { background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--border); border-radius: 8px; margin-top: 20px; }
+
+    /* Permissions Toggle Items */
+    .perm-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      margin-bottom: 8px;
+    }
+    .perm-item:hover {
+      border-color: var(--gold);
+      background: rgba(255, 184, 0, 0.04);
+    }
+    .perm-item.checked {
+      border-color: var(--gold) !important;
+      background: rgba(255, 184, 0, 0.08) !important;
+    }
+    .perm-box {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      color: #000;
+    }
+    .perm-item:hover .perm-box {
+      border-color: var(--gold);
+    }
+    .perm-item.checked .perm-box {
+      background: var(--gold) !important;
+      border-color: var(--gold) !important;
+      color: #000 !important;
+    }
+    .perm-svg {
+      display: none;
+    }
+    .perm-item.checked .perm-svg {
+      display: block;
+    }
+    .perm-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--t1);
+      margin-bottom: 2px;
+    }
+    .perm-item.checked .perm-title {
+      color: var(--gold);
+    }
+    .perm-desc {
+      font-size: 0.8rem;
+      color: var(--t2);
+      line-height: 1.35;
+    }
+    .perm-category-header {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      margin: 18px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
   </style>
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="../manifest.json">
@@ -153,7 +227,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=250.0"></script>
+  <script src="../js/theme.js?v=260.0"></script>
 </head>
 <body>
 
@@ -749,120 +823,132 @@
       <!-- Category 1: Project & Workflow -->
       <div class="perm-category-header">📁 Project &amp; Workflow Permissions</div>
       
-      <div class="perm-card" id="card-viewAll" onclick="togglePerm('perm-viewAll')">
-        <input type="checkbox" id="perm-viewAll" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">View All Agency Projects</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">If unchecked, editor only sees projects assigned strictly to them.</span>
+      <div class="perm-item" data-perm="viewAll">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">View All Agency Projects</div>
+          <div class="perm-desc">If unchecked, editor only sees projects assigned strictly to them.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-assignProj" onclick="togglePerm('perm-assignProj')">
-        <input type="checkbox" id="perm-assignProj" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Assign &amp; Delegate Projects to Other Staff</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow selecting and assigning editors on project cards.</span>
+      <div class="perm-item" data-perm="assignProj">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Assign &amp; Delegate Projects to Other Staff</div>
+          <div class="perm-desc">Allow selecting and assigning editors on project cards.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-editDeadline" onclick="togglePerm('perm-editDeadline')">
-        <input type="checkbox" id="perm-editDeadline" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Change &amp; Reschedule Deadlines</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow modifying estimated delivery dates on projects.</span>
+      <div class="perm-item" data-perm="editDeadline">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Change &amp; Reschedule Deadlines</div>
+          <div class="perm-desc">Allow modifying estimated delivery dates on projects.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-updateStatus" onclick="togglePerm('perm-updateStatus')">
-        <input type="checkbox" id="perm-updateStatus" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Update Project Progress Status</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow marking projects In Progress, Client Review, Revision, or Done.</span>
+      <div class="perm-item" data-perm="updateStatus">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Update Project Progress Status</div>
+          <div class="perm-desc">Allow marking projects In Progress, Client Review, Revision, or Done.</div>
         </div>
       </div>
 
       <!-- Category 2: Client Privacy & Protection -->
       <div class="perm-category-header">🔒 Client Privacy &amp; Anti-Poaching</div>
 
-      <div class="perm-card" id="card-viewContact" onclick="togglePerm('perm-viewContact')">
-        <input type="checkbox" id="perm-viewContact" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">View Client Real Contact Details (Phone &amp; Email)</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">If unchecked, client phone number, email, and identity are anonymized.</span>
+      <div class="perm-item" data-perm="viewContact">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">View Client Real Contact Details (Phone &amp; Email)</div>
+          <div class="perm-desc">If unchecked, client phone number, email, and identity are anonymized.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-maskChat" onclick="togglePerm('perm-maskChat')">
-        <input type="checkbox" id="perm-maskChat" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Anti-Poaching Chat Contact Masking</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Automatically blurs/hides phone numbers, WhatsApp, and email addresses in chat.</span>
+      <div class="perm-item" data-perm="maskChat">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Anti-Poaching Chat Contact Masking</div>
+          <div class="perm-desc">Automatically blurs/hides phone numbers, WhatsApp, and email addresses in chat.</div>
         </div>
       </div>
 
       <!-- Category 3: Financials & Commercial -->
       <div class="perm-category-header">💰 Financials, Pricing &amp; Billing</div>
 
-      <div class="perm-card" id="card-viewFin" onclick="togglePerm('perm-viewFin')">
-        <input type="checkbox" id="perm-viewFin" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">View Invoices, Pricing &amp; Revenue</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow viewing project amounts, revenue totals, and GST invoice data.</span>
+      <div class="perm-item" data-perm="viewFin">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">View Invoices, Pricing &amp; Revenue</div>
+          <div class="perm-desc">Allow viewing project amounts, revenue totals, and GST invoice data.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-manageCoupons" onclick="togglePerm('perm-manageCoupons')">
-        <input type="checkbox" id="perm-manageCoupons" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Manage Discount Coupons &amp; Offers</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow generating discount coupons and promo codes for clients.</span>
+      <div class="perm-item" data-perm="manageCoupons">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Manage Discount Coupons &amp; Offers</div>
+          <div class="perm-desc">Allow generating discount coupons and promo codes for clients.</div>
         </div>
       </div>
 
       <!-- Category 4: Operations & Control -->
       <div class="perm-category-header">⚙️ Operations &amp; Agency Management</div>
 
-      <div class="perm-card" id="card-accessWorkflow" onclick="togglePerm('perm-accessWorkflow')">
-        <input type="checkbox" id="perm-accessWorkflow" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Access Master Workflow &amp; Revisions Queue</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow viewing the Kanban board and agency-wide revision tickets.</span>
+      <div class="perm-item" data-perm="accessWorkflow">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Access Master Workflow &amp; Revisions Queue</div>
+          <div class="perm-desc">Allow viewing the Kanban board and agency-wide revision tickets.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-accessStorage" onclick="togglePerm('perm-accessStorage')">
-        <input type="checkbox" id="perm-accessStorage" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Access Agency Cloud Storage &amp; Asset Library</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow accessing raw footage drives and central deliverable links.</span>
+      <div class="perm-item" data-perm="accessStorage">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Access Agency Cloud Storage &amp; Asset Library</div>
+          <div class="perm-desc">Allow accessing raw footage drives and central deliverable links.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-accessTickets" onclick="togglePerm('perm-accessTickets')">
-        <input type="checkbox" id="perm-accessTickets" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Support Desk &amp; Ticket Resolution</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow viewing and replying to client support inquiries.</span>
+      <div class="perm-item" data-perm="accessTickets">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Support Desk &amp; Ticket Resolution</div>
+          <div class="perm-desc">Allow viewing and replying to client support inquiries.</div>
         </div>
       </div>
 
-      <div class="perm-card" id="card-accessCMS" onclick="togglePerm('perm-accessCMS')">
-        <input type="checkbox" id="perm-accessCMS" style="display:none;"/>
-        <div class="perm-toggle-box"><span class="perm-tick">✓</span></div>
-        <div style="flex:1;">
-          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Website CMS &amp; Testimonial Manager</strong>
-          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow modifying public website FAQs, reviews, and services text.</span>
+      <div class="perm-item" data-perm="accessCMS">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Website CMS &amp; Testimonial Manager</div>
+          <div class="perm-desc">Allow modifying public website FAQs, reviews, and services text.</div>
         </div>
       </div>
 
@@ -1682,52 +1768,56 @@
       }).join('');
     }
 
-    window.togglePerm = (id) => {
-      const input = document.getElementById(id);
-      if (!input) return;
-      input.checked = !input.checked;
-      syncPermUI();
-    };
+    let currentEditingStaffPerms = {};
 
-    window.syncPermUI = () => {
-      ['perm-viewAll', 'perm-assignProj', 'perm-editDeadline', 'perm-updateStatus',
-       'perm-viewContact', 'perm-maskChat', 'perm-viewFin', 'perm-manageCoupons',
-       'perm-accessWorkflow', 'perm-accessStorage', 'perm-accessTickets', 'perm-accessCMS'].forEach(id => {
-        const input = document.getElementById(id);
-        const cardKey = 'card-' + id.replace('perm-', '');
-        const card = document.getElementById(cardKey);
-        if (input && card) {
-          card.classList.toggle('is-checked', !!input.checked);
+    function initPermToggles() {
+      document.querySelectorAll('.perm-item').forEach(item => {
+        item.onclick = (e) => {
+          e.stopPropagation();
+          const key = item.dataset.perm;
+          if (key) {
+            currentEditingStaffPerms[key] = !currentEditingStaffPerms[key];
+            item.classList.toggle('checked', !!currentEditingStaffPerms[key]);
+          }
+        };
+      });
+    }
+
+    function renderPermTogglesState() {
+      document.querySelectorAll('.perm-item').forEach(item => {
+        const key = item.dataset.perm;
+        if (key) {
+          item.classList.toggle('checked', !!currentEditingStaffPerms[key]);
         }
       });
-    };
+    }
 
     window.setAllPerms = (state) => {
-      ['perm-viewAll', 'perm-assignProj', 'perm-editDeadline', 'perm-updateStatus',
-       'perm-viewContact', 'perm-viewFin', 'perm-manageCoupons',
-       'perm-accessWorkflow', 'perm-accessStorage', 'perm-accessTickets', 'perm-accessCMS'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.checked = state;
+      ['viewAll', 'assignProj', 'editDeadline', 'updateStatus',
+       'viewContact', 'viewFin', 'manageCoupons',
+       'accessWorkflow', 'accessStorage', 'accessTickets', 'accessCMS'].forEach(k => {
+        currentEditingStaffPerms[k] = state;
       });
-      const maskEl = document.getElementById('perm-maskChat');
-      if (maskEl) maskEl.checked = !state; // Inverted for full access
-      syncPermUI();
+      currentEditingStaffPerms['maskChat'] = !state; // Inverted
+      renderPermTogglesState();
     };
 
     window.setFreelancePreset = () => {
-      document.getElementById('perm-viewAll').checked = false;
-      document.getElementById('perm-assignProj').checked = false;
-      document.getElementById('perm-editDeadline').checked = true;
-      document.getElementById('perm-updateStatus').checked = true;
-      document.getElementById('perm-viewContact').checked = false;
-      document.getElementById('perm-maskChat').checked = true;
-      document.getElementById('perm-viewFin').checked = false;
-      document.getElementById('perm-manageCoupons').checked = false;
-      document.getElementById('perm-accessWorkflow').checked = false;
-      document.getElementById('perm-accessStorage').checked = false;
-      document.getElementById('perm-accessTickets').checked = false;
-      document.getElementById('perm-accessCMS').checked = false;
-      syncPermUI();
+      currentEditingStaffPerms = {
+        viewAll: false,
+        assignProj: false,
+        editDeadline: true,
+        updateStatus: true,
+        viewContact: false,
+        maskChat: true,
+        viewFin: false,
+        manageCoupons: false,
+        accessWorkflow: false,
+        accessStorage: false,
+        accessTickets: false,
+        accessCMS: false
+      };
+      renderPermTogglesState();
     };
 
     window.onPermModalRoleChange = async (newRole) => {
@@ -1762,20 +1852,23 @@
 
       const p = u.permissions || {};
 
-      document.getElementById('perm-viewAll').checked = p.viewAll !== undefined ? p.viewAll : (isAdmin || isManager);
-      document.getElementById('perm-assignProj').checked = p.assignProj !== undefined ? p.assignProj : (isAdmin || isManager);
-      document.getElementById('perm-editDeadline').checked = p.editDeadline !== undefined ? p.editDeadline : true;
-      document.getElementById('perm-updateStatus').checked = p.updateStatus !== undefined ? p.updateStatus : true;
-      document.getElementById('perm-viewContact').checked = p.viewContact !== undefined ? p.viewContact : (isAdmin || isManager);
-      document.getElementById('perm-maskChat').checked = p.maskChat !== undefined ? p.maskChat : (!isAdmin && !isManager);
-      document.getElementById('perm-viewFin').checked = p.viewFin !== undefined ? p.viewFin : isAdmin;
-      document.getElementById('perm-manageCoupons').checked = p.manageCoupons !== undefined ? p.manageCoupons : (isAdmin || isManager);
-      document.getElementById('perm-accessWorkflow').checked = p.accessWorkflow !== undefined ? p.accessWorkflow : (isAdmin || isManager);
-      document.getElementById('perm-accessStorage').checked = p.accessStorage !== undefined ? p.accessStorage : (isAdmin || isManager);
-      document.getElementById('perm-accessTickets').checked = p.accessTickets !== undefined ? p.accessTickets : (isAdmin || isManager);
-      document.getElementById('perm-accessCMS').checked = p.accessCMS !== undefined ? p.accessCMS : isAdmin;
+      currentEditingStaffPerms = {
+        viewAll: p.viewAll !== undefined ? p.viewAll : (isAdmin || isManager),
+        assignProj: p.assignProj !== undefined ? p.assignProj : (isAdmin || isManager),
+        editDeadline: p.editDeadline !== undefined ? p.editDeadline : true,
+        updateStatus: p.updateStatus !== undefined ? p.updateStatus : true,
+        viewContact: p.viewContact !== undefined ? p.viewContact : (isAdmin || isManager),
+        maskChat: p.maskChat !== undefined ? p.maskChat : (!isAdmin && !isManager),
+        viewFin: p.viewFin !== undefined ? p.viewFin : isAdmin,
+        manageCoupons: p.manageCoupons !== undefined ? p.manageCoupons : (isAdmin || isManager),
+        accessWorkflow: p.accessWorkflow !== undefined ? p.accessWorkflow : (isAdmin || isManager),
+        accessStorage: p.accessStorage !== undefined ? p.accessStorage : (isAdmin || isManager),
+        accessTickets: p.accessTickets !== undefined ? p.accessTickets : (isAdmin || isManager),
+        accessCMS: p.accessCMS !== undefined ? p.accessCMS : isAdmin
+      };
 
-      syncPermUI();
+      initPermToggles();
+      renderPermTogglesState();
       openModal('modalStaffPermissions');
     };
 
@@ -1783,23 +1876,12 @@
       const uid = document.getElementById('permUid').value;
       if (!uid) return;
 
-      const permissions = {
-        viewAll: document.getElementById('perm-viewAll').checked,
-        assignProj: document.getElementById('perm-assignProj').checked,
-        editDeadline: document.getElementById('perm-editDeadline').checked,
-        updateStatus: document.getElementById('perm-updateStatus').checked,
-        viewContact: document.getElementById('perm-viewContact').checked,
-        maskChat: document.getElementById('perm-maskChat').checked,
-        viewFin: document.getElementById('perm-viewFin').checked,
-        manageCoupons: document.getElementById('perm-manageCoupons').checked,
-        accessWorkflow: document.getElementById('perm-accessWorkflow').checked,
-        accessStorage: document.getElementById('perm-accessStorage').checked,
-        accessTickets: document.getElementById('perm-accessTickets').checked,
-        accessCMS: document.getElementById('perm-accessCMS').checked,
-        updatedAt: serverTimestamp()
-      };
-
-      await updateDoc(doc(db, 'users', uid), { permissions });
+      await updateDoc(doc(db, 'users', uid), {
+        permissions: {
+          ...currentEditingStaffPerms,
+          updatedAt: serverTimestamp()
+        }
+      });
       showToast('Staff feature permissions saved successfully! 🔐✅', 'success');
       closeModal('modalStaffPermissions');
     });
