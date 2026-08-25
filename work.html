@@ -9,12 +9,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap?v=200.0"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap?v=210.0"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="media/fav-logo.png">
-    <link rel="stylesheet" href="css/style.css?v=200.0">
+    <link rel="stylesheet" href="css/style.css?v=210.0">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=200.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=210.0">
 
     <style>
         /* Portfolio Filter Tabs */
@@ -563,7 +563,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="js/theme.js?v=200.0"></script>
+  <script src="js/theme.js?v=210.0"></script>
 </head>
 
 <body>
@@ -1227,7 +1227,7 @@
         // Initial setup for 'all'
         // portfolioSections already have .active from HTML
     </script>
-    <script src="js/main.js?v=200.0"></script>
+    <script src="js/main.js?v=210.0"></script>
     <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
@@ -1266,38 +1266,9 @@
   </div>
 
   <!-- Firebase Auth: Nav profile -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-    const firebaseConfig = {
-      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
-      authDomain: "editzaar-fa8d9.firebaseapp.com",
-      projectId: "editzaar-fa8d9",
-      storageBucket: "editzaar-fa8d9.firebasestorage.app",
-      messagingSenderId: "419930711716",
-      appId: "1:419930711716:web:b1504f651e397a14726831"
-    };
-    try {
-      const app = initializeApp(firebaseConfig, 'nav-app');
-      const auth = getAuth(app);
-      onAuthStateChanged(auth, function(user) {
-        const btn = document.getElementById('nav-auth-btn');
-        if (!btn) return;
-        if (user) {
-          const name = user.displayName || user.email || 'Client';
-          const initials = name.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-          btn.href = 'dashboard/index.html';
-          btn.innerHTML = `<span style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#000;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0">${initials}</span><span style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name.split(' ')[0]}</span>`;
-          btn.style.display = 'inline-flex';
-          btn.style.alignItems = 'center';
-        } else {
-          btn.href = 'dashboard/index.html';
-          btn.textContent = 'Login';
-          btn.style.display = '';
-        }
-      });
-    } catch(e) { console.warn('[Nav Auth]', e); }
-  </script>
+  
+
+  <script type="module" src="js/nav-auth.js?v=210.0"></script>
 </body>
 
 </html>

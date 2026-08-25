@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=200.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=200.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=210.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=210.0"/>
 
   <style>
     .modal-overlay {
@@ -153,7 +153,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=200.0"></script>
+  <script src="../js/theme.js?v=210.0"></script>
 </head>
 <body>
 
@@ -164,7 +164,10 @@
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <a href="../index.html" class="sidebar-logo" title="Back to Main Website">EDIT<em>ZAAR</em> ↗</a>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <a href="../index.html" class="sidebar-logo" style="margin-bottom:0;" title="Back to Main Website">EDIT<em>ZAAR</em> ↗</a>
+        <button id="sidebarCloseBtn" class="sidebar-close-btn" style="background:none;border:none;color:var(--t2);font-size:1.4rem;cursor:pointer;padding:4px 8px;display:none;">✕</button>
+      </div>
       <div class="sidebar-role-badge">👑 Admin</div>
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">Overview</div>

@@ -1,0 +1,91 @@
+// Universal Navigation Auth for Editzaar Public Pages
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+  authDomain: "editzaar-fa8d9.firebaseapp.com",
+  projectId: "editzaar-fa8d9",
+  storageBucket: "editzaar-fa8d9.firebasestorage.app",
+  messagingSenderId: "419930711716",
+  appId: "1:419930711716:web:b1504f651e397a14726831"
+};
+
+try {
+  // Use default app to share session with dashboard/index.html
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const isSubPage = window.location.pathname.includes('/pages/');
+  const dashPrefix = isSubPage ? '../dashboard/' : 'dashboard/';
+
+  onAuthStateChanged(auth, async (user) => {
+    const desktopBtns = document.querySelectorAll('#nav-auth-btn, .nav-cta:not(.nav-cta-mobile)');
+    const mobileBtns = document.querySelectorAll('.nav-cta-mobile');
+
+    if (user) {
+      let displayName = user.displayName || '';
+      let role = 'client';
+
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.name) displayName = data.name;
+          if (data.role) role = data.role;
+        }
+      } catch (err) {
+        console.warn('[NavAuth Firestore]', err);
+      }
+
+      if (!displayName) {
+        displayName = user.email ? user.email.split('@')[0] : 'User';
+      }
+
+      // First name or short name
+      const shortName = displayName.trim().split(' ')[0];
+      const initials = displayName.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'U';
+
+      // Role destination
+      let destUrl = dashPrefix + 'client.html';
+      if (role === 'admin') destUrl = dashPrefix + 'admin.html';
+      else if (role === 'editor') destUrl = dashPrefix + 'editor.html';
+
+      const buttonHtml = `
+        <span style="width:24px;height:24px;border-radius:50%;background:var(--gold);color:#000;
+          font-size:11px;font-weight:700;display:inline-flex;align-items:center;
+          justify-content:center;margin-right:8px;flex-shrink:0;box-shadow:0 0 8px rgba(255,184,0,0.5);">${initials}</span>
+        <span style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;">${shortName}</span>
+      `;
+
+      desktopBtns.forEach(btn => {
+        btn.href = destUrl;
+        btn.innerHTML = buttonHtml;
+        btn.style.display = 'inline-flex';
+        btn.style.alignItems = 'center';
+        btn.title = `Go to ${role.toUpperCase()} Dashboard`;
+      });
+
+      mobileBtns.forEach(btn => {
+        btn.href = destUrl;
+        btn.innerHTML = `👤 ${shortName} (Dashboard)`;
+      });
+
+    } else {
+      const loginUrl = dashPrefix + 'index.html';
+      desktopBtns.forEach(btn => {
+        btn.href = loginUrl;
+        btn.textContent = 'Login';
+        btn.title = 'Client & Staff Login';
+      });
+      mobileBtns.forEach(btn => {
+        btn.href = loginUrl;
+        btn.textContent = 'Login';
+      });
+    }
+  });
+} catch (e) {
+  console.warn('[Nav Auth Error]', e);
+}
