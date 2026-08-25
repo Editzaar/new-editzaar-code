@@ -135,6 +135,38 @@
       .tax-invoice-paper, .tax-invoice-paper * { visibility: visible; }
       .tax-invoice-paper { position: absolute; left: 0; top: 0; width: 100%; }
     }
+
+    /* Additional styles for new sections */
+    .stat-card-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); padding: 16px;
+      text-align: center;
+    }
+    .stat-card-label { font-size: 0.88rem; color: var(--t2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-card-value { font-size: 2rem; font-weight: 700; color: var(--gold); }
+    
+    .chat-layout { display: flex; gap: 20px; height: calc(100vh - 150px); }
+    .chat-sidebar { width: 280px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); overflow-y: auto; }
+    .chat-main { flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); display: flex; flex-direction: column; }
+    .chat-project-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+    .chat-project-item:hover { background: rgba(255,255,255,0.05); }
+    .chat-project-item.active { background: var(--gold-dim); border-left: 3px solid var(--gold); }
+
+    .file-tabs { display: flex; gap: 12px; margin-bottom: 16px; overflow-x: auto; }
+    .file-tab { padding: 8px 16px; background: var(--bg-card2); border: 1px solid var(--border); border-radius: var(--r); cursor: pointer; white-space: nowrap; }
+    .file-tab.active { background: var(--gold); color: #000; border-color: var(--gold); }
+    
+    .dash-table { width: 100%; border-collapse: collapse; }
+    .dash-table th { text-align: left; padding: 12px; background: rgba(255,255,255,0.05); border-bottom: 1px solid var(--border); color: var(--t2); }
+    .dash-table td { padding: 12px; border-bottom: 1px solid var(--border); }
+    
+    .alert-card { display: flex; align-items: center; gap: 16px; background: rgba(255, 77, 77, 0.1); border: 1px solid #FF4D4D; border-radius: var(--r); padding: 16px; margin-bottom: 16px; }
+    .alert-icon { font-size: 1.5rem; }
+    .alert-content { flex: 1; }
+    .alert-title { font-weight: 600; color: #FF4D4D; margin-bottom: 4px; }
+    .alert-desc { font-size: 0.88rem; color: var(--t2); }
   </style>
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="../manifest.json">
@@ -150,7 +182,6 @@
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   <div class="toast" id="toast"></div>
-  </div>
 
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <div class="dash-shell">
@@ -160,9 +191,29 @@
       <div class="sidebar-role-badge">👤 Client Portal</div>
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">Navigation</div>
+        <div class="sidebar-nav-item" data-section="home"><span class="nav-icon">📊</span> Dashboard Home</div>
         <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
+        <div class="sidebar-nav-item" data-section="tracking"><span class="nav-icon">📈</span> Project Tracking</div>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Project Chat</div>
+        
         <div class="sidebar-nav-section">Account</div>
-        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; GST Receipts</div>
+        <div class="sidebar-nav-item" data-section="files"><span class="nav-icon">📤</span> File Management</div>
+        <div class="sidebar-nav-item" data-section="revisions"><span class="nav-icon">🔄</span> Revisions</div>
+        <div class="sidebar-nav-item" data-section="drafts"><span class="nav-icon">✅</span> Draft &amp; Approval</div>
+        <div class="sidebar-nav-item" data-section="payments"><span class="nav-icon">💳</span> Payments</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; GST</div>
+        
+        <div class="sidebar-nav-section">Notifications</div>
+        <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">🔔</span> Notifications</div>
+        <div class="sidebar-nav-item" data-section="calendar"><span class="nav-icon">📅</span> Calendar</div>
+        <div class="sidebar-nav-item" data-section="actions"><span class="nav-icon">⚡</span> Action Required</div>
+        
+        <div class="sidebar-nav-section">Settings</div>
+        <div class="sidebar-nav-item" data-section="credits"><span class="nav-icon">🎁</span> Package Credits</div>
+        <div class="sidebar-nav-item" data-section="history"><span class="nav-icon">📚</span> Booking History</div>
+        <div class="sidebar-nav-item" data-section="settings"><span class="nav-icon">⚙️</span> Profile &amp; Settings</div>
+        <div class="sidebar-nav-item" data-section="support"><span class="nav-icon">🆘</span> Support &amp; Help</div>
+
         <div class="sidebar-nav-section">Main Site</div>
         <a href="../index.html" class="sidebar-nav-item"><span class="nav-icon">🏠</span> Home Page</a>
         <a href="../pricing.html" class="sidebar-nav-item"><span class="nav-icon">🎬</span> Services &amp; Pricing</a>
@@ -185,19 +236,222 @@
         <button class="btn-gold btn-sm" onclick="document.getElementById('modalClientNewProject').classList.add('open')">＋ Book Project →</button>
       </div>
 
-      <!-- ── SECTION: MY PROJECTS ── -->
-      <section id="sec-projects">
-        <div class="dash-topbar">
-          <div class="dash-page-title">Welcome, <em id="clientName">…</em> 👋</div>
-          <button <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
+      <div class="dash-topbar" style="margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <div class="dash-page-title" id="topbarTitle">Welcome, <em id="clientName">…</em> 👋</div>
+        <div>
+          <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
           <button class="btn-gold" id="btnOpenNewProjectModal">＋ Start New Project</button>
         </div>
+      </div>
+
+      <!-- ── SECTION: HOME ── -->
+      <section id="sec-home" style="display:none;">
+        <div class="stat-card-grid">
+          <div class="stat-card"><div class="stat-card-label">Active Projects</div><div class="stat-card-value" id="statActive">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Pending Actions</div><div class="stat-card-value" id="statActions">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statCompleted">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Pending Payment</div><div class="stat-card-value" id="statPayment">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Total Spent</div><div class="stat-card-value" id="statSpent">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Revisions Used</div><div class="stat-card-value" id="statRevisions">0</div></div>
+        </div>
+        <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+          <button class="btn-gold" onclick="document.getElementById('modalClientNewProject').classList.add('open')">Book New Project</button>
+          <button class="btn-outline" onclick="showSection('notifications')">View Notifications</button>
+          <button class="btn-outline" onclick="showSection('drafts')">Check Drafts</button>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Recent Activity</div></div>
+          <div id="recentActivityList">No recent activity.</div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: MY PROJECTS ── -->
+      <section id="sec-projects">
         <div id="projectsList"></div>
       </section>
 
-      <!-- ── SECTION: PROJECT DETAIL ── -->
+      <!-- ── SECTION: TRACKING ── -->
+      <section id="sec-tracking" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Project Tracking Pipeline</div></div>
+          <div style="font-size: 0.88rem; color: var(--t2); margin-bottom: 24px;">9-step pipeline: Booking Confirmed → Payment Received → Editor Assigned → Work in Progress → First Draft Ready → Client Review → Revision in Progress → Final Delivery → Completed</div>
+          <div id="trackingList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: CHAT ── -->
+      <section id="sec-chat" style="display:none;">
+        <div class="chat-layout">
+          <div class="chat-sidebar" id="globalChatProjects"></div>
+          <div class="chat-main">
+            <div id="globalChatHeader" style="padding: 16px; border-bottom: 1px solid var(--border); font-weight: 600;">Select a project</div>
+            <div class="chat-container" style="flex: 1; border: none;">
+              <div class="chat-messages" id="globalChatMessages"></div>
+              <div class="chat-input-row">
+                <input class="chat-input" id="globalChatInput" placeholder="Type a message..." disabled />
+                <button class="btn-gold" id="globalBtnSendMsg" disabled>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: FILES ── -->
+      <section id="sec-files" style="display:none;">
+        <div class="dash-card">
+          <div class="file-tabs">
+            <div class="file-tab active" onclick="switchFileTab('raw')">Raw Footage</div>
+            <div class="file-tab" onclick="switchFileTab('deliverables')">Deliverables</div>
+          </div>
+          <div id="fileTabRaw">
+            <div id="filesRawList"></div>
+          </div>
+          <div id="fileTabDeliverables" style="display:none;">
+            <div id="filesDeliverablesList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: REVISIONS ── -->
+      <section id="sec-revisions" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Request Revision</div></div>
+          <div id="revisionsList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: DRAFTS ── -->
+      <section id="sec-drafts" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Drafts Pending Approval</div></div>
+          <div id="draftsList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: PAYMENTS ── -->
+      <section id="sec-payments" style="display:none;">
+        <div class="stat-card-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="stat-card"><div class="stat-card-label">Total Cost</div><div class="stat-card-value" id="payTotal">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Paid Amount</div><div class="stat-card-value" id="payPaid">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Pending Balance</div><div class="stat-card-value" style="color: #FF4D4D;" id="payPending">₹0</div></div>
+        </div>
+        <div class="dash-card" style="margin-bottom: 24px;">
+          <div class="dash-card-header"><div class="dash-card-title">Payment Instructions</div></div>
+          <p>Please send payments via UPI to: <strong>nbikram704@okhdfcbank</strong></p>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Project Payments</div></div>
+          <div id="paymentsList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: INVOICES & GST RECEIPTS ── -->
+      <section id="sec-invoices" style="display:none;">
+        <div class="dash-card">
+          <div id="invoicesList"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices yet.</div></div></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: NOTIFICATIONS ── -->
+      <section id="sec-notifications" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Notifications</div></div>
+          <div id="notificationsList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: CALENDAR ── -->
+      <section id="sec-calendar" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Upcoming Deadlines</div></div>
+          <div id="calendarList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: ACTIONS ── -->
+      <section id="sec-actions" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Action Required</div></div>
+          <div id="actionsList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: CREDITS ── -->
+      <section id="sec-credits" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Package Credits</div></div>
+          <div style="font-size: 1.1rem; margin-bottom: 16px;">You are currently on <strong>Per-Project Billing</strong>.</div>
+          <p style="color: var(--t2); margin-bottom: 24px;">Upgrade to a Retainer Plan to manage video credits here.</p>
+          <div class="dash-card-header"><div class="dash-card-title">Purchased Packages (Projects)</div></div>
+          <div id="creditsList"></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: HISTORY ── -->
+      <section id="sec-history" style="display:none;">
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Booking History</div></div>
+          <table class="dash-table">
+            <thead><tr><th>Project Name</th><th>Date Booked</th><th>Status</th><th>Amount</th><th>Invoice</th></tr></thead>
+            <tbody id="historyList"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── SECTION: SETTINGS ── -->
+      <section id="sec-settings" style="display:none;">
+        <div class="dash-card" style="max-width: 600px; margin-bottom: 24px;">
+          <div class="dash-card-header"><div class="dash-card-title">Profile Settings</div></div>
+          <div class="dash-form">
+            <div class="field"><label>Display Name</label><input type="text" id="set-name"></div>
+            <div class="field"><label>Business Name</label><input type="text" id="set-biz"></div>
+            <div class="field"><label>Mobile Number</label><input type="text" id="set-mobile"></div>
+            <div class="field"><label>GSTIN Number</label><input type="text" id="set-gstin"></div>
+            <button class="btn-gold" id="btnSaveProfile">Save Profile</button>
+          </div>
+        </div>
+        <div class="dash-card" style="max-width: 600px;">
+          <div class="dash-card-header"><div class="dash-card-title">Security</div></div>
+          <div class="dash-form">
+            <div class="field"><label>New Password</label><input type="password" id="set-password"></div>
+            <button class="btn-gold" id="btnChangePassword">Change Password</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: SUPPORT ── -->
+      <section id="sec-support" style="display:none;">
+        <div class="dash-card" style="max-width: 600px; margin-bottom: 24px;">
+          <div class="dash-card-header"><div class="dash-card-title">Create Support Ticket</div></div>
+          <div class="dash-form">
+            <div class="field"><label>Subject</label><input type="text" id="sup-subject"></div>
+            <div class="field"><label>Category</label>
+              <select id="sup-category">
+                <option value="technical">Technical Issue</option>
+                <option value="billing">Billing</option>
+                <option value="project">Project Inquiry</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="field"><label>Message</label><textarea id="sup-message"></textarea></div>
+            <button class="btn-gold" id="btnSubmitSupport">Submit Ticket</button>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">My Tickets</div></div>
+          <div id="supportTicketsList"></div>
+        </div>
+        <div class="dash-card" style="margin-top: 24px;">
+          <div class="dash-card-header"><div class="dash-card-title">FAQ</div></div>
+          <div style="margin-bottom: 12px;"><strong>How do revisions work?</strong><p style="color:var(--t2);font-size:0.88rem;">Standard plans include 1-4 revisions. Request changes via the Revisions tab.</p></div>
+          <div style="margin-bottom: 12px;"><strong>How do I pay?</strong><p style="color:var(--t2);font-size:0.88rem;">We require a 50% advance to begin. Final 50% is due upon completion.</p></div>
+          <div style="margin-bottom: 12px;"><strong>What are delivery times?</strong><p style="color:var(--t2);font-size:0.88rem;">Shorts take 24-48h, long form 48-72h.</p></div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: PROJECT DETAIL (OLD) ── -->
       <section id="sec-detail" style="display:none;">
-        <div class="dash-topbar">
+        <div class="dash-topbar" style="margin-bottom:16px;">
           <button class="btn-outline" onclick="showSection('projects')">← Back to My Projects</button>
           <div id="detailStatus"></div>
         </div>
@@ -244,14 +498,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- ── SECTION: INVOICES & GST RECEIPTS ── -->
-      <section id="sec-invoices" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Invoices &amp; <em>GST Tax Receipts</em></div></div>
-        <div class="dash-card">
-          <div id="invoicesList"><div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No invoices yet.</div></div></div>
         </div>
       </section>
 
@@ -386,7 +632,7 @@
 
   <script type="module">
     import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut }
+    import { getAuth, onAuthStateChanged, signOut, updatePassword }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc,
              query, where, onSnapshot, serverTimestamp }
@@ -405,8 +651,9 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    let currentUser = null, currentProject = null, chatUnsub = null;
+    let currentUser = null, currentProject = null, chatUnsub = null, globalChatUnsub = null, globalChatPid = null;
     let allUsers = {};
+    let myProjects = [];
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('index.html'); return; }
@@ -417,7 +664,14 @@
       if (currentUser.role === 'editor') { window.location.replace('editor.html'); return; }
       document.getElementById('clientEmail').textContent = user.email;
       document.getElementById('clientName').textContent  = currentUser.name || 'there';
-      loadUsers(); listenRealtimeProjects(); listenAnnouncements();
+      
+      // Populate settings form
+      document.getElementById('set-name').value = currentUser.name || '';
+      document.getElementById('set-biz').value = currentUser.businessName || '';
+      document.getElementById('set-mobile').value = currentUser.mobile || '';
+      document.getElementById('set-gstin').value = currentUser.gstin || '';
+      
+      loadUsers(); listenRealtimeProjects(); listenAnnouncements(); listenNotifications(); listenSupportTickets();
     });
 
     document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('index.html')));
@@ -444,9 +698,105 @@
       onSnapshot(q, (snap) => {
         const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
         projects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
+        myProjects = projects;
+        
+        renderHomeStats(projects);
         renderProjects(projects);
+        renderTracking(projects);
+        renderGlobalChatList(projects);
+        renderFiles(projects);
+        renderRevisions(projects);
+        renderDrafts(projects);
+        renderPayments(projects);
         renderInvoices(projects);
+        renderCalendar(projects);
+        renderActions(projects);
+        renderCredits(projects);
+        renderHistory(projects);
       });
+    }
+    
+    function listenNotifications() {
+      const q = query(collection(db,'notifications'), where('userId','==',currentUser.uid));
+      onSnapshot(q, (snap) => {
+        const notifs = snap.docs.map(d=>({id:d.id,...d.data()}));
+        notifs.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
+        
+        // Home recent activity
+        const recent = notifs.slice(0, 5);
+        const actDiv = document.getElementById('recentActivityList');
+        if(!recent.length) {
+          actDiv.innerHTML = '<div style="color:var(--t2);">No recent activity.</div>';
+        } else {
+          actDiv.innerHTML = recent.map(n=> `<div style="padding: 10px 0; border-bottom: 1px solid var(--border);"><strong>${n.title}</strong><div style="font-size:0.88rem;color:var(--t2);">${n.message}</div></div>`).join('');
+        }
+        
+        // Full notifications
+        const notifDiv = document.getElementById('notificationsList');
+        if(!notifs.length) {
+          notifDiv.innerHTML = '<div style="color:var(--t2);">No new notifications.</div>';
+        } else {
+          notifDiv.innerHTML = notifs.map(n=> `
+            <div class="alert-card" style="background: ${n.read ? 'transparent' : 'rgba(255,184,0,0.1)'}; border-color: ${n.read ? 'var(--border)' : 'var(--gold)'};">
+              <div class="alert-icon">${n.icon || '🔔'}</div>
+              <div class="alert-content">
+                <div class="alert-title" style="color: ${n.read ? 'var(--t1)' : 'var(--gold)'};">${n.title}</div>
+                <div class="alert-desc">${n.message}</div>
+              </div>
+              ${!n.read ? `<button class="btn-outline btn-sm" onclick="markNotifRead('${n.id}')">Mark Read</button>` : ''}
+            </div>
+          `).join('');
+        }
+      });
+    }
+    
+    window.markNotifRead = async (id) => {
+      await updateDoc(doc(db,'notifications',id), { read: true });
+    };
+    
+    function listenSupportTickets() {
+      const q = query(collection(db,'supportTickets'), where('userId','==',currentUser.uid));
+      onSnapshot(q, (snap) => {
+        const tickets = snap.docs.map(d=>({id:d.id,...d.data()}));
+        tickets.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
+        
+        const listDiv = document.getElementById('supportTicketsList');
+        if(!tickets.length) {
+          listDiv.innerHTML = '<div style="color:var(--t2);">No support tickets.</div>';
+        } else {
+          listDiv.innerHTML = tickets.map(t=> `
+            <div style="padding: 12px; border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 12px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <strong>${t.subject}</strong>
+                <span class="status-badge status-${t.status||'open'}">${t.status||'Open'}</span>
+              </div>
+              <div style="font-size:0.88rem; color:var(--t2);">${t.category}</div>
+            </div>
+          `).join('');
+        }
+      });
+    }
+    
+    function renderHomeStats(projects) {
+      const active = projects.filter(p=> p.status !== 'done').length;
+      document.getElementById('statActive').textContent = active;
+      
+      const completed = projects.filter(p=> p.status === 'done').length;
+      document.getElementById('statCompleted').textContent = completed;
+      
+      let pendingPay = 0;
+      let totalSpent = 0;
+      projects.forEach(p => {
+        const amt = p.invoiceAmount || 0;
+        const total = amt + Math.round(amt * 0.18);
+        totalSpent += total;
+        if(!p.invoicePaid) pendingPay += (total / 2);
+      });
+      document.getElementById('statPayment').textContent = '₹' + pendingPay.toLocaleString();
+      document.getElementById('statSpent').textContent = '₹' + totalSpent.toLocaleString();
+      
+      const revisions = projects.filter(p=> p.revisionCount > 0).reduce((acc,p)=> acc + (p.revisionCount||0), 0);
+      document.getElementById('statRevisions').textContent = revisions;
     }
 
     const STATUS_LABELS= {pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
@@ -478,6 +828,270 @@
             <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ GST Invoice Issued':'⏳ Acknowledgment Receipt'}</span>
           </div>
         </div>`).join('');
+    }
+    
+    function renderTracking(projects) {
+      const container = document.getElementById('trackingList');
+      const stepsList = ['Booking Confirmed','Payment Received','Editor Assigned','Work in Progress','First Draft Ready','Client Review','Revision in Progress','Final Delivery','Completed'];
+      
+      const getStepIndex = (p) => {
+        if(p.status === 'done') return 8;
+        if(p.deliveryUrl) return 7;
+        if(p.status === 'revision') return 6;
+        if(p.status === 'review') return 5;
+        if(p.draftUrl) return 4;
+        if(p.status === 'in_progress') return 3;
+        if(p.editorId) return 2;
+        if(p.invoicePaid) return 1;
+        return 0;
+      };
+      
+      container.innerHTML = projects.map(p=> {
+        const sIdx = getStepIndex(p);
+        return `<div style="margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--r); padding: 16px;">
+          <div style="font-weight: 600; margin-bottom: 8px;">${p.title} ${badge(p.status)}</div>
+          <div style="color: var(--gold); font-size: 0.9rem;">Current Step: ${stepsList[sIdx]}</div>
+        </div>`;
+      }).join('');
+    }
+    
+    function renderGlobalChatList(projects) {
+      const sb = document.getElementById('globalChatProjects');
+      sb.innerHTML = projects.map(p=> `<div class="chat-project-item" id="cp-${p.id}" onclick="openGlobalChat('${p.id}', '${p.title.replace(/'/g,"")}')">
+        <div style="font-weight:600; font-size:0.95rem; margin-bottom:4px;">${p.title}</div>
+        <div style="font-size:0.8rem; color:var(--t2);">${p.status}</div>
+      </div>`).join('');
+    }
+    
+    window.openGlobalChat = (pid, ptitle) => {
+      document.querySelectorAll('.chat-project-item').forEach(el=>el.classList.remove('active'));
+      const el = document.getElementById('cp-'+pid);
+      if(el) el.classList.add('active');
+      
+      document.getElementById('globalChatHeader').textContent = ptitle;
+      document.getElementById('globalChatInput').disabled = false;
+      document.getElementById('globalBtnSendMsg').disabled = false;
+      globalChatPid = pid;
+      
+      if(globalChatUnsub) globalChatUnsub();
+      globalChatUnsub = onSnapshot(collection(db,'projects',pid,'chat'), snap => {
+        const container = document.getElementById('globalChatMessages');
+        container.innerHTML = '';
+        const msgs = snap.docs.map(d=>d.data());
+        msgs.sort((a,b)=>(a.timestamp?.toMillis?a.timestamp.toMillis():0)-(b.timestamp?.toMillis?b.timestamp.toMillis():0));
+        msgs.forEach(m=>{
+          const isMe=m.senderId===currentUser.uid;
+          const div=document.createElement('div');
+          div.className='chat-msg '+(isMe?'mine':'theirs');
+          let formattedText = m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
+            <div class="chat-msg-bubble">${formattedText}</div>`;
+          container.appendChild(div);
+        });
+        container.scrollTop=container.scrollHeight;
+      });
+    };
+    
+    document.getElementById('globalBtnSendMsg').addEventListener('click', async () => {
+      const inp = document.getElementById('globalChatInput');
+      const txt = inp.value.trim();
+      if(!txt || !globalChatPid) return;
+      inp.value = '';
+      await addDoc(collection(db,'projects',globalChatPid,'chat'), {
+        senderId: currentUser.uid, senderName: currentUser.name||'Client', text: txt, timestamp: serverTimestamp()
+      });
+    });
+    
+    window.switchFileTab = (tab) => {
+      document.querySelectorAll('.file-tab').forEach(el=>el.classList.remove('active'));
+      document.querySelector(`.file-tab[onclick*="${tab}"]`).classList.add('active');
+      document.getElementById('fileTabRaw').style.display = tab==='raw' ? 'block' : 'none';
+      document.getElementById('fileTabDeliverables').style.display = tab==='deliverables' ? 'block' : 'none';
+    };
+    
+    function renderFiles(projects) {
+      document.getElementById('filesRawList').innerHTML = projects.map(p=>`
+        <div style="margin-bottom: 16px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r);">
+          <div style="font-weight:600; margin-bottom:8px;">${p.title}</div>
+          <div class="flex-input-row">
+            <input type="url" id="fraw-${p.id}" value="${p.rawFootageUrl||''}" placeholder="Paste Drive link..." class="chat-input" style="flex:1;" />
+            <button class="btn-gold btn-sm" onclick="saveRawFile('${p.id}')">Save</button>
+          </div>
+        </div>
+      `).join('');
+      
+      const delivs = projects.filter(p=>p.deliveryUrl);
+      if(!delivs.length) {
+        document.getElementById('filesDeliverablesList').innerHTML = '<div style="color:var(--t2);">No deliverables yet.</div>';
+      } else {
+        document.getElementById('filesDeliverablesList').innerHTML = delivs.map(p=>`
+          <div style="margin-bottom: 16px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r);">
+            <div style="font-weight:600; margin-bottom:8px;">${p.title}</div>
+            <a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">Download Delivery ↗</a>
+          </div>
+        `).join('');
+      }
+    }
+    
+    window.saveRawFile = async (pid) => {
+      const val = document.getElementById('fraw-'+pid).value.trim();
+      await updateDoc(doc(db,'projects',pid), { rawFootageUrl: val });
+      showToast('File link saved','success');
+    };
+    
+    function renderRevisions(projects) {
+      document.getElementById('revisionsList').innerHTML = projects.map(p=>`
+        <div style="margin-bottom: 24px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+            <div style="font-weight:600;">${p.title}</div>
+            <span class="status-badge status-pending">${p.revisionCount||0} Revisions Used</span>
+          </div>
+          <textarea id="rev-${p.id}" class="chat-input" style="width:100%; height:80px; margin-bottom:8px;" placeholder="Describe changes needed..."></textarea>
+          <input type="url" id="revlink-${p.id}" class="chat-input" style="width:100%; margin-bottom:8px;" placeholder="Reference link (optional)" />
+          <button class="btn-outline btn-sm" onclick="requestRevision('${p.id}')">Submit Revision Request</button>
+          ${p.revisionNote ? `<div style="margin-top:12px; font-size:0.88rem; color:var(--t2);">Last Note: ${p.revisionNote}</div>` : ''}
+        </div>
+      `).join('');
+    }
+    
+    window.requestRevision = async (pid) => {
+      const note = document.getElementById('rev-'+pid).value.trim();
+      const link = document.getElementById('revlink-'+pid).value.trim();
+      if(!note) return showToast('Please enter revision details','error');
+      
+      const p = myProjects.find(x=>x.id===pid);
+      const count = (p.revisionCount||0) + 1;
+      
+      await updateDoc(doc(db,'projects',pid), {
+        status: 'revision',
+        revisionNote: note + (link ? ` (Ref: ${link})` : ''),
+        revisionCount: count
+      });
+      showToast('Revision requested','success');
+      document.getElementById('rev-'+pid).value = '';
+    };
+    
+    function renderDrafts(projects) {
+      const drafts = projects.filter(p=> p.status === 'review');
+      if(!drafts.length) {
+        document.getElementById('draftsList').innerHTML = '<div style="color:var(--t2);">No drafts pending approval.</div>';
+        return;
+      }
+      document.getElementById('draftsList').innerHTML = drafts.map(p=>`
+        <div style="margin-bottom: 24px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r);">
+          <div style="font-weight:600; margin-bottom:12px;">${p.title}</div>
+          ${p.draftUrl ? `<a href="${p.draftUrl}" target="_blank" class="btn-gold btn-sm" style="display:inline-block; margin-bottom:12px;">Review Draft Video ↗</a>` : ''}
+          <div style="display:flex; gap:12px;">
+            <button class="btn-gold" onclick="approveDraft('${p.id}')">✅ Approve Final</button>
+            <button class="btn-outline" onclick="showSection('revisions')">🔄 Request Changes</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    window.approveDraft = async (pid) => {
+      await updateDoc(doc(db,'projects',pid), { status: 'done' });
+      showToast('Project approved!','success');
+    };
+    
+    function renderPayments(projects) {
+      let payTotal = 0, payPaid = 0, payPending = 0;
+      let html = '';
+      projects.forEach(p => {
+        const base = p.invoiceAmount || 0;
+        const total = base + Math.round(base * 0.18);
+        const paid = p.invoicePaid ? total : Math.round(total / 2);
+        const pending = total - paid;
+        
+        payTotal += total;
+        payPaid += paid;
+        payPending += pending;
+        
+        html += `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-weight:600;">${p.title}</div>
+              <div style="font-size:0.88rem; color:var(--t2);">Total: ₹${total.toLocaleString()}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="color: ${pending>0 ? '#FF4D4D' : 'var(--green)'}; font-weight:600;">Pending: ₹${pending.toLocaleString()}</div>
+              <span class="status-badge status-${p.invoicePaid?'done':'pending'}">${p.invoicePaid?'Fully Paid':'50% Paid'}</span>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('payTotal').textContent = '₹' + payTotal.toLocaleString();
+      document.getElementById('payPaid').textContent = '₹' + payPaid.toLocaleString();
+      document.getElementById('payPending').textContent = '₹' + payPending.toLocaleString();
+      document.getElementById('paymentsList').innerHTML = html;
+    }
+    
+    function renderCalendar(projects) {
+      const cals = projects.filter(p=>p.deadline).sort((a,b)=>a.deadline.toMillis() - b.deadline.toMillis());
+      if(!cals.length) {
+        document.getElementById('calendarList').innerHTML = '<div style="color:var(--t2);">No upcoming deadlines.</div>';
+        return;
+      }
+      document.getElementById('calendarList').innerHTML = cals.map(p=> {
+        const d = p.deadline.toDate();
+        const isPast = d < new Date() && p.status !== 'done';
+        return `<div style="padding:12px; border-left: 3px solid ${isPast ? '#FF4D4D' : 'var(--gold)'}; background: var(--bg-card2); margin-bottom:8px;">
+          <div style="font-size:0.88rem; color:var(--t2);">${d.toLocaleDateString()}</div>
+          <div style="font-weight:600; color: ${isPast ? '#FF4D4D' : 'inherit'};">${p.title} ${badge(p.status)}</div>
+        </div>`;
+      }).join('');
+    }
+    
+    function renderActions(projects) {
+      const actions = [];
+      projects.forEach(p => {
+        if(p.status === 'review') {
+          actions.push({ icon: '📋', title: 'Draft ready for review', desc: p.title, btn: 'View Draft', act: "showSection('drafts')" });
+        }
+        if(!p.rawFootageUrl && p.status !== 'done') {
+          actions.push({ icon: '📁', title: 'Upload raw footage', desc: p.title, btn: 'Go to Files', act: "showSection('files')" });
+        }
+        if(!p.invoicePaid && p.status !== 'done') {
+          actions.push({ icon: '💳', title: 'Payment pending', desc: p.title, btn: 'View Payments', act: "showSection('payments')" });
+        }
+      });
+      document.getElementById('statActions').textContent = actions.length;
+      const listDiv = document.getElementById('actionsList');
+      if(!actions.length) {
+        listDiv.innerHTML = '<div style="color:var(--t2);">You are all caught up! No actions required.</div>';
+      } else {
+        listDiv.innerHTML = actions.map(a=>`
+          <div class="alert-card">
+            <div class="alert-icon">${a.icon}</div>
+            <div class="alert-content">
+              <div class="alert-title">${a.title}</div>
+              <div class="alert-desc">${a.desc}</div>
+            </div>
+            <button class="btn-outline btn-sm" onclick="${a.act}">${a.btn}</button>
+          </div>
+        `).join('');
+      }
+    }
+    
+    function renderCredits(projects) {
+      document.getElementById('creditsList').innerHTML = projects.map(p=>`
+        <div style="padding: 12px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between;">
+          <span>${p.title}</span>
+          <span style="color:var(--t2);">${dateStr(p.createdAt)}</span>
+        </div>
+      `).join('');
+    }
+    
+    function renderHistory(projects) {
+      document.getElementById('historyList').innerHTML = projects.map(p=>`
+        <tr>
+          <td>${p.title}</td>
+          <td>${dateStr(p.createdAt)}</td>
+          <td>${badge(p.status)}</td>
+          <td>₹${(p.invoiceAmount||0).toLocaleString()}</td>
+          <td><button class="btn-outline btn-sm" onclick="openInvoiceModal('${p.id}')">View</button></td>
+        </tr>
+      `).join('');
     }
 
     function renderInvoices(projects) {
@@ -610,6 +1224,14 @@
         footInput.value = '';
         footDisp.innerHTML = '<span style="color:var(--t3);">No drive link saved yet. Paste your Google Drive link above!</span>';
       }
+      
+      const delivSec = document.getElementById('deliverySection');
+      if(currentProject.deliveryUrl) {
+        delivSec.style.display = 'block';
+        document.getElementById('deliveryDownloadBtn').href = currentProject.deliveryUrl;
+      } else {
+        delivSec.style.display = 'none';
+      }
 
       showSection('detail');
       loadChat(pid);
@@ -680,7 +1302,43 @@
     document.getElementById('chatbotFab').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.toggle('open'));
     document.getElementById('chatbotClose').addEventListener('click',()=>document.getElementById('chatbotPanel').classList.remove('open'));
 
+    /* ── SETTINGS & SUPPORT ── */
+    document.getElementById('btnSaveProfile').addEventListener('click', async () => {
+      const n = document.getElementById('set-name').value.trim();
+      const b = document.getElementById('set-biz').value.trim();
+      const m = document.getElementById('set-mobile').value.trim();
+      const g = document.getElementById('set-gstin').value.trim();
+      await updateDoc(doc(db,'users',currentUser.uid), {
+        name: n, businessName: b, mobile: m, gstin: g
+      });
+      showToast('Profile saved successfully!','success');
+    });
     
+    document.getElementById('btnChangePassword').addEventListener('click', async () => {
+      const p = document.getElementById('set-password').value.trim();
+      if(!p || p.length < 6) return showToast('Password must be at least 6 characters','error');
+      try {
+        await updatePassword(auth.currentUser, p);
+        showToast('Password updated!','success');
+        document.getElementById('set-password').value = '';
+      } catch(e) {
+        showToast(e.message, 'error');
+      }
+    });
+    
+    document.getElementById('btnSubmitSupport').addEventListener('click', async () => {
+      const s = document.getElementById('sup-subject').value.trim();
+      const c = document.getElementById('sup-category').value;
+      const m = document.getElementById('sup-message').value.trim();
+      if(!s || !m) return showToast('Please enter subject and message', 'error');
+      await addDoc(collection(db,'supportTickets'), {
+        userId: currentUser.uid, subject: s, category: c, message: m, status: 'open', createdAt: serverTimestamp()
+      });
+      showToast('Support ticket created!', 'success');
+      document.getElementById('sup-subject').value = '';
+      document.getElementById('sup-message').value = '';
+    });
+
     /* ── INTELLIGENT AI CHATBOT ENGINE ── */
     const botInput = document.getElementById('botInput');
     const btnBotSend = document.getElementById('btnBotSend');
@@ -787,10 +1445,24 @@
       });
     }
 
-    const sections=['projects','detail','invoices'];
+    const sections=['home','projects','tracking','chat','files','revisions','drafts','payments','invoices','notifications','calendar','actions','credits','history','settings','support','detail'];
     function showSection(name){
-      sections.forEach(s=>{ document.getElementById('sec-'+s).style.display=s===name?'block':'none'; });
+      sections.forEach(s=>{ 
+        const el = document.getElementById('sec-'+s);
+        if(el) el.style.display=s===name?'block':'none'; 
+      });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.section===name));
+      
+      const titles = {
+        'home': 'Dashboard Home', 'projects': 'My Projects', 'tracking': 'Project Tracking',
+        'chat': 'Project Chat', 'files': 'File Management', 'revisions': 'Revisions',
+        'drafts': 'Drafts & Approval', 'payments': 'Payments', 'invoices': 'Invoices & GST Receipts',
+        'notifications': 'Notifications', 'calendar': 'Calendar', 'actions': 'Action Required',
+        'credits': 'Package Credits', 'history': 'Booking History', 'settings': 'Profile & Settings',
+        'support': 'Support & Help', 'detail': 'Project Details'
+      };
+      const ttlEl = document.getElementById('topbarTitle');
+      if(ttlEl) ttlEl.innerHTML = name === 'home' || name === 'projects' ? 'Welcome, <em id="clientName">' + (currentUser ? currentUser.name : '…') + '</em> 👋' : titles[name] || 'Dashboard';
     }
     window.showSection=showSection;
     document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>{
@@ -837,6 +1509,7 @@
       const el = document.getElementById(id);
       if (el) el.classList.add('active');
     }
+    window.setActiveBottomNav = setActiveBottomNav;
 
     // Show push notification when new chat message arrives (for client)
     let prevChatCount = 0;
@@ -847,17 +1520,14 @@
 
   <!-- BOTTOM NAVIGATION (Mobile) -->
   <nav class="bottom-nav" id="clientBottomNav">
-    <div class="bottom-nav-item active" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')">
-      <span class="bnav-icon">📁</span>Projects
-    </div>
-    <div class="bottom-nav-item" id="bnav-detail" style="display:none;" onclick="showSection('detail');setActiveBottomNav('bnav-detail')">
-      <span class="bnav-icon">📋</span>Details
-    </div>
-    <div class="bottom-nav-item" id="bnav-invoices" onclick="showSection('invoices');setActiveBottomNav('bnav-invoices')">
-      <span class="bnav-icon">💰</span>Invoice
-    </div>
+    <div class="bottom-nav-item" id="bnav-home" onclick="showSection('home');setActiveBottomNav('bnav-home')"><span class="bnav-icon">🏠</span>Home</div>
+    <div class="bottom-nav-item active" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')"><span class="bnav-icon">📁</span>Projects</div>
+    <div class="bottom-nav-item" id="bnav-chat" onclick="showSection('chat');setActiveBottomNav('bnav-chat')"><span class="bnav-icon">💬</span>Chat</div>
+    <div class="bottom-nav-item" id="bnav-payments" onclick="showSection('payments');setActiveBottomNav('bnav-payments')"><span class="bnav-icon">💳</span>Payments</div>
+    <div class="bottom-nav-item" id="bnav-settings" onclick="showSection('settings');setActiveBottomNav('bnav-settings')"><span class="bnav-icon">⚙️</span>Settings</div>
   </nav>
-    <script>
+
+  <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('../sw.js')
         .then(function(reg) { console.log('[SW] Registered:', reg.scope); })

@@ -81,6 +81,34 @@
       color: var(--gold); border-radius: 6px; padding: 4px 8px; font-size: 11px;
       outline: none; cursor: pointer;
     }
+    
+    /* New Styles */
+    .kanban-board {
+      display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px;
+    }
+    .kanban-column {
+      min-width: 220px; flex: 1;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px;
+    }
+    .kanban-column h4 { margin: 0 0 10px 0; color: var(--gold); font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .kanban-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 10px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s;
+    }
+    .kanban-card:hover { border-color: var(--gold); }
+    .kanban-card-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+    .kanban-card-meta { font-size: 0.75rem; color: var(--t2); }
+    
+    .workload-bar-bg { width: 100%; background: rgba(255,255,255,0.1); border-radius: 3px; height: 6px; overflow: hidden; }
+    .workload-bar { height: 6px; background: var(--gold); border-radius: 3px; display: block; }
+    
+    .tab-btn { background: none; border: none; color: var(--t2); font-family: var(--font-b); font-size: 1rem; padding: 8px 16px; cursor: pointer; }
+    .tab-btn.active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+    
+    .perf-bar { height: 10px; border-radius: 5px; display: inline-block; }
+    
+    .report-container { background: rgba(255,255,255,0.02); padding: 20px; border: 1px solid var(--border); border-radius: 8px; margin-top: 20px; }
   </style>
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="../manifest.json">
@@ -96,7 +124,6 @@
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   <div class="toast" id="toast"></div>
-  </div>
 
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <div class="dash-shell">
@@ -107,15 +134,49 @@
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">Overview</div>
         <div class="sidebar-nav-item active" data-section="overview"><span class="nav-icon">📊</span> Dashboard</div>
-        <div class="sidebar-nav-section">Management</div>
+        <div class="sidebar-nav-item" data-section="attention"><span class="nav-icon">⚡</span> Action Required</div>
+        
+        <div class="sidebar-nav-section">Projects</div>
         <div class="sidebar-nav-item" data-section="projects"><span class="nav-icon">📁</span> All Projects</div>
+        <div class="sidebar-nav-item" data-section="workflow"><span class="nav-icon">📊</span> Workflow Tracker</div>
+        <div class="sidebar-nav-item" data-section="workload"><span class="nav-icon">👥</span> Assign &amp; Workload</div>
+
+        <div class="sidebar-nav-section">People</div>
+        <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients CRM</div>
         <div class="sidebar-nav-item" data-section="editors"><span class="nav-icon">🎬</span> Editors &amp; Staff</div>
-        <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients</div>
-        <div class="sidebar-nav-section">Communication</div>
-        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat Overlook</div>
-        <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Broadcast &amp; Welcome</div>
+        <div class="sidebar-nav-item" data-section="performance"><span class="nav-icon">📊</span> Team Performance</div>
+
         <div class="sidebar-nav-section">Finance</div>
-        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; Tax Confirmations</div>
+        <div class="sidebar-nav-item" data-section="revenue"><span class="nav-icon">💰</span> Revenue &amp; Payments</div>
+        <div class="sidebar-nav-item" data-section="payments"><span class="nav-icon">💳</span> Payment Management</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">🧾</span> Invoices &amp; GST</div>
+
+        <div class="sidebar-nav-section">Communication</div>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat</div>
+        <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Broadcast</div>
+        <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">🔔</span> Notifications</div>
+        <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🤖</span> Automations</div>
+
+        <div class="sidebar-nav-section">Business</div>
+        <div class="sidebar-nav-item" data-section="revisions"><span class="nav-icon">📅</span> Revisions Queue</div>
+        <div class="sidebar-nav-item" data-section="storage"><span class="nav-icon">📂</span> File Storage</div>
+        <div class="sidebar-nav-item" data-section="calendar"><span class="nav-icon">📆</span> Calendar</div>
+        <div class="sidebar-nav-item" data-section="analytics"><span class="nav-icon">📊</span> Analytics</div>
+        <div class="sidebar-nav-item" data-section="reports"><span class="nav-icon">📄</span> Reports</div>
+
+        <div class="sidebar-nav-section">Store</div>
+        <div class="sidebar-nav-item" data-section="bookings"><span class="nav-icon">📜</span> Booking Requests</div>
+        <div class="sidebar-nav-item" data-section="services"><span class="nav-icon">🚥</span> Services &amp; Pricing</div>
+        <div class="sidebar-nav-item" data-section="coupons"><span class="nav-icon">🎫</span> Coupons</div>
+
+        <div class="sidebar-nav-section">Feedback</div>
+        <div class="sidebar-nav-item" data-section="reviews"><span class="nav-icon">⭐</span> Reviews &amp; Feedback</div>
+        <div class="sidebar-nav-item" data-section="tickets"><span class="nav-icon">🆘</span> Support Tickets</div>
+
+        <div class="sidebar-nav-section">Settings</div>
+        <div class="sidebar-nav-item" data-section="cms"><span class="nav-icon">🌐</span> Website CMS</div>
+        <div class="sidebar-nav-item" data-section="roles"><span class="nav-icon">🔐</span> Roles &amp; Permissions</div>
+        <div class="sidebar-nav-item" data-section="settings"><span class="nav-icon">⚙️</span> Agency Settings</div>
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="adminEmail">Loading…</div>
@@ -126,12 +187,13 @@
     <!-- MAIN -->
     <main class="dash-main">
 
+      <!-- EXISTING SECTIONS (overview, projects, editors, clients, broadcast, chat, invoices) -->
       <!-- OVERVIEW -->
       <section id="sec-overview">
         <div class="dash-topbar">
           <div style="display:flex;align-items:center;gap:14px;">
             <div class="dash-page-title">Admin <em>Dashboard</em></div>
-          <button <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
+            <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
             <div class="live-badge"><div class="live-dot"></div> Live Sync</div>
           </div>
           <div style="display:flex;gap:10px;">
@@ -298,6 +360,209 @@
         </div>
       </section>
 
+      <!-- NEW SECTIONS -->
+
+      <!-- ATTENTION REQUIRED -->
+      <section id="sec-attention" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Action <em>Required</em></div></div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Unassigned Projects</div></div>
+          <div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Project</th><th>Client</th><th>Actions</th></tr></thead><tbody id="attUnassignedTbody"></tbody></table></div>
+        </div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Overdue Projects</div></div>
+          <div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Project</th><th>Deadline</th><th>Days Overdue</th><th>Actions</th></tr></thead><tbody id="attOverdueTbody"></tbody></table></div>
+        </div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Awaiting Review</div></div>
+          <div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Project</th><th>Client</th><th>Actions</th></tr></thead><tbody id="attReviewTbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- WORKFLOW TRACKER -->
+      <section id="sec-workflow" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Project <em>Workflow Tracker</em></div></div>
+        <div class="kanban-board" id="kanbanBoard"></div>
+      </section>
+
+      <!-- WORKLOAD MANAGER -->
+      <section id="sec-workload" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Assign &amp; <em>Workload</em></div></div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Editor Workload</div></div>
+          <div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Editor</th><th>Active Projects</th><th>Completed</th><th>Workload</th></tr></thead><tbody id="workloadTbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- TEAM PERFORMANCE -->
+      <section id="sec-performance" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Team <em>Performance</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Editor</th><th>Total Projects</th><th>Completed</th><th>Overdue</th><th>Completion Rate</th></tr></thead><tbody id="performanceTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- REVENUE & PAYMENTS -->
+      <section id="sec-revenue" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Revenue &amp; <em>Payments</em></div></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-card-label">Total Revenue</div><div class="stat-card-value" id="revTotal">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Pending Revenue</div><div class="stat-card-value" id="revPending">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">GST Collected</div><div class="stat-card-value" id="revGST">₹0</div></div>
+        </div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Recent Paid Projects</div></div>
+          <div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Project</th><th>Client</th><th>Amount Paid</th><th>Date</th></tr></thead><tbody id="revProjectsTbody"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- PAYMENT MANAGEMENT -->
+      <section id="sec-payments" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Payment <em>Management</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Client</th><th>Project</th><th>Amount (w/ GST)</th><th>Status</th><th>Actions</th></tr></thead><tbody id="paymentTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- NOTIFICATIONS -->
+      <section id="sec-notifications" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Central <em>Notifications</em></div></div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Send Notification</div></div>
+          <div class="dash-form">
+            <div class="field"><label>Target Client</label><select id="notif-target"><option value="all">All Clients</option></select></div>
+            <div class="field"><label>Title</label><input id="notif-title" type="text" placeholder="Title"/></div>
+            <div class="field"><label>Message</label><textarea id="notif-msg" placeholder="Message"></textarea></div>
+            <button class="btn-gold" id="btnSendNotif">Send Notification</button>
+          </div>
+        </div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Recent Notifications</div></div>
+          <div id="notifList"></div>
+        </div>
+      </section>
+
+      <!-- AUTOMATIONS -->
+      <section id="sec-automations" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Automation <em>Triggers</em></div></div>
+        <div class="dash-card">
+          <div class="dash-form">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-notify client when project status changes</span> <input type="checkbox" id="auto-status" onchange="saveAutomations()"/></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-reminder 24h before deadline</span> <input type="checkbox" id="auto-remind" onchange="saveAutomations()"/></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-welcome email on client signup</span> <input type="checkbox" id="auto-welcome" onchange="saveAutomations()"/></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-notify editor when assigned</span> <input type="checkbox" id="auto-assign" onchange="saveAutomations()"/></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REVISIONS QUEUE -->
+      <section id="sec-revisions" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Master <em>Revisions Queue</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Project</th><th>Client</th><th>Revision Note</th><th>Actions</th></tr></thead><tbody id="revisionsTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- FILE STORAGE -->
+      <section id="sec-storage" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">File &amp; <em>Asset Storage</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Project</th><th>Raw Footage</th><th>Delivery URL</th><th>Actions</th></tr></thead><tbody id="storageTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section id="sec-calendar" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Agency <em>Master Calendar</em></div></div>
+        <div class="dash-card"><div id="calendarList"></div></div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="sec-analytics" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Analytics <em>&amp; Growth</em></div></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-card-label">Total Clients</div><div class="stat-card-value" id="analyticsClients">0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Avg Project Value</div><div class="stat-card-value" id="analyticsAvgValue">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">Completion %</div><div class="stat-card-value" id="analyticsConv">0%</div></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section id="sec-reports" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Reports <em>Generator</em></div></div>
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+          <button class="btn-outline" onclick="generateReport('revenue')">Revenue Report</button>
+          <button class="btn-outline" onclick="generateReport('client')">Client Report</button>
+          <button class="btn-outline" onclick="generateReport('team')">Team Report</button>
+          <button class="btn-outline" onclick="generateReport('gst')">GST Report</button>
+          <button class="btn-gold" onclick="window.print()">Print / Export PDF</button>
+        </div>
+        <div class="report-container" id="reportContainer">Select a report to generate.</div>
+      </section>
+
+      <!-- BOOKINGS -->
+      <section id="sec-bookings" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Booking <em>Requests</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Project</th><th>Service</th><th>Client</th><th>Status</th><th>Actions</th></tr></thead><tbody id="bookingsTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- SERVICES -->
+      <section id="sec-services" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Services <em>&amp; Pricing</em></div></div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Add Service</div></div>
+          <div class="dash-form">
+            <div class="field"><input id="svc-name" type="text" placeholder="Service Name"/></div>
+            <div class="field"><input id="svc-desc" type="text" placeholder="Description"/></div>
+            <div class="field"><input id="svc-price" type="number" placeholder="Price (₹)"/></div>
+            <div class="field"><input id="svc-time" type="text" placeholder="Turnaround Time (e.g. 3 Days)"/></div>
+            <button class="btn-gold" id="btnAddService">Save Service</button>
+          </div>
+        </div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Name</th><th>Description</th><th>Price</th><th>Time</th></tr></thead><tbody id="servicesTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- COUPONS -->
+      <section id="sec-coupons" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Coupons <em>&amp; Discounts</em></div></div>
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Add Coupon</div></div>
+          <div class="dash-form">
+            <div class="field"><input id="cpn-code" type="text" placeholder="CODE (e.g. SAVE20)"/></div>
+            <div class="field"><input id="cpn-disc" type="number" placeholder="Discount %"/></div>
+            <div class="field"><input id="cpn-uses" type="number" placeholder="Max Uses"/></div>
+            <div class="field"><input id="cpn-exp" type="date"/></div>
+            <button class="btn-gold" id="btnAddCoupon">Add Coupon</button>
+          </div>
+        </div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Code</th><th>Discount %</th><th>Remaining Uses</th><th>Expiry</th></tr></thead><tbody id="couponsTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- REVIEWS -->
+      <section id="sec-reviews" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Reviews <em>&amp; Feedback</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Client</th><th>Rating</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead><tbody id="reviewsTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- TICKETS -->
+      <section id="sec-tickets" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Support <em>Tickets</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Subject</th><th>Client</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ticketsTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- CMS -->
+      <section id="sec-cms" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Website <em>CMS Manager</em></div></div>
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+          <button class="tab-btn active" onclick="switchCmsTab('testimonials')">Testimonials</button>
+          <button class="tab-btn" onclick="switchCmsTab('faqs')">FAQs</button>
+          <button class="tab-btn" onclick="switchCmsTab('contact')">Contact Info</button>
+        </div>
+        <div class="dash-card" id="cmsContent">CMS Content Settings goes here.</div>
+      </section>
+
+      <!-- ROLES -->
+      <section id="sec-roles" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Roles <em>&amp; Permissions</em></div></div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>User</th><th>Email</th><th>Current Role</th><th>Change Role</th></tr></thead><tbody id="rolesTbody"></tbody></table></div></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="sec-settings" style="display:none;">
+        <div class="dash-topbar"><div class="dash-page-title">Agency <em>Settings</em></div></div>
+        <div class="dash-card">
+          <div class="dash-form">
+            <div class="field"><label>Agency Name</label><input id="set-name" type="text"/></div>
+            <div class="field"><label>GSTIN</label><input id="set-gst" type="text"/></div>
+            <div class="field"><label>UPI ID</label><input id="set-upi" type="text"/></div>
+            <button class="btn-gold" id="btnSaveSettings">Save Settings</button>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -395,7 +660,7 @@
     const db   = getFirestore(app);
 
     let currentUser = null, activeAdminChatPid = null, adminChatUnsub = null;
-    let projects=[], editors=[], clients=[];
+    let projects=[], editors=[], clients=[], users=[];
 
     function getSecondaryAuth(appName) {
       const existing = getApps().find(a => a.name === appName);
@@ -416,7 +681,7 @@
     function initRealtimeListeners() {
       // Robust Users listener: Any user not explicitly an admin/editor is classified as Client
       onSnapshot(collection(db, 'users'), (snap) => {
-        const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         editors = users.filter(u => u.role === 'editor');
         clients = users.filter(u => u.role !== 'admin' && u.role !== 'editor');
         clients.sort((a, b) => {
@@ -425,6 +690,7 @@
           return tB - tA;
         });
         renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
+        renderWorkload(); renderPerformance(); renderRoles(); renderAnalytics();
       }, (err) => console.error('Users listener error:', err));
 
       // Robust Projects listener: Client-side sorting eliminates missing composite index crashes
@@ -436,6 +702,9 @@
           return tB - tA;
         });
         renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices(); renderChatProjectList();
+        renderAttention(); renderWorkflow(); renderWorkload(); renderPerformance();
+        renderRevenue(); renderPayments(); renderRevisions(); renderStorage();
+        renderCalendar(); renderAnalytics(); renderBookings();
       }, (err) => console.error('Projects listener error:', err));
     }
 
@@ -579,6 +848,10 @@
     function populateBroadcastTargets() {
       const sel = document.getElementById('bc-target');
       sel.innerHTML = '<option value="all">📢 All Clients &amp; Users (Broadcast)</option>' +
+        clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
+        
+      const nSel = document.getElementById('notif-target');
+      nSel.innerHTML = '<option value="all">📢 All Clients</option>' +
         clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
     }
 
@@ -748,28 +1021,13 @@
     });
 
     // ── SYNC MISSING USERS ──
-    // Explanation: Firebase Auth users who signed up but whose Firestore setDoc() failed
-    // (due to security rules) will appear in Firebase Auth but NOT in the admin dashboard.
-    // This button manually creates their Firestore profile so they appear in the clients table.
     document.getElementById('btnSyncMissing').addEventListener('click', async () => {
       const btn = document.getElementById('btnSyncMissing');
       btn.disabled = true;
       btn.textContent = '🔄 Syncing…';
       showToast('Checking for missing user profiles… (this may take a few seconds)', 'success');
-
       try {
-        // Get all existing Firestore user UIDs
-        const existingUids = new Set([...clients, ...editors].map(u => u.id));
-
-        // We cannot list Firebase Auth users from the client side (requires Admin SDK).
-        // BUT: We can check users that we KNOW should have profiles by checking Firestore
-        // for any docs that might have been written without a role field.
-        // The real fix is the Firestore rules (see instructions below in showToast).
-
-        // Show a helpful message with instructions for the admin
         showToast('To fix missing users: Go to Firebase Console → Firestore → Security Rules → Update rules (see Antigravity chat for the rules code). Then ask clients to sign in again — their profile will be auto-created.', 'success');
-
-        // Show instructions banner
         const banner = document.getElementById('syncWarningBanner');
         const text   = document.getElementById('syncWarningText');
         banner.style.display = 'block';
@@ -782,20 +1040,172 @@
       }
     });
 
-    // Auto-detect missing profiles: compare clients count with a sanity check
-    // Show a persistent warning if the dashboard was freshly loaded and clients array changed
-    let prevClientCount = -1;
-    function checkForMissingProfiles() {
-      if (prevClientCount !== -1 && clients.length !== prevClientCount) {
-        // Client count changed — new user detected
-        showToast('New client detected! Dashboard updated in real-time. ✅', 'success');
-      }
-      prevClientCount = clients.length;
+    // NEW SECTIONS JS LOGIC
+    function renderAttention() {
+      const tbU = document.getElementById('attUnassignedTbody');
+      const tbO = document.getElementById('attOverdueTbody');
+      const tbR = document.getElementById('attReviewTbody');
+      
+      const unassigned = projects.filter(p => p.status === 'pending' && !p.editorId);
+      tbU.innerHTML = unassigned.map(p => `<tr><td>${p.title}</td><td>${nameOf(p.clientId)}</td><td><button class="btn-outline btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'')">Assign Editor</button></td></tr>`).join('');
+      
+      const now = new Date();
+      const overdue = projects.filter(p => p.deadline && p.status !== 'done' && new Date(p.deadline.toDate?p.deadline.toDate():p.deadline) < now);
+      tbO.innerHTML = overdue.map(p => `<tr><td>${p.title}</td><td>${dateStr(p.deadline)}</td><td><span style="color:var(--red)">Overdue</span></td><td><button class="btn-outline btn-sm" onclick="showSection('projects')">View</button></td></tr>`).join('');
+      
+      const review = projects.filter(p => p.status === 'review');
+      tbR.innerHTML = review.map(p => `<tr><td>${p.title}</td><td>${nameOf(p.clientId)}</td><td><button class="btn-outline btn-sm" onclick="openAdminChat('${p.id}','${p.title}'); showSection('chat')">View Chat</button></td></tr>`).join('');
     }
 
-    const sections = ['overview','projects','editors','clients','broadcast','chat','invoices'];
+    function renderWorkflow() {
+      const board = document.getElementById('kanbanBoard');
+      const cols = ['pending', 'in_progress', 'review', 'revision', 'done'];
+      board.innerHTML = cols.map(c => `
+        <div class="kanban-column">
+          <h4>${STATUS_LABELS[c]}</h4>
+          ${projects.filter(p => p.status === c).map(p => `
+            <div class="kanban-card" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'${p.editorId||''}')">
+              <div class="kanban-card-title">${p.title || 'Untitled'}</div>
+              <div class="kanban-card-meta">C: ${nameOf(p.clientId)}</div>
+              <div class="kanban-card-meta">E: ${nameOf(p.editorId)}</div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function renderWorkload() {
+      const tb = document.getElementById('workloadTbody');
+      tb.innerHTML = editors.map(e => {
+        const active = projects.filter(p => p.editorId === e.id && p.status !== 'done').length;
+        const comp = projects.filter(p => p.editorId === e.id && p.status === 'done').length;
+        const wl = Math.min(100, active * 10); // arbitrary visually
+        return `<tr><td>${e.name || e.email}</td><td>${active}</td><td>${comp}</td><td><div class="workload-bar-bg"><div class="workload-bar" style="width:${wl}%"></div></div></td></tr>`;
+      }).join('');
+    }
+
+    function renderPerformance() {
+      const tb = document.getElementById('performanceTbody');
+      tb.innerHTML = editors.map(e => {
+        const myP = projects.filter(p => p.editorId === e.id);
+        const comp = myP.filter(p => p.status === 'done').length;
+        const rate = myP.length ? Math.round((comp / myP.length) * 100) : 0;
+        let c = 'var(--red)'; if(rate > 50) c = 'var(--gold)'; if(rate > 80) c = 'var(--green)';
+        return `<tr><td>${e.name || e.email}</td><td>${myP.length}</td><td>${comp}</td><td>0</td>
+          <td><div class="perf-bar" style="width:${rate}%; background:${c}"></div> ${rate}%</td></tr>`;
+      }).join('');
+    }
+
+    function renderRevenue() {
+      const rev = projects.filter(p=>p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
+      const pend = projects.filter(p=>!p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
+      const gst = projects.filter(p=>p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*0.18),0);
+      document.getElementById('revTotal').textContent = '₹'+rev.toLocaleString();
+      document.getElementById('revPending').textContent = '₹'+pend.toLocaleString();
+      document.getElementById('revGST').textContent = '₹'+gst.toLocaleString();
+      
+      const tb = document.getElementById('revProjectsTbody');
+      tb.innerHTML = projects.filter(p=>p.invoicePaid).slice(0,10).map(p => `<tr><td>${p.title}</td><td>${nameOf(p.clientId)}</td><td>₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</td><td>${dateStr(p.deadline)}</td></tr>`).join('');
+    }
+
+    function renderPayments() {
+      const tb = document.getElementById('paymentTbody');
+      const payP = projects.filter(p => p.invoiceAmount > 0);
+      tb.innerHTML = payP.map(p => `<tr><td>${nameOf(p.clientId)}</td><td>${p.title}</td><td>₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</td>
+        <td>${p.invoicePaid ? '<span style="color:var(--green)">Paid</span>' : '<span style="color:var(--red)">Unpaid</span>'}</td>
+        <td>
+          ${!p.invoicePaid ? `<button class="btn-outline btn-sm" onclick="markPaid('${p.id}')">Mark Paid</button>` : ''}
+          <button class="btn-outline btn-sm" onclick="navigator.clipboard.writeText('Pay ₹${Math.round((p.invoiceAmount||0)*1.18)} to nbikram704@okhdfcbank');showToast('Copied!')">Copy UPI</button>
+        </td></tr>`).join('');
+    }
+
+    window.markPaid = async (pid) => {
+      await updateDoc(doc(db, 'projects', pid), { invoicePaid: true });
+      showToast('Marked as paid!');
+    };
+
+    document.getElementById('btnSendNotif').addEventListener('click', async () => {
+      const target = document.getElementById('notif-target').value;
+      const title = document.getElementById('notif-title').value;
+      const msg = document.getElementById('notif-msg').value;
+      await addDoc(collection(db, 'notifications'), { userId: target, title, message: msg, type: 'info', read: false, createdAt: serverTimestamp() });
+      showToast('Notification sent');
+    });
+
+    window.saveAutomations = () => { showToast('Automations updated (simulated)') };
+
+    function renderRevisions() {
+      const tb = document.getElementById('revisionsTbody');
+      const revP = projects.filter(p => p.status === 'revision');
+      tb.innerHTML = revP.map(p => `<tr><td>${p.title}</td><td>${nameOf(p.clientId)}</td><td>${p.revisionNote||'—'}</td>
+        <td>
+          <button class="btn-outline btn-sm" onclick="updateStatus('${p.id}', 'in_progress')">In Progress</button>
+          <button class="btn-gold btn-sm" onclick="updateStatus('${p.id}', 'review')">Done</button>
+        </td></tr>`).join('');
+    }
+    
+    window.updateStatus = async (pid, st) => { await updateDoc(doc(db, 'projects', pid), { status: st }); showToast('Status updated'); }
+
+    function renderStorage() {
+      const tb = document.getElementById('storageTbody');
+      tb.innerHTML = projects.map(p => `<tr><td>${p.title}</td>
+        <td>${p.rawFootage ? `<a href="${p.rawFootage}" target="_blank">Drive</a>` : 'Awaiting'}</td>
+        <td><input type="text" value="${p.deliveryUrl||''}" onblur="updateDel('${p.id}', this.value)" style="background:transparent;border:1px solid var(--border);color:#fff"/></td>
+        <td><button class="btn-outline btn-sm" onclick="showToast('Saved')">Save</button></td></tr>`).join('');
+    }
+    window.updateDel = async (pid, url) => { await updateDoc(doc(db, 'projects', pid), { deliveryUrl: url }); }
+
+    function renderCalendar() {
+      const ls = document.getElementById('calendarList');
+      const withDL = projects.filter(p => p.deadline).sort((a,b) => (a.deadline.toDate?a.deadline.toDate():a.deadline) - (b.deadline.toDate?b.deadline.toDate():b.deadline));
+      ls.innerHTML = withDL.map(p => `<div style="padding:10px; border:1px solid var(--border); margin-bottom:10px; border-radius:6px;">
+        <strong>${p.title}</strong> - ${dateStr(p.deadline)} - ${badge(p.status)}
+      </div>`).join('');
+    }
+
+    function renderAnalytics() {
+      document.getElementById('analyticsClients').textContent = clients.length;
+      document.getElementById('analyticsAvgValue').textContent = '₹' + Math.round(projects.reduce((s,p)=>s+(p.invoiceAmount||0),0)/Math.max(1,projects.length)).toLocaleString();
+      document.getElementById('analyticsConv').textContent = Math.round((projects.filter(p=>p.status==='done').length/Math.max(1,projects.length))*100) + '%';
+    }
+
+    window.generateReport = (type) => {
+      const el = document.getElementById('reportContainer');
+      let html = `<table class="dash-table" style="width:100%">`;
+      if (type === 'revenue') {
+        html += `<thead><tr><th>Project</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>` +
+          projects.filter(p=>p.invoiceAmount>0).map(p=>`<tr><td>${p.title}</td><td>${nameOf(p.clientId)}</td><td>₹${Math.round(p.invoiceAmount*1.18)}</td><td>${p.invoicePaid?'Paid':'Unpaid'}</td></tr>`).join('') + `</tbody>`;
+      } else if (type === 'client') {
+        html += `<thead><tr><th>Client</th><th>Projects</th></tr></thead><tbody>` +
+          clients.map(c=>`<tr><td>${c.name}</td><td>${projects.filter(p=>p.clientId===c.id).length}</td></tr>`).join('') + `</tbody>`;
+      } else { html += `<tr><td>Report type: ${type}</td></tr>`; }
+      html += `</table>`;
+      el.innerHTML = html;
+    };
+
+    function renderBookings() {
+      const tb = document.getElementById('bookingsTbody');
+      tb.innerHTML = projects.filter(p => p.status === 'pending' && p.bookingConfirmed).map(p => `<tr><td>${p.title}</td><td>—</td><td>${nameOf(p.clientId)}</td><td>Pending</td><td><button class="btn-outline btn-sm">Confirm</button></td></tr>`).join('');
+    }
+
+    function renderRoles() {
+      const tb = document.getElementById('rolesTbody');
+      tb.innerHTML = users.map(u => `<tr><td>${u.name||u.email}</td><td>${u.email}</td><td>${u.role||'client'}</td>
+        <td><select onchange="updateRole('${u.id}', this.value)"><option value="client" ${u.role==='client'?'selected':''}>Client</option><option value="editor" ${u.role==='editor'?'selected':''}>Editor</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select></td></tr>`).join('');
+    }
+    window.updateRole = async (uid, r) => { await updateDoc(doc(db, 'users', uid), { role: r }); showToast('Role updated'); }
+
+    // Section Routing
+    const sections = ['overview','projects','editors','clients','broadcast','chat','invoices',
+      'attention','workflow','workload','performance','revenue','payments','notifications','automations',
+      'revisions','storage','calendar','analytics','reports','bookings','services','coupons',
+      'reviews','tickets','cms','roles','settings'];
+      
     function showSection(name) {
-      sections.forEach(s=>{ document.getElementById('sec-'+s).style.display = s===name?'block':'none'; });
+      sections.forEach(s=>{ 
+        const el = document.getElementById('sec-'+s);
+        if(el) el.style.display = s===name?'block':'none'; 
+      });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.section===name));
     }
     window.showSection = showSection;
@@ -814,7 +1224,6 @@
       const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast '+type+' show';
       setTimeout(()=>t.classList.remove('show'), 3500);
     }
-    // Sidebar handled by overlay JS below
   
     // Sidebar overlay for mobile
     const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -854,35 +1263,26 @@
     // Push notif when new client registers
     let _prevClientCount = -1;
     const _origRenderClients = renderClients;
-    function renderClientsWrapped() {
+    window.renderClientsWrapped = function() {
       _origRenderClients();
       if (_prevClientCount >= 0 && clients.length > _prevClientCount) {
         const newest = clients[0];
         showPushNotif('🆕', 'New Client Registered!', (newest.name || newest.email) + ' just created an account.');
       }
       _prevClientCount = clients.length;
-    }
+    };
   </script>
 
   <!-- BOTTOM NAVIGATION (Mobile) -->
   <nav class="bottom-nav" id="adminBottomNav">
-    <div class="bottom-nav-item active" id="bnav-overview" onclick="showSection('overview');setActiveBottomNav('bnav-overview')">
-      <span class="bnav-icon">📊</span>Overview
-    </div>
-    <div class="bottom-nav-item" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')">
-      <span class="bnav-icon">📁</span>Projects
-    </div>
-    <div class="bottom-nav-item" id="bnav-clients" onclick="showSection('clients');setActiveBottomNav('bnav-clients')">
-      <span class="bnav-icon">👤</span>Clients
-    </div>
-    <div class="bottom-nav-item" id="bnav-chat" onclick="showSection('chat');setActiveBottomNav('bnav-chat')">
-      <span class="bnav-icon">💬</span>Chat
-    </div>
-    <div class="bottom-nav-item" id="bnav-invoices" onclick="showSection('invoices');setActiveBottomNav('bnav-invoices')">
-      <span class="bnav-icon">💰</span>Finance
-    </div>
+    <div class="bottom-nav-item active" id="bnav-overview" onclick="showSection('overview');setActiveBottomNav('bnav-overview')"><span class="bnav-icon">📊</span>Overview</div>
+    <div class="bottom-nav-item" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')"><span class="bnav-icon">📁</span>Projects</div>
+    <div class="bottom-nav-item" id="bnav-clients" onclick="showSection('clients');setActiveBottomNav('bnav-clients')"><span class="bnav-icon">👤</span>Clients</div>
+    <div class="bottom-nav-item" id="bnav-revenue" onclick="showSection('revenue');setActiveBottomNav('bnav-revenue')"><span class="bnav-icon">💰</span>Finance</div>
+    <div class="bottom-nav-item" id="bnav-settings" onclick="showSection('settings');setActiveBottomNav('bnav-settings')"><span class="bnav-icon">⚙️</span>Settings</div>
   </nav>
-    <script>
+
+  <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('../sw.js')
         .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
@@ -931,7 +1331,7 @@
       storageBucket: "editzaar-fa8d9.appspot.com",
       messagingSenderId: "419930711716",
       appId: "1:419930711716:web:b1504f651e397a14726831"
-    }, 'fcm-instance');
+    }, 'fcm-instance-admin');
 
     const _messaging = getMessaging(_fcmApp);
     const _auth = getAuth(_fcmApp);

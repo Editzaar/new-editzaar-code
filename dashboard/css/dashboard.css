@@ -2033,3 +2033,114 @@ html[data-theme="light"] body,
   color: #111116 !important;
   font-weight: 600 !important;
 }
+
+/* ============================================================
+   DASHBOARD v150.0 — FULL 44-SECTION EXPANSION STYLES
+   ============================================================ */
+
+/* Kanban Board */
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+.kanban-col {
+  min-width: 250px;
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.kanban-col-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.kanban-card {
+  background: var(--bg-card2);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 14px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.kanban-card:hover {
+  border-color: var(--gold-border);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+/* Workload Progress Meter */
+.workload-meter {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.workload-meter-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--gold);
+  transition: width 0.3s;
+}
+
+/* Action Required & Attention Cards */
+.action-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--r);
+  background: var(--bg-card);
+  border: 1px solid var(--gold-border);
+  margin-bottom: 12px;
+}
+.action-card.urgent {
+  border-color: rgba(255, 95, 87, 0.4);
+  background: rgba(255, 95, 87, 0.05);
+}
+
+/* Tab Navigation */
+.dash-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.dash-tab-btn {
+  background: none;
+  border: none;
+  color: var(--t2);
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-family: var(--font-b);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.dash-tab-btn:hover {
+  color: var(--t1);
+}
+.dash-tab-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  font-weight: 600;
+}
+
