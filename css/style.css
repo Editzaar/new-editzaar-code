@@ -146,6 +146,9 @@ nav {
 
 .nav-cta-mobile { display: none; }
 
+/* ── Hide the duplicate mobile-install-link on desktop; shows only in mobile menu ── */
+.mobile-install-link { display: none !important; }
+
 .nav-cta {
   font-size: 10px;
   letter-spacing: 0.16em;
@@ -2579,6 +2582,7 @@ html[data-theme="light"] body,
   }
 
   .nav-links .mobile-install-link {
+    display: flex !important;
     background: rgba(255, 184, 0, 0.08) !important;
     border: 1px dashed rgba(255, 184, 0, 0.40) !important;
     color: #FFB800 !important;
@@ -2623,6 +2627,7 @@ html[data-theme="light"] body,
   }
 
   [data-theme="light"] .nav-links .mobile-install-link {
+    display: flex !important;
     background: rgba(184, 130, 0, 0.08) !important;
     border: 1px dashed rgba(184, 130, 0, 0.40) !important;
     color: #b88200 !important;
@@ -2639,7 +2644,7 @@ html[data-theme="light"] body,
 }
 
 /* ============================================================
-   LIGHT MODE DEEP BLUE HEADLINE & HIGH VISIBILITY OVERRIDES (v100.0)
+   LIGHT MODE GOLDEN HEADLINE OVERRIDES
    ============================================================ */
 [data-theme="light"] .hv2-headline,
 [data-theme="light"] .hv2-headline *,
@@ -2649,15 +2654,18 @@ html[data-theme="light"] body,
 [data-theme="light"] .typing-wrap *,
 [data-theme="light"] .srv-hero-h1,
 [data-theme="light"] .srv-hero-h1 * {
-  color: #0A2540 !important;
+  color: #b88200 !important;
+  -webkit-text-fill-color: #b88200 !important;
+  background: none !important;
 }
 
 [data-theme="light"] .hv2-headline .gold-italic,
 [data-theme="light"] .srv-hero-h1 em,
 [data-theme="light"] .gold-italic {
   color: #b88200 !important;
+  -webkit-text-fill-color: #b88200 !important;
 }
 
 [data-theme="light"] .cursor-blink {
-  border-right-color: #0A2540 !important;
+  border-right-color: #b88200 !important;
 }
