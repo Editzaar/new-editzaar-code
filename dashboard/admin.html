@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=230.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=230.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=240.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=240.0"/>
 
   <style>
     .modal-overlay {
@@ -153,7 +153,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=230.0"></script>
+  <script src="../js/theme.js?v=240.0"></script>
 </head>
 <body>
 
@@ -707,69 +707,134 @@
 
   <!-- MODAL: STAFF PERMISSIONS MANAGER -->
   <div class="modal-overlay" id="modalStaffPermissions">
-    <div class="modal-box" style="max-width: 580px;">
+    <div class="modal-box" style="max-width: 620px; max-height: 88vh; overflow-y: auto;">
       <button class="modal-close" data-close="modalStaffPermissions">✕</button>
-      <div class="modal-title" style="margin-bottom: 6px;">Staff Permissions &amp; Feature Access</div>
-      <div style="font-size: 0.88rem; color: var(--t2); margin-bottom: 18px;" id="permStaffHeader">Configure permissions for staff member</div>
+      <div class="modal-title" style="margin-bottom: 4px;">Staff Permissions &amp; Feature Access</div>
+      <div style="font-size: 0.88rem; color: var(--t2); margin-bottom: 16px;" id="permStaffHeader">Configure permissions for staff member</div>
 
-      <div id="permAdminNotice" style="display:none;background:rgba(40,200,64,0.1);border:1px solid rgba(40,200,64,0.3);padding:12px 16px;border-radius:8px;margin-bottom:18px;color:var(--green);font-size:0.88rem;">
+      <div id="permAdminNotice" style="display:none;background:rgba(40,200,64,0.1);border:1px solid rgba(40,200,64,0.3);padding:12px 16px;border-radius:8px;margin-bottom:16px;color:var(--green);font-size:0.88rem;">
         👑 <strong>Administrator Account:</strong> This user has master access to all 27 dashboard sections and full agency controls.
       </div>
 
-      <div class="dash-form" id="permFormContainer">
-        <input type="hidden" id="permUid"/>
+      <!-- Quick Preset Actions -->
+      <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+        <button type="button" class="btn-outline btn-sm" onclick="setAllPerms(true)" style="font-size:10px;">⚡ Select All (Full Access)</button>
+        <button type="button" class="btn-outline btn-sm" onclick="setFreelancePreset()" style="font-size:10px;">🛡️ Freelancer Preset (Protected)</button>
+        <button type="button" class="btn-outline btn-sm" onclick="setAllPerms(false)" style="font-size:10px;">🚫 Deselect All</button>
+      </div>
 
-        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
-          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-            <input type="checkbox" id="perm-viewAll" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
-            <div>
-              <strong style="color:var(--t1);font-size:0.92rem;">📁 View All Agency Projects</strong>
-              <div style="font-size:0.8rem;color:var(--t2);">If unchecked, editor only sees projects assigned strictly to them.</div>
-            </div>
-          </label>
+      <input type="hidden" id="permUid"/>
 
-          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-            <input type="checkbox" id="perm-viewContact" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
-            <div>
-              <strong style="color:var(--t1);font-size:0.92rem;">👤 View Client Real Contact Details</strong>
-              <div style="font-size:0.8rem;color:var(--t2);">If unchecked, client phone number, email, and identity are anonymized.</div>
-            </div>
-          </label>
-
-          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-            <input type="checkbox" id="perm-maskChat" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
-            <div>
-              <strong style="color:var(--t1);font-size:0.92rem;">🔒 Anti-Poaching Chat Contact Masking</strong>
-              <div style="font-size:0.8rem;color:var(--t2);">Automatically blurs/hides phone numbers, WhatsApp, and email addresses in chat.</div>
-            </div>
-          </label>
-
-          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-            <input type="checkbox" id="perm-viewFin" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
-            <div>
-              <strong style="color:var(--t1);font-size:0.92rem;">💰 View Invoices &amp; Pricing Financials</strong>
-              <div style="font-size:0.8rem;color:var(--t2);">Allow viewing project amounts, revenue totals, and GST invoice data.</div>
-            </div>
-          </label>
-
-          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-            <input type="checkbox" id="perm-assignProj" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
-            <div>
-              <strong style="color:var(--t1);font-size:0.92rem;">👥 Assign &amp; Delegate Projects to Other Staff</strong>
-              <div style="font-size:0.8rem;color:var(--t2);">Allow selecting and delegating editors on project cards.</div>
-            </div>
-          </label>
-
-          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-            <input type="checkbox" id="perm-editDeadline" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
-            <div>
-              <strong style="color:var(--t1);font-size:0.92rem;">📅 Change &amp; Reschedule Deadlines</strong>
-              <div style="font-size:0.8rem;color:var(--t2);">Allow editing estimated delivery dates on projects.</div>
-            </div>
-          </label>
+      <!-- Category 1: Project & Workflow -->
+      <div class="perm-category-header">📁 Project &amp; Workflow Permissions</div>
+      
+      <label class="perm-card">
+        <input type="checkbox" id="perm-viewAll" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">View All Agency Projects</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">If unchecked, editor only sees projects assigned strictly to them.</span>
         </div>
+      </label>
 
-        <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSavePermissions">Save Staff Permissions ✅</button>
+      <label class="perm-card">
+        <input type="checkbox" id="perm-assignProj" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Assign &amp; Delegate Projects to Other Staff</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow selecting and assigning editors on project cards.</span>
+        </div>
+      </label>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-editDeadline" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Change &amp; Reschedule Deadlines</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow modifying estimated delivery dates on projects.</span>
+        </div>
+      </label>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-updateStatus" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Update Project Progress Status</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow marking projects In Progress, Client Review, Revision, or Done.</span>
+        </div>
+      </label>
+
+      <!-- Category 2: Client Privacy & Protection -->
+      <div class="perm-category-header">🔒 Client Privacy &amp; Anti-Poaching</div>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-viewContact" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">View Client Real Contact Details (Phone &amp; Email)</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">If unchecked, client phone number, email, and identity are anonymized.</span>
+        </div>
+      </label>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-maskChat" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Anti-Poaching Chat Contact Masking</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Automatically blurs/hides phone numbers, WhatsApp, and email addresses in chat.</span>
+        </div>
+      </label>
+
+      <!-- Category 3: Financials & Commercial -->
+      <div class="perm-category-header">💰 Financials, Pricing &amp; Billing</div>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-viewFin" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">View Invoices, Pricing &amp; Revenue</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow viewing project amounts, revenue totals, and GST invoice data.</span>
+        </div>
+      </label>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-manageCoupons" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Manage Discount Coupons &amp; Offers</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow generating discount coupons and promo codes for clients.</span>
+        </div>
+      </label>
+
+      <!-- Category 4: Operations & Control -->
+      <div class="perm-category-header">⚙️ Operations &amp; Agency Management</div>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-accessWorkflow" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Access Master Workflow &amp; Revisions Queue</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow viewing the Kanban board and agency-wide revision tickets.</span>
+        </div>
+      </label>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-accessStorage" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Access Agency Cloud Storage &amp; Asset Library</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow accessing raw footage drives and central deliverable links.</span>
+        </div>
+      </label>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-accessTickets" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Support Desk &amp; Ticket Resolution</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow viewing and replying to client support inquiries.</span>
+        </div>
+      </label>
+
+      <label class="perm-card">
+        <input type="checkbox" id="perm-accessCMS" class="perm-checkbox"/>
+        <div>
+          <strong style="color:var(--t1);font-size:0.9rem;display:block;margin-bottom:2px;">Website CMS &amp; Testimonial Manager</strong>
+          <span style="font-size:0.8rem;color:var(--t2);line-height:1.4;display:block;">Allow modifying public website FAQs, reviews, and services text.</span>
+        </div>
+      </label>
+
+      <div style="margin-top:24px;">
+        <button class="btn-gold" style="width:100%;justify-content:center;padding:12px;font-size:12px;" id="btnSavePermissions">Save Staff Permissions ✅</button>
       </div>
     </div>
   </div>
@@ -1584,6 +1649,32 @@
       }).join('');
     }
 
+    window.setAllPerms = (state) => {
+      ['perm-viewAll', 'perm-assignProj', 'perm-editDeadline', 'perm-updateStatus',
+       'perm-viewContact', 'perm-viewFin', 'perm-manageCoupons',
+       'perm-accessWorkflow', 'perm-accessStorage', 'perm-accessTickets', 'perm-accessCMS'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.checked = state;
+      });
+      const maskEl = document.getElementById('perm-maskChat');
+      if (maskEl) maskEl.checked = !state; // Anti-poaching mask inverted for full access
+    };
+
+    window.setFreelancePreset = () => {
+      document.getElementById('perm-viewAll').checked = false;
+      document.getElementById('perm-assignProj').checked = false;
+      document.getElementById('perm-editDeadline').checked = true;
+      document.getElementById('perm-updateStatus').checked = true;
+      document.getElementById('perm-viewContact').checked = false;
+      document.getElementById('perm-maskChat').checked = true;
+      document.getElementById('perm-viewFin').checked = false;
+      document.getElementById('perm-manageCoupons').checked = false;
+      document.getElementById('perm-accessWorkflow').checked = false;
+      document.getElementById('perm-accessStorage').checked = false;
+      document.getElementById('perm-accessTickets').checked = false;
+      document.getElementById('perm-accessCMS').checked = false;
+    };
+
     window.openStaffPermissions = (uid) => {
       const u = users.find(x => x.id === uid);
       if (!u) return;
@@ -1598,11 +1689,17 @@
       const p = u.permissions || {};
 
       document.getElementById('perm-viewAll').checked = p.viewAll !== undefined ? p.viewAll : (isAdmin || isManager);
+      document.getElementById('perm-assignProj').checked = p.assignProj !== undefined ? p.assignProj : (isAdmin || isManager);
+      document.getElementById('perm-editDeadline').checked = p.editDeadline !== undefined ? p.editDeadline : true;
+      document.getElementById('perm-updateStatus').checked = p.updateStatus !== undefined ? p.updateStatus : true;
       document.getElementById('perm-viewContact').checked = p.viewContact !== undefined ? p.viewContact : (isAdmin || isManager);
       document.getElementById('perm-maskChat').checked = p.maskChat !== undefined ? p.maskChat : (!isAdmin && !isManager);
       document.getElementById('perm-viewFin').checked = p.viewFin !== undefined ? p.viewFin : isAdmin;
-      document.getElementById('perm-assignProj').checked = p.assignProj !== undefined ? p.assignProj : (isAdmin || isManager);
-      document.getElementById('perm-editDeadline').checked = p.editDeadline !== undefined ? p.editDeadline : true;
+      document.getElementById('perm-manageCoupons').checked = p.manageCoupons !== undefined ? p.manageCoupons : (isAdmin || isManager);
+      document.getElementById('perm-accessWorkflow').checked = p.accessWorkflow !== undefined ? p.accessWorkflow : (isAdmin || isManager);
+      document.getElementById('perm-accessStorage').checked = p.accessStorage !== undefined ? p.accessStorage : (isAdmin || isManager);
+      document.getElementById('perm-accessTickets').checked = p.accessTickets !== undefined ? p.accessTickets : (isAdmin || isManager);
+      document.getElementById('perm-accessCMS').checked = p.accessCMS !== undefined ? p.accessCMS : isAdmin;
 
       openModal('modalStaffPermissions');
     };
@@ -1613,11 +1710,17 @@
 
       const permissions = {
         viewAll: document.getElementById('perm-viewAll').checked,
+        assignProj: document.getElementById('perm-assignProj').checked,
+        editDeadline: document.getElementById('perm-editDeadline').checked,
+        updateStatus: document.getElementById('perm-updateStatus').checked,
         viewContact: document.getElementById('perm-viewContact').checked,
         maskChat: document.getElementById('perm-maskChat').checked,
         viewFin: document.getElementById('perm-viewFin').checked,
-        assignProj: document.getElementById('perm-assignProj').checked,
-        editDeadline: document.getElementById('perm-editDeadline').checked,
+        manageCoupons: document.getElementById('perm-manageCoupons').checked,
+        accessWorkflow: document.getElementById('perm-accessWorkflow').checked,
+        accessStorage: document.getElementById('perm-accessStorage').checked,
+        accessTickets: document.getElementById('perm-accessTickets').checked,
+        accessCMS: document.getElementById('perm-accessCMS').checked,
         updatedAt: serverTimestamp()
       };
 
