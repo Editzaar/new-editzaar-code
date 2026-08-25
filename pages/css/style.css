@@ -146,6 +146,9 @@ nav {
 
 .nav-cta-mobile { display: none; }
 
+/* ── Hide the duplicate mobile-install-link on desktop; shows only in mobile menu ── */
+.mobile-install-link { display: none !important; }
+
 .nav-cta {
   font-size: 10px;
   letter-spacing: 0.16em;
@@ -2579,6 +2582,7 @@ html[data-theme="light"] body,
   }
 
   .nav-links .mobile-install-link {
+    display: flex !important;
     background: rgba(255, 184, 0, 0.08) !important;
     border: 1px dashed rgba(255, 184, 0, 0.40) !important;
     color: #FFB800 !important;
@@ -2623,6 +2627,7 @@ html[data-theme="light"] body,
   }
 
   [data-theme="light"] .nav-links .mobile-install-link {
+    display: flex !important;
     background: rgba(184, 130, 0, 0.08) !important;
     border: 1px dashed rgba(184, 130, 0, 0.40) !important;
     color: #b88200 !important;
@@ -2639,7 +2644,7 @@ html[data-theme="light"] body,
 }
 
 /* ============================================================
-   LIGHT MODE DEEP BLUE HEADLINE & HIGH VISIBILITY OVERRIDES (v100.0)
+   LIGHT MODE GOLDEN HEADLINE OVERRIDES
    ============================================================ */
 [data-theme="light"] .hv2-headline,
 [data-theme="light"] .hv2-headline *,
@@ -2649,15 +2654,174 @@ html[data-theme="light"] body,
 [data-theme="light"] .typing-wrap *,
 [data-theme="light"] .srv-hero-h1,
 [data-theme="light"] .srv-hero-h1 * {
-  color: #0A2540 !important;
+  color: #b88200 !important;
+  -webkit-text-fill-color: #b88200 !important;
+  background: none !important;
 }
 
 [data-theme="light"] .hv2-headline .gold-italic,
 [data-theme="light"] .srv-hero-h1 em,
 [data-theme="light"] .gold-italic {
   color: #b88200 !important;
+  -webkit-text-fill-color: #b88200 !important;
 }
 
 [data-theme="light"] .cursor-blink {
-  border-right-color: #0A2540 !important;
+  border-right-color: #b88200 !important;
+}
+
+
+/* ============================================================
+   ULTRA-COMPACT MOBILE CAROUSEL & ANIMATED UI (v130.0)
+   Fixes giant mobile cards. Makes process steps & cards compact,
+   swipeable, and animated on mobile devices (< 768px).
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ── 1. Process Grid -> Horizontal Animated Swipe Carousel ── */
+  .process-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 14px !important;
+    padding: 10px 4px 20px 4px !important;
+    margin-bottom: 20px !important;
+    scrollbar-width: none !important; /* Hide scrollbar Firefox */
+  }
+
+  .process-grid::-webkit-scrollbar {
+    display: none !important; /* Hide scrollbar Chrome/Safari */
+  }
+
+  /* ── 2. Compact Sleek Process Cards ── */
+  .pstep {
+    flex: 0 0 84vw !important;
+    max-width: 320px !important;
+    scroll-snap-align: center !important;
+    padding: 22px 18px !important;
+    border-radius: 16px !important;
+    margin-bottom: 0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.10) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  /* Compact Card Numbers */
+  .pnum {
+    font-size: 2.2rem !important;
+    line-height: 1 !important;
+    margin-bottom: 12px !important;
+    color: var(--gold) !important;
+    font-weight: 700 !important;
+    opacity: 0.9 !important;
+  }
+
+  .pname {
+    font-size: 1.15rem !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+    line-height: 1.25 !important;
+  }
+
+  .pdesc {
+    font-size: 0.85rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Card Top Accent Glow Bar */
+  .pstep::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, var(--gold) 0%, transparent 100%) !important;
+  }
+
+  /* ── 3. Compact Service Blocks & Deliverable Cards ── */
+  .srv-block {
+    padding: 22px 16px !important;
+    border-radius: 16px !important;
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .srv-block-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .srv-block-desc {
+    font-size: 0.88rem !important;
+    margin-bottom: 16px !important;
+    line-height: 1.6 !important;
+  }
+
+  .srv-deliv-item {
+    padding: 10px 14px !important;
+    font-size: 0.82rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* ── 4. Compact Pricing Cards ── */
+  .pricing-card {
+    padding: 24px 18px !important;
+    border-radius: 16px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .pc-price {
+    font-size: 2.2rem !important;
+  }
+
+  .pc-name {
+    font-size: 1.25rem !important;
+  }
+
+  /* ── 5. Compact Hero Section Adjustments ── */
+  .hv2-left {
+    padding: 44px 18px 30px !important;
+  }
+
+  .hv2-headline {
+    font-size: clamp(2.4rem, 8.5vw, 3.2rem) !important;
+    margin-bottom: 20px !important;
+    line-height: 1.1 !important;
+  }
+
+  .hv2-sub {
+    font-size: 0.92rem !important;
+    margin-bottom: 28px !important;
+    line-height: 1.6 !important;
+  }
+
+  .hv2-btns {
+    gap: 10px !important;
+    margin-bottom: 32px !important;
+  }
+
+  .hv2-btns .btn-g,
+  .hv2-btns .btn-gold {
+    padding: 12px 20px !important;
+    font-size: 0.85rem !important;
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !alignment;
+  }
+}
+
+/* Subtle Animated Floating Effect for Badges */
+@keyframes cardFloatPulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.pstep:hover .pnum {
+  animation: cardFloatPulse 2s ease-in-out infinite;
 }
