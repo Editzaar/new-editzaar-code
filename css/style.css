@@ -2825,3 +2825,61 @@ html[data-theme="light"] body,
 .pstep:hover .pnum {
   animation: cardFloatPulse 2s ease-in-out infinite;
 }
+
+
+/* ============================================================
+   LUXURY LIGHT MODE PRICING BANNER REDESIGN (v140.0)
+   Replaces dark box in Light Mode with a crisp gold-accented glass card.
+   Zero impact on Dark Mode or any other section.
+   ============================================================ */
+
+[data-theme="light"] .pricing-cta-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #fffdf5 100%) !important;
+  border: 1px solid rgba(184, 130, 0, 0.28) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 0 30px rgba(184, 130, 0, 0.10) !important;
+  transition: all 0.35s ease !important;
+}
+
+[data-theme="light"] .pricing-cta-banner:hover {
+  border-color: #b88200 !important;
+  box-shadow: 0 30px 65px rgba(0, 0, 0, 0.12), 0 0 45px rgba(184, 130, 0, 0.22) !important;
+  transform: translateY(-4px) !important;
+}
+
+[data-theme="light"] .pricing-cta-banner h2 {
+  color: #0A2540 !important;
+}
+
+[data-theme="light"] .pricing-cta-banner h2 em {
+  color: #b88200 !important;
+}
+
+[data-theme="light"] .pricing-cta-banner p {
+  color: #2D3748 !important;
+}
+
+[data-theme="light"] .pricing-cta-banner div[style*="PRICING PLANS"],
+[data-theme="light"] .pricing-cta-banner div[style*="Pricing Plans"] {
+  color: #b88200 !important;
+}
+
+[data-theme="light"] .pricing-cta-banner .btn-p {
+  background: linear-gradient(135deg, #b88200 0%, #9e7000 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(184, 130, 0, 0.35) !important;
+  font-weight: 700 !important;
+  transition: all 0.25s ease !important;
+}
+
+[data-theme="light"] .pricing-cta-banner .btn-p:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 30px rgba(184, 130, 0, 0.45) !important;
+}
+
+[data-theme="light"] .pricing-cta-banner .tbadge {
+  background: rgba(184, 130, 0, 0.08) !important;
+  border: 1px solid rgba(184, 130, 0, 0.28) !important;
+  color: #111116 !important;
+  font-weight: 600 !important;
+}

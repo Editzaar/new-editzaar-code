@@ -35,8 +35,7 @@
     /* Cursor Blink */
     'html[data-theme="light"] .cursor-blink { border-right: 2px solid ' + LIGHT_GOLD + ' !important; color: transparent !important; }',
     /* Preserved Dark Sections */
-    'html[data-theme="light"] .pricing-cta-banner, html[data-theme="light"] .pricing-cta-banner * { color: #fff !important; }',
-    'html[data-theme="light"] .hv2-right *, html[data-theme="light"] .hv2-right { color: #fff !important; }',
+        'html[data-theme="light"] .hv2-right *, html[data-theme="light"] .hv2-right { color: #fff !important; }',
     'html[data-theme="light"] footer, html[data-theme="light"] footer * { color: rgba(255,255,255,0.7) !important; }',
     'html[data-theme="light"] footer h3, html[data-theme="light"] footer .footer-logo { color: #fff !important; }',
     'html[data-theme="light"] .btn-gold, html[data-theme="light"] .btn-gold * { color: #000 !important; }'
