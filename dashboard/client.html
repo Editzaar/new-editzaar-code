@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=170.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=170.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=180.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=180.0"/>
 
   <style>
     .welcome-banner {
@@ -176,7 +176,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=170.0"></script>
+  <script src="../js/theme.js?v=180.0"></script>
 </head>
 <body>
 
@@ -936,9 +936,10 @@
     }
     
     window.saveRawFile = async (pid) => {
-      const val = document.getElementById('fraw-'+pid).value.trim();
+      let val = document.getElementById('fraw-'+pid).value.trim();
+      if (val && !/^https?:\/\//i.test(val)) val = 'https://' + val;
       await updateDoc(doc(db,'projects',pid), { rawFootageUrl: val });
-      showToast('File link saved','success');
+      showToast('File link saved! ✅','success');
     };
     
     function renderRevisions(projects) {
@@ -1217,11 +1218,21 @@
       document.getElementById('detailStatus').innerHTML     = badge(currentProject.status);
       renderTimeline(currentProject.status);
 
+      function formatExternalUrl(url) {
+        if (!url) return '';
+        url = url.trim();
+        if (!/^https?:\/\//i.test(url)) {
+          return 'https://' + url;
+        }
+        return url;
+      }
+
       const footInput = document.getElementById('rawFootageInput');
       const footDisp  = document.getElementById('footageLinkDisplay');
       if (currentProject.rawFootageUrl) {
+        const rawHref = formatExternalUrl(currentProject.rawFootageUrl);
         footInput.value = currentProject.rawFootageUrl;
-        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
+        footDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${rawHref}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
       } else {
         footInput.value = '';
         footDisp.innerHTML = '<span style="color:var(--t3);">No drive link saved yet. Paste your Google Drive link above!</span>';
@@ -1229,8 +1240,9 @@
       
       const delivSec = document.getElementById('deliverySection');
       if(currentProject.deliveryUrl) {
+        const delHref = formatExternalUrl(currentProject.deliveryUrl);
         delivSec.style.display = 'block';
-        document.getElementById('deliveryDownloadBtn').href = currentProject.deliveryUrl;
+        document.getElementById('deliveryDownloadBtn').href = delHref;
       } else {
         delivSec.style.display = 'none';
       }
@@ -1258,11 +1270,12 @@
     }
 
     document.getElementById('btnSaveFootageLink').addEventListener('click', async ()=>{
-      const url = document.getElementById('rawFootageInput').value.trim();
+      let url = document.getElementById('rawFootageInput').value.trim();
       if (!url || !currentProject) { showToast('Please enter a valid link.','error'); return; }
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
       await updateDoc(doc(db,'projects',currentProject.id),{ rawFootageUrl: url });
       currentProject.rawFootageUrl = url;
-      document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Link ↗</a>`;
+      document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
       showToast('Footage link saved! ✅','success');
     });
 

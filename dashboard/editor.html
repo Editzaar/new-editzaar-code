@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=170.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=170.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=180.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=180.0"/>
   <style>
     .link-input-box {
       background: rgba(255,255,255,0.03);
@@ -27,7 +27,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=170.0"></script>
+  <script src="../js/theme.js?v=180.0"></script>
 </head>
 <body>
 
@@ -257,21 +257,29 @@
       document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
       document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
       document.getElementById('detailClient').innerHTML     = `<span style="color:var(--gold);font-weight:600;">Client Ref #${currentProject.id.substring(0,6).toUpperCase()} (Privacy Protected)</span>`;
-      document.getElementById('detailDeadline').textContent = dateStr(currentProject.deadline);
-      document.getElementById('detailStatus').innerHTML     = badge(currentProject.status);
+      function formatExternalUrl(url) {
+        if (!url) return '';
+        url = url.trim();
+        if (!/^https?:\/\//i.test(url)) {
+          return 'https://' + url;
+        }
+        return url;
+      }
 
       // Raw footage view
       const rawEl = document.getElementById('rawFootageLink');
       if (currentProject.rawFootageUrl) {
-        rawEl.innerHTML = `<span style="color:var(--green);">✓ Link saved by client:</span> <a href="${currentProject.rawFootageUrl}" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:underline;">Open Raw Footage Drive Link ↗</a>`;
+        const rawHref = formatExternalUrl(currentProject.rawFootageUrl);
+        rawEl.innerHTML = `<span style="color:var(--green);">✓ Link saved by client:</span> <a href="${rawHref}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:600;text-decoration:underline;">Open Raw Footage Drive Link ↗</a>`;
       } else { rawEl.textContent = 'No drive link provided by client yet.'; }
 
       // Delivery link view/input
       const delInput = document.getElementById('deliveryLinkInput');
       const delDisp  = document.getElementById('deliveryLinkDisplay');
       if (currentProject.deliveryUrl) {
+        const delHref = formatExternalUrl(currentProject.deliveryUrl);
         delInput.value = currentProject.deliveryUrl;
-        delDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${currentProject.deliveryUrl}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
+        delDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${delHref}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
       } else {
         delInput.value = '';
         delDisp.innerHTML = '<span style="color:var(--t3);">No delivery link saved yet.</span>';
@@ -283,13 +291,14 @@
 
     /* Save Final Delivery Link */
     document.getElementById('btnSaveDeliveryLink').addEventListener('click', async ()=>{
-      const url = document.getElementById('deliveryLinkInput').value.trim();
+      let url = document.getElementById('deliveryLinkInput').value.trim();
       if (!url || !currentProject) { showToast('Please enter a valid link.','error'); return; }
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
       await updateDoc(doc(db,'projects',currentProject.id),{ deliveryUrl: url, status: 'review' });
       currentProject.deliveryUrl = url;
       currentProject.status = 'review';
       document.getElementById('detailStatus').innerHTML = badge('review');
-      document.getElementById('deliveryLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
+      document.getElementById('deliveryLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
       showToast('Delivery link saved & status updated to In Review! ✅','success');
     });
 

@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=170.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=170.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=180.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=180.0"/>
 
   <style>
     .modal-overlay {
@@ -118,7 +118,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=170.0"></script>
+  <script src="../js/theme.js?v=180.0"></script>
 </head>
 <body>
 
@@ -1367,16 +1367,29 @@
         </td></tr>`).join('');
     }
     
-    window.updateStatus = async (pid, st) => { await updateDoc(doc(db, 'projects', pid), { status: st }); showToast('Status updated'); }
+    function formatExternalUrl(url) {
+      if (!url) return '';
+      url = url.trim();
+      if (!/^https?:\/\//i.test(url)) return 'https://' + url;
+      return url;
+    }
 
     function renderStorage() {
       const tb = document.getElementById('storageTbody');
-      tb.innerHTML = projects.map(p => `<tr><td>${p.title}</td>
-        <td>${p.rawFootage ? `<a href="${p.rawFootage}" target="_blank">Drive</a>` : 'Awaiting'}</td>
-        <td><input type="text" value="${p.deliveryUrl||''}" onblur="updateDel('${p.id}', this.value)" style="background:transparent;border:1px solid var(--border);color:#fff"/></td>
-        <td><button class="btn-outline btn-sm" onclick="showToast('Saved')">Save</button></td></tr>`).join('');
+      tb.innerHTML = projects.map(p => {
+        const raw = p.rawFootageUrl || p.rawFootage;
+        return `<tr><td>${p.title}</td>
+          <td>${raw ? `<a href="${formatExternalUrl(raw)}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:600;">Open Drive ↗</a>` : '<span style="color:var(--t3)">Awaiting</span>'}</td>
+          <td><input type="text" value="${p.deliveryUrl||''}" onblur="updateDel('${p.id}', this.value)" placeholder="Paste delivery link..." style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:#fff;width:100%"/></td>
+          <td><button class="btn-outline btn-sm" onclick="showToast('Saved! ✅')">Save</button></td></tr>`;
+      }).join('');
     }
-    window.updateDel = async (pid, url) => { await updateDoc(doc(db, 'projects', pid), { deliveryUrl: url }); }
+    window.updateDel = async (pid, url) => {
+      let u = (url || '').trim();
+      if (u && !/^https?:\/\//i.test(u)) u = 'https://' + u;
+      await updateDoc(doc(db, 'projects', pid), { deliveryUrl: u });
+      showToast('Delivery link updated! ✅');
+    };
 
     function renderCalendar() {
       const ls = document.getElementById('calendarList');
