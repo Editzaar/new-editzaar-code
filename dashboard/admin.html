@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=140.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=140.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=160.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=160.0"/>
 
   <style>
     .modal-overlay {
@@ -118,7 +118,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=140.0"></script>
+  <script src="../js/theme.js?v=160.0"></script>
 </head>
 <body>
 
@@ -552,13 +552,24 @@
 
       <!-- SETTINGS -->
       <section id="sec-settings" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Agency <em>Settings</em></div></div>
-        <div class="dash-card">
+        <div class="dash-topbar"><div class="dash-page-title">Agency <em>Settings &amp; Data Control</em></div></div>
+        <div class="dash-card" style="margin-bottom:20px;">
+          <div class="dash-card-header"><div class="dash-card-title">Agency <em>Information</em></div></div>
           <div class="dash-form">
-            <div class="field"><label>Agency Name</label><input id="set-name" type="text"/></div>
-            <div class="field"><label>GSTIN</label><input id="set-gst" type="text"/></div>
-            <div class="field"><label>UPI ID</label><input id="set-upi" type="text"/></div>
-            <button class="btn-gold" id="btnSaveSettings">Save Settings</button>
+            <div class="field"><label>Agency Name</label><input id="set-name" type="text" value="Editzaar"/></div>
+            <div class="field"><label>GSTIN</label><input id="set-gst" type="text" value="36EDITZAAR1234Z9"/></div>
+            <div class="field"><label>UPI ID (Official Payment)</label><input id="set-upi" type="text" value="nbikram704@okhdfcbank"/></div>
+            <button class="btn-gold" id="btnSaveSettings">Save Agency Settings</button>
+          </div>
+        </div>
+
+        <div class="dash-card" style="border-color:rgba(255,95,87,0.3);background:rgba(255,95,87,0.03);">
+          <div class="dash-card-header"><div class="dash-card-title" style="color:var(--red);">🧹 Fresh Start <em>Data Cleaner</em></div></div>
+          <p style="font-size:0.88rem;color:var(--t2);margin-bottom:16px;">Use these tools to wipe old test records and start fresh with real clients and real editors.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn-danger" id="btnClearAllProjects" style="padding:10px 16px;font-size:12px;">🗑️ Delete All Projects (Fresh Start)</button>
+            <button class="btn-danger" id="btnClearAnnouncements" style="padding:10px 16px;font-size:12px;">📢 Clear Announcements</button>
+            <button class="btn-danger" id="btnClearTickets" style="padding:10px 16px;font-size:12px;">🎫 Clear Support Tickets</button>
           </div>
         </div>
       </section>
@@ -640,7 +651,7 @@
 
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword }
+    import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, setDoc,
              query, where, onSnapshot, serverTimestamp }
@@ -996,54 +1007,58 @@
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
 
+      const secAuth = getSecondaryAuth('sec_editor_' + Date.now());
+      let uid = null;
+
       try {
-        const secAuth = getSecondaryAuth('sec_editor_' + Date.now());
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
-        await secAuth.signOut();
-        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'editor', tempPass: pass, createdAt: serverTimestamp() });
-        showToast(`Editor "${name}" added! ✅`,'success');
-        document.getElementById('ne-name').value = '';
-        document.getElementById('ne-email').value = '';
-        document.getElementById('ne-pass').value = '';
-        closeModal('modalNewEditor');
-      } catch(e){
-        if (e.code === 'auth/email-already-in-use') {
-          // If this account exists in Firestore, promote/update their role to editor
+        uid = cred.user.uid;
+      } catch(authErr) {
+        if (authErr.code === 'auth/email-already-in-use') {
           try {
+            const signCred = await signInWithEmailAndPassword(secAuth, email, pass);
+            uid = signCred.user.uid;
+          } catch(signErr) {
             const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
             if (!userSnap.empty) {
-              const uDoc = userSnap.docs[0];
-              await updateDoc(doc(db, 'users', uDoc.id), {
-                role: 'editor',
-                name: name || uDoc.data().name || 'Editor',
-                tempPass: pass
-              });
-              showToast(`Account existed: "${name}" role updated to Editor! ✅`, 'success');
-              document.getElementById('ne-name').value = '';
-              document.getElementById('ne-email').value = '';
-              document.getElementById('ne-pass').value = '';
-              closeModal('modalNewEditor');
-              return;
+              uid = userSnap.docs[0].id;
             } else {
-              // The user exists in Firebase Auth but has no Firestore doc yet
-              // We can create their Firestore profile as an editor!
-              const dummyUid = 'auth_' + btoa(email).replace(/=/g,'').substring(0,20);
-              await setDoc(doc(db, 'users', dummyUid), {
-                name, email, role: 'editor', tempPass: pass, createdAt: serverTimestamp()
-              });
-              showToast(`Account found in Auth: Editor profile created for "${name}"! ✅`, 'success');
-              closeModal('modalNewEditor');
-              return;
+              uid = 'ed_' + btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
             }
-          } catch(err2) {
-            showToast('Email already in use. Please check the Clients or Staff list.', 'error');
           }
-        } else if (e.code === 'auth/weak-password') {
+        } else if (authErr.code === 'auth/weak-password') {
           showToast('Password is too weak. Minimum 6 characters required.', 'error');
-        } else if (e.code === 'auth/invalid-email') {
+          return;
+        } else if (authErr.code === 'auth/invalid-email') {
           showToast('Please enter a valid email address.', 'error');
+          return;
         } else {
-          showToast('Error: ' + e.message, 'error');
+          showToast('Auth notice: ' + authErr.message, 'error');
+          return;
+        }
+      }
+
+      try {
+        await secAuth.signOut();
+      } catch(e){}
+
+      if (uid) {
+        try {
+          await setDoc(doc(db, 'users', uid), {
+            name: name,
+            email: email,
+            role: 'editor',
+            tempPass: pass,
+            createdAt: serverTimestamp()
+          }, { merge: true });
+
+          showToast(`Editor "${name}" saved & active! ✅`, 'success');
+          document.getElementById('ne-name').value = '';
+          document.getElementById('ne-email').value = '';
+          document.getElementById('ne-pass').value = '';
+          closeModal('modalNewEditor');
+        } catch(storeErr) {
+          showToast('Firestore error: ' + storeErr.message, 'error');
         }
       }
     });
@@ -1056,54 +1071,101 @@
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
 
+      const secAuth = getSecondaryAuth('sec_client_' + Date.now());
+      let uid = null;
+
       try {
-        const secAuth = getSecondaryAuth('sec_client_' + Date.now());
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
-        await secAuth.signOut();
-        await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', tempPass: pass, assignedEditor: assignedEditor || '', createdAt: serverTimestamp() });
-        showToast(`Client "${name}" added! ✅`,'success');
-        document.getElementById('nc-name').value = '';
-        document.getElementById('nc-email').value = '';
-        document.getElementById('nc-pass').value = '';
-        closeModal('modalNewClient');
-      } catch(e){
-        if (e.code === 'auth/email-already-in-use') {
+        uid = cred.user.uid;
+      } catch(authErr) {
+        if (authErr.code === 'auth/email-already-in-use') {
           try {
+            const signCred = await signInWithEmailAndPassword(secAuth, email, pass);
+            uid = signCred.user.uid;
+          } catch(signErr) {
             const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
             if (!userSnap.empty) {
-              const uDoc = userSnap.docs[0];
-              await updateDoc(doc(db, 'users', uDoc.id), {
-                role: 'client',
-                name: name || uDoc.data().name || 'Client',
-                tempPass: pass,
-                assignedEditor: assignedEditor || uDoc.data().assignedEditor || ''
-              });
-              showToast(`Account existed: "${name}" profile updated! ✅`, 'success');
-              document.getElementById('nc-name').value = '';
-              document.getElementById('nc-email').value = '';
-              document.getElementById('nc-pass').value = '';
-              closeModal('modalNewClient');
-              return;
+              uid = userSnap.docs[0].id;
             } else {
-              const dummyUid = 'auth_' + btoa(email).replace(/=/g,'').substring(0,20);
-              await setDoc(doc(db, 'users', dummyUid), {
-                name, email, role: 'client', tempPass: pass, assignedEditor: assignedEditor || '', createdAt: serverTimestamp()
-              });
-              showToast(`Account found in Auth: Client profile created for "${name}"! ✅`, 'success');
-              closeModal('modalNewClient');
-              return;
+              uid = 'cl_' + btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
             }
-          } catch(err2) {
-            showToast('Email already in use. Please check the Clients list.', 'error');
           }
-        } else if (e.code === 'auth/weak-password') {
+        } else if (authErr.code === 'auth/weak-password') {
           showToast('Password is too weak. Minimum 6 characters required.', 'error');
-        } else if (e.code === 'auth/invalid-email') {
+          return;
+        } else if (authErr.code === 'auth/invalid-email') {
           showToast('Please enter a valid email address.', 'error');
+          return;
         } else {
-          showToast('Error: ' + e.message, 'error');
+          showToast('Auth notice: ' + authErr.message, 'error');
+          return;
         }
       }
+
+      try {
+        await secAuth.signOut();
+      } catch(e){}
+
+      if (uid) {
+        try {
+          await setDoc(doc(db, 'users', uid), {
+            name: name,
+            email: email,
+            role: 'client',
+            tempPass: pass,
+            assignedEditor: assignedEditor || '',
+            createdAt: serverTimestamp()
+          }, { merge: true });
+
+          showToast(`Client "${name}" saved & active! ✅`, 'success');
+          document.getElementById('nc-name').value = '';
+          document.getElementById('nc-email').value = '';
+          document.getElementById('nc-pass').value = '';
+          closeModal('modalNewClient');
+        } catch(storeErr) {
+          showToast('Firestore error: ' + storeErr.message, 'error');
+        }
+      }
+    });
+
+    // ── DATA CLEANER HANDLERS ──
+    document.getElementById('btnClearAllProjects').addEventListener('click', async () => {
+      if (!confirm('⚠️ Are you sure you want to delete ALL projects and start completely fresh? This cannot be undone.')) return;
+      const snap = await getDocs(collection(db, 'projects'));
+      let count = 0;
+      for (const d of snap.docs) {
+        await deleteDoc(doc(db, 'projects', d.id));
+        count++;
+      }
+      showToast(`Cleaned ${count} project(s). Fresh start ready! 🧹✅`, 'success');
+    });
+
+    document.getElementById('btnClearAnnouncements').addEventListener('click', async () => {
+      if (!confirm('Delete all broadcast announcements?')) return;
+      const snap = await getDocs(collection(db, 'announcements'));
+      for (const d of snap.docs) {
+        await deleteDoc(doc(db, 'announcements', d.id));
+      }
+      showToast('All announcements cleared! 🧹', 'success');
+    });
+
+    document.getElementById('btnClearTickets').addEventListener('click', async () => {
+      if (!confirm('Delete all support tickets?')) return;
+      const snap = await getDocs(collection(db, 'supportTickets'));
+      for (const d of snap.docs) {
+        await deleteDoc(doc(db, 'supportTickets', d.id));
+      }
+      showToast('All support tickets cleared! 🧹', 'success');
+    });
+
+    document.getElementById('btnSaveSettings').addEventListener('click', async () => {
+      const agencyName = document.getElementById('set-name').value.trim();
+      const gstin = document.getElementById('set-gst').value.trim();
+      const upi = document.getElementById('set-upi').value.trim();
+      await setDoc(doc(db, 'agencySettings', 'main'), {
+        agencyName, gstin, upi, updatedAt: serverTimestamp()
+      }, { merge: true });
+      showToast('Agency settings saved! ✅', 'success');
     });
 
     // ── SYNC MISSING USERS ──
