@@ -643,7 +643,7 @@
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, setDoc,
-             onSnapshot, serverTimestamp }
+             query, where, onSnapshot, serverTimestamp }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -994,14 +994,58 @@
       const email = document.getElementById('ne-email').value.trim();
       const pass  = document.getElementById('ne-pass').value;
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
+      if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
+
       try {
         const secAuth = getSecondaryAuth('sec_editor_' + Date.now());
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
         await secAuth.signOut();
         await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'editor', tempPass: pass, createdAt: serverTimestamp() });
         showToast(`Editor "${name}" added! ✅`,'success');
+        document.getElementById('ne-name').value = '';
+        document.getElementById('ne-email').value = '';
+        document.getElementById('ne-pass').value = '';
         closeModal('modalNewEditor');
-      } catch(e){ showToast(e.message,'error'); }
+      } catch(e){
+        if (e.code === 'auth/email-already-in-use') {
+          // If this account exists in Firestore, promote/update their role to editor
+          try {
+            const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
+            if (!userSnap.empty) {
+              const uDoc = userSnap.docs[0];
+              await updateDoc(doc(db, 'users', uDoc.id), {
+                role: 'editor',
+                name: name || uDoc.data().name || 'Editor',
+                tempPass: pass
+              });
+              showToast(`Account existed: "${name}" role updated to Editor! ✅`, 'success');
+              document.getElementById('ne-name').value = '';
+              document.getElementById('ne-email').value = '';
+              document.getElementById('ne-pass').value = '';
+              closeModal('modalNewEditor');
+              return;
+            } else {
+              // The user exists in Firebase Auth but has no Firestore doc yet
+              // We can create their Firestore profile as an editor!
+              const dummyUid = 'auth_' + btoa(email).replace(/=/g,'').substring(0,20);
+              await setDoc(doc(db, 'users', dummyUid), {
+                name, email, role: 'editor', tempPass: pass, createdAt: serverTimestamp()
+              });
+              showToast(`Account found in Auth: Editor profile created for "${name}"! ✅`, 'success');
+              closeModal('modalNewEditor');
+              return;
+            }
+          } catch(err2) {
+            showToast('Email already in use. Please check the Clients or Staff list.', 'error');
+          }
+        } else if (e.code === 'auth/weak-password') {
+          showToast('Password is too weak. Minimum 6 characters required.', 'error');
+        } else if (e.code === 'auth/invalid-email') {
+          showToast('Please enter a valid email address.', 'error');
+        } else {
+          showToast('Error: ' + e.message, 'error');
+        }
+      }
     });
 
     document.getElementById('btnCreateClient').addEventListener('click', async ()=>{
@@ -1010,14 +1054,56 @@
       const pass         = document.getElementById('nc-pass').value;
       const assignedEditor = document.getElementById('nc-editor').value;
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
+      if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
+
       try {
         const secAuth = getSecondaryAuth('sec_client_' + Date.now());
         const cred = await createUserWithEmailAndPassword(secAuth, email, pass);
         await secAuth.signOut();
         await setDoc(doc(db,'users',cred.user.uid),{ name, email, role:'client', tempPass: pass, assignedEditor: assignedEditor || '', createdAt: serverTimestamp() });
         showToast(`Client "${name}" added! ✅`,'success');
+        document.getElementById('nc-name').value = '';
+        document.getElementById('nc-email').value = '';
+        document.getElementById('nc-pass').value = '';
         closeModal('modalNewClient');
-      } catch(e){ showToast(e.message,'error'); }
+      } catch(e){
+        if (e.code === 'auth/email-already-in-use') {
+          try {
+            const userSnap = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
+            if (!userSnap.empty) {
+              const uDoc = userSnap.docs[0];
+              await updateDoc(doc(db, 'users', uDoc.id), {
+                role: 'client',
+                name: name || uDoc.data().name || 'Client',
+                tempPass: pass,
+                assignedEditor: assignedEditor || uDoc.data().assignedEditor || ''
+              });
+              showToast(`Account existed: "${name}" profile updated! ✅`, 'success');
+              document.getElementById('nc-name').value = '';
+              document.getElementById('nc-email').value = '';
+              document.getElementById('nc-pass').value = '';
+              closeModal('modalNewClient');
+              return;
+            } else {
+              const dummyUid = 'auth_' + btoa(email).replace(/=/g,'').substring(0,20);
+              await setDoc(doc(db, 'users', dummyUid), {
+                name, email, role: 'client', tempPass: pass, assignedEditor: assignedEditor || '', createdAt: serverTimestamp()
+              });
+              showToast(`Account found in Auth: Client profile created for "${name}"! ✅`, 'success');
+              closeModal('modalNewClient');
+              return;
+            }
+          } catch(err2) {
+            showToast('Email already in use. Please check the Clients list.', 'error');
+          }
+        } else if (e.code === 'auth/weak-password') {
+          showToast('Password is too weak. Minimum 6 characters required.', 'error');
+        } else if (e.code === 'auth/invalid-email') {
+          showToast('Please enter a valid email address.', 'error');
+        } else {
+          showToast('Error: ' + e.message, 'error');
+        }
+      }
     });
 
     // ── SYNC MISSING USERS ──
