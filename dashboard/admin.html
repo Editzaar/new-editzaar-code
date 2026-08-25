@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=220.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=220.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=230.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=230.0"/>
 
   <style>
     .modal-overlay {
@@ -153,7 +153,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=220.0"></script>
+  <script src="../js/theme.js?v=230.0"></script>
 </head>
 <body>
 
@@ -582,10 +582,19 @@
         <div class="dash-card" id="cmsContent">CMS Content Settings goes here.</div>
       </section>
 
-      <!-- ROLES -->
+      <!-- ROLES & PERMISSIONS -->
       <section id="sec-roles" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Roles <em>&amp; Permissions</em></div></div>
-        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>User</th><th>Email</th><th>Current Role</th><th>Change Role</th></tr></thead><tbody id="rolesTbody"></tbody></table></div></div>
+        <div class="dash-topbar"><div class="dash-page-title">Staff Roles <em>&amp; Feature Permissions</em></div></div>
+        <div class="dash-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(255,184,0,0.08) 0%, rgba(0,0,0,0.4) 100%);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:1.6rem;">👑</span>
+            <div>
+              <strong style="color:var(--gold);font-size:1.02rem;">Administrator Security Principle:</strong>
+              <div style="color:var(--t2);font-size:0.86rem;margin-top:2px;">Users designated as <strong>👑 Administrator</strong> automatically have master access to all features and settings. For freelance editors and operations managers, you can customize feature permissions individually using the <strong>🔐 Permissions</strong> manager below.</div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Staff / User</th><th>Email</th><th>Role Tier</th><th>Change Role</th><th>Feature Permissions</th></tr></thead><tbody id="rolesTbody"></tbody></table></div></div>
       </section>
 
       <!-- SETTINGS -->
@@ -692,6 +701,75 @@
         </div>
         <input type="hidden" id="es-pid"/>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSaveStatus">Save &amp; Update Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: STAFF PERMISSIONS MANAGER -->
+  <div class="modal-overlay" id="modalStaffPermissions">
+    <div class="modal-box" style="max-width: 580px;">
+      <button class="modal-close" data-close="modalStaffPermissions">✕</button>
+      <div class="modal-title" style="margin-bottom: 6px;">Staff Permissions &amp; Feature Access</div>
+      <div style="font-size: 0.88rem; color: var(--t2); margin-bottom: 18px;" id="permStaffHeader">Configure permissions for staff member</div>
+
+      <div id="permAdminNotice" style="display:none;background:rgba(40,200,64,0.1);border:1px solid rgba(40,200,64,0.3);padding:12px 16px;border-radius:8px;margin-bottom:18px;color:var(--green);font-size:0.88rem;">
+        👑 <strong>Administrator Account:</strong> This user has master access to all 27 dashboard sections and full agency controls.
+      </div>
+
+      <div class="dash-form" id="permFormContainer">
+        <input type="hidden" id="permUid"/>
+
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <input type="checkbox" id="perm-viewAll" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
+            <div>
+              <strong style="color:var(--t1);font-size:0.92rem;">📁 View All Agency Projects</strong>
+              <div style="font-size:0.8rem;color:var(--t2);">If unchecked, editor only sees projects assigned strictly to them.</div>
+            </div>
+          </label>
+
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <input type="checkbox" id="perm-viewContact" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
+            <div>
+              <strong style="color:var(--t1);font-size:0.92rem;">👤 View Client Real Contact Details</strong>
+              <div style="font-size:0.8rem;color:var(--t2);">If unchecked, client phone number, email, and identity are anonymized.</div>
+            </div>
+          </label>
+
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <input type="checkbox" id="perm-maskChat" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
+            <div>
+              <strong style="color:var(--t1);font-size:0.92rem;">🔒 Anti-Poaching Chat Contact Masking</strong>
+              <div style="font-size:0.8rem;color:var(--t2);">Automatically blurs/hides phone numbers, WhatsApp, and email addresses in chat.</div>
+            </div>
+          </label>
+
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <input type="checkbox" id="perm-viewFin" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
+            <div>
+              <strong style="color:var(--t1);font-size:0.92rem;">💰 View Invoices &amp; Pricing Financials</strong>
+              <div style="font-size:0.8rem;color:var(--t2);">Allow viewing project amounts, revenue totals, and GST invoice data.</div>
+            </div>
+          </label>
+
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <input type="checkbox" id="perm-assignProj" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
+            <div>
+              <strong style="color:var(--t1);font-size:0.92rem;">👥 Assign &amp; Delegate Projects to Other Staff</strong>
+              <div style="font-size:0.8rem;color:var(--t2);">Allow selecting and delegating editors on project cards.</div>
+            </div>
+          </label>
+
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <input type="checkbox" id="perm-editDeadline" style="margin-top:3px;transform:scale(1.2);accent-color:var(--gold);"/>
+            <div>
+              <strong style="color:var(--t1);font-size:0.92rem;">📅 Change &amp; Reschedule Deadlines</strong>
+              <div style="font-size:0.8rem;color:var(--t2);">Allow editing estimated delivery dates on projects.</div>
+            </div>
+          </label>
+        </div>
+
+        <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSavePermissions">Save Staff Permissions ✅</button>
       </div>
     </div>
   </div>
@@ -862,6 +940,7 @@
           </td>
           <td>${activeCount}</td>
           <td>
+            <button class="btn-gold btn-sm" onclick="openStaffPermissions('${e.id}')">🔐 Permissions</button>
             <button class="btn-outline btn-sm" onclick="openModal('modalNewProject')">＋ Assign Project</button>
             <button class="btn-danger" onclick="deleteUser('${e.id}','${e.name||e.email}')">Delete</button>
           </td>
@@ -1485,6 +1564,7 @@
       if (!tb) return;
       tb.innerHTML = users.map(u => {
         const curRole = u.role || 'client';
+        const isStaff = curRole === 'editor' || curRole === 'manager' || curRole === 'admin';
         return `<tr>
           <td><strong>${u.name||'User'}</strong></td>
           <td>${u.email}</td>
@@ -1497,9 +1577,54 @@
               <option value="admin" ${curRole==='admin'?'selected':''}>👑 Administrator</option>
             </select>
           </td>
+          <td>
+            ${isStaff ? `<button class="btn-gold btn-sm" onclick="openStaffPermissions('${u.id}')">🔐 Permissions</button>` : '<span style="color:var(--t3);font-size:11px;">Client Account</span>'}
+          </td>
         </tr>`;
       }).join('');
     }
+
+    window.openStaffPermissions = (uid) => {
+      const u = users.find(x => x.id === uid);
+      if (!u) return;
+      document.getElementById('permUid').value = uid;
+      document.getElementById('permStaffHeader').innerHTML = `Configuring permissions for: <strong style="color:var(--gold);">${u.name || u.email}</strong> (${u.email})`;
+
+      const isAdmin = u.role === 'admin';
+      const isManager = u.role === 'manager';
+      const adminNotice = document.getElementById('permAdminNotice');
+      if (adminNotice) adminNotice.style.display = isAdmin ? 'block' : 'none';
+
+      const p = u.permissions || {};
+
+      document.getElementById('perm-viewAll').checked = p.viewAll !== undefined ? p.viewAll : (isAdmin || isManager);
+      document.getElementById('perm-viewContact').checked = p.viewContact !== undefined ? p.viewContact : (isAdmin || isManager);
+      document.getElementById('perm-maskChat').checked = p.maskChat !== undefined ? p.maskChat : (!isAdmin && !isManager);
+      document.getElementById('perm-viewFin').checked = p.viewFin !== undefined ? p.viewFin : isAdmin;
+      document.getElementById('perm-assignProj').checked = p.assignProj !== undefined ? p.assignProj : (isAdmin || isManager);
+      document.getElementById('perm-editDeadline').checked = p.editDeadline !== undefined ? p.editDeadline : true;
+
+      openModal('modalStaffPermissions');
+    };
+
+    document.getElementById('btnSavePermissions').addEventListener('click', async () => {
+      const uid = document.getElementById('permUid').value;
+      if (!uid) return;
+
+      const permissions = {
+        viewAll: document.getElementById('perm-viewAll').checked,
+        viewContact: document.getElementById('perm-viewContact').checked,
+        maskChat: document.getElementById('perm-maskChat').checked,
+        viewFin: document.getElementById('perm-viewFin').checked,
+        assignProj: document.getElementById('perm-assignProj').checked,
+        editDeadline: document.getElementById('perm-editDeadline').checked,
+        updatedAt: serverTimestamp()
+      };
+
+      await updateDoc(doc(db, 'users', uid), { permissions });
+      showToast('Staff feature permissions saved successfully! 🔐✅', 'success');
+      closeModal('modalStaffPermissions');
+    });
 
     // Section Routing
     const sections = ['overview','projects','editors','clients','broadcast','chat','invoices',

@@ -8,8 +8,8 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=220.0" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/dashboard.css?v=220.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=230.0" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=230.0"/>
   <style>
     .link-input-box {
       background: rgba(255,255,255,0.03);
@@ -27,7 +27,7 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/theme.js?v=220.0"></script>
+  <script src="../js/theme.js?v=230.0"></script>
 </head>
 <body>
 
@@ -182,8 +182,8 @@
         return;
       }
       const role = snap.data().role;
-      if (role !== 'editor') {
-        window.location.replace(role === 'admin' ? '/dashboard/admin.html' : '/dashboard/client.html');
+      if (role !== 'editor' && role !== 'manager' && role !== 'admin') {
+        window.location.replace('/dashboard/client.html');
         return;
       }
       currentUser = { uid:user.uid, ...snap.data() };
@@ -203,11 +203,12 @@
     let projectsUnsub = null;
     function loadProjects() {
       if (projectsUnsub) projectsUnsub();
-      // Listen for all projects assigned strictly to this editor
       onSnapshot(collection(db,'projects'), (snap) => {
         const allProj = snap.docs.map(d=>({id:d.id,...d.data()}));
-        // Strict Security Filter: Editor ONLY sees projects explicitly assigned to them OR assigned to clients assigned to them
-        const projects = allProj.filter(p => p.editorId === currentUser.uid || (allUsers[p.clientId] && allUsers[p.clientId].assignedEditor === currentUser.uid));
+        const perm = currentUser.permissions || {};
+        const canViewAll = currentUser.role === 'admin' || perm.viewAll === true;
+        const projects = canViewAll ? allProj : allProj.filter(p => p.editorId === currentUser.uid || (allUsers[p.clientId] && allUsers[p.clientId].assignedEditor === currentUser.uid));
+        
         projects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
         document.getElementById('statTotal').textContent  = projects.length;
         document.getElementById('statActive').textContent = projects.filter(p=>p.status!=='done').length;
@@ -241,18 +242,25 @@
         container.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-text">No projects assigned to you yet.</div></div>';
         return;
       }
-      container.innerHTML = projects.map(p=>`
+      const perm = currentUser.permissions || {};
+      const canViewContact = currentUser.role === 'admin' || perm.viewContact === true;
+      
+      container.innerHTML = projects.map(p=>{
+        const cName = allUsers[p.clientId]?.name || 'Client';
+        const clientLabel = canViewContact ? cName : `Client Ref #${p.id.substring(0,6).toUpperCase()}`;
+        return `
         <div class="project-card">
           <div class="project-card-top">
             <div class="project-card-title">${p.title||'Untitled'}</div>
             ${badge(p.status)}
           </div>
-          <div class="project-card-meta">Client: <span style="color:var(--gold);font-weight:600;">Client Ref #${p.id.substring(0,6).toUpperCase()}</span> · Deadline: ${dateStr(p.deadline)}</div>
+          <div class="project-card-meta">Client: <span style="color:var(--gold);font-weight:600;">${clientLabel}</span> · Deadline: ${dateStr(p.deadline)}</div>
           <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
           <div class="project-card-actions">
             <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">Open Project &amp; Chat →</button>
           </div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
     }
 
     window.openProject = async (pid) => {
@@ -262,6 +270,17 @@
 
       document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
       document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
+      
+      const perm = currentUser.permissions || {};
+      const canViewContact = currentUser.role === 'admin' || perm.viewContact === true;
+      const clientName = allUsers[currentProject.clientId]?.name || 'Client';
+      const clientEmail = allUsers[currentProject.clientId]?.email || '';
+      
+      if (canViewContact) {
+        document.getElementById('detailClient').innerHTML = `<strong style="color:var(--t1);">${clientName}</strong> ${clientEmail ? `<small style="color:var(--gold);margin-left:6px;">(${clientEmail})</small>` : ''}`;
+      } else {
+        document.getElementById('detailClient').innerHTML = `<span style="color:var(--gold);font-weight:600;">Client Ref #${currentProject.id.substring(0,6).toUpperCase()} (Privacy Protected)</span>`;
+      }
       if (currentProject.deadline) {
         const dObj = currentProject.deadline.toDate ? currentProject.deadline.toDate() : new Date(currentProject.deadline);
         if (!isNaN(dObj.getTime())) {
@@ -345,7 +364,9 @@
           const isMe=m.senderId===currentUser.uid;
           const div=document.createElement('div');
           div.className='chat-msg '+(isMe?'mine':'theirs');
-          let formattedText = filterChatPrivacy(m.text);
+          const perm = currentUser.permissions || {};
+          const shouldMask = currentUser.role !== 'admin' && perm.maskChat !== false;
+          let formattedText = shouldMask ? filterChatPrivacy(m.text) : m.text;
           div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
             <div class="chat-msg-bubble">${formattedText}</div>`;
           container.appendChild(div);
