@@ -30,7 +30,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap?v=270.0"
     rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=270.0" />
+  <link rel="stylesheet" href="css/style.css?v=290.0" />
 
   <style>
     .hero-v2 {
@@ -603,7 +603,27 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="js/theme.js?v=270.0"></script>
+  <script src="js/theme.js?v=290.0"></script>
+
+  <style>
+    /* CRITICAL MOBILE HEADER CLEANLINESS (v290.0) */
+    @media (max-width: 900px) {
+      #nav-auth-btn,
+      nav .nav-cta,
+      .nav-cta:not(.nav-cta-mobile) {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body>
@@ -949,8 +969,8 @@
     </div>
   </footer>
 
-  <script src="js/services-config.js?v=270.0"></script>
-  <script src="js/main.js?v=270.0"></script>
+  <script src="js/services-config.js?v=290.0"></script>
+  <script src="js/main.js?v=290.0"></script>
   <script>
     // Hero Live Edit Preview Continuous Video Loop & Rotation
     (function () {
@@ -1040,7 +1060,7 @@
   <!-- Firebase Auth: Nav profile (module) -->
   
 
-  <script type="module" src="js/nav-auth.js?v=270.0"></script>
+  <script type="module" src="js/nav-auth.js?v=290.0"></script>
 </body>
 
 </html>

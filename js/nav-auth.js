@@ -118,6 +118,11 @@ try {
         btn.href = destUrl;
         btn.innerHTML = buttonHtml;
         btn.title = `Go to ${role.toUpperCase()} Dashboard`;
+        if (window.innerWidth <= 900) {
+          btn.style.setProperty('display', 'none', 'important');
+        } else {
+          btn.style.removeProperty('display');
+        }
       });
 
       mobileBtns.forEach(btn => {
