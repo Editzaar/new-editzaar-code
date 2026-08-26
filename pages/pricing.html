@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5020093784155856" crossorigin="anonymous"></script>
@@ -17,7 +17,7 @@
   <link rel="icon" type="image/png" href="media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap?v=270.0" rel="stylesheet"/>
   <link rel="stylesheet" href="css/style.css?v=270.0"/>
   <style>
     .catalog-tabs {
@@ -159,6 +159,15 @@
       color: #b88200 !important;
     }
 </style>
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Editzaar">
+  <link rel="apple-touch-icon" href="/media/fav-logo.png">
+  <meta name="theme-color" content="#FFB800">
+  <script src="js/theme.js?v=270.0"></script>
 </head>
 <body>
 
@@ -177,6 +186,7 @@
       <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
     </ul>
     <a class="nav-cta" id="nav-auth-btn" href="dashboard/index.html">Login</a>
+    <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
     <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
   </nav>
 
@@ -344,7 +354,7 @@
     <div class="checkout-box">
       <button class="checkout-close" id="btnCloseCheckout">✕</button>
       <div style="font-family:var(--font-h);font-size:1.8rem;margin-bottom:6px;">Project Checkout &amp; <em>Onboarding</em></div>
-      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;">Review your price breakdown, advance deposit, scan the dynamic auto-amount UPI QR, and submit project details.</div>
+      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;">Review your price breakdown, choose your deposit amount, scan the dynamic auto-amount UPI QR, and submit project details.</div>
 
       <!-- PRICE SUMMARY CARD -->
       <div class="summary-card">
@@ -352,10 +362,28 @@
         <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
         <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
         <div class="summary-row"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
-        <div class="summary-row total"><span>Total Package Value</span><span id="chkTotal" style="color:var(--gold);">₹0</span></div>
-        <div class="summary-row advance">
-          <span>💳 Required 50% Booking Advance</span>
-          <span id="chkAdvance">₹0</span>
+        <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
+
+        <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
+        <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
+          <div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;">💳 Choose Amount to Pay Now</div>
+          
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <button type="button" class="pay-preset-btn active" id="btnPreset50" onclick="window.setCheckoutDeposit('50%')">50% Advance (<span id="txtPreset50">₹0</span>)</button>
+            <button type="button" class="pay-preset-btn" id="btnPreset100" onclick="window.setCheckoutDeposit('100%')">100% Full Payment (<span id="txtPreset100">₹0</span>)</button>
+            <button type="button" class="pay-preset-btn" id="btnPresetCustom" onclick="window.setCheckoutDeposit('custom')">Custom Amount ✏️</button>
+          </div>
+
+          <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+              <label for="chkCustomPayAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
+              <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
+              <div style="font-size:1.15rem;font-weight:700;color:var(--t1);" id="chkRemainingBalance">₹0</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -405,14 +433,14 @@
           <div class="upi-badge">UPI ID: nbikram704@okhdfcbank</div>
           <div style="font-size:0.85rem;color:var(--t2);line-height:1.6;margin-top:6px;">
             • <strong>Account Name:</strong> Bikram Nath<br/>
-            • <strong>Pre-filled 50% Advance:</strong> <strong id="chkAdvancePayText" style="color:#28C840;">₹0</strong><br/>
-            • <em>Scanning this QR pre-fills the exact advance deposit automatically in your GPay or PhonePe app!</em>
+            • <strong>Amount to Deposit:</strong> <strong id="chkAdvancePayText" style="color:#28C840;">₹0</strong><br/>
+            • <em>Scanning this QR pre-fills your chosen payment amount automatically in your GPay or PhonePe app!</em>
           </div>
           <a id="btnMobileUpi" href="#" target="_blank" class="btn-upi-mobile">⚡ Open GPay / PhonePe (Pre-filled ₹<span id="btnUpiAmt">0</span>) →</a>
         </div>
         <div class="dynamic-qr-wrapper">
           <img id="dynamicQrImg" src="" alt="Dynamic Pre-filled UPI Payment QR Code" class="dynamic-qr-img"/>
-          <div style="font-size: 12px;color:#000;font-weight:700;margin-top:6px;letter-spacing:0.04em;">PRE-FILLED 50% ADVANCE QR</div>
+          <div style="font-size: 12px;color:#000;font-weight:700;margin-top:6px;letter-spacing:0.04em;" id="qrBadgeText">PRE-FILLED UPI QR</div>
         </div>
       </div>
 
@@ -528,11 +556,48 @@
       modal.classList.remove('open');
     });
   </script>
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+        .catch(function(err) { console.warn('[SW] Error:', err); });
+    }
+    let _deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      _deferredInstallPrompt = e;
+    });
+    window._triggerInstall = function() {
+      if (_deferredInstallPrompt) {
+        _deferredInstallPrompt.prompt();
+        _deferredInstallPrompt.userChoice.then(function(choice) {
+          console.log('[PWA] User choice:', choice.outcome);
+          _deferredInstallPrompt = null;
+        });
+      } else {
+        const m = document.getElementById('ios-install-modal');
+        if (m) m.style.display = 'flex';
+      }
+    };
+  </script>
+  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
+    <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:12px">&#128241;</div>
+      <h3 style="color:#FFB800;font-family:'Outfit',sans-serif;margin-bottom:8px">Install Editzaar App</h3>
+      <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
+      <div style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
+        <div>1. Tap <strong style="color:#FFB800">Share</strong> &#127758; at bottom of Safari</div>
+        <div>2. Tap <strong style="color:#FFB800">Add to Home Screen</strong></div>
+      </div>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
+    </div>
+  </div>
 
   <!-- Firebase Auth: Nav profile -->
   
 
-  <script type="module" src="../js/nav-auth.js?v=270.0"></script>
+  <script type="module" src="js/nav-auth.js?v=270.0"></script>
 </body>
 </html>
+
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5020093784155856" crossorigin="anonymous"></script>
@@ -354,7 +354,7 @@
     <div class="checkout-box">
       <button class="checkout-close" id="btnCloseCheckout">✕</button>
       <div style="font-family:var(--font-h);font-size:1.8rem;margin-bottom:6px;">Project Checkout &amp; <em>Onboarding</em></div>
-      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;">Review your price breakdown, advance deposit, scan the dynamic auto-amount UPI QR, and submit project details.</div>
+      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;">Review your price breakdown, choose your deposit amount, scan the dynamic auto-amount UPI QR, and submit project details.</div>
 
       <!-- PRICE SUMMARY CARD -->
       <div class="summary-card">
@@ -362,10 +362,28 @@
         <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
         <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
         <div class="summary-row"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
-        <div class="summary-row total"><span>Total Package Value</span><span id="chkTotal" style="color:var(--gold);">₹0</span></div>
-        <div class="summary-row advance">
-          <span>💳 Required 50% Booking Advance</span>
-          <span id="chkAdvance">₹0</span>
+        <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
+
+        <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
+        <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
+          <div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;">💳 Choose Amount to Pay Now</div>
+          
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+            <button type="button" class="pay-preset-btn active" id="btnPreset50" onclick="window.setCheckoutDeposit('50%')">50% Advance (<span id="txtPreset50">₹0</span>)</button>
+            <button type="button" class="pay-preset-btn" id="btnPreset100" onclick="window.setCheckoutDeposit('100%')">100% Full Payment (<span id="txtPreset100">₹0</span>)</button>
+            <button type="button" class="pay-preset-btn" id="btnPresetCustom" onclick="window.setCheckoutDeposit('custom')">Custom Amount ✏️</button>
+          </div>
+
+          <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+              <label for="chkCustomPayAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
+              <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
+              <div style="font-size:1.15rem;font-weight:700;color:var(--t1);" id="chkRemainingBalance">₹0</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -415,14 +433,14 @@
           <div class="upi-badge">UPI ID: nbikram704@okhdfcbank</div>
           <div style="font-size:0.85rem;color:var(--t2);line-height:1.6;margin-top:6px;">
             • <strong>Account Name:</strong> Bikram Nath<br/>
-            • <strong>Pre-filled 50% Advance:</strong> <strong id="chkAdvancePayText" style="color:#28C840;">₹0</strong><br/>
-            • <em>Scanning this QR pre-fills the exact advance deposit automatically in your GPay or PhonePe app!</em>
+            • <strong>Amount to Deposit:</strong> <strong id="chkAdvancePayText" style="color:#28C840;">₹0</strong><br/>
+            • <em>Scanning this QR pre-fills your chosen payment amount automatically in your GPay or PhonePe app!</em>
           </div>
           <a id="btnMobileUpi" href="#" target="_blank" class="btn-upi-mobile">⚡ Open GPay / PhonePe (Pre-filled ₹<span id="btnUpiAmt">0</span>) →</a>
         </div>
         <div class="dynamic-qr-wrapper">
           <img id="dynamicQrImg" src="" alt="Dynamic Pre-filled UPI Payment QR Code" class="dynamic-qr-img"/>
-          <div style="font-size: 12px;color:#000;font-weight:700;margin-top:6px;letter-spacing:0.04em;">PRE-FILLED 50% ADVANCE QR</div>
+          <div style="font-size: 12px;color:#000;font-weight:700;margin-top:6px;letter-spacing:0.04em;" id="qrBadgeText">PRE-FILLED UPI QR</div>
         </div>
       </div>
 
