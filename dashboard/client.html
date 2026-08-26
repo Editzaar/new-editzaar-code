@@ -1271,9 +1271,13 @@
       const discountCodeEl = document.getElementById('cnpDiscountCode');
       const discountAmtEl = document.getElementById('cnpDiscountAmt');
 
-      if (window._appliedCnpCoupon) {
-        const reval = window.EditzaarCoupons.validate(window._appliedCnpCoupon.code, activeCnpBase);
-        discount = reval.discountAmount || 0;
+      if (window._appliedCnpCoupon && window._appliedCnpCoupon.valid) {
+        const val = parseInt(window._appliedCnpCoupon.value) || 0;
+        if (window._appliedCnpCoupon.discountType === 'percent') {
+          discount = Math.round(activeCnpBase * (val / 100));
+        } else {
+          discount = Math.min(activeCnpBase, val);
+        }
         if (discountRow) discountRow.style.display = 'flex';
         if (discountCodeEl) discountCodeEl.textContent = window._appliedCnpCoupon.code;
         if (discountAmtEl) discountAmtEl.textContent = '-₹' + discount.toLocaleString();

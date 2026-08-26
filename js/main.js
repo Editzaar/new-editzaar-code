@@ -533,8 +533,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const elTxt100 = document.getElementById('txtPreset100');
 
     let discount = 0;
-    if (window._appliedCoupon) {
-      discount = window._appliedCoupon.discountAmount || 0;
+    if (window._appliedCoupon && window._appliedCoupon.valid) {
+      const val = parseInt(window._appliedCoupon.value) || 0;
+      if (window._appliedCoupon.discountType === 'percent') {
+        discount = Math.round(basePrice * (val / 100));
+      } else {
+        discount = Math.min(basePrice, val);
+      }
       if (discountRow) discountRow.style.display = 'flex';
       if (discountCodeEl) discountCodeEl.textContent = window._appliedCoupon.code;
       if (discountAmtEl) discountAmtEl.textContent = '-₹' + discount.toLocaleString();

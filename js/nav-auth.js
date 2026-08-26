@@ -22,7 +22,7 @@ try {
   const dashPrefix = isSubPage ? '../dashboard/' : 'dashboard/';
 
   
-  // Universal Real-time Firestore Coupon Validator
+    // Universal Real-time Firestore Coupon Validator
   window.validateCouponWithFirebase = async function(code, baseAmount) {
     const clean = String(code || '').trim().toUpperCase();
     const base = parseInt(baseAmount) || 0;
@@ -33,30 +33,41 @@ try {
       if (snap.exists()) {
         const coupon = snap.data();
         if (coupon.active !== false) {
-          let discount = 0;
           const val = parseInt(coupon.value) || 0;
+          let discount = 0;
           if (coupon.discountType === 'percent') {
             discount = Math.round(base * (val / 100));
           } else {
             discount = Math.min(base, val);
           }
-          return {
+          const result = {
             valid: true,
             code: coupon.code || clean,
-            discountType: coupon.discountType,
+            discountType: coupon.discountType || 'percent',
             value: val,
             discountAmount: discount,
-            description: coupon.description,
+            description: coupon.description || '',
             message: `🎉 Coupon "${coupon.code || clean}" applied: ${coupon.discountType === 'percent' ? val + '% OFF' : '₹' + val + ' OFF'}! Saved ₹${discount.toLocaleString()}`
           };
+          if (window.EditzaarCoupons && typeof window.EditzaarCoupons.save === 'function') {
+            window.EditzaarCoupons.save({
+              code: clean,
+              discountType: coupon.discountType || 'percent',
+              value: val,
+              maxUses: coupon.maxUses || 100,
+              description: coupon.description || '',
+              active: true
+            });
+          }
+          return result;
         }
       }
     } catch (err) {
       console.warn('[Firestore Coupon Query Error]', err);
     }
 
-    // Fallback to local config
-    if (window.EditzaarCoupons) {
+    // Fallback to local cache
+    if (window.EditzaarCoupons && typeof window.EditzaarCoupons.validate === 'function') {
       return window.EditzaarCoupons.validate(clean, base);
     }
     return { valid: false, message: `Coupon "${clean}" is invalid or expired.` };
