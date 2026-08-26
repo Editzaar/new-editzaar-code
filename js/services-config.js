@@ -304,10 +304,25 @@
     { code: "WELCOME10", discountType: "percent", value: 10, description: "10% Welcome Discount for New Clients", active: true, maxUses: 100 },
     { code: "LAUNCH20", discountType: "percent", value: 20, description: "20% Launch Celebration Discount", active: true, maxUses: 50 },
     { code: "FLAT500", discountType: "flat", value: 500, description: "₹500 Flat Discount on any project", active: true, maxUses: 200 },
-    { code: "AGENCY30", discountType: "percent", value: 30, description: "30% Partner / Agency Retainer Discount", active: true, maxUses: 20 }
+    { code: "AGENCY30", discountType: "percent", value: 30, description: "30% Partner / Agency Retainer Discount", active: true, maxUses: 20 },
+    { code: "BOSS", discountType: "percent", value: 100, description: "100% Full Discount Promo", active: true, maxUses: 100 },
+    { code: "VIP50", discountType: "percent", value: 50, description: "50% VIP Exclusive Discount", active: true, maxUses: 50 }
   ];
 
   const COUPONS_STORAGE_KEY = 'editzaar_dynamic_coupons';
+  // BroadcastChannel for instant cross-tab sync
+  let _couponChannel = null;
+  try {
+    _couponChannel = new BroadcastChannel('editzaar_coupons_channel');
+    _couponChannel.onmessage = function (e) {
+      if (e.data && Array.isArray(e.data)) {
+        _cachedCoupons = e.data;
+        if (window.EditzaarCoupons) {
+          window.EditzaarCoupons.notifySubscribers(e.data);
+        }
+      }
+    };
+  } catch (err) {}
 
   // Global in-memory cache synchronized with localStorage
   let _cachedCoupons = null;
@@ -385,6 +400,7 @@
       _cachedCoupons = all;
       try {
         localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+        if (_couponChannel) _couponChannel.postMessage(all);
       } catch (err) {}
       this.notifySubscribers(all);
       return all;
@@ -397,6 +413,7 @@
       _cachedCoupons = all;
       try {
         localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+        if (_couponChannel) _couponChannel.postMessage(all);
       } catch (err) {}
       this.notifySubscribers(all);
       return all;
