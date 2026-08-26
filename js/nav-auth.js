@@ -117,14 +117,12 @@ try {
       desktopBtns.forEach(btn => {
         btn.href = destUrl;
         btn.innerHTML = buttonHtml;
-        btn.style.display = 'inline-flex';
-        btn.style.alignItems = 'center';
         btn.title = `Go to ${role.toUpperCase()} Dashboard`;
       });
 
       mobileBtns.forEach(btn => {
         btn.href = destUrl;
-        btn.innerHTML = `👤 ${shortName} (Dashboard)`;
+        btn.innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px;"><span style="width:22px;height:22px;border-radius:50%;background:#000;color:var(--gold);font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;">${initials}</span> <span>${shortName} (Dashboard)</span></span>`;
       });
 
     } else {

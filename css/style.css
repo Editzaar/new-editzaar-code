@@ -1395,7 +1395,13 @@ footer {
    ============================================================ */
 @media (max-width: 900px) {
   nav { padding: 0 18px; height: 62px; }
-  nav .nav-cta { display: none; }
+  #nav-auth-btn,
+  nav .nav-cta,
+  .nav-cta:not(.nav-cta-mobile) { 
+    display: none !important; 
+    visibility: hidden !important; 
+    pointer-events: none !important; 
+  }
 
   .nav-links {
     position: fixed;
