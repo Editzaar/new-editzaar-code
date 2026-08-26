@@ -43,7 +43,7 @@
     .filter-select:focus { border-color:var(--gold); }
     .live-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 10px; font-weight: 600; color: #28C840;
+      font-size: 12px; font-weight: 600; color: #28C840;
       background: rgba(40,200,64,0.1); border: 1px solid rgba(40,200,64,0.3);
       padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.1em;
     }
@@ -52,7 +52,7 @@
 
     .btn-danger {
       background: rgba(255,77,77,0.15); border: 1px solid rgba(255,77,77,0.4);
-      color: #FF4D4D; font-size: 11px; padding: 4px 10px; border-radius: 4px;
+      color: #FF4D4D; font-size: 13px; padding: 4px 10px; border-radius: 4px;
       cursor: pointer; transition: all 0.2s;
     }
     .btn-danger:hover { background: #FF4D4D; color: inherit; }
@@ -107,13 +107,13 @@
       }
     }
     .pass-pill {
-      font-family: monospace; font-size: 11px; color: var(--gold);
+      font-family: monospace; font-size: 13px; color: var(--gold);
       background: rgba(255,184,0,0.1); border: 1px solid var(--gold-border);
       padding: 2px 8px; border-radius: 4px; display: inline-block;
     }
     .editor-assign-select {
       background: rgba(255,184,0,0.06); border: 1px solid var(--gold-border);
-      color: var(--gold); border-radius: 6px; padding: 4px 8px; font-size: 11px;
+      color: var(--gold); border-radius: 6px; padding: 4px 8px; font-size: 13px;
       outline: none; cursor: pointer;
     }
     
@@ -208,7 +208,7 @@
       line-height: 1.35;
     }
     .perm-category-header {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.12em;
@@ -438,7 +438,7 @@
         <div class="dash-card">
           <div class="chat-overlook-grid">
             <div class="chat-proj-list" id="adminChatProjList">
-              <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Select Project Chat</div>
+              <div style="font-size: 12px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Select Project Chat</div>
             </div>
             <div class="chat-container">
               <div style="font-size:0.9rem;font-weight:600;padding:12px;border-bottom:1px solid var(--border);color:var(--gold);word-break:break-word;overflow-wrap:break-word;" id="adminChatHeader">Select a project to view &amp; chat</div>
@@ -813,9 +813,9 @@
 
       <!-- Quick Preset Actions -->
       <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
-        <button type="button" class="btn-outline btn-sm" onclick="setAllPerms(true)" style="font-size:10px;">⚡ Select All (Full Access)</button>
-        <button type="button" class="btn-outline btn-sm" onclick="setFreelancePreset()" style="font-size:10px;">🛡️ Freelancer Preset (Protected)</button>
-        <button type="button" class="btn-outline btn-sm" onclick="setAllPerms(false)" style="font-size:10px;">🚫 Deselect All</button>
+        <button type="button" class="btn-outline btn-sm" onclick="setAllPerms(true)" style="font-size: 12px;">⚡ Select All (Full Access)</button>
+        <button type="button" class="btn-outline btn-sm" onclick="setFreelancePreset()" style="font-size: 12px;">🛡️ Freelancer Preset (Protected)</button>
+        <button type="button" class="btn-outline btn-sm" onclick="setAllPerms(false)" style="font-size: 12px;">🚫 Deselect All</button>
       </div>
 
       <input type="hidden" id="permUid"/>
@@ -1145,7 +1145,7 @@
         const mobileDisplay = c.mobile ? c.mobile : (c.phone || '—');
         return `
         <tr>
-          <td><strong>${c.name||'Client'}</strong><br/><small style="color:var(--t3);font-size:10px;">UID: ${c.id.substring(0,8)}…</small></td>
+          <td><strong>${c.name||'Client'}</strong><br/><small style="color:var(--t3);font-size: 12px;">UID: ${c.id.substring(0,8)}…</small></td>
           <td>${c.email||'—'}</td>
           <td><span style="color:var(--gold);font-size:0.85rem;">${mobileDisplay}</span></td>
           <td><span class="pass-pill">${c.tempPass||'—'}</span></td>
@@ -1206,7 +1206,7 @@
     function renderChatProjectList() {
       const listEl = document.getElementById('adminChatProjList');
       if (!projects.length) { listEl.innerHTML='<div style="color:var(--t3);padding:10px;">No active project chats</div>'; return; }
-      listEl.innerHTML = '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Select Project Chat</div>' +
+      listEl.innerHTML = '<div style="font-size: 12px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Select Project Chat</div>' +
         projects.map(p=>`
           <div class="chat-proj-item ${p.id===activeAdminChatPid?'active':''}" onclick="openAdminChat('${p.id}','${p.title}')">
             <strong>${p.title||'Untitled'}</strong><br/>
@@ -1762,7 +1762,7 @@
             </select>
           </td>
           <td>
-            ${isStaff ? `<button class="btn-gold btn-sm" onclick="openStaffPermissions('${u.id}')">🔐 Permissions</button>` : '<span style="color:var(--t3);font-size:11px;">Client Account</span>'}
+            ${isStaff ? `<button class="btn-gold btn-sm" onclick="openStaffPermissions('${u.id}')">🔐 Permissions</button>` : '<span style="color:var(--t3);font-size: 13px;">Client Account</span>'}
           </td>
         </tr>`;
       }).join('');

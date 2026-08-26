@@ -123,7 +123,7 @@ nav {
   align-items: center;
 }
 .nav-links a {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.16em;
   color: var(--t2);
   text-transform: uppercase;
@@ -150,7 +150,7 @@ nav {
 .mobile-install-link { display: none !important; }
 
 .nav-cta {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #000;
@@ -224,9 +224,9 @@ h1 em, h2 em, h3 em, .gold-italic {
   border-bottom: 1px solid var(--border);
 }
 .sec-title { font-size: 2.6rem; font-weight: 400; letter-spacing: 0.02em; }
-.sec-tag { font-size: 11px; letter-spacing: 0.16em; color: var(--gold); text-transform: uppercase; }
+.sec-tag { font-size: 13px; letter-spacing: 0.16em; color: var(--gold); text-transform: uppercase; }
 .eyebrow {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
@@ -301,43 +301,62 @@ h1 em, h2 em, h3 em, .gold-italic {
 
 .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
 
-.btn-p {
-  background: var(--gold);
-  color: #000;
-  padding: 14px 30px;
-  border-radius: 4px;
+.btn-p, .btn-primary, .btn-gold, .btn-gold-brand, .sub-btn {
+  background: var(--gold) !important;
+  color: #000000 !important;
+  font-family: var(--font-b);
+  padding: 13px 26px;
+  border-radius: 8px;
   font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--gold);
   transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(255,184,0,0.25);
+  white-space: nowrap;
 }
-.btn-p:hover {
-  background: var(--gold-light);
+.btn-p:hover, .btn-primary:hover, .btn-gold:hover, .btn-gold-brand:hover, .sub-btn:hover {
+  background: var(--gold-light) !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(255,184,0,0.4);
 }
 
-.btn-g {
+.btn-g, .btn-secondary, .btn-outline {
   border: 1px solid var(--gold-border);
   color: var(--t1);
-  padding: 14px 30px;
-  border-radius: 4px;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  transition: border-color 0.25s, background 0.25s, transform 0.25s;
+  background: transparent;
+  font-family: var(--font-b);
+  padding: 13px 26px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  transition: border-color 0.25s, background 0.25s, transform 0.25s, color 0.25s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
 }
-.btn-g:hover {
+.btn-g:hover, .btn-secondary:hover, .btn-outline:hover {
   border-color: var(--gold);
+  color: var(--gold);
   background: var(--gold-dim);
   transform: translateY(-2px);
+}
+
+.btn-sm {
+  padding: 8px 16px !important;
+  font-size: 12px !important;
+  border-radius: 6px !important;
 }
 
 /* Hero Stats */
@@ -526,7 +545,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 }
 .pstep:hover .pnum { color: rgba(255,184,0,0.30); }
 .pname { font-family: var(--font-h); font-size: 1.4rem; margin-bottom: 10px; }
-.pdesc { font-size: 0.88rem; color: var(--t2); line-height: 1.6; }
+.pdesc { font-size: 15px; color: var(--t2); line-height: 1.6; }
 
 /* ============================================================
    LOGO STRIP / PARTNER LOGOS
@@ -579,7 +598,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 .rev:hover { border-color: var(--gold); transform: translateY(-4px); }
 .rev-stars { color: var(--gold); font-size: 1rem; margin-bottom: 14px; letter-spacing: 2px; }
 .rev-q { font-size: 0.95rem; color: var(--t2); line-height: 1.7; margin-bottom: 18px; font-style: italic; }
-.rev-name { font-size: 11px; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+.rev-name { font-size: 13px; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
 
 /* ============================================================
    SERVICES PAGE HERO
@@ -659,7 +678,7 @@ h1 em, h2 em, h3 em, .gold-italic {
   box-shadow: 0 24px 60px rgba(0,0,0,0.85), 0 0 40px var(--gold-glow2);
 }
 .srv-block-tag {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--gold);
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -677,7 +696,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 .srv-block-desc { color: var(--t2); font-size: 1rem; line-height: 1.75; margin-bottom: 28px; }
 
 .srv-deliverables-title {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--gold);
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -828,7 +847,7 @@ h1 em, h2 em, h3 em, .gold-italic {
   border-radius: 4px;
   padding: 4px 10px;
   font-family: monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--gold);
   white-space: nowrap;
   overflow: hidden;
@@ -844,7 +863,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 .bm-code {
   padding: 14px 16px;
   font-family: monospace;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
   overflow-x: auto;
 }
@@ -881,7 +900,7 @@ h1 em, h2 em, h3 em, .gold-italic {
   align-items: center;
   margin-bottom: 14px;
 }
-.chart-title { font-size: 11px; color: var(--t3); letter-spacing: 0.1em; text-transform: uppercase; }
+.chart-title { font-size: 13px; color: var(--t3); letter-spacing: 0.1em; text-transform: uppercase; }
 .chart-badge {
   font-size: 12px;
   font-weight: 700;
@@ -935,7 +954,7 @@ h1 em, h2 em, h3 em, .gold-italic {
   align-items: center;
   margin-bottom: 12px;
 }
-.ctr-label { font-size: 10px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.1em; }
+.ctr-label { font-size: 12px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.1em; }
 .ctr-val {
   font-size: 1.5rem;
   color: var(--gold);
@@ -1051,14 +1070,14 @@ h1 em, h2 em, h3 em, .gold-italic {
 .vtitle { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; color: var(--t1); }
 .vdesc { font-size: 0.87rem; color: var(--t2); margin-bottom: 16px; line-height: 1.55; flex: 1; }
 .vbottom { display: flex; justify-content: space-between; align-items: center; }
-.vviews { font-size: 11px; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; }
+.vviews { font-size: 13px; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; }
 .vbtn {
   background: none;
   border: 1px solid var(--gold-border);
   color: var(--gold);
   padding: 6px 14px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -1115,11 +1134,11 @@ h1 em, h2 em, h3 em, .gold-italic {
   z-index: 5;
 }
 .reel-title { color: #FFF; font-size: 0.9rem; font-weight: 600; }
-.reel-views { color: var(--gold); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.reel-views { color: var(--gold); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
 .reel-btn {
   background: var(--gold); color: #000;
   border: none; padding: 7px 12px; border-radius: 4px;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   cursor: pointer; transition: background 0.2s, transform 0.2s; margin-top: 4px; text-align: center;
   font-family: var(--font-b);
 }
@@ -1165,7 +1184,7 @@ h1 em, h2 em, h3 em, .gold-italic {
   flex-shrink: 0;
 }
 .web-card-url {
-  color: var(--gold); font-family: monospace; font-size: 10px;
+  color: var(--gold); font-family: monospace; font-size: 12px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .web-card-title, .ad-card-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; }
@@ -1175,7 +1194,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 .web-card-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
 .web-tag {
   background: var(--gold-dim); border: 1px solid var(--gold-border);
-  color: var(--gold); font-size: 10px; padding: 3px 9px; border-radius: 3px;
+  color: var(--gold); font-size: 12px; padding: 3px 9px; border-radius: 3px;
 }
 
 /* ============================================================
@@ -1216,7 +1235,7 @@ h1 em, h2 em, h3 em, .gold-italic {
   top: -13px; left: 50%;
   transform: translateX(-50%);
   background: var(--gold); color: #000;
-  font-size: 10px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   letter-spacing: 0.12em; text-transform: uppercase;
   padding: 4px 16px; border-radius: 20px;
 }
@@ -1224,12 +1243,12 @@ h1 em, h2 em, h3 em, .gold-italic {
 .pc-price-wrap { margin-bottom: 4px; }
 .pc-currency { font-size: 1.4rem; color: var(--gold); }
 .pc-price { font-family: var(--font-h); font-size: 2.8rem; color: var(--gold); line-height: 1; }
-.pc-gst { font-size: 11px; color: var(--t2); margin-bottom: 22px; }
+.pc-gst { font-size: 13px; color: var(--t2); margin-bottom: 22px; }
 .pc-btn {
   background: none;
   border: 1px solid var(--gold-border); color: var(--t1);
   text-align: center; padding: 12px; border-radius: 4px;
-  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
   margin-bottom: 26px; transition: all 0.25s; cursor: pointer;
   display: block; font-family: var(--font-b);
 }
@@ -1255,7 +1274,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 }
 .book-title { font-family: var(--font-h); font-size: 2rem; margin-bottom: 10px; }
 .book-sub { font-size: 0.92rem; color: var(--t2); margin-bottom: 26px; line-height: 1.65; }
-.plan-sel-label { font-size: 10px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 10px; }
+.plan-sel-label { font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 10px; }
 .btn-g {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   background: var(--gold); color: #000;
@@ -1278,9 +1297,9 @@ h1 em, h2 em, h3 em, .gold-italic {
   border-color: var(--gold); background: var(--gold-dim);
 }
 .plan-opt-name { font-size: 0.9rem; font-weight: 500; }
-.plan-opt-price { font-size: 11px; color: var(--gold); margin-top: 2px; }
+.plan-opt-price { font-size: 13px; color: var(--gold); margin-top: 2px; }
 .field { margin-bottom: 18px; }
-.field label { display: block; font-size: 10px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 7px; }
+.field label { display: block; font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 7px; }
 .field input, .field textarea {
   width: 100%; background: rgba(255,255,255,0.04);
   border: 1px solid var(--border); border-radius: 6px;
@@ -1293,7 +1312,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 .sub-btn {
   background: var(--gold); color: #000;
   border: none; padding: 14px 28px; border-radius: 4px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
   cursor: pointer; transition: all 0.25s; width: 100%;
   font-family: var(--font-b);
 }
@@ -1307,7 +1326,7 @@ h1 em, h2 em, h3 em, .gold-italic {
 .trust-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
 .trust-item {
   background: var(--gold-dim); border: 1px solid var(--gold-border);
-  color: var(--gold); font-size: 10px; font-weight: 600;
+  color: var(--gold); font-size: 12px; font-weight: 600;
   padding: 6px 14px; border-radius: 30px; letter-spacing: 0.08em; text-transform: uppercase;
 }
 
@@ -1317,19 +1336,50 @@ h1 em, h2 em, h3 em, .gold-italic {
 footer {
   background: #000;
   border-top: 1px solid var(--border);
-  padding: 44px 48px;
+  padding: 48px 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 22px;
+  gap: 24px;
 }
-.foot-logo { font-family: var(--font-h); font-size: 20px; letter-spacing: 0.18em; margin-bottom: 5px; }
+.foot-logo { font-family: var(--font-h); font-size: 22px; letter-spacing: 0.18em; margin-bottom: 5px; }
 .foot-logo em { color: var(--gold); font-style: normal; }
-.foot-copy { font-size: 11px; color: var(--t3); }
-.foot-links { display: flex; gap: 24px; flex-wrap: wrap; }
-.foot-links a { font-size: 11px; color: var(--t2); transition: color 0.25s; letter-spacing: 0.06em; }
-.foot-links a:hover { color: var(--gold); }
+.foot-copy { font-size: 13px; color: var(--t3); }
+.foot-links { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+.foot-links a {
+  font-size: 14px;
+  color: var(--t2);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  transition: all 0.25s;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+.foot-links a:hover {
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+/* ============================================================
+   MODAL & CHATBOT VISIBILITY CONTAINMENT
+   ============================================================ */
+.ai-chatbot-panel:not(.open) {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+#checkoutModal:not(.open),
+.checkout-modal:not(.open),
+.modal-overlay:not(.open),
+.modal-overlay:not(.active) {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
 
 /* ============================================================
    VFX: GRADIENT RING ANIMATION (Reusable)
@@ -1365,7 +1415,7 @@ footer {
     background: var(--gold); color: #000;
     text-align: center; padding: 12px;
     border-radius: 4px; font-weight: 700;
-    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
   }
   .nav-toggle { display: block; }
 
@@ -1469,7 +1519,7 @@ footer {
 
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .field { margin-bottom: 16px; }
-.field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 6px; font-weight: 600; }
+.field label { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 6px; font-weight: 600; }
 .field input, .field textarea, .field select {
   width: 100%; background: rgba(0,0,0,0.6); border: 1px solid var(--border);
   border-radius: 8px; padding: 12px 14px; color: #fff; font-family: var(--font-b);
@@ -2727,11 +2777,7 @@ html[data-theme="light"] body,
     line-height: 1.25 !important;
   }
 
-  .pdesc {
-    font-size: 0.85rem !important;
-    line-height: 1.55 !important;
-    margin-bottom: 0 !important;
-  }
+  .pdesc { font-size: 15px; color: var(--t2); line-height: 1.6; }
 
   /* Card Top Accent Glow Bar */
   .pstep::before {

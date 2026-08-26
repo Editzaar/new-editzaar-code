@@ -40,13 +40,15 @@ try {
         console.warn('[NavAuth Firestore]', err);
       }
 
-      if (!displayName) {
-        displayName = user.email ? user.email.split('@')[0] : 'User';
+      // Clean & validate display name
+      if (!displayName || displayName.toLowerCase().includes('hhhh') || displayName.toLowerCase().includes('test')) {
+        displayName = user.email ? user.email.split('@')[0] : 'Dashboard';
       }
 
       // First name or short name
-      const shortName = displayName.trim().split(' ')[0];
-      const initials = displayName.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'U';
+      let shortName = displayName.trim().split(' ')[0] || 'Dashboard';
+      if (shortName.length > 12) shortName = shortName.substring(0, 12);
+      const initials = (shortName[0] || 'D').toUpperCase();
 
       // Role destination
       let destUrl = dashPrefix + 'client.html';
@@ -77,12 +79,12 @@ try {
       const loginUrl = dashPrefix + 'index.html';
       desktopBtns.forEach(btn => {
         btn.href = loginUrl;
-        btn.textContent = 'Login';
+        btn.textContent = 'Client Login';
         btn.title = 'Client & Staff Login';
       });
       mobileBtns.forEach(btn => {
         btn.href = loginUrl;
-        btn.textContent = 'Login';
+        btn.textContent = 'Client Login';
       });
     }
   });

@@ -36,7 +36,7 @@
     }
     .sts-dot.done  { border-color: var(--green); background: rgba(40,200,64,0.1); }
     .sts-dot.active{ border-color: var(--gold); background: var(--gold-dim); }
-    .sts-label { font-size: 10px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; text-align: center; }
+    .sts-label { font-size: 12px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; text-align: center; }
     .sts-label.done   { color: var(--green); }
     .sts-label.active { color: var(--gold); }
     .sts-line { flex: 1; height: 2px; background: var(--border); margin-top: 15px; min-width: 24px; }
@@ -106,7 +106,7 @@
     }
     .modal-close:hover { color:var(--gold); }
     .service-price-pill {
-      font-size: 11px; color: var(--gold); background: var(--gold-dim);
+      font-size: 13px; color: var(--gold); background: var(--gold-dim);
       border: 1px solid var(--gold-border); padding: 4px 10px; border-radius: 20px;
       display: inline-block; margin-top: 4px;
     }
@@ -128,7 +128,7 @@
     .inv-summary-box { width: 260px; margin-left: auto; font-size: 13px; }
     .inv-sum-row { display: flex; justify-content: space-between; padding: 4px 0; }
     .inv-sum-row.grand { border-top: 2px solid #000; font-weight: 800; font-size: 15px; padding-top: 8px; }
-    .inv-footer-note { font-size: 11px; color: #777; border-top: 1px solid #eee; padding-top: 14px; margin-top: 28px; text-align: center; }
+    .inv-footer-note { font-size: 13px; color: #777; border-top: 1px solid #eee; padding-top: 14px; margin-top: 28px; text-align: center; }
 
     @media print {
       body * { visibility: hidden; }
@@ -466,16 +466,16 @@
               <div style="font-size:1.1rem;font-weight:600;margin-bottom:6px;" id="detailTitle">—</div>
               <div style="font-size:0.88rem;color:var(--t2);margin-bottom:18px;" id="detailDesc">—</div>
                 <div>
-                  <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline (Change Date)</div>
+                  <div style="font-size: 12px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline (Change Date)</div>
                   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
                     <input type="date" id="clientDeadlineInput" style="background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:6px;padding:5px 10px;color:var(--gold);font-family:var(--font-b);font-size:0.85rem;outline:none;cursor:pointer;"/>
-                    <button class="btn-gold btn-sm" id="btnUpdateClientDeadline" style="padding:5px 12px;font-size:11px;">Update Date 📅</button>
+                    <button class="btn-gold btn-sm" id="btnUpdateClientDeadline" style="padding:5px 12px;font-size: 13px;">Update Date 📅</button>
                   </div>
                 </div>
 
               <!-- Raw Footage Link Input -->
               <div class="link-input-box">
-                <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Raw Footage Link (Google Drive / WeTransfer / Dropbox)</div>
+                <div style="font-size: 12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Raw Footage Link (Google Drive / WeTransfer / Dropbox)</div>
                 <div class="flex-input-row">
                   <input type="url" id="rawFootageInput" placeholder="https://drive.google.com/..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color: var(--t1);font-size:0.88rem;outline:none;"/>
                   <button class="btn-gold btn-sm" id="btnSaveFootageLink">Save Link</button>
@@ -485,7 +485,7 @@
 
               <!-- Download Final Delivery -->
               <div id="deliverySection" style="display:none;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--r);padding:20px;">
-                <div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎉 Final Video Delivered!</div>
+                <div style="font-size: 13px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎉 Final Video Delivered!</div>
                 <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;" id="detailDeliveryNote">Your editor has delivered your final edit.</div>
                 <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold">🎬 Open Delivered Video / Drive →</a>
               </div>
@@ -1120,7 +1120,7 @@
             <div style="font-size:12px;color:var(--t3);">Invoice Ref #${p.id.substring(0,8).toUpperCase()} · Client GSTIN: ${p.clientGstin||'N/A'}</div>
           </div>
           <div style="text-align:right;">
-            <div style="font-family:var(--font-h);font-size:1.4rem;color:var(--gold);">₹${total.toLocaleString()} <small style="font-size:10px;color:var(--t3);">(incl. GST)</small></div>
+            <div style="font-family:var(--font-h);font-size:1.4rem;color:var(--gold);">₹${total.toLocaleString()} <small style="font-size: 12px;color:var(--t3);">(incl. GST)</small></div>
             <div style="margin-top:6px;display:flex;gap:8px;justify-content:flex-end;align-items:center;">
               <span class="status-badge ${isOfficial?'invoice-paid':'invoice-unpaid'}">${isOfficial?'✅ Official GST Invoice':'⏳ Acknowledgment Receipt'}</span>
               <button class="btn-gold btn-sm" onclick="openInvoiceModal('${p.id}')">View / Print Invoice →</button>
