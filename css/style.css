@@ -2959,3 +2959,53 @@ html[data-theme="light"] body,
   color: #111116 !important;
   font-weight: 600 !important;
 }
+
+/* ============================================================
+   PREMIUM CHECKOUT & SELECT DROPDOWN POLISH (v275.0)
+   ============================================================ */
+select {
+  background: var(--bg-card) !important;
+  color: var(--t1) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-family: var(--font-b) !important;
+  font-size: 0.92rem !important;
+  outline: none !important;
+  cursor: pointer !important;
+}
+select:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px var(--gold-dim) !important;
+}
+select optgroup {
+  background: #18181f !important;
+  color: var(--gold) !important;
+  font-weight: 700 !important;
+  padding: 8px 4px !important;
+}
+select option {
+  background: #121217 !important;
+  color: #ffffff !important;
+  padding: 8px 12px !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="light"] select {
+  background: #ffffff !important;
+  color: #111116 !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+[data-theme="light"] select:focus {
+  border-color: #b88200 !important;
+  box-shadow: 0 0 0 3px rgba(184, 130, 0, 0.12) !important;
+}
+[data-theme="light"] select optgroup {
+  background: #f0f0f5 !important;
+  color: #b88200 !important;
+  font-weight: 700 !important;
+}
+[data-theme="light"] select option {
+  background: #ffffff !important;
+  color: #111116 !important;
+}
