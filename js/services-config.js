@@ -309,82 +309,104 @@
 
   const COUPONS_STORAGE_KEY = 'editzaar_dynamic_coupons';
 
+  // Global in-memory cache synchronized with localStorage
+  let _cachedCoupons = null;
+
   window.EditzaarCoupons = {
     getAll: function () {
       try {
         const local = localStorage.getItem(COUPONS_STORAGE_KEY);
         if (local) {
           const parsed = JSON.parse(local);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            _cachedCoupons = parsed;
+            return parsed;
+          }
         }
       } catch (e) {
         console.warn('[EditzaarCoupons] Local storage read error:', e);
       }
-      return DEFAULT_COUPONS;
+      if (!_cachedCoupons) _cachedCoupons = [...DEFAULT_COUPONS];
+      return _cachedCoupons;
     },
 
     getByCode: function (code) {
       if (!code) return null;
-      const clean = code.trim().toUpperCase();
-      return this.getAll().find(c => c.code.toUpperCase() === clean && c.active !== false) || null;
+      const clean = String(code).trim().toUpperCase();
+      const all = this.getAll();
+      return all.find(c => String(c.code).trim().toUpperCase() === clean && c.active !== false) || null;
     },
 
     validate: function (code, baseAmount) {
-      const clean = (code || '').trim().toUpperCase();
-      const coupon = this.getByCode(clean);
+      const clean = String(code || '').trim().toUpperCase();
       const base = parseInt(baseAmount) || 0;
 
       if (!clean) {
         return { valid: false, message: 'Please enter a coupon code.' };
       }
+
+      const coupon = this.getByCode(clean);
       if (!coupon) {
-        return { valid: false, message: 'Invalid or expired coupon code.' };
+        return { valid: false, message: `Coupon "${clean}" is invalid or expired.` };
       }
 
       let discount = 0;
+      const val = parseInt(coupon.value) || 0;
       if (coupon.discountType === 'percent') {
-        discount = Math.round(base * (coupon.value / 100));
+        discount = Math.round(base * (val / 100));
       } else {
-        discount = Math.min(base, coupon.value);
+        discount = Math.min(base, val);
       }
 
       return {
         valid: true,
         code: coupon.code,
         discountType: coupon.discountType,
-        value: coupon.value,
+        value: val,
         discountAmount: discount,
         description: coupon.description,
-        message: `🎉 Coupon applied: ${coupon.discountType === 'percent' ? coupon.value + '% OFF' : '₹' + coupon.value + ' OFF'}! Saved ₹${discount.toLocaleString()}`
+        message: `🎉 Coupon "${coupon.code}" applied: ${coupon.discountType === 'percent' ? val + '% OFF' : '₹' + val + ' OFF'}! Saved ₹${discount.toLocaleString()}`
       };
     },
 
     save: function (couponObj) {
       const all = [...this.getAll()];
-      const cleanCode = couponObj.code.trim().toUpperCase();
+      const cleanCode = String(couponObj.code).trim().toUpperCase();
       couponObj.code = cleanCode;
-      const idx = all.findIndex(c => c.code.toUpperCase() === cleanCode);
+      couponObj.value = parseInt(couponObj.value) || 0;
+      couponObj.active = true;
+
+      const idx = all.findIndex(c => String(c.code).trim().toUpperCase() === cleanCode);
       if (idx >= 0) {
         all[idx] = { ...all[idx], ...couponObj };
       } else {
         all.push(couponObj);
       }
-      localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+      _cachedCoupons = all;
+      try {
+        localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+      } catch (err) {}
       this.notifySubscribers(all);
       return all;
     },
 
     delete: function (code) {
-      const clean = code.trim().toUpperCase();
-      let all = this.getAll().filter(c => c.code.toUpperCase() !== clean);
-      if (all.length === 0) all = DEFAULT_COUPONS;
-      localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+      const clean = String(code).trim().toUpperCase();
+      let all = this.getAll().filter(c => String(c.code).trim().toUpperCase() !== clean);
+      if (all.length === 0) all = [...DEFAULT_COUPONS];
+      _cachedCoupons = all;
+      try {
+        localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+      } catch (err) {}
       this.notifySubscribers(all);
       return all;
     },
 
     resetDefaults: function () {
-      localStorage.removeItem(COUPONS_STORAGE_KEY);
+      _cachedCoupons = [...DEFAULT_COUPONS];
+      try {
+        localStorage.removeItem(COUPONS_STORAGE_KEY);
+      } catch (err) {}
       this.notifySubscribers(DEFAULT_COUPONS);
       return DEFAULT_COUPONS;
     },
@@ -397,16 +419,25 @@
       this._subscribers.forEach(cb => {
         try { cb(coupons); } catch (e) { console.error(e); }
       });
-      window.dispatchEvent(new CustomEvent('editzaar:coupons_updated', { detail: coupons }));
+      try {
+        window.dispatchEvent(new CustomEvent('editzaar:coupons_updated', { detail: coupons }));
+      } catch (err) {}
     }
   };
 
-  // Sync across browser tabs
+  // Sync across browser tabs in real-time
   window.addEventListener('storage', function (e) {
     if (e.key === STORAGE_KEY) {
       try {
         const updated = JSON.parse(e.newValue);
         window.EditzaarServices.notifySubscribers(updated);
+      } catch (err) {}
+    }
+    if (e.key === COUPONS_STORAGE_KEY) {
+      try {
+        const updated = JSON.parse(e.newValue);
+        _cachedCoupons = updated;
+        window.EditzaarCoupons.notifySubscribers(updated);
       } catch (err) {}
     }
   });
