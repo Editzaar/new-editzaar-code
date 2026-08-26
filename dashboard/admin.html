@@ -2298,54 +2298,58 @@
     }
 
 
-    /* ── DYNAMIC COUPONS ENGINE ── */
+    
+
+    /* ══════════════════════════════════════════════════════════════
+       ROCK-SOLID ADMIN COUPONS & SERVICES CONTROLLER
+       ══════════════════════════════════════════════════════════════ */
     window.renderAdminCouponsTable = function() {
       const tbody = document.getElementById('couponsTbody');
-      if (!tbody || !window.EditzaarCoupons) return;
-      const list = window.EditzaarCoupons.getAll();
+      if (!tbody) return;
+      const list = (window.EditzaarCoupons && typeof window.EditzaarCoupons.getAll === 'function') 
+                   ? window.EditzaarCoupons.getAll() 
+                   : [];
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px;">No coupons found. Create your first coupon above! 🎟️</td></tr>';
+        return;
+      }
 
       tbody.innerHTML = list.map(c => `
         <tr>
           <td><span style="font-family:monospace;font-weight:700;font-size:0.95rem;background:rgba(255,184,0,0.12);color:var(--gold);padding:4px 10px;border-radius:6px;border:1px dashed var(--gold-border);">${c.code}</span></td>
-          <td><strong style="color:#28C840;">${c.discountType === 'percent' ? c.value + '% OFF' : '₹' + c.value.toLocaleString() + ' FLAT OFF'}</strong></td>
+          <td><strong style="color:#28C840;">${c.discountType === 'percent' ? c.value + '% OFF' : '₹' + Number(c.value).toLocaleString() + ' FLAT OFF'}</strong></td>
           <td style="font-size:0.85rem;color:var(--t2);">${c.description || '—'}</td>
           <td>${c.maxUses || 'Unlimited'}</td>
           <td><span class="status-badge" style="background:rgba(40,200,64,0.1);color:#28C840;">Active</span></td>
           <td>
-            <button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminCoupon('${c.code}')">🗑️ Delete</button>
+            <button type="button" class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);padding:4px 10px;" onclick="window.deleteAdminCoupon('${c.code}')">🗑️ Delete</button>
           </td>
         </tr>
       `).join('');
     };
 
-    window.deleteAdminCoupon = function(code) {
-      if (confirm(`Are you sure you want to delete coupon ${code}?`)) {
-        window.EditzaarCoupons.delete(code);
-        if (typeof window.deleteAdminCouponFromFirebase === 'function') {
-          window.deleteAdminCouponFromFirebase(code);
-        }
-        showToast(`Coupon ${code} deleted! 🗑️`, 'info');
-        window.renderAdminCouponsTable();
+    window.createAdminCouponNow = function() {
+      const codeInp = document.getElementById('cpn-code');
+      const typeInp = document.getElementById('cpn-type');
+      const discInp = document.getElementById('cpn-disc');
+      const usesInp = document.getElementById('cpn-uses');
+      const descInp = document.getElementById('cpn-desc');
+
+      const code = (codeInp ? codeInp.value : '').trim().toUpperCase();
+      const type = typeInp ? typeInp.value : 'percent';
+      const val = parseInt(discInp ? discInp.value : 0) || 0;
+      const uses = parseInt(usesInp ? usesInp.value : 100) || 100;
+      const desc = descInp ? descInp.value.trim() : '';
+
+      if (!code) {
+        alert('Please enter a Coupon Code (e.g. BT or SAVE20).');
+        if (codeInp) codeInp.focus();
+        return;
       }
-    };
-
-    window.resetCouponsToDefault = function() {
-      if (confirm('Reset all coupons to factory defaults?')) {
-        window.EditzaarCoupons.resetDefaults();
-        showToast('Coupons reset to default! ↺', 'success');
-        window.renderAdminCouponsTable();
-      }
-    };
-
-    document.getElementById('btnAddCoupon')?.addEventListener('click', () => {
-      const code = (document.getElementById('cpn-code').value || '').trim().toUpperCase();
-      const type = document.getElementById('cpn-type').value;
-      const val = parseInt(document.getElementById('cpn-disc').value) || 0;
-      const uses = parseInt(document.getElementById('cpn-uses').value) || 100;
-      const desc = document.getElementById('cpn-desc').value.trim();
-
-      if (!code || val <= 0) {
-        showToast('Please enter a valid coupon code and discount value.', 'error');
+      if (val <= 0) {
+        alert('Please enter a valid Discount Value greater than 0.');
+        if (discInp) discInp.focus();
         return;
       }
 
@@ -2356,23 +2360,48 @@
         maxUses: uses,
         description: desc || `${type === 'percent' ? val + '%' : '₹' + val} Discount`,
         active: true
-      });
+      };
 
-      window.EditzaarCoupons.save(newCpnObj);
+      if (window.EditzaarCoupons) {
+        window.EditzaarCoupons.save(newCpnObj);
+      }
       if (typeof window.saveAdminCouponToFirebase === 'function') {
         window.saveAdminCouponToFirebase(newCpnObj);
       }
-      showToast(`Coupon ${code} created & published globally! 🎟️`, 'success');
-      document.getElementById('cpn-code').value = '';
-      document.getElementById('cpn-disc').value = '';
-      document.getElementById('cpn-desc').value = '';
-      window.renderAdminCouponsTable();
-    });
 
+      showToast(`Coupon "${code}" created & published successfully! 🎟️`, 'success');
+
+      if (codeInp) codeInp.value = '';
+      if (discInp) discInp.value = '';
+      if (descInp) descInp.value = '';
+
+      window.renderAdminCouponsTable();
+    };
+
+    window.deleteAdminCoupon = function(code) {
+      if (confirm(`Are you sure you want to delete coupon ${code}?`)) {
+        if (window.EditzaarCoupons) window.EditzaarCoupons.delete(code);
+        if (typeof window.deleteAdminCouponFromFirebase === 'function') {
+          window.deleteAdminCouponFromFirebase(code);
+        }
+        showToast(`Coupon ${code} deleted! 🗑️`, 'info');
+        window.renderAdminCouponsTable();
+      }
+    };
+
+    window.resetCouponsToDefault = function() {
+      if (confirm('Reset all coupons to factory defaults?')) {
+        if (window.EditzaarCoupons) window.EditzaarCoupons.resetDefaults();
+        showToast('Coupons reset to default! ↺', 'success');
+        window.renderAdminCouponsTable();
+      }
+    };
+
+    // Auto-render on load & subscribe
     if (window.EditzaarCoupons) {
       window.EditzaarCoupons.subscribe(() => window.renderAdminCouponsTable());
-      window.renderAdminCouponsTable();
     }
+    setTimeout(() => { window.renderAdminCouponsTable(); }, 100);
 
 </script>
 </body>

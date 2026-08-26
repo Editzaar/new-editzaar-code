@@ -3009,3 +3009,18 @@ select option {
   background: #ffffff !important;
   color: #111116 !important;
 }
+
+/* LUXURY DESIGN 2 UPI CARD RESPONSIVE LAYOUT */
+@media (max-width: 600px) {
+  .upi-grid-wrap {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+    text-align: center !important;
+    gap: 16px !important;
+  }
+}
+[data-theme="light"] .luxury-upi-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(184, 130, 0, 0.3) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
+}
