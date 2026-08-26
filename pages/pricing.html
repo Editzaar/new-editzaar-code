@@ -361,8 +361,22 @@
         <div style="font-size: 13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:10px;font-weight:700;">Selected Package Breakdown</div>
         <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
         <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
+        <div class="summary-row" id="chkDiscountRow" style="display:none;color:#28C840;font-weight:600;">
+          <span>Coupon Discount (<span id="chkDiscountCode"></span>)</span>
+          <span id="chkDiscountAmt">-₹0</span>
+        </div>
         <div class="summary-row"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
         <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
+
+        <!-- COUPON PROMO CODE INPUT -->
+        <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🎟️ Have a Coupon Code?</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" id="chkCouponCode" placeholder="e.g. WELCOME10 / LAUNCH20" style="flex:1;text-transform:uppercase;padding:7px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:monospace;font-weight:700;outline:none;font-size:0.9rem;"/>
+            <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
+          </div>
+          <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
+        </div>
 
         <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
         <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">

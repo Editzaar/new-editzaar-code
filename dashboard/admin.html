@@ -671,17 +671,66 @@
 
       <!-- COUPONS -->
       <section id="sec-coupons" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Coupons <em>&amp; Discounts</em></div></div>
-        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Add Coupon</div></div>
+        <div class="dash-topbar">
+          <div class="dash-page-title">Coupons <em>&amp; Discount Promos</em></div>
+          <button class="btn-outline btn-sm" onclick="window.resetCouponsToDefault()">↺ Reset to Default Coupons</button>
+        </div>
+        <div class="dash-card" style="margin-bottom:20px;background:linear-gradient(135deg,rgba(40,200,64,0.06) 0%,rgba(0,0,0,0.4) 100%);">
+          <div style="font-size:0.9rem;color:var(--t2);">🎟️ <strong>Dynamic Coupon Discounts:</strong> Any coupons created here can be applied by clients in the <strong>Website Checkout &amp; Client Dashboard Booking Modal</strong> for instant percentage or flat discounts on project orders.</div>
+        </div>
+
+        <div class="dash-card" style="margin-bottom:24px;">
+          <div class="dash-card-header"><div class="dash-card-title">＋ Create New <em>Coupon Code</em></div></div>
           <div class="dash-form">
-            <div class="field"><input id="cpn-code" type="text" placeholder="CODE (e.g. SAVE20)"/></div>
-            <div class="field"><input id="cpn-disc" type="number" placeholder="Discount %"/></div>
-            <div class="field"><input id="cpn-uses" type="number" placeholder="Max Uses"/></div>
-            <div class="field"><input id="cpn-exp" type="date"/></div>
-            <button class="btn-gold" id="btnAddCoupon">Add Coupon</button>
+            <div class="form-grid-2">
+              <div class="field">
+                <label>Coupon Code * (All-Caps)</label>
+                <input id="cpn-code" type="text" placeholder="e.g. VIP25 / SUMMER500" style="text-transform:uppercase;"/>
+              </div>
+              <div class="field">
+                <label>Discount Type *</label>
+                <select id="cpn-type">
+                  <option value="percent">Percentage Discount (%)</option>
+                  <option value="flat">Flat Rupee Discount (₹)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="field">
+                <label>Discount Value * (% or ₹)</label>
+                <input id="cpn-disc" type="number" placeholder="e.g. 20 (for 20%) or 500 (for ₹500)" min="1"/>
+              </div>
+              <div class="field">
+                <label>Max Usage Limit</label>
+                <input id="cpn-uses" type="number" placeholder="e.g. 100" value="100"/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Coupon Description / Campaign Note</label>
+              <input id="cpn-desc" type="text" placeholder="e.g. Exclusive client onboarding bonus"/>
+            </div>
+            <button class="btn-gold" style="margin-top:6px;" id="btnAddCoupon">Create &amp; Publish Coupon →</button>
           </div>
         </div>
-        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Code</th><th>Discount %</th><th>Remaining Uses</th><th>Expiry</th></tr></thead><tbody id="couponsTbody"></tbody></table></div></div>
+
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Active <em>Coupons &amp; Promo Codes</em></div></div>
+          <div class="table-scroll-wrap">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Coupon Code</th>
+                  <th>Discount</th>
+                  <th>Description</th>
+                  <th>Max Uses</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="couponsTbody"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- REVIEWS -->
@@ -1952,6 +2001,9 @@
       if (name === 'services' && typeof window.renderAdminServicesTable === 'function') {
         window.renderAdminServicesTable();
       }
+      if (name === 'coupons' && typeof window.renderAdminCouponsTable === 'function') {
+        window.renderAdminCouponsTable();
+      }
     }
     window.showSection = showSection;
     document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
@@ -2212,6 +2264,75 @@
         window.renderAdminServicesTable();
       });
       window.renderAdminServicesTable();
+    }
+
+
+    /* ── DYNAMIC COUPONS ENGINE ── */
+    window.renderAdminCouponsTable = function() {
+      const tbody = document.getElementById('couponsTbody');
+      if (!tbody || !window.EditzaarCoupons) return;
+      const list = window.EditzaarCoupons.getAll();
+
+      tbody.innerHTML = list.map(c => `
+        <tr>
+          <td><span style="font-family:monospace;font-weight:700;font-size:0.95rem;background:rgba(255,184,0,0.12);color:var(--gold);padding:4px 10px;border-radius:6px;border:1px dashed var(--gold-border);">${c.code}</span></td>
+          <td><strong style="color:#28C840;">${c.discountType === 'percent' ? c.value + '% OFF' : '₹' + c.value.toLocaleString() + ' FLAT OFF'}</strong></td>
+          <td style="font-size:0.85rem;color:var(--t2);">${c.description || '—'}</td>
+          <td>${c.maxUses || 'Unlimited'}</td>
+          <td><span class="status-badge" style="background:rgba(40,200,64,0.1);color:#28C840;">Active</span></td>
+          <td>
+            <button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminCoupon('${c.code}')">🗑️ Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    };
+
+    window.deleteAdminCoupon = function(code) {
+      if (confirm(`Are you sure you want to delete coupon ${code}?`)) {
+        window.EditzaarCoupons.delete(code);
+        showToast(`Coupon ${code} deleted! 🗑️`, 'info');
+        window.renderAdminCouponsTable();
+      }
+    };
+
+    window.resetCouponsToDefault = function() {
+      if (confirm('Reset all coupons to factory defaults?')) {
+        window.EditzaarCoupons.resetDefaults();
+        showToast('Coupons reset to default! ↺', 'success');
+        window.renderAdminCouponsTable();
+      }
+    };
+
+    document.getElementById('btnAddCoupon')?.addEventListener('click', () => {
+      const code = (document.getElementById('cpn-code').value || '').trim().toUpperCase();
+      const type = document.getElementById('cpn-type').value;
+      const val = parseInt(document.getElementById('cpn-disc').value) || 0;
+      const uses = parseInt(document.getElementById('cpn-uses').value) || 100;
+      const desc = document.getElementById('cpn-desc').value.trim();
+
+      if (!code || val <= 0) {
+        showToast('Please enter a valid coupon code and discount value.', 'error');
+        return;
+      }
+
+      window.EditzaarCoupons.save({
+        code: code,
+        discountType: type,
+        value: val,
+        maxUses: uses,
+        description: desc || `${type === 'percent' ? val + '%' : '₹' + val} Discount`,
+        active: true
+      });
+
+      showToast(`Coupon ${code} created & activated! 🎟️`, 'success');
+      document.getElementById('cpn-code').value = '';
+      document.getElementById('cpn-disc').value = '';
+      document.getElementById('cpn-desc').value = '';
+      window.renderAdminCouponsTable();
+    });
+
+    if (window.EditzaarCoupons) {
+      window.EditzaarCoupons.subscribe(() => window.renderAdminCouponsTable());
     }
 
 </script>

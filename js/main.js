@@ -242,8 +242,22 @@ document.addEventListener('DOMContentLoaded', function () {
           <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:12px;font-weight:700;">Selected Package Breakdown</div>
           <div class="summary-row"><span>Package Name</span><strong id="chkPkgName" style="color:#fff;">Custom Project</strong></div>
           <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹1,000</span></div>
+          <div class="summary-row" id="chkDiscountRow" style="display:none;color:#28C840;font-weight:600;">
+            <span>Coupon Discount (<span id="chkDiscountCode"></span>)</span>
+            <span id="chkDiscountAmt">-₹0</span>
+          </div>
           <div class="summary-row"><span>GST (18%)</span><span id="chkGst">₹180</span></div>
           <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹1,180</strong></div>
+
+          <!-- COUPON PROMO CODE INPUT -->
+          <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🎟️ Have a Coupon Code?</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="chkCouponCode" placeholder="e.g. WELCOME10 / LAUNCH20" style="flex:1;text-transform:uppercase;padding:7px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:monospace;font-weight:700;outline:none;font-size:0.9rem;"/>
+              <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
+            </div>
+            <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
+          </div>
 
           <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
           <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
@@ -444,6 +458,100 @@ document.addEventListener('DOMContentLoaded', function () {
     var btn = document.getElementById('btnPresetCustom');
     if (btn) btn.classList.add('active');
     window.updateCheckoutUpi(amt);
+  };
+
+  
+  window._appliedCoupon = null;
+
+  window.applyCheckoutCoupon = function() {
+    const codeInp = document.getElementById('chkCouponCode');
+    const msgEl = document.getElementById('chkCouponStatusMsg');
+    const code = (codeInp ? codeInp.value : '').trim().toUpperCase();
+    const basePrice = window._activeCheckoutPackage ? window._activeCheckoutPackage.basePrice : 1000;
+
+    if (!code) {
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#ff5555';
+        msgEl.textContent = 'Please enter a coupon code.';
+      }
+      return;
+    }
+
+    if (!window.EditzaarCoupons) {
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#ff5555';
+        msgEl.textContent = 'Coupons system loading... please try again.';
+      }
+      return;
+    }
+
+    const res = window.EditzaarCoupons.validate(code, basePrice);
+    if (!res.valid) {
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#ff5555';
+        msgEl.textContent = res.message;
+      }
+      return;
+    }
+
+    window._appliedCoupon = res;
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      msgEl.style.color = '#28C840';
+      msgEl.innerHTML = `${res.message} <button type="button" onclick="window.removeCheckoutCoupon()" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:0.8rem;text-decoration:underline;margin-left:6px;">[Remove]</button>`;
+    }
+
+    window.recalculateCheckoutTotals();
+  };
+
+  window.removeCheckoutCoupon = function() {
+    window._appliedCoupon = null;
+    const codeInp = document.getElementById('chkCouponCode');
+    const msgEl = document.getElementById('chkCouponStatusMsg');
+    if (codeInp) codeInp.value = '';
+    if (msgEl) {
+      msgEl.style.display = 'none';
+      msgEl.textContent = '';
+    }
+    window.recalculateCheckoutTotals();
+  };
+
+  window.recalculateCheckoutTotals = function() {
+    const basePrice = window._activeCheckoutPackage ? window._activeCheckoutPackage.basePrice : 1000;
+    const discountRow = document.getElementById('chkDiscountRow');
+    const discountCodeEl = document.getElementById('chkDiscountCode');
+    const discountAmtEl = document.getElementById('chkDiscountAmt');
+    const elGst = document.getElementById('chkGst');
+    const elTot = document.getElementById('chkTotal');
+    const elTxt50 = document.getElementById('txtPreset50');
+    const elTxt100 = document.getElementById('txtPreset100');
+
+    let discount = 0;
+    if (window._appliedCoupon) {
+      discount = window._appliedCoupon.discountAmount || 0;
+      if (discountRow) discountRow.style.display = 'flex';
+      if (discountCodeEl) discountCodeEl.textContent = window._appliedCoupon.code;
+      if (discountAmtEl) discountAmtEl.textContent = '-₹' + discount.toLocaleString();
+    } else {
+      if (discountRow) discountRow.style.display = 'none';
+    }
+
+    const discountedBase = Math.max(0, basePrice - discount);
+    const gst = Math.round(discountedBase * 0.18);
+    const total = discountedBase + gst;
+    const advance50 = Math.round(total * 0.5);
+
+    window._activeCheckoutTotal = total;
+
+    if (elGst) elGst.textContent = '₹' + gst.toLocaleString();
+    if (elTot) elTot.textContent = '₹' + total.toLocaleString();
+    if (elTxt50) elTxt50.textContent = '₹' + advance50.toLocaleString();
+    if (elTxt100) elTxt100.textContent = '₹' + total.toLocaleString();
+
+    window.setCheckoutDeposit('50%');
   };
 
   window.openCheckout = function (pName, price, deliveryTime) {

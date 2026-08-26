@@ -562,8 +562,22 @@
         <div class="summary-card" style="margin-bottom:16px;">
           <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:10px;font-weight:700;">Price Breakdown &amp; Deposit</div>
           <div class="summary-row"><span>Base Service Amount</span><span id="cnpBasePrice">₹1,000</span></div>
+          <div class="summary-row" id="cnpDiscountRow" style="display:none;color:#28C840;font-weight:600;">
+            <span>Coupon Discount (<span id="cnpDiscountCode"></span>)</span>
+            <span id="cnpDiscountAmt">-₹0</span>
+          </div>
           <div class="summary-row"><span>GST (18%)</span><span id="cnpGst">₹180</span></div>
           <div class="summary-row total"><span>Total Project Value</span><strong id="cnpTotal" style="color:var(--gold);">₹1,180</strong></div>
+
+          <!-- COUPON PROMO CODE INPUT -->
+          <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🎟️ Have a Coupon Code?</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="cnpCouponCode" placeholder="e.g. WELCOME10 / LAUNCH20" style="flex:1;text-transform:uppercase;padding:7px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:monospace;font-weight:700;outline:none;font-size:0.9rem;"/>
+              <button type="button" class="btn-gold btn-sm" id="btnApplyCnpCoupon" onclick="window.applyCnpCoupon()">Apply</button>
+            </div>
+            <div id="cnpCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
+          </div>
 
           <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--gold-border);">
             <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:8px;">💳 Choose Amount to Pay Now</div>
@@ -1250,8 +1264,25 @@
 
     window.updateCnpPriceUi = function(basePrice) {
       activeCnpBase = parseInt(basePrice) || 0;
-      const gst = Math.round(activeCnpBase * 0.18);
-      activeCnpTotal = activeCnpBase + gst;
+
+      let discount = 0;
+      const discountRow = document.getElementById('cnpDiscountRow');
+      const discountCodeEl = document.getElementById('cnpDiscountCode');
+      const discountAmtEl = document.getElementById('cnpDiscountAmt');
+
+      if (window._appliedCnpCoupon) {
+        const reval = window.EditzaarCoupons.validate(window._appliedCnpCoupon.code, activeCnpBase);
+        discount = reval.discountAmount || 0;
+        if (discountRow) discountRow.style.display = 'flex';
+        if (discountCodeEl) discountCodeEl.textContent = window._appliedCnpCoupon.code;
+        if (discountAmtEl) discountAmtEl.textContent = '-₹' + discount.toLocaleString();
+      } else {
+        if (discountRow) discountRow.style.display = 'none';
+      }
+
+      const discountedBase = Math.max(0, activeCnpBase - discount);
+      const gst = Math.round(discountedBase * 0.18);
+      activeCnpTotal = discountedBase + gst;
       const adv50 = Math.round(activeCnpTotal * 0.5);
 
       document.getElementById('cnpBasePrice').textContent = '₹' + activeCnpBase.toLocaleString();
@@ -1314,6 +1345,64 @@
     window.onCnpCustomBudgetChange = function(val) {
       const budget = parseInt(val) || 0;
       window.updateCnpPriceUi(budget);
+    };
+
+    
+    window._appliedCnpCoupon = null;
+
+    window.applyCnpCoupon = function() {
+      const codeInp = document.getElementById('cnpCouponCode');
+      const msgEl = document.getElementById('cnpCouponStatusMsg');
+      const code = (codeInp ? codeInp.value : '').trim().toUpperCase();
+
+      if (!code) {
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.style.color = '#ff5555';
+          msgEl.textContent = 'Please enter a coupon code.';
+        }
+        return;
+      }
+
+      if (!window.EditzaarCoupons) {
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.style.color = '#ff5555';
+          msgEl.textContent = 'Coupons system loading... please try again.';
+        }
+        return;
+      }
+
+      const res = window.EditzaarCoupons.validate(code, activeCnpBase);
+      if (!res.valid) {
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.style.color = '#ff5555';
+          msgEl.textContent = res.message;
+        }
+        return;
+      }
+
+      window._appliedCnpCoupon = res;
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#28C840';
+        msgEl.innerHTML = `${res.message} <button type="button" onclick="window.removeCnpCoupon()" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:0.8rem;text-decoration:underline;margin-left:6px;">[Remove]</button>`;
+      }
+
+      window.updateCnpPriceUi(activeCnpBase);
+    };
+
+    window.removeCnpCoupon = function() {
+      window._appliedCnpCoupon = null;
+      const codeInp = document.getElementById('cnpCouponCode');
+      const msgEl = document.getElementById('cnpCouponStatusMsg');
+      if (codeInp) codeInp.value = '';
+      if (msgEl) {
+        msgEl.style.display = 'none';
+        msgEl.textContent = '';
+      }
+      window.updateCnpPriceUi(activeCnpBase);
     };
 
     const cnpServiceSelect = document.getElementById('cnp-service');

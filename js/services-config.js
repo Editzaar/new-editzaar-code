@@ -296,6 +296,111 @@
     }
   };
 
+  
+  /* ══════════════════════════════════════════════════════════════
+     DYNAMIC COUPONS & DISCOUNTS SYSTEM
+     ══════════════════════════════════════════════════════════════ */
+  const DEFAULT_COUPONS = [
+    { code: "WELCOME10", discountType: "percent", value: 10, description: "10% Welcome Discount for New Clients", active: true, maxUses: 100 },
+    { code: "LAUNCH20", discountType: "percent", value: 20, description: "20% Launch Celebration Discount", active: true, maxUses: 50 },
+    { code: "FLAT500", discountType: "flat", value: 500, description: "₹500 Flat Discount on any project", active: true, maxUses: 200 },
+    { code: "AGENCY30", discountType: "percent", value: 30, description: "30% Partner / Agency Retainer Discount", active: true, maxUses: 20 }
+  ];
+
+  const COUPONS_STORAGE_KEY = 'editzaar_dynamic_coupons';
+
+  window.EditzaarCoupons = {
+    getAll: function () {
+      try {
+        const local = localStorage.getItem(COUPONS_STORAGE_KEY);
+        if (local) {
+          const parsed = JSON.parse(local);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {
+        console.warn('[EditzaarCoupons] Local storage read error:', e);
+      }
+      return DEFAULT_COUPONS;
+    },
+
+    getByCode: function (code) {
+      if (!code) return null;
+      const clean = code.trim().toUpperCase();
+      return this.getAll().find(c => c.code.toUpperCase() === clean && c.active !== false) || null;
+    },
+
+    validate: function (code, baseAmount) {
+      const clean = (code || '').trim().toUpperCase();
+      const coupon = this.getByCode(clean);
+      const base = parseInt(baseAmount) || 0;
+
+      if (!clean) {
+        return { valid: false, message: 'Please enter a coupon code.' };
+      }
+      if (!coupon) {
+        return { valid: false, message: 'Invalid or expired coupon code.' };
+      }
+
+      let discount = 0;
+      if (coupon.discountType === 'percent') {
+        discount = Math.round(base * (coupon.value / 100));
+      } else {
+        discount = Math.min(base, coupon.value);
+      }
+
+      return {
+        valid: true,
+        code: coupon.code,
+        discountType: coupon.discountType,
+        value: coupon.value,
+        discountAmount: discount,
+        description: coupon.description,
+        message: `🎉 Coupon applied: ${coupon.discountType === 'percent' ? coupon.value + '% OFF' : '₹' + coupon.value + ' OFF'}! Saved ₹${discount.toLocaleString()}`
+      };
+    },
+
+    save: function (couponObj) {
+      const all = [...this.getAll()];
+      const cleanCode = couponObj.code.trim().toUpperCase();
+      couponObj.code = cleanCode;
+      const idx = all.findIndex(c => c.code.toUpperCase() === cleanCode);
+      if (idx >= 0) {
+        all[idx] = { ...all[idx], ...couponObj };
+      } else {
+        all.push(couponObj);
+      }
+      localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+      this.notifySubscribers(all);
+      return all;
+    },
+
+    delete: function (code) {
+      const clean = code.trim().toUpperCase();
+      let all = this.getAll().filter(c => c.code.toUpperCase() !== clean);
+      if (all.length === 0) all = DEFAULT_COUPONS;
+      localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(all));
+      this.notifySubscribers(all);
+      return all;
+    },
+
+    resetDefaults: function () {
+      localStorage.removeItem(COUPONS_STORAGE_KEY);
+      this.notifySubscribers(DEFAULT_COUPONS);
+      return DEFAULT_COUPONS;
+    },
+
+    _subscribers: [],
+    subscribe: function (cb) {
+      if (typeof cb === 'function') this._subscribers.push(cb);
+    },
+    notifySubscribers: function (coupons) {
+      this._subscribers.forEach(cb => {
+        try { cb(coupons); } catch (e) { console.error(e); }
+      });
+      window.dispatchEvent(new CustomEvent('editzaar:coupons_updated', { detail: coupons }));
+    }
+  };
+
   // Sync across browser tabs
   window.addEventListener('storage', function (e) {
     if (e.key === STORAGE_KEY) {
