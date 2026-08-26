@@ -320,21 +320,33 @@ document.addEventListener('DOMContentLoaded', function () {
           <input type="url" id="chkFootage" placeholder="https://drive.google.com/..."/>
         </div>
 
-        <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX -->
-        <div class="payment-box">
-          <div>
-            <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px;font-weight:700;">Dynamic Auto-Amount UPI QR Code</div>
-            <div class="upi-badge">UPI ID: nbikram704@okhdfcbank</div>
-            <div style="font-size:0.85rem;color:var(--t2);line-height:1.6;margin-top:6px;">
-              • <strong>Account Name:</strong> Bikram Nath<br/>
-              • <strong>Amount to Deposit:</strong> <strong id="chkAdvancePayText" style="color:#28C840;">₹590</strong><br/>
-              • <em>Scanning this QR pre-fills your chosen payment amount automatically in your GPay or PhonePe app!</em>
+        <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX (Design 2) -->
+        <div class="luxury-upi-card" style="background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(255,184,0,0.35);border-radius:16px;padding:20px 22px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);">
+          <div style="display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:center;" class="upi-grid-wrap">
+            <div>
+              <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);font-weight:800;margin-bottom:10px;">DYNAMIC AUTO-AMOUNT UPI QR CODE</div>
+              <div style="display:inline-flex;align-items:center;background:#b88200;color:#ffffff;font-weight:700;font-size:0.84rem;padding:5px 14px;border-radius:20px;margin-bottom:12px;letter-spacing:0.02em;">
+                UPI ID: nbikram704@okhdfcbank
+              </div>
+              <div style="font-size:0.86rem;color:var(--t2);line-height:1.7;">
+                <div>• <strong>Account Name:</strong> Bikram Nath</div>
+                <div>• <strong>Pre-filled 50% Advance:</strong> <strong id="chkAdvancePayText" style="color:#28C840;font-weight:700;">₹590</strong></div>
+                <div style="font-style:italic;color:var(--t3);font-size:0.8rem;margin-top:2px;">• Scanning this QR pre-fills the exact advance deposit automatically in your GPay or PhonePe app!</div>
+              </div>
+              <a id="btnMobileUpi" href="upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=590&cu=INR&tn=Editzaar%20Project" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#28C840;color:#ffffff;font-weight:700;font-size:0.88rem;padding:10px 18px;border-radius:10px;text-decoration:none;margin-top:14px;box-shadow:0 4px 14px rgba(40,200,64,0.35);transition:all 0.2s;">
+                ⚡ Open GPay / PhonePe (Pre-filled ₹<span id="btnUpiAmt">590</span>) →
+              </a>
             </div>
-            <a id="btnMobileUpi" href="#" target="_blank" class="btn-upi-mobile">⚡ Open GPay / PhonePe (Pre-filled ₹<span id="btnUpiAmt">590</span>) →</a>
-          </div>
-          <div class="dynamic-qr-wrapper">
-            <img id="dynamicQrImg" src="" alt="Dynamic Pre-filled UPI Payment QR Code" class="dynamic-qr-img"/>
-            <div style="font-size:10px;color:#000;font-weight:700;margin-top:6px;letter-spacing:0.04em;" id="qrBadgeText">PRE-FILLED UPI QR</div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <div style="background:#ffffff;border:2px solid #FFB800;border-radius:14px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(255,184,0,0.25);width:170px;">
+                <img id="dynamicQrImg" 
+                     src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi%3A%2F%2Fpay%3Fpa%3Dnbikram704%40okhdfcbank%26pn%3DBikram%20Nath%26am%3D590%26cu%3DINR%26tn%3DEditzaar%20Project" 
+                     alt="Pre-filled UPI Payment QR Code" 
+                     onerror="this.src='https://quickchart.io/qr?text=' + encodeURIComponent('upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=' + (document.getElementById('btnUpiAmt')?.textContent || '590') + '&cu=INR&tn=Editzaar%20Project');"
+                     style="width:145px;height:145px;display:block;object-fit:contain;border-radius:4px;"/>
+                <div style="font-size:10px;font-weight:800;color:#111116;text-transform:uppercase;letter-spacing:0.04em;margin-top:6px;text-align:center;" id="qrBadgeText">PRE-FILLED 50% ADVANCE QR</div>
+              </div>
+            </div>
           </div>
         </div>
 
