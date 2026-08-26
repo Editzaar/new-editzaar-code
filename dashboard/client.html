@@ -1332,9 +1332,14 @@
       }
     });
 
-    window.openClientBookingModal = function() {
+        window.openClientBookingModal = function() {
+      if (window.EditzaarServices) {
+        window.EditzaarServices.populateSelect(cnpServiceSelect);
+      }
       modalClientNewProject.classList.add('open');
-      window.updateCnpPriceUi(1000);
+      const rawVal = cnpServiceSelect.value || 'Shorts|1000|48 Hours';
+      const [sName, sPrice] = rawVal.split('|');
+      window.updateCnpPriceUi(parseInt(sPrice) || 1000);
     };
 
     // Attach to all booking trigger buttons in client.html

@@ -605,17 +605,68 @@
 
       <!-- SERVICES -->
       <section id="sec-services" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Services <em>&amp; Pricing</em></div></div>
-        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Add Service</div></div>
+        <div class="dash-topbar">
+          <div class="dash-page-title">Master Services <em>&amp; Live Pricing Manager</em></div>
+          <button class="btn-outline btn-sm" onclick="window.resetServicesToDefault()">↺ Reset to Default Prices</button>
+        </div>
+        <div class="dash-card" style="margin-bottom:20px;background:linear-gradient(135deg,rgba(255,184,0,0.06) 0%,rgba(0,0,0,0.4) 100%);">
+          <div style="font-size:0.9rem;color:var(--t2);">💡 <strong>Dynamic Live Pricing:</strong> Any changes made here to service prices, delivery turnaround times, or new packages automatically and instantly update across the <strong>Client Dashboard Booking Modal, Website Pricing Page, and Checkout System</strong> without needing code updates!</div>
+        </div>
+
+        <div class="dash-card" style="margin-bottom:24px;">
+          <div class="dash-card-header"><div class="dash-card-title">＋ Add / Update <em>Service Package</em></div></div>
           <div class="dash-form">
-            <div class="field"><input id="svc-name" type="text" placeholder="Service Name"/></div>
-            <div class="field"><input id="svc-desc" type="text" placeholder="Description"/></div>
-            <div class="field"><input id="svc-price" type="number" placeholder="Price (₹)"/></div>
-            <div class="field"><input id="svc-time" type="text" placeholder="Turnaround Time (e.g. 3 Days)"/></div>
-            <button class="btn-gold" id="btnAddService">Save Service</button>
+            <div class="form-grid-2">
+              <div class="field">
+                <label>Service Category</label>
+                <select id="svc-category">
+                  <option value="Video Post-Production">🎬 Video Post-Production</option>
+                  <option value="Website Design & Development">💻 Website Design & Development</option>
+                  <option value="Paid Advertising & Growth">📈 Paid Advertising & Growth</option>
+                  <option value="Custom Creative Service">⭐ Custom Creative Service</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Service Package Name *</label>
+                <input id="svc-name" type="text" placeholder="e.g. 3D Product Animation / YouTube Shorts"/>
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="field">
+                <label>Base Price (₹) *</label>
+                <input id="svc-price" type="number" placeholder="e.g. 2500" min="100"/>
+              </div>
+              <div class="field">
+                <label>Turnaround Delivery Time *</label>
+                <input id="svc-time" type="text" placeholder="e.g. 48 Hours / 3-5 Days"/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Service Short Description</label>
+              <input id="svc-desc" type="text" placeholder="Brief explanation of what is included in this service..."/>
+            </div>
+            <button class="btn-gold" style="margin-top:6px;" id="btnAddService">Save Service Package →</button>
           </div>
         </div>
-        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Name</th><th>Description</th><th>Price</th><th>Time</th></tr></thead><tbody id="servicesTbody"></tbody></table></div></div>
+
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">Live Active <em>Service Catalog &amp; Prices</em></div></div>
+          <div class="table-scroll-wrap">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Service Name</th>
+                  <th>Base Price (₹)</th>
+                  <th>Delivery</th>
+                  <th>Description</th>
+                  <th>Quick Actions</th>
+                </tr>
+              </thead>
+              <tbody id="servicesTbody"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- COUPONS -->
@@ -1898,6 +1949,9 @@
         if(el) el.style.display = s===name?'block':'none'; 
       });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.section===name));
+      if (name === 'services' && typeof window.renderAdminServicesTable === 'function') {
+        window.renderAdminServicesTable();
+      }
     }
     window.showSection = showSection;
     document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
@@ -2055,6 +2109,111 @@
     onAuthStateChanged(_auth, function(user) {
       if (user) saveFcmToken(user.uid);
     });
-  </script>
+  
+    /* ── DYNAMIC MASTER SERVICES & PRICING ENGINE ── */
+    window.renderAdminServicesTable = function() {
+      const tbody = document.getElementById('servicesTbody');
+      if (!tbody || !window.EditzaarServices) return;
+      const list = window.EditzaarServices.getAll();
+
+      tbody.innerHTML = list.map(s => `
+        <tr>
+          <td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">${s.categoryIcon || '📌'} ${s.category || 'General'}</span></td>
+          <td><strong>${s.name}</strong></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span>₹</span>
+              <input type="number" id="inp-price-${s.id}" value="${s.price}" style="width:90px;padding:4px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;" min="100"/>
+            </div>
+          </td>
+          <td>
+            <input type="text" id="inp-time-${s.id}" value="${s.delivery || '48 Hours'}" style="width:110px;padding:4px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);"/>
+          </td>
+          <td style="font-size:0.85rem;color:var(--t2);max-width:240px;">${s.description || '—'}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-gold btn-sm" onclick="window.saveAdminServicePrice('${s.id}')">💾 Save</button>
+              <button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminService('${s.id}')">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    };
+
+    window.saveAdminServicePrice = function(id) {
+      const pInp = document.getElementById('inp-price-' + id);
+      const tInp = document.getElementById('inp-time-' + id);
+      if (!pInp || !tInp) return;
+      const newPrice = parseInt(pInp.value) || 0;
+      const newTime = tInp.value.trim() || '48 Hours';
+
+      window.EditzaarServices.updatePrice(id, newPrice, newTime);
+      showToast('Service price & delivery updated! ✅', 'success');
+      window.renderAdminServicesTable();
+    };
+
+    window.deleteAdminService = function(id) {
+      if (confirm('Are you sure you want to remove this service package?')) {
+        window.EditzaarServices.delete(id);
+        showToast('Service removed! 🗑️', 'info');
+        window.renderAdminServicesTable();
+      }
+    };
+
+    window.resetServicesToDefault = function() {
+      if (confirm('Reset all services and prices to factory defaults?')) {
+        window.EditzaarServices.resetDefaults();
+        showToast('Services reset to default prices! ↺', 'success');
+        window.renderAdminServicesTable();
+      }
+    };
+
+    document.getElementById('btnAddService')?.addEventListener('click', () => {
+      const cat = document.getElementById('svc-category').value;
+      const name = document.getElementById('svc-name').value.trim();
+      const price = parseInt(document.getElementById('svc-price').value) || 0;
+      const time = document.getElementById('svc-time').value.trim() || '48 Hours';
+      const desc = document.getElementById('svc-desc').value.trim();
+
+      if (!name || price <= 0) {
+        showToast('Please provide a valid service name and price.', 'error');
+        return;
+      }
+
+      let icon = '📌';
+      if (cat.includes('Video')) icon = '🎬';
+      else if (cat.includes('Web')) icon = '💻';
+      else if (cat.includes('Ad')) icon = '📈';
+      else if (cat.includes('Custom')) icon = '⭐';
+
+      const newSvc = {
+        id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        category: cat,
+        categoryIcon: icon,
+        name: name,
+        price: price,
+        unit: '/ project',
+        delivery: time,
+        description: desc || 'Custom agency service.'
+      };
+
+      window.EditzaarServices.save(newSvc);
+      showToast('Service added and published across all pages! 🚀', 'success');
+      document.getElementById('svc-name').value = '';
+      document.getElementById('svc-price').value = '';
+      document.getElementById('svc-time').value = '';
+      document.getElementById('svc-desc').value = '';
+      window.renderAdminServicesTable();
+    });
+
+    // Subscribe to dynamic updates
+    if (window.EditzaarServices) {
+      window.EditzaarServices.subscribe(() => {
+        window.renderAdminServicesTable();
+      });
+      window.renderAdminServicesTable();
+    }
+
+</script>
 </body>
 </html>
