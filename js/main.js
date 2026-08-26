@@ -212,13 +212,41 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 
-  /* ── 9. Mobile Navigation Toggle ── */
+  /* ── 9. Mobile Navigation Toggle & Outside Click Handler ── */
   var navToggle = document.getElementById('navToggle');
   var navLinks  = document.querySelector('.nav-links');
 
   if (navToggle && navLinks) {
-    navToggle.addEventListener('click', function () {
+    navToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
       navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open');
+    });
+
+    // Close menu when clicking outside anywhere on document
+    document.addEventListener('click', function (e) {
+      if (navLinks.classList.contains('open')) {
+        if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+          navLinks.classList.remove('open');
+          navToggle.classList.remove('open');
+        }
+      }
+    });
+
+    // Close menu when tapping/clicking any menu link
+    navLinks.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+      });
+    });
+
+    // Close menu on Escape key press
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+      }
     });
   }
 
