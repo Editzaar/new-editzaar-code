@@ -511,37 +511,114 @@
 
   <!-- ══ MODAL: NEW PROJECT BOOKING ══ -->
   <div class="modal-overlay" id="modalClientNewProject">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width:680px;max-height:90vh;overflow-y:auto;">
       <button class="modal-close" id="btnCloseClientModal">✕</button>
       <div class="modal-title">Book New Project</div>
+      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:18px;">Select a service or custom requirement, choose your deposit amount, scan the UPI QR, and submit.</div>
+      
       <div class="dash-form">
         <div class="field">
-          <label>Project Title</label>
-          <input id="cnp-title" type="text" placeholder="e.g. Instagram Reel / Finance Edit / YouTube Video"/>
+          <label>Project Title *</label>
+          <input id="cnp-title" type="text" placeholder="e.g. Instagram Reel / Finance Edit / YouTube Video" required/>
         </div>
+
         <div class="field">
-          <label>Select Service Package</label>
+          <label>Select Service Package *</label>
           <select id="cnp-service">
-            <option value="Shorts &amp; Reels (₹1,000 / video)|1000">📱 Shorts &amp; Instagram Reels — ₹1,000 / video</option>
-            <option value="Motion Graphic &amp; Animated (₹2,500 / video)|2500">🎨 Motion Graphic &amp; Animated Video — ₹2,500 / video</option>
-            <option value="Long Form YouTube Edit (₹5,000 / video)|5000">🎬 Long Form YouTube Video Edit — ₹5,000 / video</option>
-            <option value="Custom Brand Partnership|0">⭐ Custom Brand Partnership / Agency Retainer</option>
+            <optgroup label="🎬 Video Post-Production">
+              <option value="Shorts &amp; Instagram Reels|1000|48 Hours" selected>📱 Shorts &amp; Instagram Reels — ₹1,000 / video</option>
+              <option value="Motion Graphic &amp; Animated Video|2500|48 Hours">🎨 Motion Graphic &amp; Animated Video — ₹2,500 / video</option>
+              <option value="Long Form YouTube Video Edit|5000|48-72 Hours">🎬 Long Form YouTube Video Edit — ₹5,000 / video</option>
+              <option value="Cinematic Documentary &amp; Ad Film|10000|3-5 Days">🎥 Cinematic Documentary &amp; Ad Film — ₹10,000 / video</option>
+            </optgroup>
+            <optgroup label="💻 Website Design &amp; Development">
+              <option value="High-Converting Landing Page|4999|3-5 Days">⚡ High-Converting Landing Page — ₹4,999 / project</option>
+              <option value="D2C Brand &amp; E-Commerce Store|12999|7-10 Days">🛍️ D2C Brand &amp; E-Commerce Store — ₹12,999 / project</option>
+              <option value="Full Web System &amp; Portal|24999|10-14 Days">💻 Full Web System &amp; Portal — ₹24,999 / project</option>
+            </optgroup>
+            <optgroup label="📈 Paid Advertising &amp; Growth">
+              <option value="Paid Ad Setup &amp; Creatives|7999|3-5 Days">🎯 Paid Ad Setup &amp; Creatives (Meta &amp; Google) — ₹7,999 / campaign</option>
+              <option value="Full Channel Growth Retainer|14999|Monthly">🚀 Full Channel Growth Retainer — ₹14,999 / month</option>
+            </optgroup>
+            <optgroup label="⭐ Custom Service / Quote">
+              <option value="Custom Service / Custom Quote|0|Custom">✨ Custom Service / Custom Quote Request</option>
+            </optgroup>
           </select>
-          <div class="service-price-pill" id="cnpPriceTag">Est. Price: ₹1,000 (+ 18% GST)</div>
         </div>
+
+        <!-- CUSTOM SERVICE DETAIL FIELDS (Shown only when Custom Service is selected) -->
+        <div id="cnpCustomServiceWrap" style="display:none;background:rgba(255,184,0,0.06);border:1px dashed var(--gold-border);padding:14px;border-radius:10px;margin-bottom:16px;">
+          <div class="field" style="margin-bottom:12px;">
+            <label>Custom Service Name / Scope *</label>
+            <input id="cnp-custom-name" type="text" placeholder="e.g. Podcast Video Editing / 3D Product VFX / Mobile App"/>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Estimated Custom Budget (₹) *</label>
+            <input id="cnp-custom-budget" type="number" placeholder="e.g. 5000" min="100" oninput="window.onCnpCustomBudgetChange(this.value)"/>
+          </div>
+        </div>
+
+        <!-- PRICE BREAKDOWN & DEPOSIT CUSTOMIZER -->
+        <div class="summary-card" style="margin-bottom:16px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:10px;font-weight:700;">Price Breakdown &amp; Deposit</div>
+          <div class="summary-row"><span>Base Service Amount</span><span id="cnpBasePrice">₹1,000</span></div>
+          <div class="summary-row"><span>GST (18%)</span><span id="cnpGst">₹180</span></div>
+          <div class="summary-row total"><span>Total Project Value</span><strong id="cnpTotal" style="color:var(--gold);">₹1,180</strong></div>
+
+          <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--gold-border);">
+            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:8px;">💳 Choose Amount to Pay Now</div>
+            
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <button type="button" class="pay-preset-btn active" id="btnCnpPreset50" onclick="window.setCnpDeposit('50%')">50% Advance (<span id="txtCnpPreset50">₹590</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnCnpPreset100" onclick="window.setCnpDeposit('100%')">100% Full Payment (<span id="txtCnpPreset100">₹1,180</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnCnpPresetCustom" onclick="window.setCnpDeposit('custom')">Custom Amount ✏️</button>
+            </div>
+
+            <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:10px 14px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+              <div>
+                <label for="cnpCustomPayAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;display:block;margin-bottom:2px;">Deposit Amount (₹):</label>
+                <input type="number" id="cnpCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.15rem;font-weight:700;padding:6px 12px;border-radius:6px;width:150px;outline:none;" min="100" oninput="window.onCnpCustomDepositChange(this.value)"/>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
+                <div style="font-size:1.1rem;font-weight:700;color:var(--t1);" id="cnpRemainingBalance">₹590</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="field">
           <label>Client GSTIN Number (Optional — For Tax Input Credit)</label>
           <input id="cnp-gstin" type="text" placeholder="e.g. 36AAAAA0000A1Z5 (Optional)"/>
         </div>
         <div class="field">
-          <label>Project Brief / Instructions</label>
+          <label>Project Brief / Instructions *</label>
           <textarea id="cnp-desc" placeholder="Describe your video style, reference links, hook preferences, audio instructions…"></textarea>
         </div>
         <div class="field">
           <label>Raw Footage Link (Google Drive / WeTransfer / Dropbox)</label>
           <input id="cnp-footage" type="url" placeholder="https://drive.google.com/..."/>
         </div>
-        <button class="btn-gold" style="width:100%;justify-content:center;margin-top:8px;" id="btnSubmitClientProject">Submit Project Request →</button>
+
+        <!-- DYNAMIC AUTO-AMOUNT UPI QR PAYMENT BOX -->
+        <div class="payment-box" style="margin-top:10px;margin-bottom:16px;">
+          <div>
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:6px;font-weight:700;">Dynamic Auto-Amount UPI QR Code</div>
+            <div class="upi-badge" style="margin-bottom:6px;">UPI ID: nbikram704@okhdfcbank</div>
+            <div style="font-size:0.82rem;color:var(--t2);line-height:1.5;margin-top:4px;">
+              • <strong>Account Name:</strong> Bikram Nath<br/>
+              • <strong>Amount to Deposit:</strong> <strong id="cnpAdvancePayText" style="color:#28C840;">₹590</strong><br/>
+              • <em>Scanning this QR pre-fills your chosen amount automatically in GPay / PhonePe!</em>
+            </div>
+            <a id="btnCnpMobileUpi" href="#" target="_blank" class="btn-upi-mobile" style="margin-top:8px;">⚡ Open GPay / PhonePe (Pre-filled ₹<span id="btnCnpUpiAmt">590</span>) →</a>
+          </div>
+          <div class="dynamic-qr-wrapper">
+            <img id="cnpDynamicQrImg" src="" alt="Dynamic Pre-filled UPI Payment QR Code" class="dynamic-qr-img"/>
+            <div style="font-size:10px;color:#000;font-weight:700;margin-top:4px;letter-spacing:0.04em;" id="cnpQrBadgeText">PRE-FILLED UPI QR</div>
+          </div>
+        </div>
+
+        <button class="btn-gold" style="width:100%;justify-content:center;margin-top:8px;" id="btnSubmitClientProject">Confirm Booking &amp; Submit Request →</button>
       </div>
     </div>
   </div>
@@ -1165,39 +1242,137 @@
     };
 
     const modalClientNewProject = document.getElementById('modalClientNewProject');
-    document.getElementById('btnOpenNewProjectModal').addEventListener('click', ()=> modalClientNewProject.classList.add('open'));
-    document.getElementById('btnCloseClientModal').addEventListener('click', ()=> modalClientNewProject.classList.remove('open'));
+    document.getElementById('btnOpenNewProjectModal')?.addEventListener('click', ()=> openClientBookingModal());
+    document.getElementById('btnCloseClientModal')?.addEventListener('click', ()=> modalClientNewProject.classList.remove('open'));
+
+    let activeCnpBase = 1000;
+    let activeCnpTotal = 1180;
+
+    window.updateCnpPriceUi = function(basePrice) {
+      activeCnpBase = parseInt(basePrice) || 0;
+      const gst = Math.round(activeCnpBase * 0.18);
+      activeCnpTotal = activeCnpBase + gst;
+      const adv50 = Math.round(activeCnpTotal * 0.5);
+
+      document.getElementById('cnpBasePrice').textContent = '₹' + activeCnpBase.toLocaleString();
+      document.getElementById('cnpGst').textContent = '₹' + gst.toLocaleString();
+      document.getElementById('cnpTotal').textContent = '₹' + activeCnpTotal.toLocaleString();
+      document.getElementById('txtCnpPreset50').textContent = '₹' + adv50.toLocaleString();
+      document.getElementById('txtCnpPreset100').textContent = '₹' + activeCnpTotal.toLocaleString();
+
+      window.setCnpDeposit('50%');
+    };
+
+    window.updateCnpUpi = function(amt) {
+      const deposit = parseInt(amt) || 0;
+      const rem = Math.max(0, activeCnpTotal - deposit);
+
+      document.getElementById('cnpAdvancePayText').textContent = '₹' + deposit.toLocaleString();
+      document.getElementById('btnCnpUpiAmt').textContent = deposit.toLocaleString();
+      document.getElementById('cnpRemainingBalance').textContent = '₹' + rem.toLocaleString();
+      document.getElementById('cnpQrBadgeText').textContent = `PRE-FILLED ₹${deposit.toLocaleString()} QR`;
+
+      const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${deposit}&cu=INR&tn=${encodeURIComponent('Editzaar Booking')}`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+
+      const elQr = document.getElementById('cnpDynamicQrImg');
+      const elMobileUpi = document.getElementById('btnCnpMobileUpi');
+      if (elQr) elQr.src = qrApiUrl;
+      if (elMobileUpi) elMobileUpi.href = upiUrl;
+    };
+
+    window.setCnpDeposit = function(type) {
+      const adv50 = Math.round(activeCnpTotal * 0.5);
+      let amt = adv50;
+
+      document.querySelectorAll('#modalClientNewProject .pay-preset-btn').forEach(b => b.classList.remove('active'));
+      const input = document.getElementById('cnpCustomPayAmount');
+
+      if (type === '50%') {
+        amt = adv50;
+        document.getElementById('btnCnpPreset50')?.classList.add('active');
+      } else if (type === '100%') {
+        amt = activeCnpTotal;
+        document.getElementById('btnCnpPreset100')?.classList.add('active');
+      } else {
+        document.getElementById('btnCnpPresetCustom')?.classList.add('active');
+        if (input) { input.focus(); input.select(); }
+        return;
+      }
+
+      if (input) input.value = amt;
+      window.updateCnpUpi(amt);
+    };
+
+    window.onCnpCustomDepositChange = function(val) {
+      const amt = parseInt(val) || 0;
+      document.querySelectorAll('#modalClientNewProject .pay-preset-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('btnCnpPresetCustom')?.classList.add('active');
+      window.updateCnpUpi(amt);
+    };
+
+    window.onCnpCustomBudgetChange = function(val) {
+      const budget = parseInt(val) || 0;
+      window.updateCnpPriceUi(budget);
+    };
 
     const cnpServiceSelect = document.getElementById('cnp-service');
     cnpServiceSelect.addEventListener('change', (e)=>{
-      const [name, price] = e.target.value.split('|');
-      document.getElementById('cnpPriceTag').textContent = price === '0' ? 'Custom Quote' : `Est. Price: ₹${parseInt(price).toLocaleString()} (+ 18% GST)`;
+      const [serviceName, priceStr] = e.target.value.split('|');
+      const customWrap = document.getElementById('cnpCustomServiceWrap');
+      const isCustom = serviceName.includes('Custom Service');
+
+      if (isCustom) {
+        customWrap.style.display = 'block';
+        const customBudget = parseInt(document.getElementById('cnp-custom-budget').value) || 0;
+        window.updateCnpPriceUi(customBudget);
+      } else {
+        customWrap.style.display = 'none';
+        window.updateCnpPriceUi(parseInt(priceStr) || 1000);
+      }
+    });
+
+    window.openClientBookingModal = function() {
+      modalClientNewProject.classList.add('open');
+      window.updateCnpPriceUi(1000);
+    };
+
+    // Attach to all booking trigger buttons in client.html
+    document.querySelectorAll('[onclick*="modalClientNewProject"]').forEach(btn => {
+      btn.onclick = () => window.openClientBookingModal();
     });
 
     document.getElementById('btnSubmitClientProject').addEventListener('click', async () => {
-      const title   = document.getElementById('cnp-title').value.trim();
-      const rawVal  = cnpServiceSelect.value;
+      const title = document.getElementById('cnp-title').value.trim();
+      const rawVal = cnpServiceSelect.value;
       const [serviceName, priceStr] = rawVal.split('|');
-      const gstin   = document.getElementById('cnp-gstin').value.trim();
-      const desc    = document.getElementById('cnp-desc').value.trim();
+      const isCustom = serviceName.includes('Custom Service');
+      const customName = document.getElementById('cnp-custom-name').value.trim();
+      const finalServiceName = isCustom && customName ? customName : serviceName;
+      const gstin = document.getElementById('cnp-gstin').value.trim();
+      const desc = document.getElementById('cnp-desc').value.trim();
       const footage = document.getElementById('cnp-footage').value.trim();
-      const price   = parseInt(priceStr) || 0;
+      const enteredDeposit = parseInt(document.getElementById('cnpCustomPayAmount').value) || 0;
 
       if (!title) { showToast('Please enter a project title.','error'); return; }
 
       const deadline = new Date();
-      deadline.setDate(deadline.getDate() + 2);
+      deadline.setDate(deadline.getDate() + (serviceName.includes('Web') ? 10 : 3));
 
       await addDoc(collection(db, 'projects'), {
-        title: title + ' (' + serviceName + ')',
+        title: title + ' (' + finalServiceName + ')',
+        serviceName: finalServiceName,
         description: desc,
         clientId: currentUser.uid,
+        clientName: currentUser.name || 'Client',
+        clientEmail: currentUser.email || '',
         clientGstin: gstin || '',
         editorId: '',
         rawFootageUrl: footage,
         deliveryUrl: '',
-        invoiceAmount: price,
-        invoicePaid: false,
+        invoiceAmount: activeCnpTotal,
+        depositPaidAmount: enteredDeposit,
+        invoicePaid: enteredDeposit >= activeCnpTotal,
         status: 'pending',
         createdAt: serverTimestamp(),
         deadline: deadline
@@ -1208,6 +1383,8 @@
       document.getElementById('cnp-title').value = '';
       document.getElementById('cnp-desc').value = '';
       document.getElementById('cnp-footage').value = '';
+      document.getElementById('cnp-custom-name').value = '';
+      document.getElementById('cnp-custom-budget').value = '';
     });
 
     window.openProject = async (pid) => {
