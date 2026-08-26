@@ -18,8 +18,7 @@ try {
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const isSubPage = window.location.pathname.includes('/pages/');
-  const dashPrefix = isSubPage ? '../dashboard/' : 'dashboard/';
+  const dashPrefix = window.location.pathname.includes('/dashboard/') ? '' : 'dashboard/';
 
   
     // Universal Real-time Firestore Coupon Validator
