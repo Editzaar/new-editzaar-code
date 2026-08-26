@@ -1517,6 +1517,36 @@ footer {
   padding: 10px 14px; border-radius: 8px; color: #28C840; font-weight: 700; margin-top: 10px;
 }
 
+.pay-preset-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  color: var(--t1);
+  font-family: var(--font-b);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.pay-preset-btn:hover, .pay-preset-btn.active {
+  background: var(--gold) !important;
+  color: #000000 !important;
+  border-color: var(--gold) !important;
+  box-shadow: 0 4px 14px rgba(255, 184, 0, 0.35);
+  font-weight: 700;
+}
+[data-theme="light"] .pay-preset-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #111116;
+}
+[data-theme="light"] .pay-preset-btn.active {
+  background: #b88200 !important;
+  color: #ffffff !important;
+}
+
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .field { margin-bottom: 16px; }
 .field label { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 6px; font-weight: 600; }

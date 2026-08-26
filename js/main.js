@@ -239,14 +239,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
         <!-- PACKAGE SUMMARY BREAKDOWN -->
         <div class="summary-card">
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:12px;font-weight:700;">Selected Package Breakdown</div>
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:12px;font-weight:700;">Selected Package Breakdown</div>
           <div class="summary-row"><span>Package Name</span><strong id="chkPkgName" style="color:#fff;">Custom Project</strong></div>
           <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹1,000</span></div>
           <div class="summary-row"><span>GST (18%)</span><span id="chkGst">₹180</span></div>
-          <div class="summary-row total"><span>Total Package Value</span><span id="chkTotal" style="color:var(--gold);">₹1,180</span></div>
-          <div class="summary-row advance">
-            <span>💳 Required 50% Booking Advance</span>
-            <span id="chkAdvance">₹590</span>
+          <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹1,180</strong></div>
+
+          <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
+          <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
+            <div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;">💳 Choose Amount to Pay Now</div>
+            
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+              <button type="button" class="pay-preset-btn active" id="btnPreset50" onclick="window.setCheckoutDeposit('50%')">50% Advance (<span id="txtPreset50">₹590</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnPreset100" onclick="window.setCheckoutDeposit('100%')">100% Full Payment (<span id="txtPreset100">₹1,180</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnPresetCustom" onclick="window.setCheckoutDeposit('custom')">Custom Amount ✏️</button>
+            </div>
+
+            <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div>
+                <label for="chkCustomPayAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
+                <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
+                <div style="font-size:1.15rem;font-weight:700;color:var(--t1);" id="chkRemainingBalance">₹590</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -291,18 +309,18 @@ document.addEventListener('DOMContentLoaded', function () {
         <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX -->
         <div class="payment-box">
           <div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px;font-weight:700;">Dynamic Auto-Amount UPI QR Code</div>
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px;font-weight:700;">Dynamic Auto-Amount UPI QR Code</div>
             <div class="upi-badge">UPI ID: nbikram704@okhdfcbank</div>
             <div style="font-size:0.85rem;color:var(--t2);line-height:1.6;margin-top:6px;">
               • <strong>Account Name:</strong> Bikram Nath<br/>
-              • <strong>Pre-filled 50% Advance:</strong> <strong id="chkAdvancePayText" style="color:#28C840;">₹590</strong><br/>
-              • <em>Scanning this QR pre-fills the exact advance deposit automatically in your GPay or PhonePe app!</em>
+              • <strong>Amount to Deposit:</strong> <strong id="chkAdvancePayText" style="color:#28C840;">₹590</strong><br/>
+              • <em>Scanning this QR pre-fills your chosen payment amount automatically in your GPay or PhonePe app!</em>
             </div>
             <a id="btnMobileUpi" href="#" target="_blank" class="btn-upi-mobile">⚡ Open GPay / PhonePe (Pre-filled ₹<span id="btnUpiAmt">590</span>) →</a>
           </div>
           <div class="dynamic-qr-wrapper">
             <img id="dynamicQrImg" src="" alt="Dynamic Pre-filled UPI Payment QR Code" class="dynamic-qr-img"/>
-            <div style="font-size:10px;color:#000;font-weight:700;margin-top:6px;letter-spacing:0.04em;">PRE-FILLED 50% ADVANCE QR</div>
+            <div style="font-size:10px;color:#000;font-weight:700;margin-top:6px;letter-spacing:0.04em;" id="qrBadgeText">PRE-FILLED UPI QR</div>
           </div>
         </div>
 
@@ -339,7 +357,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var gst = Math.round(basePrice * 0.18);
         var total = basePrice + gst;
-        var advance = Math.round(total * 0.5);
+        var enteredPaid = parseInt(document.getElementById('chkCustomPayAmount').value) || Math.round(total * 0.5);
+        var remaining = Math.max(0, total - enteredPaid);
 
         var message = `🚨 *NEW PROJECT ORDER & CHECKOUT* 🚨\n\n` +
                       `📦 *PACKAGE:* ${pkgName}\n` +
@@ -347,7 +366,8 @@ document.addEventListener('DOMContentLoaded', function () {
                       `💵 *Base Price:* ₹${basePrice.toLocaleString()}\n` +
                       `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n` +
                       `💰 *Total Package Value:* ₹${total.toLocaleString()}\n` +
-                      `💳 *50% Advance Booking Deposit:* ₹${advance.toLocaleString()}\n\n` +
+                      `💳 *Amount Paying Now:* ₹${enteredPaid.toLocaleString()}\n` +
+                      `⏳ *Remaining Balance:* ₹${remaining.toLocaleString()}\n\n` +
                       `👤 *CLIENT DETAILS:*\n` +
                       `• Name: ${name}\n` +
                       `• Phone: ${phone}\n` +
@@ -358,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function () {
                       `📝 *REQUIREMENT BRIEF:*\n${brief}\n\n` +
                       `📁 *RAW FOOTAGE / ASSET LINK:*\n${footage || 'Not attached (will upload in portal)'}\n\n` +
                       `-----------------------------------\n` +
-                      `Please confirm my 50% advance payment deposit of ₹${advance.toLocaleString()} and generate my Tax Invoice!`;
+                      `Please confirm my payment deposit of ₹${enteredPaid.toLocaleString()} and generate my Tax Invoice!`;
 
         window.open(`https://wa.me/919476766340?text=${encodeURIComponent(message)}`, '_blank');
         modal.classList.remove('open');
@@ -366,38 +386,93 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  window.updateCheckoutUpi = function (amount) {
+    var amt = parseInt(amount) || 1;
+    var pkgName = window._activeCheckoutPackage ? window._activeCheckoutPackage.name : 'Project';
+    var total = window._activeCheckoutTotal || (amt * 2);
+    var remaining = Math.max(0, total - amt);
+
+    var elAdvPay = document.getElementById('chkAdvancePayText');
+    var elUpiAmt = document.getElementById('btnUpiAmt');
+    var elRem = document.getElementById('chkRemainingBalance');
+    var elQr = document.getElementById('dynamicQrImg');
+    var elMobileUpi = document.getElementById('btnMobileUpi');
+    var elQrBadge = document.getElementById('qrBadgeText');
+
+    if (elAdvPay) elAdvPay.textContent = '₹' + amt.toLocaleString();
+    if (elUpiAmt) elUpiAmt.textContent = amt.toLocaleString();
+    if (elRem) elRem.textContent = '₹' + remaining.toLocaleString();
+    if (elQrBadge) elQrBadge.textContent = `PRE-FILLED ₹${amt.toLocaleString()} QR`;
+
+    var upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${amt}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + pkgName)}`;
+    var qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+
+    if (elQr) elQr.src = qrApiUrl;
+    if (elMobileUpi) elMobileUpi.href = upiUrl;
+  };
+
+  window.setCheckoutDeposit = function (type) {
+    var total = window._activeCheckoutTotal || 1180;
+    var amt = Math.round(total * 0.5);
+
+    document.querySelectorAll('.pay-preset-btn').forEach(function(b) { b.classList.remove('active'); });
+
+    var input = document.getElementById('chkCustomPayAmount');
+
+    if (type === '50%') {
+      amt = Math.round(total * 0.5);
+      var btn = document.getElementById('btnPreset50');
+      if (btn) btn.classList.add('active');
+    } else if (type === '100%') {
+      amt = total;
+      var btn = document.getElementById('btnPreset100');
+      if (btn) btn.classList.add('active');
+    } else {
+      var btn = document.getElementById('btnPresetCustom');
+      if (btn) btn.classList.add('active');
+      if (input) { input.focus(); input.select(); }
+      return;
+    }
+
+    if (input) input.value = amt;
+    window.updateCheckoutUpi(amt);
+  };
+
+  window.onCustomDepositChange = function (val) {
+    var amt = parseInt(val) || 0;
+    document.querySelectorAll('.pay-preset-btn').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.getElementById('btnPresetCustom');
+    if (btn) btn.classList.add('active');
+    window.updateCheckoutUpi(amt);
+  };
+
   window.openCheckout = function (pName, price, deliveryTime) {
     ensureCheckoutModal();
-    window._activeCheckoutPackage = { name: pName || 'Custom Project', basePrice: price || 1000, delivery: deliveryTime || '48 Hours' };
-
     var priceNum = parseInt(price) || 1000;
     var gst = Math.round(priceNum * 0.18);
     var total = priceNum + gst;
-    var advance = Math.round(total * 0.5);
+    var advance50 = Math.round(total * 0.5);
+
+    window._activeCheckoutPackage = { name: pName || 'Custom Project', basePrice: priceNum, delivery: deliveryTime || '48 Hours' };
+    window._activeCheckoutTotal = total;
 
     var elPkg = document.getElementById('chkPkgName');
     var elBase = document.getElementById('chkBasePrice');
     var elGst = document.getElementById('chkGst');
     var elTot = document.getElementById('chkTotal');
-    var elAdv = document.getElementById('chkAdvance');
-    var elAdvPay = document.getElementById('chkAdvancePayText');
-    var elUpiAmt = document.getElementById('btnUpiAmt');
+    var elTxt50 = document.getElementById('txtPreset50');
+    var elTxt100 = document.getElementById('txtPreset100');
+    var elCustomInput = document.getElementById('chkCustomPayAmount');
 
     if (elPkg) elPkg.textContent = pName || 'Custom Project';
     if (elBase) elBase.textContent = '₹' + priceNum.toLocaleString();
     if (elGst) elGst.textContent = '₹' + gst.toLocaleString();
     if (elTot) elTot.textContent = '₹' + total.toLocaleString();
-    if (elAdv) elAdv.textContent = '₹' + advance.toLocaleString();
-    if (elAdvPay) elAdvPay.textContent = '₹' + advance.toLocaleString();
-    if (elUpiAmt) elUpiAmt.textContent = advance.toLocaleString();
+    if (elTxt50) elTxt50.textContent = '₹' + advance50.toLocaleString();
+    if (elTxt100) elTxt100.textContent = '₹' + total.toLocaleString();
+    if (elCustomInput) elCustomInput.value = advance50;
 
-    var upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${advance}&cu=INR&tn=${encodeURIComponent('Editzaar Advance: ' + (pName || 'Project'))}`;
-    var qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
-
-    var elQr = document.getElementById('dynamicQrImg');
-    var elMobileUpi = document.getElementById('btnMobileUpi');
-    if (elQr) elQr.src = qrApiUrl;
-    if (elMobileUpi) elMobileUpi.href = upiUrl;
+    window.setCheckoutDeposit('50%');
 
     var modal = document.getElementById('checkoutModal');
     if (modal) modal.classList.add('open');
