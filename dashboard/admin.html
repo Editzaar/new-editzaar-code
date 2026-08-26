@@ -1095,6 +1095,36 @@
       currentUser = user;
       document.getElementById('adminEmail').textContent = user.email;
       initRealtimeListeners();
+
+    // Realtime Firestore Coupons Synchronization
+    onSnapshot(collection(db, 'coupons'), (snap) => {
+      const fireCoupons = snap.docs.map(d => ({ ...d.data(), code: d.id }));
+      fireCoupons.forEach(c => {
+        if (window.EditzaarCoupons) window.EditzaarCoupons.save(c);
+      });
+      if (typeof window.renderAdminCouponsTable === 'function') {
+        window.renderAdminCouponsTable();
+      }
+    });
+
+    window.saveAdminCouponToFirebase = async function(couponObj) {
+      const cleanCode = String(couponObj.code).trim().toUpperCase();
+      await setDoc(doc(db, 'coupons', cleanCode), {
+        code: cleanCode,
+        discountType: couponObj.discountType,
+        value: couponObj.value,
+        maxUses: couponObj.maxUses || 100,
+        description: couponObj.description || '',
+        active: true,
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    };
+
+    window.deleteAdminCouponFromFirebase = async function(code) {
+      const cleanCode = String(code).trim().toUpperCase();
+      await deleteDoc(doc(db, 'coupons', cleanCode));
+    };
+
     });
 
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('index.html')));
@@ -2291,6 +2321,9 @@
     window.deleteAdminCoupon = function(code) {
       if (confirm(`Are you sure you want to delete coupon ${code}?`)) {
         window.EditzaarCoupons.delete(code);
+        if (typeof window.deleteAdminCouponFromFirebase === 'function') {
+          window.deleteAdminCouponFromFirebase(code);
+        }
         showToast(`Coupon ${code} deleted! 🗑️`, 'info');
         window.renderAdminCouponsTable();
       }
@@ -2316,7 +2349,7 @@
         return;
       }
 
-      window.EditzaarCoupons.save({
+      const newCpnObj = {
         code: code,
         discountType: type,
         value: val,
@@ -2325,7 +2358,11 @@
         active: true
       });
 
-      showToast(`Coupon ${code} created & activated! 🎟️`, 'success');
+      window.EditzaarCoupons.save(newCpnObj);
+      if (typeof window.saveAdminCouponToFirebase === 'function') {
+        window.saveAdminCouponToFirebase(newCpnObj);
+      }
+      showToast(`Coupon ${code} created & published globally! 🎟️`, 'success');
       document.getElementById('cpn-code').value = '';
       document.getElementById('cpn-disc').value = '';
       document.getElementById('cpn-desc').value = '';

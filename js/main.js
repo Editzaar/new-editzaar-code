@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
   window._appliedCoupon = null;
 
-  window.applyCheckoutCoupon = function() {
+  window.applyCheckoutCoupon = async function() {
     const codeInp = document.getElementById('chkCouponCode');
     const msgEl = document.getElementById('chkCouponStatusMsg');
     const code = (codeInp ? codeInp.value : '').trim().toUpperCase();
@@ -478,21 +478,24 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    if (!window.EditzaarCoupons) {
-      if (msgEl) {
-        msgEl.style.display = 'block';
-        msgEl.style.color = '#ff5555';
-        msgEl.textContent = 'Coupons system loading... please try again.';
-      }
-      return;
+    if (msgEl) {
+      msgEl.style.display = 'block';
+      msgEl.style.color = 'var(--gold)';
+      msgEl.textContent = 'Validating coupon code... ⏳';
     }
 
-    const res = window.EditzaarCoupons.validate(code, basePrice);
-    if (!res.valid) {
+    let res = null;
+    if (typeof window.validateCouponWithFirebase === 'function') {
+      res = await window.validateCouponWithFirebase(code, basePrice);
+    } else if (window.EditzaarCoupons) {
+      res = window.EditzaarCoupons.validate(code, basePrice);
+    }
+
+    if (!res || !res.valid) {
       if (msgEl) {
         msgEl.style.display = 'block';
         msgEl.style.color = '#ff5555';
-        msgEl.textContent = res.message;
+        msgEl.textContent = (res && res.message) ? res.message : `Coupon "${code}" is invalid or expired.`;
       }
       return;
     }

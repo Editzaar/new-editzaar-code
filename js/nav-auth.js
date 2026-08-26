@@ -21,6 +21,47 @@ try {
   const isSubPage = window.location.pathname.includes('/pages/');
   const dashPrefix = isSubPage ? '../dashboard/' : 'dashboard/';
 
+  
+  // Universal Real-time Firestore Coupon Validator
+  window.validateCouponWithFirebase = async function(code, baseAmount) {
+    const clean = String(code || '').trim().toUpperCase();
+    const base = parseInt(baseAmount) || 0;
+    if (!clean) return { valid: false, message: 'Please enter a coupon code.' };
+
+    try {
+      const snap = await getDoc(doc(db, 'coupons', clean));
+      if (snap.exists()) {
+        const coupon = snap.data();
+        if (coupon.active !== false) {
+          let discount = 0;
+          const val = parseInt(coupon.value) || 0;
+          if (coupon.discountType === 'percent') {
+            discount = Math.round(base * (val / 100));
+          } else {
+            discount = Math.min(base, val);
+          }
+          return {
+            valid: true,
+            code: coupon.code || clean,
+            discountType: coupon.discountType,
+            value: val,
+            discountAmount: discount,
+            description: coupon.description,
+            message: `🎉 Coupon "${coupon.code || clean}" applied: ${coupon.discountType === 'percent' ? val + '% OFF' : '₹' + val + ' OFF'}! Saved ₹${discount.toLocaleString()}`
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('[Firestore Coupon Query Error]', err);
+    }
+
+    // Fallback to local config
+    if (window.EditzaarCoupons) {
+      return window.EditzaarCoupons.validate(clean, base);
+    }
+    return { valid: false, message: `Coupon "${clean}" is invalid or expired.` };
+  };
+
   onAuthStateChanged(auth, async (user) => {
     const desktopBtns = document.querySelectorAll('#nav-auth-btn, .nav-cta:not(.nav-cta-mobile)');
     const mobileBtns = document.querySelectorAll('.nav-cta-mobile');

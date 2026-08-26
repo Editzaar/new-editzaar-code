@@ -1351,7 +1351,7 @@
     
     window._appliedCnpCoupon = null;
 
-    window.applyCnpCoupon = function() {
+    window.applyCnpCoupon = async function() {
       const codeInp = document.getElementById('cnpCouponCode');
       const msgEl = document.getElementById('cnpCouponStatusMsg');
       const code = (codeInp ? codeInp.value : '').trim().toUpperCase();
@@ -1365,21 +1365,24 @@
         return;
       }
 
-      if (!window.EditzaarCoupons) {
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.color = '#ff5555';
-          msgEl.textContent = 'Coupons system loading... please try again.';
-        }
-        return;
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = 'var(--gold)';
+        msgEl.textContent = 'Validating coupon code... ⏳';
       }
 
-      const res = window.EditzaarCoupons.validate(code, activeCnpBase);
-      if (!res.valid) {
+      let res = null;
+      if (typeof window.validateCouponWithFirebase === 'function') {
+        res = await window.validateCouponWithFirebase(code, activeCnpBase);
+      } else if (window.EditzaarCoupons) {
+        res = window.EditzaarCoupons.validate(code, activeCnpBase);
+      }
+
+      if (!res || !res.valid) {
         if (msgEl) {
           msgEl.style.display = 'block';
           msgEl.style.color = '#ff5555';
-          msgEl.textContent = res.message;
+          msgEl.textContent = (res && res.message) ? res.message : `Coupon "${code}" is invalid or expired.`;
         }
         return;
       }
