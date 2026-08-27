@@ -1,3 +1,14 @@
+// Clean URLs Engine: automatically cleans .html and /index from address bar seamlessly
+(function () {
+  try {
+    if (window.location.pathname.endsWith('.html') || window.location.pathname.endsWith('/index')) {
+      var clean = window.location.pathname.replace(/\.html$/, '').replace(/\/index$/, '/');
+      if (!clean) clean = '/';
+      window.history.replaceState(null, '', clean + window.location.search + window.location.hash);
+    }
+  } catch (e) {}
+})();
+
 /**
  * EDITZAAR — Universal Theme Controller (v5.0)
  * Deep Blue Text in Light Mode for Maximum Visibility & Elegance
