@@ -735,19 +735,7 @@ document.addEventListener('DOMContentLoaded', function () {
           panel.classList.remove('open');
         }
       }
-    }, { passive: true }););
-    }
-
-    // Quick chip delegate
-    if (chipsContainer) {
-      chipsContainer.addEventListener('click', function (e) {
-        var chip = e.target.closest('.ai-chip');
-        if (chip) {
-          var query = chip.getAttribute('data-q');
-          if (query) handleUserQuestion(query);
-        }
-      });
-    }
+    }, { passive: true });
 
     // Input handlers
     if (send && input) {
