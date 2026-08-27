@@ -433,8 +433,8 @@ h1 em, h2 em, h3 em, .gold-italic {
 .srv-service-card {
   background: var(--bg-card);
   border: 1px solid var(--gold-border);
-  border-radius: var(--r);
-  padding: 36px 28px;
+  border-radius: 12px;
+  padding: 22px 18px;
   transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
   position: relative;
   overflow: hidden;
@@ -451,34 +451,28 @@ h1 em, h2 em, h3 em, .gold-italic {
 .srv-service-card:hover::before { transform: scaleX(1); }
 .srv-service-card:hover {
   border-color: var(--gold);
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 24px var(--gold-glow2);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.7), 0 0 18px var(--gold-glow2);
 }
-
 .srv-sc-icon {
-  font-size: 2.2rem;
-  margin-bottom: 18px;
-  display: inline-block;
-  animation: iconFloat 3s ease-in-out infinite;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
 }
-@keyframes iconFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
 .srv-service-card h3 {
   font-family: var(--font-h);
-  font-size: 1.6rem;
-  margin-bottom: 12px;
+  font-size: 1.25rem;
+  margin-bottom: 6px;
   font-weight: 400;
+  line-height: 1.25;
 }
-.srv-service-card p { color: var(--t2); font-size: 0.92rem; line-height: 1.65; margin-bottom: 18px; }
-.srv-service-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.srv-service-card p { color: var(--t2); font-size: 0.84rem; line-height: 1.5; margin-bottom: 10px; }
+.srv-service-card ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
 .srv-service-card ul li {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--t2);
-  padding-left: 16px;
+  padding-left: 14px;
   position: relative;
+  line-height: 1.4;
 }
 .srv-service-card ul li::before {
   content: '✦';
