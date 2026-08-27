@@ -2953,7 +2953,7 @@ html[data-theme="light"] body,
 }
 
 /* ============================================================
-   APPLE UI FROSTED GLASS INTELLIGENCE CHATBOT STYLES
+   APPLE FROSTED GLASS INTELLIGENCE CHATBOT (CLEAN & MOBILE-FIRST)
    ============================================================ */
 .ai-chatbot-panel:not(.open) {
   display: none !important;
@@ -3006,11 +3006,11 @@ html[data-theme="light"] body,
   position: fixed;
   bottom: 96px;
   right: 28px;
-  width: 390px;
+  width: 400px;
   max-width: calc(100vw - 32px);
-  height: 580px;
+  height: 600px;
   max-height: calc(100vh - 120px);
-  background: rgba(15, 15, 20, 0.82);
+  background: rgba(15, 15, 20, 0.86);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 24px;
   z-index: 9991;
@@ -3032,9 +3032,8 @@ html[data-theme="light"] body,
   transform: translateY(0) scale(1);
 }
 
-/* Light Mode Overrides for Apple UI */
 [data-theme="light"] .ai-chatbot-panel {
-  background: rgba(255, 255, 255, 0.88) !important;
+  background: rgba(255, 255, 255, 0.90) !important;
   border: 1px solid rgba(0, 0, 0, 0.10) !important;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
 }
@@ -3092,8 +3091,17 @@ html[data-theme="light"] body,
   color: #28C840;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-weight: 500;
+}
+
+.live-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #28C840;
+  display: inline-block;
+  box-shadow: 0 0 6px #28C840;
 }
 
 .ai-chat-close-btn {
@@ -3129,13 +3137,14 @@ html[data-theme="light"] body,
   flex-direction: column;
   gap: 14px;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ai-msg {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-width: 88%;
+  max-width: 90%;
   font-size: 0.88rem;
   line-height: 1.55;
   animation: fadeInMsg 0.25s ease-out forwards;
@@ -3185,14 +3194,27 @@ html[data-theme="light"] body,
   padding: 0 6px;
 }
 
+.ai-lead-box {
+  background: rgba(255, 184, 0, 0.08);
+  border: 1px solid rgba(255, 184, 0, 0.25);
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 8px;
+}
+
+[data-theme="light"] .ai-lead-box {
+  background: rgba(255, 184, 0, 0.12) !important;
+}
+
 .ai-quick-chips {
   padding: 10px 14px;
   display: flex;
   gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
-  background: rgba(0, 0, 0, 0.15);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.18);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  -webkit-overflow-scrolling: touch;
 }
 
 .ai-quick-chips::-webkit-scrollbar {
@@ -3200,12 +3222,13 @@ html[data-theme="light"] body,
 }
 
 .ai-chip {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--t1);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Outfit', sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
-  padding: 6px 14px;
+  padding: 7px 14px;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -3231,7 +3254,7 @@ html[data-theme="light"] body,
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="light"] .ai-chat-input-row {
@@ -3297,19 +3320,34 @@ html[data-theme="light"] body,
   box-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
 }
 
+/* ── Mobile Responsive Optimization (< 600px) ── */
 @media (max-width: 600px) {
   .ai-chatbot-panel {
-    right: 12px;
-    bottom: 84px;
-    width: calc(100vw - 24px);
-    height: calc(100vh - 100px);
-    border-radius: 20px;
+    right: 10px !important;
+    bottom: 74px !important;
+    width: calc(100vw - 20px) !important;
+    height: calc(100vh - 90px) !important;
+    max-height: calc(100vh - 90px) !important;
+    border-radius: 20px !important;
   }
   .ai-chatbot-fab {
-    bottom: 18px;
-    right: 18px;
-    width: 52px;
-    height: 52px;
-    font-size: 1.3rem;
+    bottom: 16px !important;
+    right: 16px !important;
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 1.35rem !important;
+  }
+  .ai-msg {
+    max-width: 94% !important;
+    font-size: 0.85rem !important;
+  }
+  .ai-bubble {
+    padding: 12px 14px !important;
+  }
+  .ai-chat-header {
+    padding: 12px 16px !important;
+  }
+  .ai-chat-input-row {
+    padding: 10px 12px !important;
   }
 }

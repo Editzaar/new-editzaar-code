@@ -643,56 +643,64 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   /* ============================================================
-     10. GLOBAL HIGHLY-TRAINED PROFESSIONAL AI CHATBOT ENGINE
+     10. GLOBAL MASTER-TRAINED EDITZAAR AI CREATIVE STRATEGIST ENGINE
      ============================================================ */
   function ensureAiChatbot() {
     if (document.getElementById('editzaarAiChatbot')) return;
 
     var botHtml = `
     <div id="editzaarAiChatbot">
-      <button class="ai-chatbot-fab" id="aiChatbotFab" title="Chat with Editzaar AI">
+      <button class="ai-chatbot-fab" id="aiChatbotFab" title="Chat with Editzaar Creative Strategist" aria-label="Open AI Assistant">
         ✨
         <div class="fab-badge"></div>
       </button>
 
-      <div class="ai-chatbot-panel" id="aiChatbotPanel">
+      <div class="ai-chatbot-panel" id="aiChatbotPanel" role="dialog" aria-label="Editzaar AI Assistant">
+        <!-- Header -->
         <div class="ai-chat-header">
           <div class="ai-chat-header-info">
             <div class="ai-chat-avatar">✨</div>
             <div>
-              <div class="ai-chat-title">Editzaar Intelligence</div>
-              <div class="ai-chat-status"><span style="width:7px;height:7px;border-radius:50%;background:#28C840;display:inline-block;box-shadow:0 0 6px #28C840;"></span> Online · Active Assistant</div>
+              <div class="ai-chat-title">Editzaar Creative Strategist</div>
+              <div class="ai-chat-status">
+                <span class="live-status-dot"></span>
+                <span>Active Onboarding AI · 24/7</span>
+              </div>
             </div>
           </div>
-          <button class="ai-chat-close-btn" id="aiChatbotClose" title="Close">✕</button>
+          <button class="ai-chat-close-btn" id="aiChatbotClose" title="Close" aria-label="Close Chat">✕</button>
         </div>
 
+        <!-- Messages Area -->
         <div class="ai-chat-body" id="aiChatMessages">
           <div class="ai-msg bot">
             <div class="ai-bubble">
-              👋 <strong>Welcome to Editzaar Intelligence!</strong><br/><br/>
-              I am your 24/7 AI Agency Assistant, trained on all our <strong>creative services, website systems, paid acquisition funnels, and workflows</strong>.<br/><br/>
-              How can we help scale your brand or content today?
+              👋 <strong>Hi! Welcome to Editzaar!</strong><br/><br/>
+              I am your <strong>Senior Creative Strategist &amp; Client Onboarding AI</strong>. I help creators and scaling brands engineer high-retention video systems, ultra-fast websites, and profitable paid acquisition funnels.<br/><br/>
+              What type of project or growth goal are you focusing on right now?
             </div>
             <span class="ai-msg-time">Just now</span>
           </div>
         </div>
 
-        <div class="ai-quick-chips">
-          <span class="ai-chip" data-q="Tell me about Video Editing & Graphic Design">🎬 Video &amp; Design</span>
-          <span class="ai-chip" data-q="Tell me about Website Development & SEO">💻 Websites &amp; SEO</span>
-          <span class="ai-chip" data-q="Tell me about Paid Advertising & Performance Marketing">📈 Performance Ads</span>
-          <span class="ai-chip" data-q="Tell me about Social Media Management">📣 Social Media</span>
-          <span class="ai-chip" data-q="What are your packages and pricing?">💰 Pricing &amp; Plans</span>
-          <span class="ai-chip" data-q="Can I see your previous work and portfolio?">📁 View Portfolio</span>
-          <span class="ai-chip" data-q="What is your 4-step workflow and turnaround time?">⏱ Workflow &amp; Delivery</span>
-          <span class="ai-chip" data-q="How do I book a project or contact founder?">💬 WhatsApp (+91 9476766340)</span>
+        <!-- Quick Reply Action Chips (Apple Style) -->
+        <div class="ai-quick-chips" id="aiQuickChips">
+          <button type="button" class="ai-chip" data-q="I need Reels & Shorts (Short-form)">🎬 Reels &amp; Shorts</button>
+          <button type="button" class="ai-chip" data-q="I need YouTube Long-form editing">📹 YouTube Long-form</button>
+          <button type="button" class="ai-chip" data-q="Tell me about Website Development & SEO">💻 Web &amp; SEO</button>
+          <button type="button" class="ai-chip" data-q="Tell me about Paid Ads & Performance Marketing">📈 Paid Ads &amp; ROAS</button>
+          <button type="button" class="ai-chip" data-q="What are your pricing packages and ROI?">💰 Pricing &amp; ROI</button>
+          <button type="button" class="ai-chip" data-q="Can I see portfolio samples for my niche?">📁 Niche Portfolio</button>
+          <button type="button" class="ai-chip" data-q="Why should I choose Editzaar over Fiverr/Upwork freelancers?">🛡️ Agency vs Freelancer</button>
+          <button type="button" class="ai-chip" data-q="What is your policy on copyright and royalty-free music?">🎵 Music &amp; Copyright</button>
+          <button type="button" class="ai-chip" data-q="I want to book a free discovery call on WhatsApp">💬 WhatsApp Founder</button>
         </div>
 
+        <!-- Input Bar (Apple iOS Pill Style) -->
         <div class="ai-chat-input-row">
           <div class="ai-chat-input-wrapper">
-            <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Ask anything about services, pricing, turnaround…"/>
-            <button class="ai-chat-send" id="aiChatSend" title="Send message">↑</button>
+            <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Ask about editing, pricing, turnaround, ROI…" aria-label="Message Editzaar AI"/>
+            <button class="ai-chat-send" id="aiChatSend" title="Send message" aria-label="Send">↑</button>
           </div>
         </div>
       </div>
@@ -706,25 +714,33 @@ document.addEventListener('DOMContentLoaded', function () {
     var input = document.getElementById('aiChatInput');
     var send = document.getElementById('aiChatSend');
     var msgsContainer = document.getElementById('aiChatMessages');
+    var chipsContainer = document.getElementById('aiQuickChips');
 
+    // Toggle Chat
     if (fab && panel) {
       fab.addEventListener('click', function () { 
         panel.classList.toggle('open'); 
-        if (panel.classList.contains('open') && input) input.focus(); 
+        if (panel.classList.contains('open') && input) {
+          setTimeout(function() { input.focus(); }, 150);
+        }
       });
     }
     if (close && panel) {
       close.addEventListener('click', function () { panel.classList.remove('open'); });
     }
 
-    // Quick chip clicks
-    document.querySelectorAll('.ai-chip').forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        var query = chip.getAttribute('data-q');
-        if (query) handleUserQuestion(query);
+    // Quick chip delegate
+    if (chipsContainer) {
+      chipsContainer.addEventListener('click', function (e) {
+        var chip = e.target.closest('.ai-chip');
+        if (chip) {
+          var query = chip.getAttribute('data-q');
+          if (query) handleUserQuestion(query);
+        }
       });
-    });
+    }
 
+    // Input handlers
     if (send && input) {
       send.addEventListener('click', function () {
         var text = input.value.trim();
@@ -760,7 +776,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var typingDiv = document.createElement('div');
       typingDiv.className = 'ai-msg bot';
       typingDiv.id = 'aiTypingIndicator';
-      typingDiv.innerHTML = '<div class="ai-bubble" style="padding:8px 16px;"><span class="dot-pulse">Consulting Editzaar AI…</span></div>';
+      typingDiv.innerHTML = '<div class="ai-bubble" style="padding:10px 18px;display:flex;align-items:center;gap:8px;"><span class="dot-pulse">Analyzing requirement…</span></div>';
       msgsContainer.appendChild(typingDiv);
       msgsContainer.scrollTop = msgsContainer.scrollHeight;
 
@@ -768,181 +784,185 @@ document.addEventListener('DOMContentLoaded', function () {
         var indicator = document.getElementById('aiTypingIndicator');
         if (indicator) indicator.remove();
 
-        var botResponse = generateAiResponse(q.toLowerCase());
+        var botResponse = generateMasterAiResponse(q.trim());
         appendMessage('bot', botResponse);
       }, 350);
     }
 
-    function generateAiResponse(text) {
-      // 1. GREETINGS / HELLO
-      if (text === 'hi' || text === 'hello' || text === 'hey' || text === 'hola' || text.startsWith('good morning') || text.startsWith('good evening') || text.startsWith('greetings')) {
-        return `👋 <strong>Hello! Great to connect with you.</strong><br/><br/>` +
-               `At Editzaar, we provide end-to-end digital media &amp; growth systems:<br/>` +
-               `• <strong>01 · CREATE:</strong> Video Editing &amp; Graphic Design<br/>` +
-               `• <strong>02 · BUILD:</strong> Website Development &amp; SEO<br/>` +
-               `• <strong>03 · ACQUIRE:</strong> Paid Ads &amp; Performance Marketing<br/>` +
-               `• <strong>04 · GROW:</strong> Social Media Management<br/><br/>` +
-               `What area would you like to explore first?`;
+    // ----------------------------------------------------
+    // MASTER KNOWLEDGE & STRATEGY RESPONSE GENERATOR
+    // ----------------------------------------------------
+    function generateMasterAiResponse(rawText) {
+      var text = rawText.toLowerCase();
+
+      // 1. LEAD CAPTURE FORM / BOOKING / CONTACT FOUNDER
+      if (text.includes('whatsapp') || text.includes('call') || text.includes('phone') || text.includes('contact') || text.includes('founder') || text.includes('bikram') || text.includes('hire') || text.includes('get started') || text.includes('start project') || text.includes('book')) {
+        return `🚀 <strong>Ready to Scale Your Content &amp; Brand?</strong><br/><br/>` +
+               `Our Creative Director <strong>Bikram Nath</strong> and production team are ready to review your project.<br/><br/>` +
+               `<div class="ai-lead-box">` +
+               `<div style="font-weight:600;font-size:0.88rem;color:var(--gold);margin-bottom:6px;">⚡ Connect Directly on WhatsApp:</div>` +
+               `<div style="font-size:0.84rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">Chat 1-on-1, share sample footage links, or get a custom retainer quote in under 15 minutes.</div>` +
+               `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20to%20discuss%20a%20project%20for%20my%20brand!" target="_blank" rel="noopener noreferrer" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;width:100%;justify-content:center;padding:10px 16px;border-radius:12px;">💬 Chat on WhatsApp (+91 9476766340) →</a>` +
+               `</div><br/>` +
+               `Prefer email? Reach us at <a href="mailto:editzaarbooking@gmail.com" style="color:var(--gold);text-decoration:underline;">editzaarbooking@gmail.com</a>`;
       }
 
-      // 2. PILLAR 01: VIDEO EDITING & GRAPHIC DESIGN
-      if (text.includes('video') || text.includes('edit') || text.includes('reel') || text.includes('short') || text.includes('youtube') || text.includes('motion') || text.includes('vfx') || text.includes('thumbnail') || text.includes('graphic') || text.includes('color grade')) {
-        return `🎬 <strong>Core Service 01: Video Editing &amp; Graphic Design</strong><br/><br/>` +
-               `We turn raw footage and ideas into high-impact content that makes your brand impossible to ignore.<br/><br/>` +
-               `<strong>Deliverables include:</strong><br/>` +
-               `✓ High-Retention Reels &amp; Shorts (3-sec hook engineering)<br/>` +
-               `✓ Long-Form YouTube Video Editing &amp; Storytelling<br/>` +
-               `✓ Motion Graphics, Kinetic Typography &amp; VFX<br/>` +
-               `✓ Cinematic Color Grading &amp; Sound Design<br/>` +
-               `✓ 4K CTR-Optimized Thumbnails &amp; Social Creatives<br/><br/>` +
-               `⏱ <strong>Turnaround:</strong> 24 to 48 hours for short-form | 3 to 5 days for long-form.<br/><br/>` +
+      // 2. OBJECTION HANDLING: AGENCY VS FREELANCER (Fiverr/Upwork)
+      if (text.includes('fiverr') || text.includes('upwork') || text.includes('freelancer') || text.includes('why choose') || text.includes('why editzaar') || text.includes('agency vs') || text.includes('expensive')) {
+        return `🛡️ <strong>Why Creators &amp; Brands Choose Editzaar over Freelancers:</strong><br/><br/>` +
+               `• <strong>Guaranteed 24–48h Velocity:</strong> No ghosting, no missed deadlines, no creative burnout.<br/>` +
+               `• <strong>Multi-Person Production Pipeline:</strong> You don't just get 1 editor — you get an editor, sound designer, motion artist, and quality reviewer for less than an in-house hire.<br/>` +
+               `• <strong>100% Brand Consistency:</strong> We lock in your brand guidelines, LUTs, typography, and pacing so every video hits standard.<br/>` +
+               `• <strong>Unlimited Revisions:</strong> We collaborate until you are 100% satisfied with zero friction.<br/><br/>` +
                `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Video Pricing →</a>` +
-               `<a href="work#video" class="btn-outline btn-sm" style="text-decoration:none;">View Video Portfolio 🎬</a>` +
+               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Pricing Models →</a>` +
+               `<a href="work" class="btn-outline btn-sm" style="text-decoration:none;">Inspect Our Work 🎬</a>` +
                `</div>`;
       }
 
-      // 3. PILLAR 02: WEBSITE DEVELOPMENT & SEO
-      if (text.includes('web') || text.includes('site') || text.includes('seo') || text.includes('landing page') || text.includes('ecommerce') || text.includes('store') || text.includes('wordpress') || text.includes('speed') || text.includes('develop')) {
-        return `💻 <strong>Core Service 02: Website Development &amp; SEO</strong><br/><br/>` +
-               `We design and develop fast, responsive websites that look better, load in sub-seconds (98+ PageSpeed), and convert traffic into paying customers.<br/><br/>` +
-               `<strong>Deliverables include:</strong><br/>` +
-               `✓ High-Converting Landing Pages &amp; Funnels<br/>` +
-               `✓ Business &amp; Corporate Websites<br/>` +
-               `✓ D2C E-Commerce Storefronts &amp; WooCommerce<br/>` +
-               `✓ Mobile-First Responsive Layouts<br/>` +
-               `✓ Technical SEO &amp; On-Page Optimization<br/>` +
-               `✓ Google Search Console &amp; Analytics Setup<br/><br/>` +
+      // 3. COPYRIGHT, MUSIC & COMMERCIAL LICENSING
+      if (text.includes('copyright') || text.includes('music') || text.includes('license') || text.includes('strike') || text.includes('stock footage') || text.includes('audio')) {
+        return `🎵 <strong>100% Commercial Licensing &amp; Zero Copyright Strikes Guarantee:</strong><br/><br/>` +
+               `• <strong>Royalty-Free Commercial Audio:</strong> Licensed via premium platforms like Artlist, Epidemic Sound, and Audiio.<br/>` +
+               `• <strong>4K Premium Stock Footage:</strong> Storyblocks, Envato Elements, Motion Array.<br/>` +
+               `• <strong>Commercial Fonts &amp; 3D VFX:</strong> Full commercial rights included for YouTube monetization, Instagram, and paid ads.<br/>` +
+               `• <strong>Peace of Mind:</strong> Safe for monetized channels and corporate advertising worldwide.`;
+      }
+
+      // 4. TECHNICAL SPECIFICATIONS & RAW FOOTAGE WORKFLOW
+      if (text.includes('raw') || text.includes('spec') || text.includes('resolution') || text.includes('4k') || text.includes('prores') || text.includes('upload') || text.includes('format') || text.includes('drive') || text.includes('dropbox')) {
+        return `⚙️ <strong>Technical Specifications &amp; Footage Workflow:</strong><br/><br/>` +
+               `• <strong>Formats Supported:</strong> MP4, MOV, Apple ProRes, Blackmagic BRAW, Sony S-Log, Canon C-Log.<br/>` +
+               `• <strong>Resolution:</strong> 1080p Full HD up to 4K UHD 60fps.<br/>` +
+               `• <strong>Multi-Track Audio:</strong> Dual lavalier sync, podcast multi-mic setups, noise reduction.<br/>` +
+               `• <strong>Easy Upload:</strong> Share via Google Drive, Dropbox, Frame.io, or WeTransfer.<br/><br/>` +
+               `💡 <em>Recommended Folder Structure:</em><br/>` +
+               `<code style="background:rgba(255,255,255,0.08);padding:4px 8px;border-radius:6px;font-size:0.78rem;display:block;margin-top:6px;">/Project_Name ➔ /Raw_A_Roll · /B_Roll · /Voiceover · /Brief_Notes</code>`;
+      }
+
+      // 5. SHORT-FORM VIDEO EDITING (9:16 REELS, SHORTS, TIKTOK)
+      if (text.includes('reel') || text.includes('short') || text.includes('tiktok') || text.includes('short-form') || text.includes('9:16') || text.includes('hook') || text.includes('hormozi')) {
+        return `🎬 <strong>High-Retention Short-Form Editing (9:16 Vertical):</strong><br/><br/>` +
+               `We engineer viral short-form assets built to stop the swipe and maximize retention:<br/><br/>` +
+               `✓ <strong>3-Second Hook Rule:</strong> Visual pattern interrupts, kinetic title pop-ins, and riser SFX in the first 150 frames.<br/>` +
+               `✓ <strong>Dynamic Styled Subtitles:</strong> Hormozi-style, animated word-by-word, colored emphasis tags.<br/>` +
+               `✓ <strong>Pacing &amp; B-roll:</strong> Micro-zooms, sound design whooshes, animated emojis, stock cutaways.<br/>` +
+               `✓ <strong>Turnaround:</strong> Fast 24–48 hours delivery.<br/><br/>` +
+               `💰 <strong>Starting at:</strong> ₹1,000 / video (or discounted monthly volume retainers).<br/><br/>` +
                `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Request Website Quote 💬</a>` +
+               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Short-Form Pricing →</a>` +
+               `<a href="work#video" class="btn-outline btn-sm" style="text-decoration:none;">Watch Live Reels 📱</a>` +
+               `</div>`;
+      }
+
+      // 6. LONG-FORM YOUTUBE & PODCASTS (16:9)
+      if (text.includes('youtube') || text.includes('long-form') || text.includes('podcast') || text.includes('16:9') || text.includes('talking head') || text.includes('documentary') || text.includes('interview')) {
+        return `📹 <strong>Long-Form YouTube &amp; Podcast Post-Production (16:9):</strong><br/><br/>` +
+               `We edit for <strong>high Average Percentage Viewed (APV)</strong> and viewer retention:<br/><br/>` +
+               `✓ <strong>Narrative Pacing:</strong> Dead-air removal, multi-camera switching, audio leveling.<br/>` +
+               `✓ <strong>Custom Motion Graphics:</strong> Animated stats, lower thirds, screen zoom callouts.<br/>` +
+               `✓ <strong>Color Grading &amp; Mastering:</strong> Studio LUTs and vocal clarity enhancement.<br/>` +
+               `✓ <strong>Shorts Extraction:</strong> We can extract 5–8 viral Shorts from every 1-hour episode!<br/>` +
+               `✓ <strong>Turnaround:</strong> 48–72 hours per episode.<br/><br/>` +
+               `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
+               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View YouTube Packages →</a>` +
+               `<a href="work#video" class="btn-outline btn-sm" style="text-decoration:none;">View YouTube Portfolio 🎬</a>` +
+               `</div>`;
+      }
+
+      // 7. WEBSITE DEVELOPMENT & SEO
+      if (text.includes('web') || text.includes('site') || text.includes('seo') || text.includes('landing page') || text.includes('wordpress') || text.includes('ecommerce') || text.includes('store') || text.includes('speed')) {
+        return `💻 <strong>Website Development &amp; Technical SEO:</strong><br/><br/>` +
+               `Give your brand a digital home built to convert visitors and rank organically:<br/><br/>` +
+               `✓ <strong>High-Converting Landing Pages:</strong> Sub-second load speeds (98+ PageSpeed), mobile-first UI.<br/>` +
+               `✓ <strong>Corporate &amp; E-Commerce:</strong> Custom HTML5/JS systems, WooCommerce, Shopify.<br/>` +
+               `✓ <strong>SEO Foundation:</strong> Schema.org Knowledge Graph, OpenGraph, Google Search Console indexing.<br/>` +
+               `✓ <strong>Turnaround:</strong> 3 to 7 business days.<br/><br/>` +
+               `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
+               `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20a%20quote%20for%20a%20new%20website" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Request Website Quote 💬</a>` +
                `<a href="work#web" class="btn-outline btn-sm" style="text-decoration:none;">View Web Projects 💻</a>` +
                `</div>`;
       }
 
-      // 4. PILLAR 03: PAID ADS & PERFORMANCE MARKETING
-      if (text.includes('ad') || text.includes('ads') || text.includes('marketing') || text.includes('performance') || text.includes('meta') || text.includes('facebook') || text.includes('google ad') || text.includes('roas') || text.includes('lead') || text.includes('campaign') || text.includes('acquire')) {
-        return `📈 <strong>Core Service 03: Paid Advertising &amp; Performance Marketing</strong><br/><br/>` +
-               `We build and manage performance ad campaigns designed to turn advertising budgets into measurable business growth and qualified client leads.<br/><br/>` +
-               `<strong>Deliverables include:</strong><br/>` +
-               `✓ Meta &amp; Instagram Ad Strategy &amp; Execution<br/>` +
-               `✓ Google Search, Display &amp; YouTube Video Ads<br/>` +
-               `✓ Direct-Response Video Ad Creatives<br/>` +
-               `✓ Audience Research, Retargeting &amp; Funnels<br/>` +
-               `✓ Creative A/B Variant Testing &amp; ROAS Tracking<br/><br/>` +
-               `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Book Ad Strategy Call ↗</a>` +
-               `<a href="work#brand" class="btn-outline btn-sm" style="text-decoration:none;">View Ad Case Studies 📈</a>` +
-               `</div>`;
+      // 8. PAID ADVERTISING & PERFORMANCE MARKETING
+      if (text.includes('ad') || text.includes('marketing') || text.includes('meta') || text.includes('google ads') || text.includes('roas') || text.includes('cpl') || text.includes('campaign') || text.includes('lead gen')) {
+        return `📈 <strong>Paid Advertising &amp; Performance Marketing:</strong><br/><br/>` +
+               `Turn ad spend into measurable, scalable revenue:<br/><br/>` +
+               `✓ <strong>Meta &amp; Instagram Ads:</strong> Direct-response video creatives, audience targeting &amp; lookalikes.<br/>` +
+               `✓ <strong>Google &amp; YouTube Ads:</strong> High-intent search and video discovery funnels.<br/>` +
+               `✓ <strong>A/B Creative Testing:</strong> Hook variants, angle testing, and ROAS optimization.<br/>` +
+               `✓ <strong>Proven Performance:</strong> +380% ROAS on average client campaigns.<br/><br/>` +
+               `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20to%20discuss%20Paid%20Ads%20for%20my%20business" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Book Ad Strategy Call on WhatsApp ↗</a>`;
       }
 
-      // 5. PILLAR 04: SOCIAL MEDIA MANAGEMENT
-      if (text.includes('social') || text.includes('instagram') || text.includes('channel') || text.includes('management') || text.includes('grow') || text.includes('calendar') || text.includes('content strategy') || text.includes('subscribers') || text.includes('followers')) {
-        return `📣 <strong>Core Service 04: Social Media Management &amp; Channel Growth</strong><br/><br/>` +
-               `We turn your social channels into consistent, compounding growth assets so your brand stays active and authoritative.<br/><br/>` +
-               `<strong>Deliverables include:</strong><br/>` +
-               `✓ Social Media Growth Strategy &amp; Content Calendar<br/>` +
-               `✓ Instagram &amp; Facebook Page Handling<br/>` +
-               `✓ YouTube Channel Management &amp; Metadata SEO<br/>` +
-               `✓ CTR-Optimized 4K Thumbnails<br/>` +
-               `✓ Audience Retention Analytics &amp; Monthly Reports<br/><br/>` +
-               `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Book Channel Strategy Call ↗</a>` +
-               `<a href="work#social" class="btn-outline btn-sm" style="text-decoration:none;">View Growth Studies 📢</a>` +
-               `</div>`;
+      // 9. SOCIAL MEDIA MANAGEMENT & CHANNEL GROWTH
+      if (text.includes('social') || text.includes('instagram') || text.includes('channel') || text.includes('management') || text.includes('grow') || text.includes('calendar') || text.includes('followers')) {
+        return `📣 <strong>Social Media Management &amp; Channel Growth:</strong><br/><br/>` +
+               `Build a consistent content engine that compounds authority:<br/><br/>` +
+               `✓ Complete Content Strategy &amp; Monthly Publishing Calendar<br/>` +
+               `✓ Instagram, YouTube, and Facebook Channel Handling<br/>` +
+               `✓ 4K CTR-Optimized Thumbnails &amp; Video Titles<br/>` +
+               `✓ Analytics, Retention Audits &amp; Monthly Performance Reports<br/><br/>` +
+               `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20tell%20me%20about%20Social%20Media%20Management" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Discuss Social Retainers on WhatsApp ↗</a>`;
       }
 
-      // 6. PRICING / RATES / PACKAGES / RETAINER
-      if (text.includes('price') || text.includes('pricing') || text.includes('cost') || text.includes('rate') || text.includes('package') || text.includes('charge') || text.includes('fee') || text.includes('plan') || text.includes('retainer')) {
-        return `💰 <strong>Editzaar Transparent Pricing &amp; Flexible Packages:</strong><br/><br/>` +
-               `Choose what you need. Scale when you’re ready:<br/>` +
-               `• <strong>Shorts &amp; Reels (9:16):</strong> ₹1,000 / video (48h turnaround, hook optimization, sound design &amp; subtitles)<br/>` +
-               `• <strong>Motion Graphics &amp; VFX:</strong> ₹2,500 / video (Custom kinetic typography &amp; animation)<br/>` +
+      // 10. NICHE SPECIFIC STRATEGIES (Finance, Real Estate, Fitness, Tech, Podcasts)
+      if (text.includes('finance') || text.includes('real estate') || text.includes('fitness') || text.includes('tech') || text.includes('saas') || text.includes('doctor') || text.includes('medical') || text.includes('vlog')) {
+        return `🎯 <strong>Custom Tailored Editing Strategy for Your Niche:</strong><br/><br/>` +
+               `• <strong>Finance / Real Estate:</strong> Clean luxury aesthetic, animated financial charts, key metric popups, and high-end stock B-roll to build maximum trust.<br/>` +
+               `• <strong>Fitness / Lifestyle:</strong> Beat-synced jump cuts, dynamic speed ramps, energetic sound design, and vibrant color grading.<br/>` +
+               `• <strong>Tech / SaaS:</strong> Smooth pan-and-zoom screen captures, highlighted UI boxes, and clean kinetic typography.<br/><br/>` +
+               `Would you like to see 2–3 sample edits we produced in your specific industry?<br/><br/>` +
+               `<a href="work" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Explore Niche Portfolio Samples →</a>`;
+      }
+
+      // 11. PRICING, PACKAGES & TIME SAVINGS ROI CALCULATOR
+      if (text.includes('price') || text.includes('pricing') || text.includes('cost') || text.includes('rate') || text.includes('package') || text.includes('retainer') || text.includes('roi') || text.includes('saving')) {
+        return `💰 <strong>Editzaar Transparent Pricing &amp; ROI Calculator:</strong><br/><br/>` +
+               `• <strong>Shorts &amp; Reels (9:16):</strong> ₹1,000 / video (48h turnaround, hook design, subtitles, SFX)<br/>` +
+               `• <strong>Motion Graphics &amp; VFX:</strong> ₹2,500 / video (Custom vector animation &amp; kinetic typography)<br/>` +
                `• <strong>Long-Form YouTube (16:9):</strong> ₹5,000 / video (Cinematic story cuts, B-roll, audio mastering)<br/>` +
-               `• <strong>High-Converting Website:</strong> Starting from ₹4,999 (3-day delivery, 98+ speed score, SEO ready)<br/>` +
-               `• <strong>Monthly Growth Retainers:</strong> Custom creator &amp; brand partnerships with dedicated editors and priority delivery.<br/><br/>` +
+               `• <strong>High-Converting Website:</strong> Starting from ₹4,999 (3-day delivery, 98+ PageSpeed, SEO)<br/>` +
+               `• <strong>Monthly Creator Retainer:</strong> Discounted bulk volume with dedicated editor queue.<br/><br/>` +
+               `⚡ <strong>Time-Savings ROI:</strong> Editing 15 Reels takes ~50 hours/month of your time. Handing it to Editzaar gives you back <strong>12+ hours every week</strong> to focus on filming and closing clients.<br/><br/>` +
                `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">Explore Pricing Catalog →</a>` +
-               `<a href="https://wa.me/919476766340" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">Custom Quote on WhatsApp 💬</a>` +
+               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Full Pricing Catalog →</a>` +
+               `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20a%20custom%20monthly%20retainer%20quote" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">Custom Volume Quote 💬</a>` +
                `</div>`;
       }
 
-      // 7. PORTFOLIO / WORK SAMPLES / PREVIOUS WORK
-      if (text.includes('portfolio') || text.includes('work') || text.includes('sample') || text.includes('case stud') || text.includes('previous') || text.includes('examples') || text.includes('showcase') || text.includes('proof')) {
-        return `📁 <strong>Editzaar Portfolio &amp; Case Studies:</strong><br/><br/>` +
-               `You can explore our live client deliverables and video streams:<br/>` +
-               `• <strong>Vertical Reels (9:16):</strong> Music, Healthcare, Real Estate &amp; Finance reels with 12M+ views.<br/>` +
-               `• <strong>Horizontal Long-Form (16:9):</strong> Documentaries &amp; YouTube story cuts.<br/>` +
-               `• <strong>Web Projects:</strong> Fast e-commerce &amp; agency portals (98/100 speed).<br/>` +
-               `• <strong>Ad Case Studies:</strong> +380% ROAS Meta &amp; Google ad campaigns.<br/><br/>` +
-               `<a href="work" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Browse Full Portfolio Showcase 🎬</a>`;
-      }
-
-      // 8. 4-STEP WORKFLOW / TURNAROUND / DELIVERY / PROCESS
-      if (text.includes('workflow') || text.includes('process') || text.includes('step') || text.includes('time') || text.includes('turnaround') || text.includes('delivery') || text.includes('fast') || text.includes('how long') || text.includes('how does it work')) {
+      // 12. 4-STEP WORKFLOW, PROCESS & REVISIONS
+      if (text.includes('process') || text.includes('workflow') || text.includes('step') || text.includes('revision') || text.includes('delivery time') || text.includes('turnaround') || text.includes('how it works')) {
         return `⚙️ <strong>Our 4-Step Production Workflow:</strong><br/><br/>` +
-               `<strong>01 · Discovery:</strong> Quick discussion to understand goals, niche, and vision.<br/>` +
-               `<strong>02 · Strategy &amp; Planning:</strong> Build the roadmap, script brief, and creative direction.<br/>` +
-               `<strong>03 · Production:</strong> We edit, grade, animate, and develop your project.<br/>` +
-               `<strong>04 · Delivery &amp; Support:</strong> Final delivery within agreed timelines + ongoing support.<br/><br/>` +
-               `⏱ <strong>Typical Timelines:</strong><br/>` +
-               `• Reels &amp; Shorts: 24 to 48 Hours<br/>` +
-               `• YouTube Long-Form &amp; Motion: 3 to 5 Days<br/>` +
-               `• Web Development: 3 to 7 Days<br/><br/>` +
-               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">View Turnaround Packages →</a>`;
+               `<strong>01 · Discovery:</strong> Quick discussion to understand goals, niche, and creative direction.<br/>` +
+               `<strong>02 · Strategy &amp; Planning:</strong> Build the roadmap, pacing guidelines, and script structure.<br/>` +
+               `<strong>03 · Production:</strong> We edit, color grade, animate, sound design, and review internally.<br/>` +
+               `<strong>04 · Delivery &amp; Support:</strong> Receive 4K exports in 24–48 hours + ongoing support.<br/><br/>` +
+               `🔄 <strong>Revisions:</strong> Revisions are handled swiftly until your video matches the agreed direction 100%.`;
       }
 
-      // 9. REVISIONS & QUALITY GUARANTEE
-      if (text.includes('revision') || text.includes('change') || text.includes('edit again') || text.includes('satisfaction') || text.includes('guarantee') || text.includes('quality')) {
-        return `🔄 <strong>Revision Policy &amp; Quality Guarantee:</strong><br/><br/>` +
-               `• Every project includes a defined number of revision rounds based on the selected package.<br/>` +
-               `• We understand your brief and references deeply upfront to minimize back-and-forth.<br/>` +
-               `• Direct 1-on-1 collaboration in the Client Portal to request instant tweaks until the final output matches your vision perfectly.`;
+      // 13. WHITE-LABEL & AGENCY PARTNERSHIPS
+      if (text.includes('white label') || text.includes('agency') || text.includes('resell') || text.includes('partner') || text.includes('nda')) {
+        return `🤝 <strong>White-Label Video Production for Agencies:</strong><br/><br/>` +
+               `We provide scalable, white-label editing capacity for marketing agencies and course creators:<br/><br/>` +
+               `✓ <strong>Strict NDAs:</strong> We edit under your agency brand name with 100% confidentiality.<br/>` +
+               `✓ <strong>Dedicated Slack/Discord Channel:</strong> Direct real-time communication for volume accounts.<br/>` +
+               `✓ <strong>Predictable Capacity:</strong> 20 to 100+ videos delivered monthly without expanding your payroll.<br/><br/>` +
+               `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'm%20an%20agency%20owner%20interested%20in%20White-Label%20partnerships" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Discuss Agency Partnership on WhatsApp ↗</a>`;
       }
 
-      // 10. PAYMENT / UPI / ADVANCE / GST
-      if (text.includes('pay') || text.includes('upi') || text.includes('advance') || text.includes('gst') || text.includes('bank') || text.includes('gpay') || text.includes('phonepe') || text.includes('deposit')) {
-        return `💳 <strong>Payment Terms &amp; Instant UPI Deposit:</strong><br/><br/>` +
-               `• <strong>Deposit Terms:</strong> 50% advance deposit to initiate work; 50% upon final delivery.<br/>` +
-               `• <strong>Official UPI ID:</strong> <span class="pass-pill" style="font-size:12px;">nbikram704@okhdfcbank</span> (Bikram Nath)<br/>` +
-               `• <strong>Instant Scan:</strong> Dynamic auto-amount QR codes on our pricing page pre-fill the exact advance deposit in GPay / PhonePe.<br/>` +
-               `• <strong>GST Invoices:</strong> Official 18% GST invoices with input tax credit for businesses.<br/><br/>` +
-               `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Open Pricing &amp; UPI QR Checkout →</a>`;
-      }
-
-      // 11. CONTACT / FOUNDER / LOCATION / HYDERABAD / WHATSAPP
-      if (text.includes('contact') || text.includes('founder') || text.includes('phone') || text.includes('whatsapp') || text.includes('call') || text.includes('location') || text.includes('address') || text.includes('hyderabad') || text.includes('email') || text.includes('bikram') || text.includes('about')) {
-        return `🏢 <strong>About Editzaar &amp; Direct Founder Contact:</strong><br/><br/>` +
-               `• <strong>Founder &amp; Director:</strong> Bikram Nath<br/>` +
-               `• <strong>Agency Headquarters:</strong> Hyderabad, Telangana, India<br/>` +
-               `• <strong>Global Reach:</strong> Serving creators &amp; brands across India, US, UK, UAE<br/>` +
-               `• <strong>WhatsApp Direct:</strong> <a href="https://wa.me/919476766340" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">+91 9476766340 (Click to Chat ↗)</a><br/>` +
-               `• <strong>Official Email:</strong> <a href="mailto:editzaarbooking@gmail.com" style="color:var(--gold);text-decoration:underline;">editzaarbooking@gmail.com</a><br/>` +
-               `• <strong>Client Portal:</strong> <a href="dashboard/index.html" style="color:var(--gold);text-decoration:underline;">editzaar.in/dashboard ↗</a><br/><br/>` +
-               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Book a Free 10-Min Call on WhatsApp →</a>`;
-      }
-
-      // 12. CLIENT DASHBOARD / LOGIN / STATUS
-      if (text.includes('login') || text.includes('dashboard') || text.includes('portal') || text.includes('track') || text.includes('status') || text.includes('account')) {
-        return `🔐 <strong>Editzaar Client &amp; Team Portal:</strong><br/><br/>` +
-               `Our built-in client portal allows you to:<br/>` +
-               `• Track project milestones in real-time<br/>` +
-               `• Upload raw footage and brand assets<br/>` +
-               `• Review draft deliverables &amp; request revisions<br/>` +
-               `• Download GST invoices &amp; payment receipts<br/><br/>` +
-               `<a href="dashboard/index.html" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Access Client Portal ↗</a>`;
-      }
-
-      // 13. INTELLIGENT COMPREHENSIVE FALLBACK
-      return `💡 <strong>Editzaar Digital Growth &amp; Media Agency:</strong><br/><br/>` +
-             `We can assist you with any of our 4 core pillars:<br/>` +
-             `• <strong>01 · CREATE:</strong> High-Retention Video Editing, Reels &amp; Motion Graphics<br/>` +
-             `• <strong>02 · BUILD:</strong> Fast Websites &amp; SEO Setup (98+ PageSpeed)<br/>` +
-             `• <strong>03 · ACQUIRE:</strong> Performance Ads (Meta &amp; Google ROAS Funnels)<br/>` +
-             `• <strong>04 · GROW:</strong> Social Media &amp; Channel Growth Management<br/><br/>` +
-             `You can also chat directly with our founder on WhatsApp at <a href="https://wa.me/919476766340" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">+91 9476766340 ↗</a>.<br/><br/>` +
+      // 14. DEFAULT INTELLIGENT CREATIVE STRATEGIST FALLBACK
+      return `💡 <strong>Editzaar Digital Growth &amp; Creative Agency:</strong><br/><br/>` +
+             `We can help you scale across any of our 4 core pillars:<br/>` +
+             `• <strong>01 · CREATE:</strong> High-Retention Reels, YouTube &amp; Motion Graphics<br/>` +
+             `• <strong>02 · BUILD:</strong> Fast Websites &amp; SEO Systems (98+ PageSpeed)<br/>` +
+             `• <strong>03 · ACQUIRE:</strong> Paid Ads &amp; Performance ROAS Funnels<br/>` +
+             `• <strong>04 · GROW:</strong> Social Media Management &amp; Content Calendars<br/><br/>` +
+             `Would you like to explore <strong>pricing</strong>, view <strong>portfolio samples</strong>, or <strong>chat directly with our founder on WhatsApp</strong>?<br/><br/>` +
              `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
              `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Pricing →</a>` +
-             `<a href="https://wa.me/919476766340" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">WhatsApp Us 💬</a>` +
+             `<a href="work" class="btn-outline btn-sm" style="text-decoration:none;">View Work 🎬</a>` +
+             `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20to%20discuss%20a%20project!" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">WhatsApp Us 💬</a>` +
              `</div>`;
     }
   }
