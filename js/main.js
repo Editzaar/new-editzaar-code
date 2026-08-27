@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  /* ── 2. Typing Headline Effect ── */
+  /* ── 2. Dynamic Multi-Color Typing Headline Effect ── */
   var typingTarget = document.getElementById('typing-target');
   if (typingTarget) {
     var words = [
-      'impossible to ignore.',
-      'stand out & scale.',
-      'go viral.',
-      'unforgettable.'
+      { text: 'impossible to ignore.', color: '#FFB800' },
+      { text: 'stand out & scale.',    color: '#28C840' },
+      { text: 'go viral.',             color: '#00D2FF' },
+      { text: 'unforgettable.',        color: '#E056FD' }
     ];
     var wordIndex  = 0;
     var charIndex  = 0;
@@ -35,8 +35,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function typeLoop() {
       if (!typingTarget) return;
 
-      var currentWord = words[wordIndex];
-      var cursor      = '<span class="cursor-blink"></span>';
+      var currentObj   = words[wordIndex];
+      var currentWord  = currentObj.text;
+      var currentColor = currentObj.color;
+      
+      typingTarget.style.color = currentColor;
+      var cursor = '<span class="cursor-blink" style="background:' + currentColor + ';box-shadow:0 0 8px ' + currentColor + '"></span>';
 
       if (!isDeleting) {
         charIndex++;
@@ -59,11 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
           setTimeout(typeLoop, 420);
           return;
         }
-        setTimeout(typeLoop, 36);
+        setTimeout(typeLoop, 38);
       }
     }
 
-    setTimeout(typeLoop, 800);
+    typeLoop();
   }
 
 
