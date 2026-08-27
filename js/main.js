@@ -23,12 +23,10 @@ document.addEventListener('DOMContentLoaded', function () {
   var typingTarget = document.getElementById('typing-target');
   if (typingTarget) {
     var words = [
-      'for top creators.',
-      'for modern brands.',
-      'that drives growth.',
-      'for viral reach.',
-      'that converts viewers.',
-      'for category leaders.'
+      'impossible to ignore.',
+      'stand out & scale.',
+      'go viral.',
+      'unforgettable.'
     ];
     var wordIndex  = 0;
     var charIndex  = 0;
