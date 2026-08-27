@@ -650,28 +650,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var botHtml = `
     <div id="editzaarAiChatbot">
-      <button class="ai-chatbot-fab" id="aiChatbotFab" title="Chat with Editzaar AI Assistant">
-        🤖
+      <button class="ai-chatbot-fab" id="aiChatbotFab" title="Chat with Editzaar AI">
+        ✨
         <div class="fab-badge"></div>
       </button>
 
       <div class="ai-chatbot-panel" id="aiChatbotPanel">
         <div class="ai-chat-header">
           <div class="ai-chat-header-info">
-            <div class="ai-chat-avatar">🤖</div>
+            <div class="ai-chat-avatar">✨</div>
             <div>
-              <div class="ai-chat-title">Editzaar AI Assistant</div>
-              <div class="ai-chat-status"><span style="width:7px;height:7px;border-radius:50%;background:#28C840;display:inline-block;"></span> Online · Trained Agency AI</div>
+              <div class="ai-chat-title">Editzaar Intelligence</div>
+              <div class="ai-chat-status"><span style="width:7px;height:7px;border-radius:50%;background:#28C840;display:inline-block;box-shadow:0 0 6px #28C840;"></span> Online · Active Assistant</div>
             </div>
           </div>
-          <button class="checkout-close" id="aiChatbotClose" style="position:static;font-size:1.2rem;" aria-label="Close Chat">✕</button>
+          <button class="ai-chat-close-btn" id="aiChatbotClose" title="Close">✕</button>
         </div>
 
         <div class="ai-chat-body" id="aiChatMessages">
           <div class="ai-msg bot">
             <div class="ai-bubble">
-              👋 <strong>Welcome to Editzaar!</strong><br/><br/>
-              I am your 24/7 AI Agency Assistant, trained on all our <strong>creative services, website development, paid advertising, pricing, and project workflows</strong>.<br/><br/>
+              👋 <strong>Welcome to Editzaar Intelligence!</strong><br/><br/>
+              I am your 24/7 AI Agency Assistant, trained on all our <strong>creative services, website systems, paid acquisition funnels, and workflows</strong>.<br/><br/>
               How can we help scale your brand or content today?
             </div>
             <span class="ai-msg-time">Just now</span>
@@ -686,12 +686,14 @@ document.addEventListener('DOMContentLoaded', function () {
           <span class="ai-chip" data-q="What are your packages and pricing?">💰 Pricing &amp; Plans</span>
           <span class="ai-chip" data-q="Can I see your previous work and portfolio?">📁 View Portfolio</span>
           <span class="ai-chip" data-q="What is your 4-step workflow and turnaround time?">⏱ Workflow &amp; Delivery</span>
-          <span class="ai-chip" data-q="How do I book a project or contact founder?">💬 Book on WhatsApp</span>
+          <span class="ai-chip" data-q="How do I book a project or contact founder?">💬 WhatsApp (+91 9476766340)</span>
         </div>
 
         <div class="ai-chat-input-row">
-          <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Ask about services, pricing, turnaround, portfolio…"/>
-          <button class="ai-chat-send" id="aiChatSend" title="Send message">➤</button>
+          <div class="ai-chat-input-wrapper">
+            <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Ask anything about services, pricing, turnaround…"/>
+            <button class="ai-chat-send" id="aiChatSend" title="Send message">↑</button>
+          </div>
         </div>
       </div>
     </div>`;
@@ -812,7 +814,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `✓ Technical SEO &amp; On-Page Optimization<br/>` +
                `✓ Google Search Console &amp; Analytics Setup<br/><br/>` +
                `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Request Website Quote 💬</a>` +
+               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Request Website Quote 💬</a>` +
                `<a href="work#web" class="btn-outline btn-sm" style="text-decoration:none;">View Web Projects 💻</a>` +
                `</div>`;
       }
@@ -828,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `✓ Audience Research, Retargeting &amp; Funnels<br/>` +
                `✓ Creative A/B Variant Testing &amp; ROAS Tracking<br/><br/>` +
                `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Book Ad Strategy Call ↗</a>` +
+               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Book Ad Strategy Call ↗</a>` +
                `<a href="work#brand" class="btn-outline btn-sm" style="text-decoration:none;">View Ad Case Studies 📈</a>` +
                `</div>`;
       }
@@ -844,7 +846,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `✓ CTR-Optimized 4K Thumbnails<br/>` +
                `✓ Audience Retention Analytics &amp; Monthly Reports<br/><br/>` +
                `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
-               `<a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Book Channel Strategy Call ↗</a>` +
+               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;">Book Channel Strategy Call ↗</a>` +
                `<a href="work#social" class="btn-outline btn-sm" style="text-decoration:none;">View Growth Studies 📢</a>` +
                `</div>`;
       }
@@ -860,7 +862,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `• <strong>Monthly Growth Retainers:</strong> Custom creator &amp; brand partnerships with dedicated editors and priority delivery.<br/><br/>` +
                `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
                `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">Explore Pricing Catalog →</a>` +
-               `<a href="https://wa.link/pz3w3p" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">Custom Quote on WhatsApp 💬</a>` +
+               `<a href="https://wa.me/919476766340" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">Custom Quote on WhatsApp 💬</a>` +
                `</div>`;
       }
 
@@ -913,10 +915,10 @@ document.addEventListener('DOMContentLoaded', function () {
                `• <strong>Founder &amp; Director:</strong> Bikram Nath<br/>` +
                `• <strong>Agency Headquarters:</strong> Hyderabad, Telangana, India<br/>` +
                `• <strong>Global Reach:</strong> Serving creators &amp; brands across India, US, UK, UAE<br/>` +
-               `• <strong>WhatsApp Direct:</strong> <a href="https://wa.link/pz3w3p" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">+91 93478 69345 (Click to Chat ↗)</a><br/>` +
+               `• <strong>WhatsApp Direct:</strong> <a href="https://wa.me/919476766340" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">+91 9476766340 (Click to Chat ↗)</a><br/>` +
                `• <strong>Official Email:</strong> <a href="mailto:editzaarbooking@gmail.com" style="color:var(--gold);text-decoration:underline;">editzaarbooking@gmail.com</a><br/>` +
                `• <strong>Client Portal:</strong> <a href="dashboard/index.html" style="color:var(--gold);text-decoration:underline;">editzaar.in/dashboard ↗</a><br/><br/>` +
-               `<a href="https://wa.link/pz3w3p" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Book a Free 10-Min Call on WhatsApp →</a>`;
+               `<a href="https://wa.me/919476766340" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Book a Free 10-Min Call on WhatsApp →</a>`;
       }
 
       // 12. CLIENT DASHBOARD / LOGIN / STATUS
@@ -937,10 +939,10 @@ document.addEventListener('DOMContentLoaded', function () {
              `• <strong>02 · BUILD:</strong> Fast Websites &amp; SEO Setup (98+ PageSpeed)<br/>` +
              `• <strong>03 · ACQUIRE:</strong> Performance Ads (Meta &amp; Google ROAS Funnels)<br/>` +
              `• <strong>04 · GROW:</strong> Social Media &amp; Channel Growth Management<br/><br/>` +
-             `You can also chat directly with our founder on WhatsApp at <a href="https://wa.link/pz3w3p" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">+91 93478 69345 ↗</a>.<br/><br/>` +
+             `You can also chat directly with our founder on WhatsApp at <a href="https://wa.me/919476766340" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">+91 9476766340 ↗</a>.<br/><br/>` +
              `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
              `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Pricing →</a>` +
-             `<a href="https://wa.link/pz3w3p" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">WhatsApp Us 💬</a>` +
+             `<a href="https://wa.me/919476766340" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">WhatsApp Us 💬</a>` +
              `</div>`;
     }
   }
