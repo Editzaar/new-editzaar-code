@@ -787,7 +787,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ----------------------------------------------------
-    // MASTER KNOWLEDGE & STRATEGY RESPONSE GENERATOR
+    // MASTER KNOWLEDGE & STRATEGY RESPONSE GENERATOR (WITH BLOG INSIGHTS)
     // ----------------------------------------------------
     function generateMasterAiResponse(rawText) {
       var text = rawText.toLowerCase();
@@ -804,7 +804,59 @@ document.addEventListener('DOMContentLoaded', function () {
                `Prefer email? Reach us at <a href="mailto:editzaarbooking@gmail.com" style="color:var(--gold);text-decoration:underline;">editzaarbooking@gmail.com</a>`;
       }
 
-      // 2. OBJECTION HANDLING: AGENCY VS FREELANCER (Fiverr/Upwork)
+      // 2. BLOG: AI IN VIDEO EDITING / IS AI REPLACING EDITORS
+      if (text.includes('ai') || text.includes('artificial intelligence') || text.includes('replace') || text.includes('automate') || text.includes('future of editing') || text.includes('ai tool')) {
+        return `🤖 <strong>Is AI Replacing Video Editors? The Editzaar Perspective:</strong><br/><br/>` +
+               `While AI tools (like auto-transcription, silence cuts, and basic rotoscoping) speed up production, they cannot replace <strong>human creative strategy, narrative pacing, comedic timing, or brand-specific emotional hooks</strong>.<br/><br/>` +
+               `At Editzaar, we leverage AI for lightning-fast velocity, but every cut, sound cue, and color grade is polished by human creative directors to maximize viewer retention.<br/><br/>` +
+               `📖 <strong>Deep-Dive Guides from Our Blog:</strong><br/>` +
+               `• <a href="https://blog.editzaar.in/2026/06/is-ai-replacing-video-editors-reality.html" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Is AI Replacing Video Editors? The Reality in 2026 ↗</a><br/>` +
+               `• <a href="https://blog.editzaar.in/2026/06/why-ai-cant-replace-human-strategy-in.html" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Why AI Can't Replace Human Strategy in Video Editing ↗</a>`;
+      }
+
+      // 3. BLOG: COLOR GRADING & DAVINCI RESOLVE / TV DRAMA LOOKS
+      if (text.includes('color grade') || text.includes('color grading') || text.includes('davinci') || text.includes('lut') || text.includes('shaidai') || text.includes('cinematic look') || text.includes('film look')) {
+        return `🎨 <strong>Cinematic Color Grading &amp; DaVinci Resolve Mastery:</strong><br/><br/>` +
+               `We grade in DaVinci Resolve Studio using industry-standard node trees, custom film emulation LUTs, skin-tone preservation, and dynamic contrast curves to deliver that rich, cinematic look.<br/><br/>` +
+               `📖 <strong>Featured Masterclass from Our Blog:</strong><br/>` +
+               `• <a href="https://blog.editzaar.in/2026/07/how-to-get-shaidai-tv-drama-look-in.html" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:600;text-decoration:underline;">How to Get the TV Drama Look in DaVinci Resolve ↗</a><br/><br/>` +
+               `<a href="work#video" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">See Color Graded Samples 🎬</a>`;
+      }
+
+      // 4. BLOG: CINEMATIC PACING & MOVIE EDITING BREAKDOWNS
+      if (text.includes('pacing') || text.includes('movie') || text.includes('cinematic lesson') || text.includes('storytelling') || text.includes('rhythm') || text.includes('tension')) {
+        return `🎬 <strong>Cinematic Pacing &amp; Narrative Rhythm:</strong><br/><br/>` +
+               `Pacing is the heartbeat of video editing. It’s not just about cutting fast; it’s about knowing when to accelerate for intensity and when to give visual breathers for emotional weight.<br/><br/>` +
+               `📖 <strong>Read Our In-Depth Breakdown:</strong><br/>` +
+               `• <a href="https://blog.editzaar.in/2026/08/movie-video-editing-breakdown-cinematic.html" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:600;text-decoration:underline;">Movie Video Editing Breakdown: Cinematic Pacing Lessons ↗</a><br/><br/>` +
+               `We apply these exact pacing rules to high-retention YouTube documentaries and business brand videos.`;
+      }
+
+      // 5. BLOG: WHY HIGH-BUDGET VIDEOS FAIL & RETENTION EDITING
+      if (text.includes('fail') || text.includes('drop off') || text.includes('retention editing') || text.includes('watch time') || text.includes('low views') || text.includes('swipe away')) {
+        return `📉 <strong>Why High-Budget Videos Fail (And What Retention Fixes):</strong><br/><br/>` +
+               `Expensive cameras and lighting don't guarantee views. If the first 3 seconds lack an irresistible hook, or if dead air causes viewer drop-off, the algorithm stops recommending the video.<br/><br/>` +
+               `<strong>Editzaar Retention Framework:</strong><br/>` +
+               `✓ 3-Second Pattern Interrupt (sound FX + kinetic text hook)<br/>` +
+               `✓ Micro-cuts every 3–5 seconds (zooms, B-roll, overlays)<br/>` +
+               `✓ Audio dynamics &amp; tension building<br/><br/>` +
+               `📖 <strong>Case Study Article on Our Blog:</strong><br/>` +
+               `• <a href="https://blog.editzaar.in/2026/07/why-high-budget-videos-fail-and-what.html" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:600;text-decoration:underline;">Why High-Budget Videos Fail (And What Retention Editing Fixes) ↗</a>`;
+      }
+
+      // 6. BLOG / ARTICLES INQUIRY IN GENERAL
+      if (text.includes('blog') || text.includes('article') || text.includes('guide') || text.includes('tutorial') || text.includes('insights') || text.includes('learn')) {
+        return `📚 <strong>Editzaar Creative Insights &amp; Blog Hub:</strong><br/><br/>` +
+               `We regularly publish deep-dive breakdowns on video retention, cinematic grading, algorithm growth, and agency workflows at <a href="https://blog.editzaar.in/" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">blog.editzaar.in ↗</a>.<br/><br/>` +
+               `<strong>Popular Articles:</strong><br/>` +
+               `1. <a href="https://blog.editzaar.in/2026/08/movie-video-editing-breakdown-cinematic.html" target="_blank" rel="noopener noreferrer" style="color:var(--t1);text-decoration:underline;">Movie Editing Breakdown: Cinematic Pacing Lessons ↗</a><br/>` +
+               `2. <a href="https://blog.editzaar.in/2026/07/how-to-get-shaidai-tv-drama-look-in.html" target="_blank" rel="noopener noreferrer" style="color:var(--t1);text-decoration:underline;">How to Get the TV Drama Look in DaVinci Resolve ↗</a><br/>` +
+               `3. <a href="https://blog.editzaar.in/2026/07/why-high-budget-videos-fail-and-what.html" target="_blank" rel="noopener noreferrer" style="color:var(--t1);text-decoration:underline;">Why High-Budget Videos Fail (And What Retention Fixes) ↗</a><br/>` +
+               `4. <a href="https://blog.editzaar.in/2026/06/is-ai-replacing-video-editors-reality.html" target="_blank" rel="noopener noreferrer" style="color:var(--t1);text-decoration:underline;">Is AI Replacing Video Editors? The 2026 Reality ↗</a><br/><br/>` +
+               `<a href="https://blog.editzaar.in/" target="_blank" rel="noopener noreferrer" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Visit Editzaar Blog Hub ↗</a>`;
+      }
+
+      // 7. OBJECTION HANDLING: AGENCY VS FREELANCER (Fiverr/Upwork)
       if (text.includes('fiverr') || text.includes('upwork') || text.includes('freelancer') || text.includes('why choose') || text.includes('why editzaar') || text.includes('agency vs') || text.includes('expensive')) {
         return `🛡️ <strong>Why Creators &amp; Brands Choose Editzaar over Freelancers:</strong><br/><br/>` +
                `• <strong>Guaranteed 24–48h Velocity:</strong> No ghosting, no missed deadlines, no creative burnout.<br/>` +
@@ -817,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `</div>`;
       }
 
-      // 3. COPYRIGHT, MUSIC & COMMERCIAL LICENSING
+      // 8. COPYRIGHT, MUSIC & COMMERCIAL LICENSING
       if (text.includes('copyright') || text.includes('music') || text.includes('license') || text.includes('strike') || text.includes('stock footage') || text.includes('audio')) {
         return `🎵 <strong>100% Commercial Licensing &amp; Zero Copyright Strikes Guarantee:</strong><br/><br/>` +
                `• <strong>Royalty-Free Commercial Audio:</strong> Licensed via premium platforms like Artlist, Epidemic Sound, and Audiio.<br/>` +
@@ -826,7 +878,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `• <strong>Peace of Mind:</strong> Safe for monetized channels and corporate advertising worldwide.`;
       }
 
-      // 4. TECHNICAL SPECIFICATIONS & RAW FOOTAGE WORKFLOW
+      // 9. TECHNICAL SPECIFICATIONS & RAW FOOTAGE WORKFLOW
       if (text.includes('raw') || text.includes('spec') || text.includes('resolution') || text.includes('4k') || text.includes('prores') || text.includes('upload') || text.includes('format') || text.includes('drive') || text.includes('dropbox')) {
         return `⚙️ <strong>Technical Specifications &amp; Footage Workflow:</strong><br/><br/>` +
                `• <strong>Formats Supported:</strong> MP4, MOV, Apple ProRes, Blackmagic BRAW, Sony S-Log, Canon C-Log.<br/>` +
@@ -837,7 +889,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `<code style="background:rgba(255,255,255,0.08);padding:4px 8px;border-radius:6px;font-size:0.78rem;display:block;margin-top:6px;">/Project_Name ➔ /Raw_A_Roll · /B_Roll · /Voiceover · /Brief_Notes</code>`;
       }
 
-      // 5. SHORT-FORM VIDEO EDITING (9:16 REELS, SHORTS, TIKTOK)
+      // 10. SHORT-FORM VIDEO EDITING (9:16 REELS, SHORTS, TIKTOK)
       if (text.includes('reel') || text.includes('short') || text.includes('tiktok') || text.includes('short-form') || text.includes('9:16') || text.includes('hook') || text.includes('hormozi')) {
         return `🎬 <strong>High-Retention Short-Form Editing (9:16 Vertical):</strong><br/><br/>` +
                `We engineer viral short-form assets built to stop the swipe and maximize retention:<br/><br/>` +
@@ -852,7 +904,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `</div>`;
       }
 
-      // 6. LONG-FORM YOUTUBE & PODCASTS (16:9)
+      // 11. LONG-FORM YOUTUBE & PODCASTS (16:9)
       if (text.includes('youtube') || text.includes('long-form') || text.includes('podcast') || text.includes('16:9') || text.includes('talking head') || text.includes('documentary') || text.includes('interview')) {
         return `📹 <strong>Long-Form YouTube &amp; Podcast Post-Production (16:9):</strong><br/><br/>` +
                `We edit for <strong>high Average Percentage Viewed (APV)</strong> and viewer retention:<br/><br/>` +
@@ -867,7 +919,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `</div>`;
       }
 
-      // 7. WEBSITE DEVELOPMENT & SEO
+      // 12. WEBSITE DEVELOPMENT & SEO
       if (text.includes('web') || text.includes('site') || text.includes('seo') || text.includes('landing page') || text.includes('wordpress') || text.includes('ecommerce') || text.includes('store') || text.includes('speed')) {
         return `💻 <strong>Website Development &amp; Technical SEO:</strong><br/><br/>` +
                `Give your brand a digital home built to convert visitors and rank organically:<br/><br/>` +
@@ -881,7 +933,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `</div>`;
       }
 
-      // 8. PAID ADVERTISING & PERFORMANCE MARKETING
+      // 13. PAID ADVERTISING & PERFORMANCE MARKETING
       if (text.includes('ad') || text.includes('marketing') || text.includes('meta') || text.includes('google ads') || text.includes('roas') || text.includes('cpl') || text.includes('campaign') || text.includes('lead gen')) {
         return `📈 <strong>Paid Advertising &amp; Performance Marketing:</strong><br/><br/>` +
                `Turn ad spend into measurable, scalable revenue:<br/><br/>` +
@@ -892,7 +944,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20to%20discuss%20Paid%20Ads%20for%20my%20business" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Book Ad Strategy Call on WhatsApp ↗</a>`;
       }
 
-      // 9. SOCIAL MEDIA MANAGEMENT & CHANNEL GROWTH
+      // 14. SOCIAL MEDIA MANAGEMENT & CHANNEL GROWTH
       if (text.includes('social') || text.includes('instagram') || text.includes('channel') || text.includes('management') || text.includes('grow') || text.includes('calendar') || text.includes('followers')) {
         return `📣 <strong>Social Media Management &amp; Channel Growth:</strong><br/><br/>` +
                `Build a consistent content engine that compounds authority:<br/><br/>` +
@@ -903,7 +955,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20tell%20me%20about%20Social%20Media%20Management" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Discuss Social Retainers on WhatsApp ↗</a>`;
       }
 
-      // 10. NICHE SPECIFIC STRATEGIES (Finance, Real Estate, Fitness, Tech, Podcasts)
+      // 15. NICHE SPECIFIC STRATEGIES (Finance, Real Estate, Fitness, Tech, Podcasts)
       if (text.includes('finance') || text.includes('real estate') || text.includes('fitness') || text.includes('tech') || text.includes('saas') || text.includes('doctor') || text.includes('medical') || text.includes('vlog')) {
         return `🎯 <strong>Custom Tailored Editing Strategy for Your Niche:</strong><br/><br/>` +
                `• <strong>Finance / Real Estate:</strong> Clean luxury aesthetic, animated financial charts, key metric popups, and high-end stock B-roll to build maximum trust.<br/>` +
@@ -913,7 +965,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `<a href="work" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Explore Niche Portfolio Samples →</a>`;
       }
 
-      // 11. PRICING, PACKAGES & TIME SAVINGS ROI CALCULATOR
+      // 16. PRICING, PACKAGES & TIME SAVINGS ROI CALCULATOR
       if (text.includes('price') || text.includes('pricing') || text.includes('cost') || text.includes('rate') || text.includes('package') || text.includes('retainer') || text.includes('roi') || text.includes('saving')) {
         return `💰 <strong>Editzaar Transparent Pricing &amp; ROI Calculator:</strong><br/><br/>` +
                `• <strong>Shorts &amp; Reels (9:16):</strong> ₹1,000 / video (48h turnaround, hook design, subtitles, SFX)<br/>` +
@@ -928,7 +980,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `</div>`;
       }
 
-      // 12. 4-STEP WORKFLOW, PROCESS & REVISIONS
+      // 17. 4-STEP WORKFLOW, PROCESS & REVISIONS
       if (text.includes('process') || text.includes('workflow') || text.includes('step') || text.includes('revision') || text.includes('delivery time') || text.includes('turnaround') || text.includes('how it works')) {
         return `⚙️ <strong>Our 4-Step Production Workflow:</strong><br/><br/>` +
                `<strong>01 · Discovery:</strong> Quick discussion to understand goals, niche, and creative direction.<br/>` +
@@ -938,7 +990,7 @@ document.addEventListener('DOMContentLoaded', function () {
                `🔄 <strong>Revisions:</strong> Revisions are handled swiftly until your video matches the agreed direction 100%.`;
       }
 
-      // 13. WHITE-LABEL & AGENCY PARTNERSHIPS
+      // 18. WHITE-LABEL & AGENCY PARTNERSHIPS
       if (text.includes('white label') || text.includes('agency') || text.includes('resell') || text.includes('partner') || text.includes('nda')) {
         return `🤝 <strong>White-Label Video Production for Agencies:</strong><br/><br/>` +
                `We provide scalable, white-label editing capacity for marketing agencies and course creators:<br/><br/>` +
@@ -948,18 +1000,18 @@ document.addEventListener('DOMContentLoaded', function () {
                `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'm%20an%20agency%20owner%20interested%20in%20White-Label%20partnerships" target="_blank" class="btn-gold-brand btn-sm" style="text-decoration:none;display:inline-block;">Discuss Agency Partnership on WhatsApp ↗</a>`;
       }
 
-      // 14. DEFAULT INTELLIGENT CREATIVE STRATEGIST FALLBACK
+      // 19. DEFAULT INTELLIGENT CREATIVE STRATEGIST & BLOG RECOMMENDER FALLBACK
       return `💡 <strong>Editzaar Digital Growth &amp; Creative Agency:</strong><br/><br/>` +
              `We can help you scale across any of our 4 core pillars:<br/>` +
              `• <strong>01 · CREATE:</strong> High-Retention Reels, YouTube &amp; Motion Graphics<br/>` +
              `• <strong>02 · BUILD:</strong> Fast Websites &amp; SEO Systems (98+ PageSpeed)<br/>` +
              `• <strong>03 · ACQUIRE:</strong> Paid Ads &amp; Performance ROAS Funnels<br/>` +
              `• <strong>04 · GROW:</strong> Social Media Management &amp; Content Calendars<br/><br/>` +
-             `Would you like to explore <strong>pricing</strong>, view <strong>portfolio samples</strong>, or <strong>chat directly with our founder on WhatsApp</strong>?<br/><br/>` +
+             `You can also read our deep-dive tutorials on video retention, cinematic grading, and AI editing on our <a href="https://blog.editzaar.in/" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Editzaar Blog Hub ↗</a>.<br/><br/>` +
              `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
              `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Pricing →</a>` +
              `<a href="work" class="btn-outline btn-sm" style="text-decoration:none;">View Work 🎬</a>` +
-             `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20to%20discuss%20a%20project!" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">WhatsApp Us 💬</a>` +
+             `<a href="https://wa.me/919476766340?text=Hi%20Editzaar,%20I'd%20like%20to%20discuss%20a%20project!" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;">WhatsApp Founder 💬</a>` +
              `</div>`;
     }
   }
