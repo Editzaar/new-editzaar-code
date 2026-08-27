@@ -2915,3 +2915,39 @@ html[data-theme="light"] body,
   background-clip: text !important;
   display: inline-block;
 }
+
+
+/* ── Sleek Mobile Optimization for 4-Step Process ── */
+@media (max-width: 600px) {
+  .process {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .pstep {
+    padding: 18px 14px !important;
+    border-radius: 12px !important;
+  }
+  .pnum {
+    font-size: 1.7rem !important;
+    margin-bottom: 6px !important;
+    color: var(--gold) !important;
+  }
+  .pname {
+    font-size: 1.05rem !important;
+    margin-bottom: 6px !important;
+    line-height: 1.2 !important;
+  }
+  .pdesc {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+  }
+  .pstep::after {
+    display: none !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .process {
+    grid-template-columns: 1fr !important;
+  }
+}
