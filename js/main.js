@@ -23,14 +23,21 @@ document.addEventListener('DOMContentLoaded', function () {
   var typingTarget = document.getElementById('typing-target');
   if (typingTarget) {
     var words = [
-      { text: 'impossible to ignore.', color: '#FFB800' },
-      { text: 'stand out & scale.',    color: '#28C840' },
-      { text: 'go viral.',             color: '#00D2FF' },
-      { text: 'unforgettable.',        color: '#E056FD' }
+      { text: 'impossible to ignore.', cls: 'color-gold',   color: '#FFB800' },
+      { text: 'stand out & scale.',    cls: 'color-green',  color: '#28C840' },
+      { text: 'go viral.',             cls: 'color-cyan',   color: '#00D2FF' },
+      { text: 'unforgettable.',        cls: 'color-violet', color: '#E056FD' }
     ];
     var wordIndex  = 0;
     var charIndex  = 0;
     var isDeleting = false;
+
+    function applyColor(item) {
+      typingTarget.className = 'gold-italic ' + item.cls;
+      typingTarget.style.setProperty('color', item.color, 'important');
+      typingTarget.style.setProperty('-webkit-text-fill-color', item.color, 'important');
+      typingTarget.style.setProperty('background', 'none', 'important');
+    }
 
     function typeLoop() {
       if (!typingTarget) return;
@@ -39,8 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var currentWord  = currentObj.text;
       var currentColor = currentObj.color;
       
-      typingTarget.style.color = currentColor;
-      var cursor = '<span class="cursor-blink" style="background:' + currentColor + ';box-shadow:0 0 8px ' + currentColor + '"></span>';
+      applyColor(currentObj);
+      var cursor = '<span class="cursor-blink" style="background:' + currentColor + ';box-shadow:0 0 10px ' + currentColor + ';color:' + currentColor + '"></span>';
 
       if (!isDeleting) {
         charIndex++;
@@ -60,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (charIndex === 0) {
           isDeleting = false;
           wordIndex  = (wordIndex + 1) % words.length;
+          applyColor(words[wordIndex]);
           setTimeout(typeLoop, 420);
           return;
         }

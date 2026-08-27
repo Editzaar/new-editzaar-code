@@ -3030,3 +3030,30 @@ select option {
   border: 1px solid rgba(184, 130, 0, 0.3) !important;
   box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
 }
+
+
+/* Dynamic Multi-Color Typing Classes */
+#typing-target.color-gold,
+[data-theme="light"] #typing-target.color-gold {
+  color: #FFB800 !important;
+  -webkit-text-fill-color: #FFB800 !important;
+  background: none !important;
+}
+#typing-target.color-green,
+[data-theme="light"] #typing-target.color-green {
+  color: #28C840 !important;
+  -webkit-text-fill-color: #28C840 !important;
+  background: none !important;
+}
+#typing-target.color-cyan,
+[data-theme="light"] #typing-target.color-cyan {
+  color: #00D2FF !important;
+  -webkit-text-fill-color: #00D2FF !important;
+  background: none !important;
+}
+#typing-target.color-violet,
+[data-theme="light"] #typing-target.color-violet {
+  color: #E056FD !important;
+  -webkit-text-fill-color: #E056FD !important;
+  background: none !important;
+}
