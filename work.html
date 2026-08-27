@@ -25,7 +25,7 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap?v=270.0"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="media/fav-logo.png">
-    <link rel="stylesheet" href="css/style.css?v=320.0">
+    <link rel="stylesheet" href="css/style.css?v=330.0">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=300.0">
 
@@ -1257,11 +1257,36 @@
             });
         });
 
+                // Handle Hash Deep-Linking for auto-filtering and smooth scrolling
+        function handleHashFilter() {
+            var hash = window.location.hash.replace('#', '').toLowerCase();
+            if (hash) {
+                // Aliases mapping
+                if (hash === 'video-editing' || hash === 'video-production' || hash === 'videos' || hash === 'video') hash = 'video';
+                if (hash === 'web-development' || hash === 'web-design' || hash === 'websites' || hash === 'web') hash = 'web';
+                if (hash === 'paid-advertising' || hash === 'ads' || hash === 'brand-promotions' || hash === 'brand') hash = 'brand';
+                if (hash === 'social-growth' || hash === 'social-media' || hash === 'channel-growth' || hash === 'social') hash = 'social';
+
+                var targetBtn = document.querySelector('.filter-btn[data-filter="' + hash + '"]');
+                if (targetBtn) {
+                    targetBtn.click();
+                    setTimeout(function() {
+                        var targetSec = document.querySelector('.portfolio-section[data-category="' + hash + '"]');
+                        if (targetSec) {
+                            targetSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 120);
+                }
+            }
+        }
+        window.addEventListener('DOMContentLoaded', handleHashFilter);
+        window.addEventListener('hashchange', handleHashFilter);
+
         // Initial setup for 'all'
         // portfolioSections already have .active from HTML
     </script>
     <script src="js/services-config.js?v=310.0"></script>
-  <script src="js/main.js?v=320.0"></script>
+  <script src="js/main.js?v=330.0"></script>
     <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
