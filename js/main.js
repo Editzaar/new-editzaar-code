@@ -19,35 +19,32 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 
-  /* ── 2. Dynamic Multi-Color Typing Headline Effect ── */
+  /* ── 2. Dynamic Unique Multi-Color Gradient Typing Headline Effect ── */
   var typingTarget = document.getElementById('typing-target');
   if (typingTarget) {
     var words = [
-      { text: 'impossible to ignore.', cls: 'color-gold',   color: '#FFB800' },
-      { text: 'stand out & scale.',    cls: 'color-green',  color: '#28C840' },
-      { text: 'go viral.',             cls: 'color-cyan',   color: '#00D2FF' },
-      { text: 'unforgettable.',        cls: 'color-violet', color: '#E056FD' }
+      { text: 'impossible to ignore.', cls: 'grad-gold',    cursorColor: '#FFB800' },
+      { text: 'stand out & scale.',    cls: 'grad-emerald', cursorColor: '#28C840' },
+      { text: 'go viral.',             cls: 'grad-cyan',    cursorColor: '#00D2FF' },
+      { text: 'unforgettable.',        cls: 'grad-rose',    cursorColor: '#F43F5E' }
     ];
     var wordIndex  = 0;
     var charIndex  = 0;
     var isDeleting = false;
 
-    function applyColor(item) {
+    function applyGradient(item) {
       typingTarget.className = 'gold-italic ' + item.cls;
-      typingTarget.style.setProperty('color', item.color, 'important');
-      typingTarget.style.setProperty('-webkit-text-fill-color', item.color, 'important');
-      typingTarget.style.setProperty('background', 'none', 'important');
     }
 
     function typeLoop() {
       if (!typingTarget) return;
 
-      var currentObj   = words[wordIndex];
-      var currentWord  = currentObj.text;
-      var currentColor = currentObj.color;
+      var currentObj    = words[wordIndex];
+      var currentWord   = currentObj.text;
+      var currentCursor = currentObj.cursorColor;
       
-      applyColor(currentObj);
-      var cursor = '<span class="cursor-blink" style="background:' + currentColor + ';box-shadow:0 0 10px ' + currentColor + ';color:' + currentColor + '"></span>';
+      applyGradient(currentObj);
+      var cursor = '<span class="cursor-blink" style="background:' + currentCursor + ';box-shadow:0 0 12px ' + currentCursor + '"></span>';
 
       if (!isDeleting) {
         charIndex++;
@@ -67,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (charIndex === 0) {
           isDeleting = false;
           wordIndex  = (wordIndex + 1) % words.length;
-          applyColor(words[wordIndex]);
+          applyGradient(words[wordIndex]);
           setTimeout(typeLoop, 420);
           return;
         }

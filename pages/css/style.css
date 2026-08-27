@@ -2885,28 +2885,39 @@ html[data-theme="light"] body,
 }
 
 
-/* Dynamic Multi-Color Typing Classes */
-#typing-target.color-gold,
-[data-theme="light"] #typing-target.color-gold {
-  color: #FFB800 !important;
-  -webkit-text-fill-color: #FFB800 !important;
-  background: none !important;
+/* Dynamic Unique Multi-Color Gradient Typing Classes */
+#typing-target.grad-gold,
+[data-theme="light"] #typing-target.grad-gold {
+  background: linear-gradient(135deg, #FFE082 0%, #FFB800 50%, #FF8F00 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: inline-block;
 }
-#typing-target.color-green,
-[data-theme="light"] #typing-target.color-green {
-  color: #28C840 !important;
-  -webkit-text-fill-color: #28C840 !important;
-  background: none !important;
+
+#typing-target.grad-emerald,
+[data-theme="light"] #typing-target.grad-emerald {
+  background: linear-gradient(135deg, #6EE7B7 0%, #28C840 50%, #059669 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: inline-block;
 }
-#typing-target.color-cyan,
-[data-theme="light"] #typing-target.color-cyan {
-  color: #00D2FF !important;
-  -webkit-text-fill-color: #00D2FF !important;
-  background: none !important;
+
+#typing-target.grad-cyan,
+[data-theme="light"] #typing-target.grad-cyan {
+  background: linear-gradient(135deg, #7DD3FC 0%, #00D2FF 50%, #0284C7 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: inline-block;
 }
-#typing-target.color-violet,
-[data-theme="light"] #typing-target.color-violet {
-  color: #E056FD !important;
-  -webkit-text-fill-color: #E056FD !important;
-  background: none !important;
+
+#typing-target.grad-rose,
+[data-theme="light"] #typing-target.grad-rose {
+  background: linear-gradient(135deg, #FDA4AF 0%, #F43F5E 50%, #C026D3 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: inline-block;
 }
