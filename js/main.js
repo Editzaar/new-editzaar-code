@@ -683,19 +683,6 @@ document.addEventListener('DOMContentLoaded', function () {
           </div>
         </div>
 
-        <!-- Quick Reply Action Chips (Apple Style) -->
-        <div class="ai-quick-chips" id="aiQuickChips">
-          <button type="button" class="ai-chip" data-q="I need Reels & Shorts (Short-form)">🎬 Reels &amp; Shorts</button>
-          <button type="button" class="ai-chip" data-q="I need YouTube Long-form editing">📹 YouTube Long-form</button>
-          <button type="button" class="ai-chip" data-q="Tell me about Website Development & SEO">💻 Web &amp; SEO</button>
-          <button type="button" class="ai-chip" data-q="Tell me about Paid Ads & Performance Marketing">📈 Paid Ads &amp; ROAS</button>
-          <button type="button" class="ai-chip" data-q="What are your pricing packages and ROI?">💰 Pricing &amp; ROI</button>
-          <button type="button" class="ai-chip" data-q="Can I see portfolio samples for my niche?">📁 Niche Portfolio</button>
-          <button type="button" class="ai-chip" data-q="Why should I choose Editzaar over Fiverr/Upwork freelancers?">🛡️ Agency vs Freelancer</button>
-          <button type="button" class="ai-chip" data-q="What is your policy on copyright and royalty-free music?">🎵 Music &amp; Copyright</button>
-          <button type="button" class="ai-chip" data-q="I want to book a free discovery call on WhatsApp">💬 WhatsApp Founder</button>
-        </div>
-
         <!-- Input Bar (Apple iOS Pill Style) -->
         <div class="ai-chat-input-row">
           <div class="ai-chat-input-wrapper">
@@ -714,19 +701,41 @@ document.addEventListener('DOMContentLoaded', function () {
     var input = document.getElementById('aiChatInput');
     var send = document.getElementById('aiChatSend');
     var msgsContainer = document.getElementById('aiChatMessages');
-    var chipsContainer = document.getElementById('aiQuickChips');
 
     // Toggle Chat
     if (fab && panel) {
-      fab.addEventListener('click', function () { 
+      fab.addEventListener('click', function (e) { 
+        e.stopPropagation();
         panel.classList.toggle('open'); 
         if (panel.classList.contains('open') && input) {
           setTimeout(function() { input.focus(); }, 150);
         }
       });
     }
+
     if (close && panel) {
-      close.addEventListener('click', function () { panel.classList.remove('open'); });
+      close.addEventListener('click', function (e) {
+        e.stopPropagation();
+        panel.classList.remove('open'); 
+      });
+    }
+
+    // Auto-close when clicking outside of the chatbot panel
+    document.addEventListener('click', function (e) {
+      if (panel && panel.classList.contains('open')) {
+        if (!panel.contains(e.target) && !fab.contains(e.target)) {
+          panel.classList.remove('open');
+        }
+      }
+    });
+
+    document.addEventListener('touchstart', function (e) {
+      if (panel && panel.classList.contains('open')) {
+        if (!panel.contains(e.target) && !fab.contains(e.target)) {
+          panel.classList.remove('open');
+        }
+      }
+    }, { passive: true }););
     }
 
     // Quick chip delegate
