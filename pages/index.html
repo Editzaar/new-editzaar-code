@@ -596,7 +596,7 @@
     [data-theme="light"] .cursor-blink {
       border-right: 2px solid #b88200 !important;
     }
-  
+
     /* MOBILE HERO POLISH (v295.0) */
     .hv2-eyebrow {
       display: inline-flex;
@@ -624,41 +624,47 @@
       .hv2-left {
         padding: 50px 18px 30px !important;
       }
+
       .hv2-eyebrow {
         font-size: 10px;
         letter-spacing: 0.08em;
         margin-bottom: 14px;
       }
+
       .hv2-headline {
         font-size: 2.1rem !important;
         line-height: 1.18 !important;
         margin-bottom: 16px !important;
       }
+
       .hv2-sub {
         font-size: 0.9rem !important;
         line-height: 1.6 !important;
         margin-bottom: 22px !important;
       }
+
       .hv2-stats {
         grid-template-columns: 1fr 1fr !important;
         gap: 16px 12px !important;
         margin-top: 28px !important;
         padding-top: 20px !important;
       }
+
       .hv2-stat {
         border-left: 2px solid var(--gold-border);
         padding-left: 10px;
       }
+
       .hv2-stat-n {
         font-size: 1.65rem !important;
       }
+
       .hv2-stat-l {
         font-size: 0.72rem !important;
         letter-spacing: 0.06em !important;
       }
     }
-
-</style>
+  </style>
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="/manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
@@ -668,11 +674,11 @@
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
   <script src="js/theme.js?v=310.0"></script>
-  <script src="../js/services-config.js?v=310.0"></script>
 
   <style>
     /* CRITICAL MOBILE HEADER CLEANLINESS (v290.0) */
     @media (max-width: 900px) {
+
       #nav-auth-btn,
       nav .nav-cta,
       .nav-cta:not(.nav-cta-mobile) {
@@ -1148,27 +1154,28 @@
   <section class="sec sec-alt">
     <div class="sec-hdr reveal">
       <h2 class="sec-title">What Creators &amp; Brands <em>Say About Editzaar</em></h2>
-      <div class="sec-tag"> Reviews</div>
+      <div class="sec-tag"> Reviews &amp; Testimonials</div>
     </div>
-    <div class="reviews-grid">
-      <div class="rev reveal">
-        <div class="rev-stars">★★★★★</div>
-        <div class="rev-q">"Editzaar understands finance content deeply. The pacing and visual hierarchy make every
-          video feel authoritative and engaging."</div>
-        <div class="rev-name">Finance Creator · 200K Subscribers</div>
+    <div class="reviews-carousel-wrapper" style="position:relative;max-width:1100px;margin:0 auto;display:flex;align-items:center;">
+      <button class="carousel-nav-arrow prev" onclick="scrollTestimonials(-1)" aria-label="Previous Review" style="position:absolute;left:-20px;z-index:10;background:rgba(0,0,0,0.8);border:1px solid var(--border);color:var(--gold);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.4rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">‹</button>
+      <div class="reviews-carousel-track" id="homeTestimonialsTrack" style="display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:20px 10px 30px;width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+        <div class="rev reveal" style="flex:0 0 calc(33.333% - 16px);min-width:280px;scroll-snap-align:start;">
+          <div class="rev-stars">★★★★★</div>
+          <div class="rev-q">"Editzaar understands finance content deeply. The pacing and visual hierarchy make every video feel authoritative and engaging."</div>
+          <div class="rev-name">Finance Creator · 200K Subscribers</div>
+        </div>
+        <div class="rev reveal reveal-d1" style="flex:0 0 calc(33.333% - 16px);min-width:280px;scroll-snap-align:start;">
+          <div class="rev-stars">★★★★★</div>
+          <div class="rev-q">"Our property listings now feel cinematic. Buyers comment on the video quality before they even ask about the price."</div>
+          <div class="rev-name">Real Estate Developer · Hyderabad</div>
+        </div>
+        <div class="rev reveal reveal-d2" style="flex:0 0 calc(33.333% - 16px);min-width:280px;scroll-snap-align:start;">
+          <div class="rev-stars">★★★★★</div>
+          <div class="rev-q">"Strong understanding of branding, rhythm, and visual language. The best creative partner we've had."</div>
+          <div class="rev-name">Creative Director · D2C Brand</div>
+        </div>
       </div>
-      <div class="rev reveal reveal-d1">
-        <div class="rev-stars">★★★★★</div>
-        <div class="rev-q">"Our property listings now feel cinematic. Buyers comment on the video quality before they
-          even ask about the price."</div>
-        <div class="rev-name">Real Estate Developer · Hyderabad</div>
-      </div>
-      <div class="rev reveal reveal-d2">
-        <div class="rev-stars">★★★★★</div>
-        <div class="rev-q">"Strong understanding of branding, rhythm, and visual language. The best creative partner
-          we've had."</div>
-        <div class="rev-name">Creative Director · D2C Brand</div>
-      </div>
+      <button class="carousel-nav-arrow next" onclick="scrollTestimonials(1)" aria-label="Next Review" style="position:absolute;right:-20px;z-index:10;background:rgba(0,0,0,0.8);border:1px solid var(--border);color:var(--gold);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.4rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">›</button>
     </div>
   </section>
 
@@ -1183,7 +1190,7 @@
         Everything you need to know about partnering with Editzaar for creative production and growth.
       </p>
     </div>
-    <div class="faq-container reveal" style="display:flex;flex-direction:column;gap:16px;">
+    <div class="faq-container reveal" id="homeFaqContainer" style="display:flex;flex-direction:column;gap:16px;">
       <details style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;cursor:pointer;transition:border-color 0.3s;" onmouseenter="this.style.borderColor='rgba(255,184,0,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
         <summary style="font-family:'Outfit',sans-serif;font-weight:600;font-size:1.05rem;color:var(--t1);list-style:none;display:flex;justify-content:space-between;align-items:center;">
           <span>01. How does the process work after I contact Editzaar?</span>
@@ -1269,6 +1276,7 @@
     </div>
   </footer>
 
+  <script src="js/services-config.js?v=310.0"></script>
   <script src="js/main.js?v=510.0"></script>
   <script>
     // Hero Live Edit Preview Continuous Video Loop & Rotation
@@ -1357,9 +1365,92 @@
   </div>
 
   <!-- Firebase Auth: Nav profile (module) -->
-  
+
 
   <script type="module" src="js/nav-auth.js?v=300.0"></script>
+
+  <!-- Testimonial Carousel & FAQ Realtime Sync -->
+  <script>
+    window.scrollTestimonials = function(dir) {
+      var track = document.getElementById('homeTestimonialsTrack');
+      if (track) {
+        track.scrollBy({ left: dir * 320, behavior: 'smooth' });
+      }
+    };
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain: "editzaar-fa8d9.firebaseapp.com",
+      projectId: "editzaar-fa8d9",
+      storageBucket: "editzaar-fa8d9.firebasestorage.app",
+      messagingSenderId: "419930711716",
+      appId: "1:419930711716:web:b1504f651e397a14726831"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    try {
+      onSnapshot(collection(db, 'cms_testimonials'), (snapshot) => {
+        var items = [];
+        snapshot.forEach(doc => {
+          var d = doc.data();
+          d.id = doc.id;
+          items.push(d);
+        });
+        if (items.length > 0) {
+          items.sort((a, b) => (a.order || 1) - (b.order || 1));
+          var track = document.getElementById('homeTestimonialsTrack');
+          if (track) {
+            var html = '';
+            items.forEach(t => {
+              var stars = '★'.repeat(t.rating || 5);
+              html += `<div class="rev" style="flex:0 0 calc(33.333% - 16px);min-width:280px;scroll-snap-align:start;">
+                <div class="rev-stars" style="color:var(--gold);">${stars}</div>
+                <div class="rev-q">"${t.quote}"</div>
+                <div class="rev-name">${t.author}${t.role ? ' · ' + t.role : ''}</div>
+              </div>`;
+            });
+            track.innerHTML = html;
+          }
+        }
+      });
+
+      onSnapshot(collection(db, 'cms_faqs'), (snapshot) => {
+        var faqs = [];
+        snapshot.forEach(doc => {
+          var d = doc.data();
+          d.id = doc.id;
+          faqs.push(d);
+        });
+        if (faqs.length > 0) {
+          faqs.sort((a, b) => (a.order || 1) - (b.order || 1));
+          var cont = document.getElementById('homeFaqContainer');
+          if (cont) {
+            var html = '';
+            faqs.forEach(f => {
+              html += `<details style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;cursor:pointer;transition:border-color 0.3s;" onmouseenter="this.style.borderColor='rgba(255,184,0,0.4)'" onmouseleave="this.style.borderColor='var(--border)'">
+                <summary style="font-family:'Outfit',sans-serif;font-weight:600;font-size:1.05rem;color:var(--t1);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+                  <span>${f.question}</span>
+                  <span style="color:var(--gold);font-size:1.2rem;margin-left:12px;">+</span>
+                </summary>
+                <p style="color:var(--t2);margin-top:14px;line-height:1.75;font-size:0.95rem;">${f.answer}</p>
+              </details>`;
+            });
+            cont.innerHTML = html;
+          }
+        }
+      });
+    } catch(e) {
+      console.log('Homepage Firestore CMS sync:', e);
+    }
+  </script>
+
 </body>
 
 </html>
