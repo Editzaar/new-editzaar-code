@@ -34,30 +34,81 @@
         .portfolio-filters {
             display: flex;
             justify-content: center;
-            gap: 1rem;
+            align-items: center;
+            gap: 0.8rem;
             flex-wrap: wrap;
-            margin: 3rem 0;
+            margin: 2.5rem auto 1.5rem;
             padding: 0 1rem;
+            max-width: 1100px;
         }
 
         .filter-btn {
             background: transparent;
             border: 1px solid var(--border);
             color: var(--t2);
-            padding: 0.8rem 1.5rem;
+            padding: 0.75rem 1.4rem;
             border-radius: 30px;
             font-family: var(--font-b);
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
 
         .filter-btn:hover,
         .filter-btn.active {
             background: var(--gold);
-            color: var(--bg);
+            color: #000;
             border-color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Centered View Switcher */
+        .view-switcher-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin: 0 auto 3.5rem;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .view-toggle-bar {
+            display: inline-flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 4px;
+            gap: 4px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .view-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--t2);
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-family: var(--font-b);
+            font-size: 0.85rem;
             font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-toggle-btn:hover {
+            color: var(--t1);
+        }
+
+        .view-toggle-btn.active {
+            background: var(--gold);
+            color: #000;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(255, 184, 0, 0.35);
         }
 
         /* Portfolio Sections Base */
@@ -684,12 +735,18 @@
         </div>
     </section>
 
-    <!-- Filters -->
+        <!-- Category Filter Tabs (Row 1) -->
     <div class="portfolio-filters reveal">
+        <button class="filter-btn active" data-filter="all">All Work</button>
+        <button class="filter-btn" data-filter="video">Video Editing</button>
+        <button class="filter-btn" data-filter="web">Website Development</button>
+        <button class="filter-btn" data-filter="brand">Brand Promotions</button>
+        <button class="filter-btn" data-filter="social">Social Media</button>
+    </div>
 
-    <!-- View Switcher (Carousel vs Grid) -->
-    <div class="view-switcher-container reveal" style="display:flex;justify-content:center;align-items:center;gap:12px;margin:-1.5rem auto 2.5rem;padding:0 1rem;">
-        <span style="font-size:0.88rem;color:var(--t2);font-family:var(--font-b);font-weight:500;">Display Mode:</span>
+    <!-- Centered View Switcher (Row 2) -->
+    <div class="view-switcher-container reveal">
+        <span style="font-size:0.85rem;color:var(--t2);font-family:var(--font-b);font-weight:500;">Display View:</span>
         <div class="view-toggle-bar">
             <button class="view-toggle-btn active" id="btnViewCarousel" onclick="setPortfolioView('carousel')" title="Carousel Slider View">
                 <span>🎠</span> Carousel View
@@ -698,13 +755,6 @@
                 <span>⊞</span> Grid View
             </button>
         </div>
-    </div>
-
-        <button class="filter-btn active" data-filter="all">All Work</button>
-        <button class="filter-btn" data-filter="video">Video Editing</button>
-        <button class="filter-btn" data-filter="web">Website Development</button>
-        <button class="filter-btn" data-filter="brand">Brand Promotions</button>
-        <button class="filter-btn" data-filter="social">Social Media</button>
     </div>
 
     <!-- MAIN PORTFOLIO WRAPPER -->
