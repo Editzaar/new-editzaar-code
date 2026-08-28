@@ -568,6 +568,7 @@
     const modal = document.getElementById('checkoutModal');
 
     window.openCheckout = (pName, price, deliveryTime) => {
+      if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
       activePackage = { name: pName, basePrice: price, delivery: deliveryTime };
       const gst = Math.round(price * 0.18);
       const total = price + gst;
@@ -590,6 +591,127 @@
       modal.classList.add('open');
     };
 
+    
+    // === DYNAMIC CHECKOUT COUPON ENGINE ===
+    let _appliedCheckoutCoupon = null;
+
+    window.applyCheckoutCoupon = function() {
+      const codeInp = document.getElementById('chkCouponCode');
+      const msgEl   = document.getElementById('chkCouponStatusMsg');
+      const code    = (codeInp ? codeInp.value : '').trim().toUpperCase();
+
+      if (!code) {
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.style.color = '#ff5555';
+          msgEl.textContent = 'Please enter a coupon code.';
+        }
+        return;
+      }
+
+      if (!activePackage || !activePackage.basePrice) {
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.style.color = '#ff5555';
+          msgEl.textContent = 'Please select a package first.';
+        }
+        return;
+      }
+
+      let res = null;
+      if (window.EditzaarCoupons && typeof window.EditzaarCoupons.validate === 'function') {
+        res = window.EditzaarCoupons.validate(code, activePackage.basePrice);
+      }
+
+      if (!res || !res.valid) {
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.style.color = '#ff5555';
+          msgEl.textContent = (res && res.message) ? res.message : `Coupon "${code}" is invalid or expired.`;
+        }
+        return;
+      }
+
+      _appliedCheckoutCoupon = res;
+
+      // Update coupon status message with Remove link
+      if (msgEl) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#28C840';
+        msgEl.innerHTML = `${res.message} <button type="button" onclick="window.removeCheckoutCoupon()" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:0.82rem;text-decoration:underline;margin-left:6px;">[Remove]</button>`;
+      }
+
+      // Recalculate Checkout Price UI
+      window.recalcCheckoutPriceUi();
+    };
+
+    window.removeCheckoutCoupon = function() {
+      _appliedCheckoutCoupon = null;
+      const codeInp = document.getElementById('chkCouponCode');
+      const msgEl   = document.getElementById('chkCouponStatusMsg');
+      if (codeInp) codeInp.value = '';
+      if (msgEl) {
+        msgEl.style.display = 'none';
+        msgEl.textContent = '';
+      }
+      window.recalcCheckoutPriceUi();
+    };
+
+    window.recalcCheckoutPriceUi = function() {
+      if (!activePackage || !activePackage.basePrice) return;
+
+      const base = activePackage.basePrice;
+      let discountAmt = 0;
+      let discountCode = '';
+
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = _appliedCheckoutCoupon.discountAmount;
+        discountCode = _appliedCheckoutCoupon.code;
+      }
+
+      const discountedBase = Math.max(0, base - discountAmt);
+      const gst = Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
+      const advance = Math.round(total * 0.5);
+
+      // Update UI elements
+      const discRow = document.getElementById('chkDiscountRow');
+      const discCodeEl = document.getElementById('chkDiscountCode');
+      const discAmtEl = document.getElementById('chkDiscountAmt');
+
+      if (discRow) discRow.style.display = discountAmt > 0 ? 'flex' : 'none';
+      if (discCodeEl) discCodeEl.textContent = discountCode;
+      if (discAmtEl) discAmtEl.textContent = '-₹' + discountAmt.toLocaleString();
+
+      const baseEl = document.getElementById('chkBasePrice');
+      const gstEl = document.getElementById('chkGst');
+      const totalEl = document.getElementById('chkTotal');
+      const advEl = document.getElementById('chkAdvance');
+      const advTextEl = document.getElementById('chkAdvancePayText');
+      const btnUpiAmtEl = document.getElementById('btnUpiAmt');
+
+      if (baseEl) baseEl.textContent = '₹' + base.toLocaleString();
+      if (gstEl) gstEl.textContent = '₹' + gst.toLocaleString();
+      if (totalEl) totalEl.textContent = '₹' + total.toLocaleString();
+      if (advEl) advEl.textContent = '₹' + advance.toLocaleString();
+      if (advTextEl) advTextEl.textContent = '₹' + advance.toLocaleString();
+      if (btnUpiAmtEl) btnUpiAmtEl.textContent = advance.toLocaleString();
+
+      const p50 = document.getElementById('txtPreset50');
+      const p100 = document.getElementById('txtPreset100');
+      if (p50) p50.textContent = '₹' + advance.toLocaleString();
+      if (p100) p100.textContent = '₹' + total.toLocaleString();
+
+      // Update UPI link and QR code
+      const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${advance}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name + (discountCode ? ' (' + discountCode + ')' : ''))}`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+
+      const qrImg = document.getElementById('dynamicQrImg');
+      const mobileUpiBtn = document.getElementById('btnMobileUpi');
+      if (qrImg) qrImg.src = qrApiUrl;
+      if (mobileUpiBtn) mobileUpiBtn.href = upiUrl;
+    };
+
     document.getElementById('btnCloseCheckout').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
 
@@ -608,14 +730,23 @@
         return;
       }
 
-      const gst = Math.round(activePackage.basePrice * 0.18);
-      const total = activePackage.basePrice + gst;
+      let discountAmt = 0;
+      let couponInfo = '';
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = _appliedCheckoutCoupon.discountAmount;
+        couponInfo = `🎟️ *COUPON APPLIED:* ${_appliedCheckoutCoupon.code} (-₹${discountAmt.toLocaleString()})\n`;
+      }
+
+      const discountedBase = Math.max(0, activePackage.basePrice - discountAmt);
+      const gst = Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
       const advance = Math.round(total * 0.5);
 
       const message = `🚨 *NEW PROJECT ORDER & CHECKOUT* 🚨\n\n` +
                       `📦 *PACKAGE:* ${activePackage.name}\n` +
                       `⏱ *Est. Delivery:* ${activePackage.delivery}\n` +
                       `💵 *Base Price:* ₹${activePackage.basePrice.toLocaleString()}\n` +
+                      couponInfo +
                       `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n` +
                       `💰 *Total Package Value:* ₹${total.toLocaleString()}\n` +
                       `💳 *50% Advance Booking Deposit:* ₹${advance.toLocaleString()}\n\n` +

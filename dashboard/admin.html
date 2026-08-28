@@ -1461,6 +1461,7 @@
       initExtendedCmsListeners();
       initServicesFirestoreListener();
       initReportsHub();
+      if (typeof window.renderAdminCouponsTable === 'function') window.renderAdminCouponsTable();
     initPortfolioCmsListeners();
     initExtendedCmsListeners();
 
@@ -3834,6 +3835,156 @@
     printWin.document.close();
     printWin.focus();
     setTimeout(function() { printWin.print(); }, 500);
+  };
+
+  
+  // ============================================================
+  // EDITZAAR COUPONS & PROMO ENGINE (ADMIN DASHBOARD)
+  // ============================================================
+  window.renderAdminCouponsTable = function() {
+    var tbody = document.getElementById('couponsTbody');
+    if (!tbody) return;
+
+    var list = [];
+    if (window.EditzaarCoupons && typeof window.EditzaarCoupons.getAll === 'function') {
+      list = window.EditzaarCoupons.getAll();
+    }
+
+    if (!list || !list.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No active coupons found. Create one above or click "Reset to Default Coupons".</td></tr>';
+      return;
+    }
+
+    var html = '';
+    list.forEach(function(c) {
+      var isPercent = c.discountType === 'percent';
+      var discLabel = isPercent ? (c.value + '% OFF') : ('₹' + parseInt(c.value).toLocaleString('en-IN') + ' OFF');
+      html += '<tr>'
+        + '<td><span class="pass-pill" style="font-weight:700;font-size:14px;letter-spacing:0.05em;">' + c.code + '</span></td>'
+        + '<td><strong style="color:var(--gold);font-size:1rem;">' + discLabel + '</strong></td>'
+        + '<td style="color:var(--t2);font-size:0.85rem;max-width:280px;">' + (c.description || '—') + '</td>'
+        + '<td>' + (c.maxUses || 100) + '</td>'
+        + '<td><span style="color:#27c93f;font-weight:700;">ACTIVE</span></td>'
+        + '<td><button class="btn-danger btn-sm" onclick="window.deleteAdminCouponNow(\'' + c.code + '\')">🗑️ Delete</button></td>'
+        + '</tr>';
+    });
+    tbody.innerHTML = html;
+  };
+
+  window.createAdminCouponNow = async function() {
+    var codeEl = document.getElementById('cpn-code');
+    var typeEl = document.getElementById('cpn-type');
+    var discEl = document.getElementById('cpn-disc');
+    var usesEl = document.getElementById('cpn-uses');
+    var descEl = document.getElementById('cpn-desc');
+    var btn = document.getElementById('btnAddCoupon');
+
+    var code = codeEl ? codeEl.value.trim().toUpperCase() : '';
+    var type = typeEl ? typeEl.value : 'percent';
+    var val  = parseInt(discEl ? discEl.value : 0) || 0;
+    var uses = parseInt(usesEl ? usesEl.value : 100) || 100;
+    var desc = descEl ? descEl.value.trim() : '';
+
+    if (!code) { showToast('Please enter a Coupon Code (e.g. BOSS).', 'error'); return; }
+    if (val <= 0) { showToast('Please enter a valid discount value greater than 0.', 'error'); return; }
+    if (type === 'percent' && val > 100) { showToast('Percentage discount cannot exceed 100%.', 'error'); return; }
+
+    var couponObj = {
+      code: code,
+      discountType: type,
+      value: val,
+      maxUses: uses,
+      description: desc || (type === 'percent' ? val + '% Special Promo' : '₹' + val + ' Flat Discount'),
+      active: true,
+      createdAt: new Date().toISOString()
+    };
+
+    if (btn) { btn.disabled = true; btn.textContent = 'Publishing Coupon... ⏳'; }
+
+    // 1. Save to EditzaarCoupons in-memory & localStorage (instant render)
+    if (window.EditzaarCoupons && typeof window.EditzaarCoupons.save === 'function') {
+      window.EditzaarCoupons.save(couponObj);
+    }
+
+    // 2. Save to Firestore 'coupons' collection
+    try {
+      await setDoc(doc(db, 'coupons', code), {
+        code: code,
+        discountType: type,
+        value: val,
+        maxUses: uses,
+        description: couponObj.description,
+        active: true,
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    } catch(err) {
+      console.warn('Direct coupons collection write notice:', err.message);
+    }
+
+    // Reset inputs
+    if (codeEl) codeEl.value = '';
+    if (discEl) discEl.value = '';
+    if (descEl) descEl.value = '';
+    if (btn) { btn.disabled = false; btn.textContent = 'Create & Publish Coupon →'; }
+
+    window.renderAdminCouponsTable();
+    showToast('🎉 Coupon "' + code + '" (' + (type === 'percent' ? val + '% OFF' : '₹' + val + ' OFF') + ') published live!', 'success');
+  };
+
+  window.deleteAdminCouponNow = async function(code) {
+    var cleanCode = String(code).trim().toUpperCase();
+    if (!confirm('Permanently delete coupon "' + cleanCode + '"?')) return;
+
+    if (window.EditzaarCoupons && typeof window.EditzaarCoupons.delete === 'function') {
+      window.EditzaarCoupons.delete(cleanCode);
+    }
+
+    try {
+      await deleteDoc(doc(db, 'coupons', cleanCode));
+    } catch(err) {
+      console.warn('deleteDoc coupons error:', err.message);
+    }
+
+    window.renderAdminCouponsTable();
+    showToast('Coupon "' + cleanCode + '" removed.', 'info');
+  };
+
+  window.resetCouponsToDefault = async function() {
+    if (!confirm('Reset all coupons to official agency defaults?')) return;
+    try {
+      localStorage.removeItem('editzaar_dynamic_coupons');
+    } catch(e) {}
+
+    var defaults = [
+      { code: "WELCOME10", discountType: "percent", value: 10, description: "10% Welcome Discount for New Clients", active: true, maxUses: 100 },
+      { code: "LAUNCH20", discountType: "percent", value: 20, description: "20% Launch Celebration Discount", active: true, maxUses: 50 },
+      { code: "FLAT500", discountType: "flat", value: 500, description: "₹500 Flat Discount on any project", active: true, maxUses: 200 },
+      { code: "AGENCY30", discountType: "percent", value: 30, description: "30% Partner / Agency Retainer Discount", active: true, maxUses: 20 },
+      { code: "BOSS", discountType: "percent", value: 100, description: "100% Full Discount Promo", active: true, maxUses: 100 },
+      { code: "VIP50", discountType: "percent", value: 50, description: "50% VIP Exclusive Discount", active: true, maxUses: 50 }
+    ];
+
+    if (window.EditzaarCoupons) {
+      defaults.forEach(function(c) { window.EditzaarCoupons.save(c); });
+    }
+
+    for (var i = 0; i < defaults.length; i++) {
+      var d = defaults[i];
+      try {
+        await setDoc(doc(db, 'coupons', d.code), {
+          code: d.code,
+          discountType: d.discountType,
+          value: d.value,
+          description: d.description,
+          maxUses: d.maxUses,
+          active: true,
+          createdAt: serverTimestamp()
+        }, { merge: true });
+      } catch(e) {}
+    }
+
+    window.renderAdminCouponsTable();
+    showToast('Coupons reset to official defaults!', 'success');
   };
 
   window.initReportsHub = function() {
