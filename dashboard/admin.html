@@ -228,6 +228,62 @@
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
   <script src="../js/services-config.js?v=310.0">
+
+    // ===== FIREBASE SCOPE BRIDGE =====
+    // All CMS functions below are in a plain <script> block and cannot access
+    // const db / serverTimestamp from the <script type="module"> block above.
+    // This bridge exposes them via the window._xxx globals set by the module.
+    //
+    // Use getter proxies so that by the time any async CMS function runs,
+    // window._db is already initialized by the module.
+    function _getFirebase() {
+      return {
+        db: window._db,
+        serverTimestamp: window._serverTimestamp,
+        collection: window._collection,
+        doc: window._doc,
+        addDoc: window._addDoc,
+        updateDoc: window._updateDoc,
+        deleteDoc: window._deleteDoc,
+        setDoc: window._setDoc,
+        query: window._query,
+        where: window._where,
+        onSnapshot: window._onSnapshot,
+        getDocs: window._getDocs,
+        getDoc: window._getDoc,
+      };
+    }
+    // Convenience shims used by CMS functions
+    var db = new Proxy({}, { get: function(t,k) { return window._db ? window._db[k] : undefined; } });
+    var serverTimestamp = function() { return window._serverTimestamp(); };
+    var collection = function() { var fb = _getFirebase(); return fb.collection.apply(null, arguments); };
+    var doc = function() { var fb = _getFirebase(); return fb.doc.apply(null, arguments); };
+    var addDoc = function() { var fb = _getFirebase(); return fb.addDoc.apply(null, arguments); };
+    var updateDoc = function() { var fb = _getFirebase(); return fb.updateDoc.apply(null, arguments); };
+    var deleteDoc = function() { var fb = _getFirebase(); return fb.deleteDoc.apply(null, arguments); };
+    var setDoc = function() { var fb = _getFirebase(); return fb.setDoc.apply(null, arguments); };
+    var query = function() { var fb = _getFirebase(); return fb.query.apply(null, arguments); };
+    var where = function() { var fb = _getFirebase(); return fb.where.apply(null, arguments); };
+    var onSnapshot = function() { var fb = _getFirebase(); return fb.onSnapshot.apply(null, arguments); };
+    var getDocs = function() { var fb = _getFirebase(); return fb.getDocs.apply(null, arguments); };
+    var getDoc = function() { var fb = _getFirebase(); return fb.getDoc.apply(null, arguments); };
+    // Helper: get db (always current)
+    function _db_() { return window._db; }
+    // ================================
+
+
+  // Auto-init reports hub when Reports nav item is clicked
+  document.querySelectorAll('[data-section="reports"], [onclick*=\"reports\"]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      setTimeout(function() { if(window._initReportsHub) window._initReportsHub(); }, 100);
+    });
+  });
+  // Also init if Reports section is already visible on load
+  if (document.getElementById('sec-reports') && document.getElementById('sec-reports').style.display !== 'none') {
+    setTimeout(function() { if(window._initReportsHub) window._initReportsHub(); }, 300);
+  }
+
+
   // ============================================================
   // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
   // ============================================================
@@ -1103,7 +1159,288 @@
       } catch(err) { if(window.showToast) showToast('Error: ' + err.message, 'error'); }
     };
 
-    </script>
+    
+
+  // ====================================================
+  // EDITZAAR REPORTS HUB — FULL PERIOD + DOWNLOAD ENGINE
+  // ====================================================
+  var _rptType   = 'revenue';
+  var _rptPeriod = 'daily';
+  var _rptData   = [];   // raw rows for current report
+
+  // ─── Period Date Range ────────────────────────────────
+  function _rptDateRange(period) {
+    var now = new Date();
+    var from;
+    switch (period) {
+      case 'daily':     from = new Date(now); from.setHours(0,0,0,0); break;
+      case 'weekly':    from = new Date(now); from.setDate(now.getDate() - now.getDay()); from.setHours(0,0,0,0); break;
+      case 'monthly':   from = new Date(now.getFullYear(), now.getMonth(), 1); break;
+      case 'quarterly': from = new Date(now.getFullYear(), Math.floor(now.getMonth()/3)*3, 1); break;
+      default:          from = new Date(2020, 0, 1); break;
+    }
+    return { from: from, to: now };
+  }
+
+  // ─── Select type / period ─────────────────────────────
+  window.selectRptType = function(t) {
+    _rptType = t;
+    document.querySelectorAll('.rpt-type-btn').forEach(function(b) {
+      b.className = b.dataset.type === t ? 'btn-gold btn-sm rpt-type-btn' : 'btn-outline btn-sm rpt-type-btn';
+    });
+    window.loadReport();
+  };
+
+  window.selectRptPeriod = function(p) {
+    _rptPeriod = p;
+    document.querySelectorAll('.rpt-period-btn').forEach(function(b) {
+      b.className = b.dataset.period === p ? 'btn-gold btn-sm rpt-period-btn' : 'btn-outline btn-sm rpt-period-btn';
+    });
+    window.loadReport();
+  };
+
+  // ─── Main report loader ───────────────────────────────
+  window.loadReport = async function() {
+    var fb = _getFirebase();
+    if (!fb.db) { setTimeout(window.loadReport, 200); return; }
+
+    var range = _rptDateRange(_rptPeriod);
+    var titleEl = document.getElementById('rpt-table-title');
+    var periodLabel = _rptPeriod.charAt(0).toUpperCase() + _rptPeriod.slice(1);
+    var typeLabel   = _rptType.charAt(0).toUpperCase() + _rptType.slice(1);
+
+    if (titleEl) titleEl.innerHTML = typeLabel + ' Report <span style="color:var(--t2);font-size:0.85rem;"> &mdash; ' + periodLabel + '</span>';
+
+    var tbody = document.getElementById('rpt-tbody');
+    var thead = document.getElementById('rpt-thead');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:30px;">Loading...</td></tr>';
+
+    try {
+      var snap = await fb.getDocs(fb.collection(fb.db, 'projects'));
+      var allProjects = [];
+      snap.forEach(function(d) {
+        var p = d.data();
+        p._id = d.id;
+        allProjects.push(p);
+      });
+
+      // Filter by period
+      var filtered = allProjects.filter(function(p) {
+        if (_rptPeriod === 'all') return true;
+        var ts = p.createdAt;
+        if (!ts) return false;
+        var d = ts.toDate ? ts.toDate() : new Date(ts);
+        return d >= range.from && d <= range.to;
+      });
+
+      _rptData = filtered;
+      _renderReport(filtered, thead, tbody);
+      _updateSummaryCards(filtered);
+    } catch(err) {
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#ff5555;padding:30px;">Error: ' + err.message + '</td></tr>';
+    }
+  };
+
+  function _updateSummaryCards(rows) {
+    var totalRev = 0, totalGst = 0, paid = 0, pending = 0;
+    rows.forEach(function(p) {
+      var amt = parseFloat(p.amount || p.price || 0);
+      totalRev += amt;
+      totalGst += amt * 0.18;
+      if ((p.paymentStatus || p.status || '').toLowerCase() === 'paid') paid++;
+      else pending++;
+    });
+    var el = function(id) { return document.getElementById(id); };
+    if (el('rpt-total-revenue')) el('rpt-total-revenue').textContent = '\u20b9' + totalRev.toLocaleString('en-IN');
+    if (el('rpt-total-projects')) el('rpt-total-projects').textContent = rows.length;
+    if (el('rpt-total-gst'))     el('rpt-total-gst').textContent = '\u20b9' + Math.round(totalGst).toLocaleString('en-IN');
+    if (el('rpt-paid-count'))    el('rpt-paid-count').textContent = paid;
+    if (el('rpt-pending-count')) el('rpt-pending-count').textContent = pending;
+  }
+
+  function _renderReport(rows, thead, tbody) {
+    if (!thead || !tbody) return;
+    var headers, mapper;
+
+    if (_rptType === 'revenue') {
+      headers = ['Project', 'Client', 'Service', 'Amount', 'GST (18%)', 'Total', 'Status', 'Date'];
+      mapper = function(p) {
+        var amt = parseFloat(p.amount || p.price || 0);
+        var gst = Math.round(amt * 0.18);
+        var d = p.createdAt ? (p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt)) : null;
+        return [
+          p.title || p.name || '—',
+          p.clientName || '—',
+          p.service || p.package || '—',
+          '\u20b9' + amt.toLocaleString('en-IN'),
+          '\u20b9' + gst.toLocaleString('en-IN'),
+          '\u20b9' + (amt + gst).toLocaleString('en-IN'),
+          _statusBadge(p.paymentStatus || p.status || 'Pending'),
+          d ? d.toLocaleDateString('en-IN') : '—'
+        ];
+      };
+    } else if (_rptType === 'client') {
+      headers = ['Client Name', 'Email', 'Projects', 'Total Paid', 'Last Project', 'Status'];
+      var clientMap = {};
+      rows.forEach(function(p) {
+        var key = p.clientEmail || p.clientName || 'Unknown';
+        if (!clientMap[key]) clientMap[key] = { name: p.clientName || key, email: p.clientEmail || '—', count: 0, paid: 0, last: null };
+        clientMap[key].count++;
+        if ((p.paymentStatus || '').toLowerCase() === 'paid') clientMap[key].paid += parseFloat(p.amount || 0);
+        var d = p.createdAt ? (p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt)) : null;
+        if (d && (!clientMap[key].last || d > clientMap[key].last)) clientMap[key].last = d;
+      });
+      var clientRows = Object.values(clientMap);
+      mapper = null;
+      tbody.innerHTML = clientRows.length ? clientRows.map(function(cl) {
+        return '<tr><td>' + cl.name + '</td><td>' + cl.email + '</td><td>' + cl.count + '</td>'
+          + '<td>\u20b9' + cl.paid.toLocaleString('en-IN') + '</td>'
+          + '<td>' + (cl.last ? cl.last.toLocaleDateString('en-IN') : '—') + '</td>'
+          + '<td>' + _statusBadge('Active') + '</td></tr>';
+      }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:20px;">No client data for this period.</td></tr>';
+      thead.innerHTML = '<tr>' + headers.map(function(h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
+      return;
+    } else if (_rptType === 'team') {
+      headers = ['Editor Name', 'Email', 'Projects Assigned', 'Completed', 'In Progress', 'Avg Turnaround'];
+      var editorMap = {};
+      rows.forEach(function(p) {
+        var key = p.editorEmail || p.assignedTo || 'Unassigned';
+        if (!editorMap[key]) editorMap[key] = { name: p.editorName || key, email: key, total: 0, done: 0, wip: 0 };
+        editorMap[key].total++;
+        if ((p.status || '').toLowerCase() === 'delivered') editorMap[key].done++;
+        else editorMap[key].wip++;
+      });
+      var editorRows = Object.values(editorMap);
+      tbody.innerHTML = editorRows.length ? editorRows.map(function(e) {
+        return '<tr><td>' + e.name + '</td><td>' + e.email + '</td><td>' + e.total + '</td>'
+          + '<td><span style="color:#27c93f;">' + e.done + '</span></td>'
+          + '<td><span style="color:#FFB800;">' + e.wip + '</span></td>'
+          + '<td>48-72h avg</td></tr>';
+      }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:20px;">No team data for this period.</td></tr>';
+      thead.innerHTML = '<tr>' + headers.map(function(h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
+      return;
+    } else if (_rptType === 'gst') {
+      headers = ['Invoice #', 'Client', 'Service', 'Base Amount', 'GST (18%)', 'Total w/ GST', 'Date', 'Status'];
+      mapper = function(p, idx) {
+        var amt = parseFloat(p.amount || p.price || 0);
+        var gst = Math.round(amt * 0.18);
+        var d = p.createdAt ? (p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt)) : null;
+        return [
+          'INV-' + String(idx + 1).padStart(4, '0'),
+          p.clientName || '—',
+          p.service || p.package || '—',
+          '\u20b9' + amt.toLocaleString('en-IN'),
+          '\u20b9' + gst.toLocaleString('en-IN'),
+          '\u20b9' + (amt + gst).toLocaleString('en-IN'),
+          d ? d.toLocaleDateString('en-IN') : '—',
+          _statusBadge(p.paymentStatus || 'Pending')
+        ];
+      };
+    }
+
+    thead.innerHTML = '<tr>' + headers.map(function(h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
+
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="' + headers.length + '" style="text-align:center;color:var(--t2);padding:20px;">No data for this period.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.map(function(p, idx) {
+      var cells = mapper(p, idx);
+      return '<tr>' + cells.map(function(v) { return '<td>' + v + '</td>'; }).join('') + '</tr>';
+    }).join('');
+  }
+
+  function _statusBadge(status) {
+    var s = (status || '').toLowerCase();
+    var color = s === 'paid' || s === 'delivered' || s === 'active' ? '#27c93f' : (s === 'pending' ? '#FFB800' : '#aaa');
+    return '<span style="color:' + color + ';font-weight:600;">' + (status || 'Pending') + '</span>';
+  }
+
+  // ─── CSV Download ─────────────────────────────────────
+  window.downloadReportCSV = function() {
+    var rows = _rptData;
+    if (!rows.length) { if(window.showToast) showToast('No data to export.', 'error'); return; }
+
+    var headers, mapper;
+    if (_rptType === 'revenue' || _rptType === 'gst') {
+      headers = ['Project', 'Client', 'Service', 'Amount', 'GST 18%', 'Total', 'Status', 'Date'];
+      mapper = function(p) {
+        var amt = parseFloat(p.amount || p.price || 0);
+        var gst = Math.round(amt * 0.18);
+        var d = p.createdAt ? (p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt)) : null;
+        return [p.title || p.name || '', p.clientName || '', p.service || p.package || '', amt, gst, amt + gst, p.paymentStatus || 'Pending', d ? d.toLocaleDateString('en-IN') : ''];
+      };
+    } else if (_rptType === 'client') {
+      headers = ['Client', 'Email', 'Projects', 'Total Paid'];
+      mapper = function(p) { return [p.clientName || '', p.clientEmail || '', 1, parseFloat(p.amount || 0)]; };
+    } else {
+      headers = ['Project', 'Editor', 'Status'];
+      mapper = function(p) { return [p.title || '', p.assignedTo || '', p.status || '']; };
+    }
+
+    var csv = [headers.join(',')].concat(rows.map(function(p) {
+      return mapper(p).map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',');
+    })).join('\r\n');
+
+    var period = _rptPeriod.charAt(0).toUpperCase() + _rptPeriod.slice(1);
+    var type   = _rptType.charAt(0).toUpperCase() + _rptType.slice(1);
+    var fname  = 'Editzaar_' + type + '_Report_' + period + '_' + new Date().toISOString().slice(0,10) + '.csv';
+
+    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url; a.download = fname; a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+    if(window.showToast) showToast(fname + ' downloaded!', 'success');
+  };
+
+  // ─── PDF Export ───────────────────────────────────────
+  window.downloadReportPDF = function() {
+    var period = _rptPeriod.charAt(0).toUpperCase() + _rptPeriod.slice(1);
+    var type   = _rptType.charAt(0).toUpperCase() + _rptType.slice(1);
+    var date   = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+
+    var table = document.getElementById('rpt-table');
+    var tableHTML = table ? table.outerHTML : '<p>No data</p>';
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"/>'
+      + '<title>Editzaar ' + type + ' Report — ' + period + '</title>'
+      + '<style>'
+      + 'body{font-family:Arial,sans-serif;padding:32px;color:#111;background:#fff;}'
+      + 'h1{color:#b88200;font-size:1.6rem;margin-bottom:4px;}'
+      + 'p.meta{color:#555;font-size:0.85rem;margin-bottom:24px;}'
+      + 'table{width:100%;border-collapse:collapse;font-size:0.85rem;}'
+      + 'th{background:#b88200;color:#fff;padding:8px 10px;text-align:left;}'
+      + 'td{padding:7px 10px;border-bottom:1px solid #eee;}'
+      + 'tr:nth-child(even) td{background:#f9f6ee;}'
+      + '.footer{margin-top:32px;font-size:0.75rem;color:#888;border-top:1px solid #eee;padding-top:12px;}'
+      + 'span[style*="27c93f"]{color:#1a7a30!important;}'
+      + 'span[style*="FFB800"]{color:#b88200!important;}'
+      + '</style></head><body>'
+      + '<h1>Editzaar &mdash; ' + type + ' Report</h1>'
+      + '<p class="meta">Period: <strong>' + period + '</strong> &nbsp;|&nbsp; Generated: <strong>' + date + '</strong> &nbsp;|&nbsp; Projects: <strong>' + _rptData.length + '</strong></p>'
+      + tableHTML
+      + '<div class="footer">Editzaar Agency &mdash; editzaar.in &mdash; Hyderabad, India &mdash; UPI: nbikram704@okhdfcbank &mdash; WhatsApp: +91 9476766340</div>'
+      + '</body></html>';
+
+    var win = window.open('', '_blank', 'width=1000,height=700');
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(function() { win.print(); }, 500);
+  };
+
+  // Auto-load reports when section is opened
+  window._initReportsHub = function() {
+    _rptType   = 'revenue';
+    _rptPeriod = 'daily';
+    window.selectRptType('revenue');
+    window.selectRptPeriod('daily');
+  };
+
+  </script>
   <script src="../js/theme.js?v=310.0">
   // ============================================================
   // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
@@ -2187,17 +2524,79 @@
         </div>
       </section>
 
-      <!-- REPORTS -->
+      <!-- REPORTS HUB -->
       <section id="sec-reports" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Reports <em>Generator</em></div></div>
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-          <button class="btn-outline" onclick="generateReport('revenue')">Revenue Report</button>
-          <button class="btn-outline" onclick="generateReport('client')">Client Report</button>
-          <button class="btn-outline" onclick="generateReport('team')">Team Report</button>
-          <button class="btn-outline" onclick="generateReport('gst')">GST Report</button>
-          <button class="btn-gold" onclick="window.print()">Print / Export PDF</button>
+        <div class="dash-topbar">
+          <div class="dash-page-title">Reports <em>Generator</em></div>
+          <span class="live-badge"><span class="live-dot"></span> Live from Firestore</span>
         </div>
-        <div class="report-container" id="reportContainer">Select a report to generate.</div>
+
+        <!-- Period & Type Selectors -->
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px;">
+          <div>
+            <label style="font-size:0.8rem;color:var(--t2);display:block;margin-bottom:4px;">REPORT TYPE</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;" id="rpt-type-btns">
+              <button class="btn-gold btn-sm rpt-type-btn" data-type="revenue" onclick="window.selectRptType('revenue')">&#128200; Revenue</button>
+              <button class="btn-outline btn-sm rpt-type-btn" data-type="client" onclick="window.selectRptType('client')">&#128100; Client</button>
+              <button class="btn-outline btn-sm rpt-type-btn" data-type="team" onclick="window.selectRptType('team')">&#128101; Team</button>
+              <button class="btn-outline btn-sm rpt-type-btn" data-type="gst" onclick="window.selectRptType('gst')">&#127981; GST</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.8rem;color:var(--t2);display:block;margin-bottom:4px;">TIME PERIOD</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;" id="rpt-period-btns">
+              <button class="btn-gold btn-sm rpt-period-btn" data-period="daily" onclick="window.selectRptPeriod('daily')">Daily</button>
+              <button class="btn-outline btn-sm rpt-period-btn" data-period="weekly" onclick="window.selectRptPeriod('weekly')">Weekly</button>
+              <button class="btn-outline btn-sm rpt-period-btn" data-period="monthly" onclick="window.selectRptPeriod('monthly')">Monthly</button>
+              <button class="btn-outline btn-sm rpt-period-btn" data-period="quarterly" onclick="window.selectRptPeriod('quarterly')">Quarterly</button>
+              <button class="btn-outline btn-sm rpt-period-btn" data-period="all" onclick="window.selectRptPeriod('all')">All Time</button>
+            </div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="btn-gold btn-sm" onclick="window.downloadReportCSV()" title="Download as CSV spreadsheet">&#128196; Download CSV</button>
+            <button class="btn-outline btn-sm" onclick="window.downloadReportPDF()" title="Download as printable PDF">&#128424; Export PDF</button>
+          </div>
+        </div>
+
+        <!-- Report Summary Cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;" id="rpt-summary-cards">
+          <div class="dash-card" style="text-align:center;padding:16px 10px;">
+            <div style="font-size:0.72rem;color:var(--t2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Total Revenue</div>
+            <div style="font-size:1.6rem;font-family:var(--font-h);color:var(--gold);" id="rpt-total-revenue">&#8377;0</div>
+          </div>
+          <div class="dash-card" style="text-align:center;padding:16px 10px;">
+            <div style="font-size:0.72rem;color:var(--t2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Projects</div>
+            <div style="font-size:1.6rem;font-family:var(--font-h);color:var(--gold);" id="rpt-total-projects">0</div>
+          </div>
+          <div class="dash-card" style="text-align:center;padding:16px 10px;">
+            <div style="font-size:0.72rem;color:var(--t2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">GST Collected</div>
+            <div style="font-size:1.6rem;font-family:var(--font-h);color:#27c93f;" id="rpt-total-gst">&#8377;0</div>
+          </div>
+          <div class="dash-card" style="text-align:center;padding:16px 10px;">
+            <div style="font-size:0.72rem;color:var(--t2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Paid</div>
+            <div style="font-size:1.6rem;font-family:var(--font-h);color:#27c93f;" id="rpt-paid-count">0</div>
+          </div>
+          <div class="dash-card" style="text-align:center;padding:16px 10px;">
+            <div style="font-size:0.72rem;color:var(--t2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Pending</div>
+            <div style="font-size:1.6rem;font-family:var(--font-h);color:#FFB800;" id="rpt-pending-count">0</div>
+          </div>
+        </div>
+
+        <!-- Report Table -->
+        <div class="dash-card" id="reportContainer">
+          <div class="dash-card-header">
+            <div class="dash-card-title" id="rpt-table-title">Revenue Report <span style="color:var(--t2);font-size:0.85rem;"> — Daily</span></div>
+          </div>
+          <div class="table-scroll-wrap">
+            <table class="dash-table" id="rpt-table">
+              <thead id="rpt-thead"></thead>
+              <tbody id="rpt-tbody"><tr><td colspan="6" style="text-align:center;color:var(--t2);padding:30px;">Loading...</td></tr></tbody>
+            </table>
+          </div>
+          <div style="padding:12px 0 0 0;font-size:0.8rem;color:var(--t2);" id="rpt-footer-note">
+            Showing data from Firestore (projects collection)
+          </div>
+        </div>
       </section>
 
       <!-- BOOKINGS -->
@@ -2971,7 +3370,24 @@
 
     const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+
     const db   = getFirestore(app);
+
+    // Expose Firebase functions globally so plain-script CMS functions can use them
+    window._db = db;
+    window._auth = auth;
+    window._serverTimestamp = serverTimestamp;
+    window._collection = collection;
+    window._doc = doc;
+    window._addDoc = addDoc;
+    window._updateDoc = updateDoc;
+    window._deleteDoc = deleteDoc;
+    window._setDoc = setDoc;
+    window._query = query;
+    window._where = where;
+    window._onSnapshot = onSnapshot;
+    window._getDocs = getDocs;
+    window._getDoc = getDoc;
 
     let currentUser = null, activeAdminChatPid = null, adminChatUnsub = null;
     let projects=[], editors=[], clients=[], users=[];
