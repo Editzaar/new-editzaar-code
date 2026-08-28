@@ -244,7 +244,7 @@
 
     <!-- CATALOG 1: VIDEO POST-PRODUCTION -->
     <div class="pricing-cards catalog-grid active" id="cat-video">
-      <div class="pricing-card">
+      <div class="pricing-card" data-svc-id="shorts-reels">
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Shorts &amp; Reels</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹1,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48h Delivery</div>
@@ -259,7 +259,7 @@
         </ul>
       </div>
 
-      <div class="pricing-card popular">
+      <div class="pricing-card popular" data-svc-id="motion-graphics">
         <div class="pc-badge">Most Popular</div>
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Motion Graphic / Animated</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹2,500 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
@@ -275,7 +275,7 @@
         </ul>
       </div>
 
-      <div class="pricing-card">
+      <div class="pricing-card" data-svc-id="long-form-youtube">
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Long-Form YouTube</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹5,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48-72h Delivery</div>
@@ -305,7 +305,7 @@
 
     <!-- CATALOG 2: WEB DESIGN & DEVELOPMENT -->
     <div class="pricing-cards catalog-grid" id="cat-web">
-      <div class="pricing-card">
+      <div class="pricing-card" data-svc-id="landing-page">
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Landing Page</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹4,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 3-Day Delivery</div>
@@ -319,7 +319,7 @@
         </ul>
       </div>
 
-      <div class="pricing-card popular">
+      <div class="pricing-card popular" data-svc-id="ecommerce-store">
         <div class="pc-badge">Most Popular</div>
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Corporate / D2C Storefront</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
@@ -334,7 +334,7 @@
         </ul>
       </div>
 
-      <div class="pricing-card">
+      <div class="pricing-card" data-svc-id="full-web-portal">
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Web System &amp; Portal</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 10-14 Day Delivery</div>
@@ -351,7 +351,7 @@
 
     <!-- CATALOG 3: PAID ADS & GROWTH -->
     <div class="pricing-cards catalog-grid" id="cat-growth">
-      <div class="pricing-card">
+      <div class="pricing-card" data-svc-id="paid-ads-setup">
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Paid Ad Setup &amp; Creatives</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹7,999 <span style="font-size:1rem;color:var(--t3);">/ campaign</span></div>
         <div class="pc-gst">+ 18% GST · Meta &amp; Google Ads</div>
@@ -364,7 +364,7 @@
         </ul>
       </div>
 
-      <div class="pricing-card popular">
+      <div class="pricing-card popular" data-svc-id="growth-retainer">
         <div class="pc-badge">Best ROI</div>
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Channel Growth Retainer</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹14,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
@@ -706,47 +706,46 @@
       'growth-retainer': { cardIndex: 1, cat: 'cat-growth', defaultTitle: 'Monthly Growth Retainer' }
     };
 
+    
+    // === LIVE FIRESTORE PRICING CARD SYNC ===
+    // Updates price, delivery, and checkout button on pricing.html in real time
+    // when admin saves changes in Services & Pricing section.
     try {
-      onSnapshot(collection(db, 'services'), (snapshot) => {
-        snapshot.forEach(docSnap => {
-          const s = docSnap.data();
-          const sid = docSnap.id;
-          
-          // Update matching card in DOM
-          const mapping = SERVICE_MAPPINGS[sid];
-          if (mapping) {
-            const catContainer = document.getElementById(mapping.cat);
-            if (catContainer) {
-              const cards = catContainer.querySelectorAll('.pricing-card');
-              if (cards && cards[mapping.cardIndex]) {
-                const card = cards[mapping.cardIndex];
-                
-                // Update Price Display
-                const priceEl = card.querySelector('[style*="font-family:var(--font-h)"]') || card.querySelector('.pc-price');
-                if (priceEl && s.price) {
-                  priceEl.innerHTML = `₹${parseInt(s.price).toLocaleString()} <span style="font-size:1rem;color:var(--t3);">${s.unit || '/ video'}</span>`;
-                }
+      onSnapshot(collection(db, 'services'), function(snapshot) {
+        snapshot.forEach(function(docSnap) {
+          var s = docSnap.data();
+          var sid = docSnap.id;
+          if (!s || !s.price) return;
 
-                // Update Delivery / Subtext
-                const subEl = card.querySelector('.pc-gst');
-                if (subEl && s.delivery) {
-                  subEl.textContent = `+ 18% GST · ${s.delivery} Delivery`;
-                }
+          // Find the card directly via data-svc-id attribute
+          var card = document.querySelector('[data-svc-id="' + sid + '"]');
+          if (!card) return;
 
-                // Update Checkout Button onclick
-                const btn = card.querySelector('.btn-gold-brand');
-                if (btn && s.price) {
-                  btn.setAttribute('onclick', `openCheckout('${s.name || mapping.defaultTitle}', ${s.price}, '${s.delivery || '48 Hours'}')`);
-                }
-              }
-            }
+          // Update price display element (the gold big price element)
+          var priceEl = card.querySelector('[style*="font-family:var(--font-h)"]');
+          if (priceEl && s.price) {
+            priceEl.innerHTML = '&#8377;' + parseInt(s.price).toLocaleString('en-IN') + ' <span style="font-size:1rem;color:var(--t3);">' + (s.unit || '/ video') + '</span>';
+          }
+
+          // Update delivery/GST subtext
+          var gstEl = card.querySelector('.pc-gst');
+          if (gstEl && s.delivery) {
+            gstEl.textContent = '+ 18% GST · ' + s.delivery + ' Delivery';
+          }
+
+          // Update checkout button onclick with new price
+          var btn = card.querySelector('.btn-gold-brand');
+          if (btn && s.price) {
+            btn.setAttribute('onclick', 'openCheckout(\'' + (s.name || sid) + '\', ' + s.price + ', \'' + (s.delivery || '48 Hours') + '\')');
           }
         });
+      }, function(err) {
+        console.warn('[Pricing] Firestore sync error:', err);
       });
-    } catch(err) {
-      console.log('Pricing sync note:', err);
+    } catch(e) {
+      console.warn('[Pricing] Could not start pricing sync:', e.message);
     }
-  </script>
+    </script>
 
 </body>
 </html>

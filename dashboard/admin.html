@@ -953,7 +953,157 @@
     }
   };
 
-</script>
+
+
+    // ============================================================
+    // SERVICES & PRICING FIRESTORE REALTIME MANAGER
+    // ============================================================
+    var allAdminServices = [];
+    var hasSeededServices = false;
+
+    var DEFAULT_SERVICES_LIST = [
+      { id: "shorts-reels", category: "Video Post-Production", categoryIcon: "🎬", name: "Shorts & Instagram Reels", price: 1000, unit: "/ video", delivery: "48 Hours", description: "High-retention vertical editing with kinetic typography, SFX & 3-second hook structure.", order: 1 },
+      { id: "motion-graphics", category: "Video Post-Production", categoryIcon: "🎬", name: "Motion Graphic & Animated Video", price: 2500, unit: "/ video", delivery: "48 Hours", description: "2D animations, title cards, animated infographics, lower thirds, and logo reveals.", order: 2 },
+      { id: "long-form-youtube", category: "Video Post-Production", categoryIcon: "🎬", name: "Long Form YouTube Video Edit", price: 5000, unit: "/ video", delivery: "48-72 Hours", description: "Full YouTube video editing: narrative pacing, seamless jump-cuts, zoom-ins, meme overlays & B-roll.", order: 3 },
+      { id: "cinematic-documentary", category: "Video Post-Production", categoryIcon: "🎬", name: "Cinematic Documentary & Ad Film", price: 10000, unit: "/ video", delivery: "3-5 Days", description: "Cinematic grade brand films, high-end product showcases, and documentary storytelling.", order: 4 },
+      { id: "landing-page", category: "Website Design & Development", categoryIcon: "💻", name: "High-Converting Landing Page", price: 4999, unit: "/ project", delivery: "3-5 Days", description: "Single-page responsive landing page engineered to capture leads and drive sales.", order: 5 },
+      { id: "ecommerce-store", category: "Website Design & Development", categoryIcon: "💻", name: "D2C Brand & E-Commerce Store", price: 12999, unit: "/ project", delivery: "7-10 Days", description: "Full-featured online store with payment gateway, product catalog, cart, and order system.", order: 6 },
+      { id: "full-web-portal", category: "Website Design & Development", categoryIcon: "💻", name: "Full Web System & Portal", price: 24999, unit: "/ project", delivery: "10-14 Days", description: "Custom SaaS portal, multi-role client/staff dashboard with realtime database & live chat.", order: 7 },
+      { id: "paid-ads-setup", category: "Paid Advertising & Growth", categoryIcon: "📈", name: "Paid Ad Setup & Creatives", price: 7999, unit: "/ campaign", delivery: "3-5 Days", description: "Data-driven Meta (FB/IG) & Google ad campaign setup with 3 direct-response video creatives.", order: 8 },
+      { id: "growth-retainer", category: "Paid Advertising & Growth", categoryIcon: "📈", name: "Monthly Growth Retainer", price: 19999, unit: "/ month", delivery: "Monthly", description: "Full-service digital growth: 12 edited videos + paid ad management + creative strategy.", order: 9 }
+    ];
+
+    function initServicesFirestoreListener() {
+      allAdminServices = DEFAULT_SERVICES_LIST.slice();
+      renderAdminServicesTable();
+      try {
+        onSnapshot(collection(db, 'services'), function(snapshot) {
+          if (snapshot.empty) {
+            if (!hasSeededServices) {
+              hasSeededServices = true;
+              autoSeedServicesToFirestore();
+            }
+            allAdminServices = DEFAULT_SERVICES_LIST.slice();
+          } else {
+            allAdminServices = [];
+            snapshot.forEach(function(d) {
+              var data = d.data();
+              data.id = d.id;
+              allAdminServices.push(data);
+            });
+            allAdminServices.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          }
+          renderAdminServicesTable();
+        }, function(err) {
+          console.error('[Services] Listener error:', err);
+        });
+      } catch(e) {
+        console.error('[Services] Init error:', e);
+      }
+    }
+
+    async function autoSeedServicesToFirestore() {
+      try {
+        for (var i = 0; i < DEFAULT_SERVICES_LIST.length; i++) {
+          var s = DEFAULT_SERVICES_LIST[i];
+          await setDoc(doc(db, 'services', s.id), {
+            category: s.category, categoryIcon: s.categoryIcon,
+            name: s.name, price: s.price, unit: s.unit,
+            delivery: s.delivery, description: s.description,
+            order: s.order, active: true, createdAt: serverTimestamp()
+          });
+        }
+        console.log('[Services] Seeded to Firestore!');
+      } catch(e) { console.log('[Services] Seed note:', e.message); }
+    }
+
+    window.renderAdminServicesTable = function() {
+      var tbody = document.getElementById('servicesTbody');
+      if (!tbody) return;
+      var html = '';
+      allAdminServices.forEach(function(s) {
+        html += '<tr>'
+          + '<td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">' + (s.categoryIcon || '') + ' ' + (s.category || 'General') + '</span></td>'
+          + '<td><strong>' + (s.name || '') + '</strong></td>'
+          + '<td><div style="display:flex;align-items:center;gap:6px;">'
+          + '<span style="color:var(--gold);font-weight:700;">&#8377;</span>'
+          + '<input type="number" id="inp-price-' + s.id + '" value="' + (s.price || 0) + '" style="width:100px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.95rem;" min="100"/>'
+          + '</div></td>'
+          + '<td><input type="text" id="inp-time-' + s.id + '" value="' + (s.delivery || '48 Hours') + '" style="width:120px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:0.9rem;"/></td>'
+          + '<td style="font-size:0.85rem;color:var(--t2);max-width:260px;">' + (s.description || '') + '</td>'
+          + '<td><div style="display:flex;gap:6px;">'
+          + '<button class="btn-gold btn-sm" id="btn-save-svc-' + s.id + '" onclick="window.saveAdminServicePrice(\'' + s.id + '\')">&#128190; SAVE</button>'
+          + '<button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminService(\'' + s.id + '\')">&#128465;</button>'
+          + '</div></td></tr>';
+      });
+      tbody.innerHTML = html;
+    };
+
+    window.saveAdminServicePrice = async function(id) {
+      var pInp = document.getElementById('inp-price-' + id);
+      var tInp = document.getElementById('inp-time-' + id);
+      var saveBtn = document.getElementById('btn-save-svc-' + id);
+      if (!pInp || !tInp) { if(window.showToast) showToast('Fields not found.', 'error'); return; }
+      var newPrice = parseInt(pInp.value) || 0;
+      var newTime = (tInp.value || '').trim() || '48 Hours';
+      if (newPrice < 100) { if(window.showToast) showToast('Price must be at least Rs 100.', 'error'); return; }
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
+      try {
+        await setDoc(doc(db, 'services', id), { price: newPrice, delivery: newTime, updatedAt: serverTimestamp() }, { merge: true });
+        var target = allAdminServices.find(function(s) { return s.id === id; });
+        if (target) { target.price = newPrice; target.delivery = newTime; }
+        if (saveBtn) {
+          saveBtn.style.background = '#27c93f';
+          saveBtn.style.color = '#000';
+          saveBtn.textContent = 'SAVED!';
+          setTimeout(function() {
+            if (saveBtn) { saveBtn.style.background = ''; saveBtn.style.color = ''; saveBtn.textContent = 'SAVE'; saveBtn.disabled = false; }
+          }, 2500);
+        }
+        if(window.showToast) showToast('Price updated to Rs ' + newPrice.toLocaleString('en-IN') + ' — Live on website now!', 'success');
+      } catch(err) {
+        console.error('[Services] Save error:', err);
+        if(window.showToast) showToast('Error: ' + err.message, 'error');
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'SAVE'; }
+      }
+    };
+
+    window.deleteAdminService = async function(id) {
+      if (!confirm('Remove this service from the live catalog?')) return;
+      try {
+        await deleteDoc(doc(db, 'services', id));
+        allAdminServices = allAdminServices.filter(function(s) { return s.id !== id; });
+        renderAdminServicesTable();
+        if(window.showToast) showToast('Service removed from catalog.', 'info');
+      } catch(err) { if(window.showToast) showToast('Error: ' + err.message, 'error'); }
+    };
+
+    window.createAdminServiceNow = async function() {
+      var catEl = document.getElementById('svc-cat');
+      var nameEl = document.getElementById('svc-name');
+      var priceEl = document.getElementById('svc-price');
+      var timeEl = document.getElementById('svc-time');
+      var descEl = document.getElementById('svc-desc');
+      var cat = catEl ? catEl.value : 'Video Post-Production';
+      var name = nameEl ? nameEl.value.trim() : '';
+      var price = parseInt(priceEl ? priceEl.value : 0) || 0;
+      var delivery = timeEl ? (timeEl.value.trim() || '48 Hours') : '48 Hours';
+      var desc = descEl ? descEl.value.trim() : '';
+      if (!name || !price) { if(window.showToast) showToast('Please fill in service name and price.', 'error'); return; }
+      var cleanId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
+      var catIcon = cat.indexOf('Video') >= 0 ? '🎬' : (cat.indexOf('Web') >= 0 ? '💻' : '📈');
+      try {
+        await setDoc(doc(db, 'services', cleanId), {
+          category: cat, categoryIcon: catIcon, name: name, price: price,
+          unit: '/ project', delivery: delivery, description: desc,
+          order: allAdminServices.length + 1, active: true, createdAt: serverTimestamp()
+        });
+        [nameEl, priceEl, timeEl, descEl].forEach(function(el) { if(el) el.value = ''; });
+        if(window.showToast) showToast('Service "' + name + '" added at Rs ' + price.toLocaleString('en-IN') + '!', 'success');
+      } catch(err) { if(window.showToast) showToast('Error: ' + err.message, 'error'); }
+    };
+
+    </script>
   <script src="../js/theme.js?v=310.0">
   // ============================================================
   // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
