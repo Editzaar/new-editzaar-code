@@ -22,12 +22,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap?v=270.0"
         rel="stylesheet">
     <link rel="icon" type="image/png" href="media/fav-logo.png">
-    <link rel="stylesheet" href="css/style.css?v=500.0">
+    <link rel="stylesheet" href="css/style.css?v=510.0">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=300.0">
 
     <style>
         /* Portfolio Filter Tabs */
@@ -567,8 +567,72 @@
         .browser-frame:hover .browser-preview-overlay {
             opacity: 1;
         }
+    
+        /* View Toggle Bar (Carousel vs Grid) */
+        .view-toggle-bar {
+            display: inline-flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 4px;
+            gap: 4px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .view-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--t2);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-family: var(--font-b);
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-toggle-btn:hover {
+            color: var(--t1);
+        }
+
+        .view-toggle-btn.active {
+            background: var(--gold);
+            color: #000;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(255, 184, 0, 0.4);
+        }
+
+        /* Grid Layout Mode */
+        .is-grid-layout .carousel-track {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+            gap: 2rem !important;
+            overflow: visible !important;
+            padding: 10px 0 !important;
+        }
+
+        .is-grid-layout .carousel-track > div {
+            width: 100% !important;
+        }
+
+        .is-grid-layout .carousel-btn {
+            display: none !important;
+        }
+
     </style>
-  <script src="../js/services-config.js?v=310.0"></script>
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Editzaar">
+  <link rel="apple-touch-icon" href="/media/fav-logo.png">
+  <meta name="theme-color" content="#FFB800">
+  <script src="js/theme.js?v=310.0"></script>
 
   <style>
     /* CRITICAL MOBILE HEADER CLEANLINESS (v290.0) */
@@ -604,6 +668,7 @@
           <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
     </ul>
         <a class="nav-cta" id="nav-auth-btn" href="dashboard/index.html">Login</a>
+    <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
         <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
     </nav>
 
@@ -621,6 +686,20 @@
 
     <!-- Filters -->
     <div class="portfolio-filters reveal">
+
+    <!-- View Switcher (Carousel vs Grid) -->
+    <div class="view-switcher-container reveal" style="display:flex;justify-content:center;align-items:center;gap:12px;margin:-1.5rem auto 2.5rem;padding:0 1rem;">
+        <span style="font-size:0.88rem;color:var(--t2);font-family:var(--font-b);font-weight:500;">Display Mode:</span>
+        <div class="view-toggle-bar">
+            <button class="view-toggle-btn active" id="btnViewCarousel" onclick="setPortfolioView('carousel')" title="Carousel Slider View">
+                <span>🎠</span> Carousel View
+            </button>
+            <button class="view-toggle-btn" id="btnViewGrid" onclick="setPortfolioView('grid')" title="Full Multi-Column Grid View">
+                <span>⊞</span> Grid View
+            </button>
+        </div>
+    </div>
+
         <button class="filter-btn active" data-filter="all">All Work</button>
         <button class="filter-btn" data-filter="video">Video Editing</button>
         <button class="filter-btn" data-filter="web">Website Development</button>
@@ -640,7 +719,7 @@
 
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
-                <div class="carousel-track video-grid-vertical">
+                <div class="carousel-track video-grid-vertical" id="verticalReelsTrack">
                     <!-- Video 1 -->
                     <div>
                         <div class="phone-frame">
@@ -810,7 +889,7 @@
 
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
-                <div class="carousel-track video-grid-horizontal">
+                <div class="carousel-track video-grid-horizontal" id="horizontalVideosTrack">
                     <!-- Video 1 -->
                     <div>
                         <div class="monitor-frame">
@@ -984,7 +1063,7 @@
 
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
-                <div class="carousel-track web-grid">
+                <div class="carousel-track web-grid" id="webPortfolioTrack">
                     <!-- Web 1 -->
                     <div class="browser-frame">
                         <div class="browser-header">
@@ -1276,12 +1355,221 @@
         // Initial setup for 'all'
         // portfolioSections already have .active from HTML
     </script>
-    <script src="js/main.js?v=500.0"></script>
+    <script src="js/services-config.js?v=310.0"></script>
+  <script src="js/main.js?v=510.0"></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+        .catch(function(err) { console.warn('[SW] Error:', err); });
+    }
+    let _deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      _deferredInstallPrompt = e;
+    });
+    window._triggerInstall = function() {
+      if (_deferredInstallPrompt) {
+        _deferredInstallPrompt.prompt();
+        _deferredInstallPrompt.userChoice.then(function(choice) {
+          console.log('[PWA] User choice:', choice.outcome);
+          _deferredInstallPrompt = null;
+        });
+      } else {
+        const m = document.getElementById('ios-install-modal');
+        if (m) m.style.display = 'flex';
+      }
+    };
+  </script>
+  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
+    <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:12px">&#128241;</div>
+      <h3 style="color:#FFB800;font-family:'Outfit',sans-serif;margin-bottom:8px">Install Editzaar App</h3>
+      <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
+      <div style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
+        <div>1. Tap <strong style="color:#FFB800">Share</strong> &#127758; at bottom of Safari</div>
+        <div>2. Tap <strong style="color:#FFB800">Add to Home Screen</strong></div>
+      </div>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
+    </div>
+  </div>
 
   <!-- Firebase Auth: Nav profile -->
   
 
-  <script type="module" src="../js/nav-auth.js?v=300.0"></script>
+  <script type="module" src="js/nav-auth.js?v=300.0"></script>
+
+    <!-- Dynamic Firebase Portfolio Sync & View Mode Controller -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+          authDomain: "editzaar-fa8d9.firebaseapp.com",
+          projectId: "editzaar-fa8d9",
+          storageBucket: "editzaar-fa8d9.firebasestorage.app",
+          messagingSenderId: "419930711716",
+          appId: "1:419930711716:web:b1504f651e397a14726831"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // View Mode Switcher
+        window.setPortfolioView = function(mode) {
+            var btnC = document.getElementById('btnViewCarousel');
+            var btnG = document.getElementById('btnViewGrid');
+            var wrapper = document.getElementById('portfolio-wrapper');
+
+            if (mode === 'grid') {
+                if (btnC) btnC.classList.remove('active');
+                if (btnG) btnG.classList.add('active');
+                if (wrapper) wrapper.classList.add('is-grid-layout');
+            } else {
+                if (btnG) btnG.classList.remove('active');
+                if (btnC) btnC.classList.add('active');
+                if (wrapper) wrapper.classList.remove('is-grid-layout');
+            }
+        };
+
+        function wireVideoHover(container) {
+            var vids = container.querySelectorAll('video');
+            vids.forEach(function(v) {
+                var card = v.closest('.phone-frame') || v.closest('.monitor-frame') || v.parentElement;
+                if (!card) return;
+                card.addEventListener('mouseenter', function() {
+                    v.play().catch(function(){});
+                });
+                card.addEventListener('mouseleave', function() {
+                    v.pause();
+                });
+                var muteBtn = card.querySelector('.mute-btn');
+                if (muteBtn) {
+                    muteBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        v.muted = !v.muted;
+                        muteBtn.innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+                    });
+                }
+            });
+        }
+
+        // Render Dynamic Videos from Firestore
+        function renderDynamicVideos(vids) {
+            var vertTrack = document.getElementById('verticalReelsTrack');
+            var horizTrack = document.getElementById('horizontalVideosTrack');
+
+            var vertVids = vids.filter(v => v.type === 'vertical');
+            var horizVids = vids.filter(v => v.type === 'horizontal');
+
+            if (vertVids.length > 0 && vertTrack) {
+                var vertHtml = '';
+                vertVids.forEach(v => {
+                    vertHtml += `<div>
+                        <div class="phone-frame">
+                            <div class="video-container">
+                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>${v.title || 'Cinematic Reel'}</h4>
+                            <span class="tech-badge">${v.niche || 'Creative'}</span>
+                        </div>
+                    </div>`;
+                });
+                vertTrack.innerHTML = vertHtml;
+                wireVideoHover(vertTrack);
+            }
+
+            if (horizVids.length > 0 && horizTrack) {
+                var horizHtml = '';
+                horizVids.forEach(v => {
+                    horizHtml += `<div>
+                        <div class="monitor-frame">
+                            <div class="video-container">
+                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} muted loop playsinline></video>
+                                <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-label">
+                            <h4>${v.title || 'Cinematic Video'}</h4>
+                            <span class="tech-badge">${v.niche || 'Explainer'}</span>
+                        </div>
+                    </div>`;
+                });
+                horizTrack.innerHTML = horizHtml;
+                wireVideoHover(horizTrack);
+            }
+        }
+
+        // Render Dynamic Websites from Firestore
+        function renderDynamicWebsites(webs) {
+            var webTrack = document.getElementById('webPortfolioTrack');
+            if (!webTrack || webs.length === 0) return;
+
+            var webHtml = '';
+            webs.forEach(w => {
+                var techBadges = (w.tech || 'HTML5, CSS3, JS').split(',').map(t => `<span class="tech-badge">${t.trim()}</span>`).join('');
+                webHtml += `<div>
+                    <div class="browser-frame">
+                        <div class="browser-header">
+                            <div class="browser-dots"><span></span><span></span><span></span></div>
+                        </div>
+                        <div class="browser-content">
+                            <a href="${w.url}" target="_blank" rel="noopener noreferrer" class="browser-content-link">
+                                ${w.screenshot ? '<img src="' + w.screenshot + '" alt="' + (w.name || 'Website') + '" style="width:100%;height:100%;object-fit:cover;"/>' : '<iframe src="' + w.url + '" loading="lazy" scrolling="no"></iframe>'}
+                                <div class="browser-preview-overlay"><span>Visit Live Website ↗</span></div>
+                            </a>
+                        </div>
+                        <div class="web-info">
+                            <h4>${w.name || 'Website Project'}</h4>
+                            <a href="${w.url}" target="_blank" rel="noopener noreferrer">${w.url} ↗</a>
+                            <div class="web-tech">${techBadges}</div>
+                            <div class="speed-metric"><i class="fas fa-bolt"></i> Speed: ${w.speed || '98/100'} (Mobile &amp; Desktop)</div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            webTrack.innerHTML = webHtml;
+        }
+
+        // Listen in real-time
+        try {
+            onSnapshot(collection(db, 'portfolio_videos'), (snap) => {
+                var vids = [];
+                snap.forEach(d => {
+                    var dat = d.data();
+                    dat.id = d.id;
+                    vids.push(dat);
+                });
+                if (vids.length > 0) {
+                    vids.sort((a, b) => (a.order || 1) - (b.order || 1));
+                    renderDynamicVideos(vids);
+                }
+            });
+
+            onSnapshot(collection(db, 'portfolio_websites'), (snap) => {
+                var webs = [];
+                snap.forEach(d => {
+                    var dat = d.data();
+                    dat.id = d.id;
+                    webs.push(dat);
+                });
+                if (webs.length > 0) {
+                    webs.sort((a, b) => (a.order || 1) - (b.order || 1));
+                    renderDynamicWebsites(webs);
+                }
+            });
+        } catch(e) {
+            console.log("Firestore portfolio sync:", e);
+        }
+    </script>
+
 </body>
 
 </html>
+

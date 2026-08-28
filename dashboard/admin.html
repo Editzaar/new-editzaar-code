@@ -227,8 +227,766 @@
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/services-config.js?v=310.0"></script>
-  <script src="../js/theme.js?v=310.0"></script>
+  <script src="../js/services-config.js?v=310.0">
+  // ============================================================
+  // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
+  // ============================================================
+  var allCmsVideos = [];
+  var allCmsWebsites = [];
+  var currentVidFilter = 'all';
+
+  window.switchCmsTab = function(tabName) {
+    var tabs = ['portfolio_videos', 'portfolio_web', 'testimonials', 'faqs', 'contact'];
+    tabs.forEach(function(t) {
+      var btn = document.getElementById('tab-cms-' + (t === 'portfolio_videos' ? 'video' : (t === 'portfolio_web' ? 'web' : (t === 'testimonials' ? 'testi' : (t === 'faqs' ? 'faq' : 'contact')))));
+      var container = document.getElementById('cms-tab-' + t);
+      if (btn) {
+        if (t === tabName) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+      if (container) {
+        if (t === tabName) container.style.display = 'block';
+        else container.style.display = 'none';
+      }
+    });
+  };
+
+  // Real-time listener for Portfolio Videos
+  function initPortfolioCmsListeners() {
+    try {
+      onSnapshot(collection(db, 'portfolio_videos'), function(snapshot) {
+        allCmsVideos = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsVideos.push(data);
+        });
+        allCmsVideos.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsVideos();
+      }, function(err) {
+        console.error('Error listening to portfolio_videos:', err);
+      });
+
+      onSnapshot(collection(db, 'portfolio_websites'), function(snapshot) {
+        allCmsWebsites = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsWebsites.push(data);
+        });
+        allCmsWebsites.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsWebsites();
+      }, function(err) {
+        console.error('Error listening to portfolio_websites:', err);
+      });
+    } catch(e) {
+      console.error('initPortfolioCmsListeners error:', e);
+    }
+  }
+
+  function renderCmsVideos() {
+    var tbody = document.getElementById('cmsVideosTbody');
+    if (!tbody) return;
+
+    var countEl = document.getElementById('count-all-vids');
+    if (countEl) countEl.innerText = allCmsVideos.length;
+
+    var filtered = allCmsVideos.filter(function(v) {
+      if (currentVidFilter === 'all') return true;
+      return v.type === currentVidFilter;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No videos added yet. Click <strong>"＋ Add New Video"</strong> or <strong>"↺ Import Starter Videos"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function(v) {
+      var isVert = v.type === 'vertical';
+      var badge = isVert ? '<span style="background:rgba(255,184,0,0.15);color:var(--gold);padding:4px 8px;border-radius:12px;font-size:0.76rem;">📱 9:16 Vertical</span>' : '<span style="background:rgba(0,200,255,0.15);color:#00c8ff;padding:4px 8px;border-radius:12px;font-size:0.76rem;">🖥️ 16:9 Horizontal</span>';
+      
+      html += `<tr>
+        <td style="width:80px;">
+          <div style="width:60px;height:${isVert ? '80px' : '45px'};background:#000;border-radius:6px;overflow:hidden;position:relative;">
+            <video src="${v.videoUrl}" style="width:100%;height:100%;object-fit:cover;" muted></video>
+          </div>
+        </td>
+        <td><strong>${v.title || 'Untitled'}</strong></td>
+        <td>${badge}</td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${v.niche || 'General'}</span></td>
+        <td>${v.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsVideo('${v.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsVideo('${v.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderCmsWebsites() {
+    var tbody = document.getElementById('cmsWebsitesTbody');
+    if (!tbody) return;
+
+    if (allCmsWebsites.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No website projects added yet. Click <strong>"＋ Add New Website"</strong> or <strong>"↺ Import Starter Websites"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsWebsites.forEach(function(w) {
+      html += `<tr>
+        <td><strong>${w.name || 'Untitled'}</strong></td>
+        <td><a href="${w.url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">${w.url || '-'} ↗</a></td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${w.niche || 'Web'}</span></td>
+        <td style="font-size:0.8rem;color:var(--t2);">${w.tech || 'Custom'}</td>
+        <td><span style="color:#27c93f;font-weight:600;">⚡ ${w.speed || '98/100'}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsWebsite('${w.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsWebsite('${w.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  window.filterCmsVideos = function(type) {
+    currentVidFilter = type;
+    var bAll = document.getElementById('vfilter-all');
+    var bVert = document.getElementById('vfilter-vert');
+    var bHoriz = document.getElementById('vfilter-horiz');
+    if (bAll) bAll.className = type === 'all' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bVert) bVert.className = type === 'vertical' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bHoriz) bHoriz.className = type === 'horizontal' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    renderCmsVideos();
+  };
+
+  window.resetVideoForm = function() {
+    document.getElementById('vid-id').value = '';
+    document.getElementById('vid-type').value = 'vertical';
+    document.getElementById('vid-title').value = '';
+    document.getElementById('vid-niche').value = '';
+    document.getElementById('vid-order').value = (allCmsVideos.length + 1);
+    document.getElementById('vid-url').value = '';
+    document.getElementById('vid-poster').value = '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Save Video to Live Portfolio →';
+  };
+
+  window.editCmsVideo = function(id) {
+    var v = allCmsVideos.find(function(item) { return item.id === id; });
+    if (!v) return;
+    document.getElementById('vid-id').value = v.id;
+    document.getElementById('vid-type').value = v.type || 'vertical';
+    document.getElementById('vid-title').value = v.title || '';
+    document.getElementById('vid-niche').value = v.niche || '';
+    document.getElementById('vid-order').value = v.order || 1;
+    document.getElementById('vid-url').value = v.videoUrl || '';
+    document.getElementById('vid-poster').value = v.posterUrl || '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Update Video Changes →';
+    document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioVideoNow = async function() {
+    var id = document.getElementById('vid-id').value;
+    var type = document.getElementById('vid-type').value;
+    var title = document.getElementById('vid-title').value.trim();
+    var niche = document.getElementById('vid-niche').value.trim();
+    var order = parseInt(document.getElementById('vid-order').value) || 1;
+    var videoUrl = document.getElementById('vid-url').value.trim();
+    var posterUrl = document.getElementById('vid-poster').value.trim();
+
+    if (!title || !videoUrl) {
+      alert('Please provide both Video Title and Video Stream URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveVideo');
+    btn.disabled = true;
+    btn.innerText = 'Saving to Live Portfolio...';
+
+    try {
+      var payload = {
+        title: title,
+        type: type,
+        niche: niche || 'Creative',
+        order: order,
+        videoUrl: videoUrl,
+        posterUrl: posterUrl,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_videos', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_videos'), payload);
+      }
+
+      window.resetVideoForm();
+      alert('✅ Video saved successfully! It is now LIVE on editzaar.in/work in real-time.');
+    } catch(err) {
+      console.error('Error saving portfolio video:', err);
+      alert('Error saving video: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Video to Live Portfolio →';
+    }
+  };
+
+  window.deleteCmsVideo = async function(id) {
+    if (!confirm('Are you sure you want to remove this video from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_videos', id));
+      alert('✅ Video deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting video:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  window.resetWebsiteForm = function() {
+    document.getElementById('web-id').value = '';
+    document.getElementById('web-name').value = '';
+    document.getElementById('web-url').value = '';
+    document.getElementById('web-niche').value = '';
+    document.getElementById('web-speed').value = '98/100';
+    document.getElementById('web-tech').value = '';
+    document.getElementById('web-order').value = (allCmsWebsites.length + 1);
+    document.getElementById('web-screenshot').value = '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Save Website Project →';
+  };
+
+  window.editCmsWebsite = function(id) {
+    var w = allCmsWebsites.find(function(item) { return item.id === id; });
+    if (!w) return;
+    document.getElementById('web-id').value = w.id;
+    document.getElementById('web-name').value = w.name || '';
+    document.getElementById('web-url').value = w.url || '';
+    document.getElementById('web-niche').value = w.niche || '';
+    document.getElementById('web-speed').value = w.speed || '98/100';
+    document.getElementById('web-tech').value = w.tech || '';
+    document.getElementById('web-order').value = w.order || 1;
+    document.getElementById('web-screenshot').value = w.screenshot || '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Update Website Project →';
+    document.getElementById('webForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioWebsiteNow = async function() {
+    var id = document.getElementById('web-id').value;
+    var name = document.getElementById('web-name').value.trim();
+    var url = document.getElementById('web-url').value.trim();
+    var niche = document.getElementById('web-niche').value.trim();
+    var speed = document.getElementById('web-speed').value.trim() || '98/100';
+    var tech = document.getElementById('web-tech').value.trim();
+    var order = parseInt(document.getElementById('web-order').value) || 1;
+    var screenshot = document.getElementById('web-screenshot').value.trim();
+
+    if (!name || !url) {
+      alert('Please provide Website Name and URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveWeb');
+    btn.disabled = true;
+    btn.innerText = 'Saving Website...';
+
+    try {
+      var payload = {
+        name: name,
+        url: url,
+        niche: niche || 'Web Development',
+        speed: speed,
+        tech: tech || 'HTML5, CSS3, JavaScript',
+        order: order,
+        screenshot: screenshot,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_websites', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_websites'), payload);
+      }
+
+      window.resetWebsiteForm();
+      alert('✅ Website project saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.error('Error saving website:', err);
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Website Project →';
+    }
+  };
+
+  window.deleteCmsWebsite = async function(id) {
+    if (!confirm('Are you sure you want to remove this website from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_websites', id));
+      alert('✅ Website project deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting website:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  // Seed default starter items if empty
+  window.seedDefaultPortfolioVideos = async function() {
+    if (allCmsVideos.length > 0 && !confirm('You already have portfolio videos. Add default starter videos anyway?')) return;
+    
+    var starters = [
+      { type: 'vertical', title: 'Cinematic Reel', niche: 'Creative', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4', order: 1 },
+      { type: 'vertical', title: 'Motion Graphics', niche: 'Creative / Motion', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4', order: 2 },
+      { type: 'vertical', title: 'Ai Video Commercial', niche: 'Ai / Commercial', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4', order: 3 },
+      { type: 'vertical', title: 'Animated Reel', niche: 'Motion Graphics', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4', order: 4 },
+      { type: 'vertical', title: 'Real Estate & Vastu', niche: 'Real Estate', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4', order: 5 },
+      { type: 'vertical', title: 'Medical & Healthcare Reel', niche: 'Medical / Health', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4', order: 6 },
+      { type: 'vertical', title: 'Music & Brand Video Reel', niche: 'Music Video', url: 'https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4', order: 7 },
+      { type: 'horizontal', title: 'Deep-Dive Explainer', niche: 'Explainer / EdTech', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4', order: 1 },
+      { type: 'horizontal', title: 'Documentary Style Story', niche: 'Documentary', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4', order: 2 },
+      { type: 'horizontal', title: 'Corporate & Finance Breakdown', niche: 'Corporate / Finance', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4', order: 3 },
+      { type: 'horizontal', title: 'Lifestyle Chronological Montage', niche: 'Lifestyle', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4', order: 4 },
+      { type: 'horizontal', title: '2D Motion Video', niche: '2D Animation', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4', order: 5 },
+      { type: 'horizontal', title: 'Educational & Informational', niche: 'Educational', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4', order: 6 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_videos'), {
+          title: s.title,
+          type: s.type,
+          niche: s.niche,
+          videoUrl: s.url,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter videos populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding videos: ' + err.message);
+    }
+  };
+
+  window.seedDefaultPortfolioWebsites = async function() {
+    if (allCmsWebsites.length > 0 && !confirm('You already have website projects. Add default starter websites anyway?')) return;
+    
+    var starters = [
+      { name: 'D Plus Cure', url: 'https://dpluscure.com', niche: 'Healthcare E-Commerce', tech: 'WordPress, WooCommerce, PHP, Elementor', speed: '92/100', order: 1 },
+      { name: 'News Flash Daily', url: 'https://newsflashdaily.in', niche: 'News & Media Portal', tech: 'WordPress, SEO Suite, AMP, Custom Theme', speed: '96/100', order: 2 },
+      { name: 'Editzaar Agency', url: 'https://editzaar.in', niche: 'Creative Agency Portfolio', tech: 'HTML5, CSS3, JavaScript, Firebase Cloud', speed: '98/100', order: 3 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_websites'), {
+          name: s.name,
+          url: s.url,
+          niche: s.niche,
+          tech: s.tech,
+          speed: s.speed,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter websites populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding websites: ' + err.message);
+    }
+  };
+
+</script>
+  <script src="../js/theme.js?v=310.0">
+  // ============================================================
+  // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
+  // ============================================================
+  var allCmsVideos = [];
+  var allCmsWebsites = [];
+  var currentVidFilter = 'all';
+
+  window.switchCmsTab = function(tabName) {
+    var tabs = ['portfolio_videos', 'portfolio_web', 'testimonials', 'faqs', 'contact'];
+    tabs.forEach(function(t) {
+      var btn = document.getElementById('tab-cms-' + (t === 'portfolio_videos' ? 'video' : (t === 'portfolio_web' ? 'web' : (t === 'testimonials' ? 'testi' : (t === 'faqs' ? 'faq' : 'contact')))));
+      var container = document.getElementById('cms-tab-' + t);
+      if (btn) {
+        if (t === tabName) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+      if (container) {
+        if (t === tabName) container.style.display = 'block';
+        else container.style.display = 'none';
+      }
+    });
+  };
+
+  // Real-time listener for Portfolio Videos
+  function initPortfolioCmsListeners() {
+    try {
+      onSnapshot(collection(db, 'portfolio_videos'), function(snapshot) {
+        allCmsVideos = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsVideos.push(data);
+        });
+        allCmsVideos.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsVideos();
+      }, function(err) {
+        console.error('Error listening to portfolio_videos:', err);
+      });
+
+      onSnapshot(collection(db, 'portfolio_websites'), function(snapshot) {
+        allCmsWebsites = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsWebsites.push(data);
+        });
+        allCmsWebsites.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsWebsites();
+      }, function(err) {
+        console.error('Error listening to portfolio_websites:', err);
+      });
+    } catch(e) {
+      console.error('initPortfolioCmsListeners error:', e);
+    }
+  }
+
+  function renderCmsVideos() {
+    var tbody = document.getElementById('cmsVideosTbody');
+    if (!tbody) return;
+
+    var countEl = document.getElementById('count-all-vids');
+    if (countEl) countEl.innerText = allCmsVideos.length;
+
+    var filtered = allCmsVideos.filter(function(v) {
+      if (currentVidFilter === 'all') return true;
+      return v.type === currentVidFilter;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No videos added yet. Click <strong>"＋ Add New Video"</strong> or <strong>"↺ Import Starter Videos"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function(v) {
+      var isVert = v.type === 'vertical';
+      var badge = isVert ? '<span style="background:rgba(255,184,0,0.15);color:var(--gold);padding:4px 8px;border-radius:12px;font-size:0.76rem;">📱 9:16 Vertical</span>' : '<span style="background:rgba(0,200,255,0.15);color:#00c8ff;padding:4px 8px;border-radius:12px;font-size:0.76rem;">🖥️ 16:9 Horizontal</span>';
+      
+      html += `<tr>
+        <td style="width:80px;">
+          <div style="width:60px;height:${isVert ? '80px' : '45px'};background:#000;border-radius:6px;overflow:hidden;position:relative;">
+            <video src="${v.videoUrl}" style="width:100%;height:100%;object-fit:cover;" muted></video>
+          </div>
+        </td>
+        <td><strong>${v.title || 'Untitled'}</strong></td>
+        <td>${badge}</td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${v.niche || 'General'}</span></td>
+        <td>${v.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsVideo('${v.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsVideo('${v.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderCmsWebsites() {
+    var tbody = document.getElementById('cmsWebsitesTbody');
+    if (!tbody) return;
+
+    if (allCmsWebsites.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No website projects added yet. Click <strong>"＋ Add New Website"</strong> or <strong>"↺ Import Starter Websites"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsWebsites.forEach(function(w) {
+      html += `<tr>
+        <td><strong>${w.name || 'Untitled'}</strong></td>
+        <td><a href="${w.url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">${w.url || '-'} ↗</a></td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${w.niche || 'Web'}</span></td>
+        <td style="font-size:0.8rem;color:var(--t2);">${w.tech || 'Custom'}</td>
+        <td><span style="color:#27c93f;font-weight:600;">⚡ ${w.speed || '98/100'}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsWebsite('${w.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsWebsite('${w.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  window.filterCmsVideos = function(type) {
+    currentVidFilter = type;
+    var bAll = document.getElementById('vfilter-all');
+    var bVert = document.getElementById('vfilter-vert');
+    var bHoriz = document.getElementById('vfilter-horiz');
+    if (bAll) bAll.className = type === 'all' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bVert) bVert.className = type === 'vertical' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bHoriz) bHoriz.className = type === 'horizontal' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    renderCmsVideos();
+  };
+
+  window.resetVideoForm = function() {
+    document.getElementById('vid-id').value = '';
+    document.getElementById('vid-type').value = 'vertical';
+    document.getElementById('vid-title').value = '';
+    document.getElementById('vid-niche').value = '';
+    document.getElementById('vid-order').value = (allCmsVideos.length + 1);
+    document.getElementById('vid-url').value = '';
+    document.getElementById('vid-poster').value = '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Save Video to Live Portfolio →';
+  };
+
+  window.editCmsVideo = function(id) {
+    var v = allCmsVideos.find(function(item) { return item.id === id; });
+    if (!v) return;
+    document.getElementById('vid-id').value = v.id;
+    document.getElementById('vid-type').value = v.type || 'vertical';
+    document.getElementById('vid-title').value = v.title || '';
+    document.getElementById('vid-niche').value = v.niche || '';
+    document.getElementById('vid-order').value = v.order || 1;
+    document.getElementById('vid-url').value = v.videoUrl || '';
+    document.getElementById('vid-poster').value = v.posterUrl || '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Update Video Changes →';
+    document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioVideoNow = async function() {
+    var id = document.getElementById('vid-id').value;
+    var type = document.getElementById('vid-type').value;
+    var title = document.getElementById('vid-title').value.trim();
+    var niche = document.getElementById('vid-niche').value.trim();
+    var order = parseInt(document.getElementById('vid-order').value) || 1;
+    var videoUrl = document.getElementById('vid-url').value.trim();
+    var posterUrl = document.getElementById('vid-poster').value.trim();
+
+    if (!title || !videoUrl) {
+      alert('Please provide both Video Title and Video Stream URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveVideo');
+    btn.disabled = true;
+    btn.innerText = 'Saving to Live Portfolio...';
+
+    try {
+      var payload = {
+        title: title,
+        type: type,
+        niche: niche || 'Creative',
+        order: order,
+        videoUrl: videoUrl,
+        posterUrl: posterUrl,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_videos', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_videos'), payload);
+      }
+
+      window.resetVideoForm();
+      alert('✅ Video saved successfully! It is now LIVE on editzaar.in/work in real-time.');
+    } catch(err) {
+      console.error('Error saving portfolio video:', err);
+      alert('Error saving video: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Video to Live Portfolio →';
+    }
+  };
+
+  window.deleteCmsVideo = async function(id) {
+    if (!confirm('Are you sure you want to remove this video from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_videos', id));
+      alert('✅ Video deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting video:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  window.resetWebsiteForm = function() {
+    document.getElementById('web-id').value = '';
+    document.getElementById('web-name').value = '';
+    document.getElementById('web-url').value = '';
+    document.getElementById('web-niche').value = '';
+    document.getElementById('web-speed').value = '98/100';
+    document.getElementById('web-tech').value = '';
+    document.getElementById('web-order').value = (allCmsWebsites.length + 1);
+    document.getElementById('web-screenshot').value = '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Save Website Project →';
+  };
+
+  window.editCmsWebsite = function(id) {
+    var w = allCmsWebsites.find(function(item) { return item.id === id; });
+    if (!w) return;
+    document.getElementById('web-id').value = w.id;
+    document.getElementById('web-name').value = w.name || '';
+    document.getElementById('web-url').value = w.url || '';
+    document.getElementById('web-niche').value = w.niche || '';
+    document.getElementById('web-speed').value = w.speed || '98/100';
+    document.getElementById('web-tech').value = w.tech || '';
+    document.getElementById('web-order').value = w.order || 1;
+    document.getElementById('web-screenshot').value = w.screenshot || '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Update Website Project →';
+    document.getElementById('webForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioWebsiteNow = async function() {
+    var id = document.getElementById('web-id').value;
+    var name = document.getElementById('web-name').value.trim();
+    var url = document.getElementById('web-url').value.trim();
+    var niche = document.getElementById('web-niche').value.trim();
+    var speed = document.getElementById('web-speed').value.trim() || '98/100';
+    var tech = document.getElementById('web-tech').value.trim();
+    var order = parseInt(document.getElementById('web-order').value) || 1;
+    var screenshot = document.getElementById('web-screenshot').value.trim();
+
+    if (!name || !url) {
+      alert('Please provide Website Name and URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveWeb');
+    btn.disabled = true;
+    btn.innerText = 'Saving Website...';
+
+    try {
+      var payload = {
+        name: name,
+        url: url,
+        niche: niche || 'Web Development',
+        speed: speed,
+        tech: tech || 'HTML5, CSS3, JavaScript',
+        order: order,
+        screenshot: screenshot,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_websites', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_websites'), payload);
+      }
+
+      window.resetWebsiteForm();
+      alert('✅ Website project saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.error('Error saving website:', err);
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Website Project →';
+    }
+  };
+
+  window.deleteCmsWebsite = async function(id) {
+    if (!confirm('Are you sure you want to remove this website from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_websites', id));
+      alert('✅ Website project deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting website:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  // Seed default starter items if empty
+  window.seedDefaultPortfolioVideos = async function() {
+    if (allCmsVideos.length > 0 && !confirm('You already have portfolio videos. Add default starter videos anyway?')) return;
+    
+    var starters = [
+      { type: 'vertical', title: 'Cinematic Reel', niche: 'Creative', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4', order: 1 },
+      { type: 'vertical', title: 'Motion Graphics', niche: 'Creative / Motion', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4', order: 2 },
+      { type: 'vertical', title: 'Ai Video Commercial', niche: 'Ai / Commercial', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4', order: 3 },
+      { type: 'vertical', title: 'Animated Reel', niche: 'Motion Graphics', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4', order: 4 },
+      { type: 'vertical', title: 'Real Estate & Vastu', niche: 'Real Estate', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4', order: 5 },
+      { type: 'vertical', title: 'Medical & Healthcare Reel', niche: 'Medical / Health', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4', order: 6 },
+      { type: 'vertical', title: 'Music & Brand Video Reel', niche: 'Music Video', url: 'https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4', order: 7 },
+      { type: 'horizontal', title: 'Deep-Dive Explainer', niche: 'Explainer / EdTech', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4', order: 1 },
+      { type: 'horizontal', title: 'Documentary Style Story', niche: 'Documentary', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4', order: 2 },
+      { type: 'horizontal', title: 'Corporate & Finance Breakdown', niche: 'Corporate / Finance', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4', order: 3 },
+      { type: 'horizontal', title: 'Lifestyle Chronological Montage', niche: 'Lifestyle', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4', order: 4 },
+      { type: 'horizontal', title: '2D Motion Video', niche: '2D Animation', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4', order: 5 },
+      { type: 'horizontal', title: 'Educational & Informational', niche: 'Educational', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4', order: 6 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_videos'), {
+          title: s.title,
+          type: s.type,
+          niche: s.niche,
+          videoUrl: s.url,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter videos populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding videos: ' + err.message);
+    }
+  };
+
+  window.seedDefaultPortfolioWebsites = async function() {
+    if (allCmsWebsites.length > 0 && !confirm('You already have website projects. Add default starter websites anyway?')) return;
+    
+    var starters = [
+      { name: 'D Plus Cure', url: 'https://dpluscure.com', niche: 'Healthcare E-Commerce', tech: 'WordPress, WooCommerce, PHP, Elementor', speed: '92/100', order: 1 },
+      { name: 'News Flash Daily', url: 'https://newsflashdaily.in', niche: 'News & Media Portal', tech: 'WordPress, SEO Suite, AMP, Custom Theme', speed: '96/100', order: 2 },
+      { name: 'Editzaar Agency', url: 'https://editzaar.in', niche: 'Creative Agency Portfolio', tech: 'HTML5, CSS3, JavaScript, Firebase Cloud', speed: '98/100', order: 3 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_websites'), {
+          name: s.name,
+          url: s.url,
+          niche: s.niche,
+          tech: s.tech,
+          speed: s.speed,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter websites populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding websites: ' + err.message);
+    }
+  };
+
+</script>
 </head>
 <body>
 
@@ -746,15 +1504,211 @@
         <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Subject</th><th>Client</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ticketsTbody"></tbody></table></div></div>
       </section>
 
-      <!-- CMS -->
+            <!-- WEBSITE CMS & PORTFOLIO MANAGER -->
       <section id="sec-cms" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Website <em>CMS Manager</em></div></div>
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-          <button class="tab-btn active" onclick="switchCmsTab('testimonials')">Testimonials</button>
-          <button class="tab-btn" onclick="switchCmsTab('faqs')">FAQs</button>
-          <button class="tab-btn" onclick="switchCmsTab('contact')">Contact Info</button>
+        <div class="dash-topbar">
+          <div class="dash-page-title">Website <em>CMS &amp; Showcase Manager</em></div>
         </div>
-        <div class="dash-card" id="cmsContent">CMS Content Settings goes here.</div>
+
+        <div class="dash-card" style="margin-bottom:20px;background:linear-gradient(135deg,rgba(255,184,0,0.06) 0%,rgba(0,0,0,0.4) 100%);">
+          <div style="font-size:0.9rem;color:var(--t2);">
+            🎬 <strong>No-Code Portfolio Manager:</strong> Add, edit, or remove videos and website projects directly from here. Any changes immediately update in real-time on your live <strong>Work Page (editzaar.in/work)</strong> without touching code!
+          </div>
+        </div>
+
+        <!-- CMS Sub Tabs -->
+        <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+          <button class="tab-btn active" id="tab-cms-video" onclick="switchCmsTab('portfolio_videos')">🎬 Video Editing Showcase</button>
+          <button class="tab-btn" id="tab-cms-web" onclick="switchCmsTab('portfolio_web')">💻 Website Showcase</button>
+          <button class="tab-btn" id="tab-cms-testi" onclick="switchCmsTab('testimonials')">⭐ Testimonials</button>
+          <button class="tab-btn" id="tab-cms-faq" onclick="switchCmsTab('faqs')">❓ FAQs</button>
+          <button class="tab-btn" id="tab-cms-contact" onclick="switchCmsTab('contact')">📞 Contact Info</button>
+        </div>
+
+        <!-- CMS Content Container -->
+        <div id="cmsContent">
+          <!-- VIDEO CMS TAB -->
+          <div id="cms-tab-portfolio_videos">
+            <div class="dash-card" style="margin-bottom:24px;">
+              <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div class="dash-card-title">＋ Add / Update <em>Portfolio Video</em></div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn-outline btn-sm" onclick="window.seedDefaultPortfolioVideos()">↺ Import Starter Videos</button>
+                  <button class="btn-gold btn-sm" onclick="window.resetVideoForm()">＋ Add New Video</button>
+                </div>
+              </div>
+              <div class="dash-form" id="videoForm">
+                <input type="hidden" id="vid-id" value=""/>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Video Orientation / Format *</label>
+                    <select id="vid-type">
+                      <option value="vertical">📱 Vertical Reel (9:16) - Instagram Reels / YouTube Shorts</option>
+                      <option value="horizontal">🖥️ Horizontal Video (16:9) - YouTube Long-Form / Commercial</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Video Title *</label>
+                    <input id="vid-title" type="text" placeholder="e.g. Cinematic Reel / Luxury Real Estate Tour"/>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Niche / Industry Tag *</label>
+                    <input id="vid-niche" type="text" placeholder="e.g. Creative / Real Estate / Medical / Podcast / Finance"/>
+                  </div>
+                  <div class="field">
+                    <label>Display Sort Order (Number)</label>
+                    <input id="vid-order" type="number" placeholder="1, 2, 3..." value="1"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Video Stream URL * (Direct MP4, Cloudinary, or R2 link)</label>
+                  <input id="vid-url" type="text" placeholder="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/.../video.mp4"/>
+                </div>
+                <div class="field">
+                  <label>Optional Poster Image URL</label>
+                  <input id="vid-poster" type="text" placeholder="https://.../poster.jpg (Optional)"/>
+                </div>
+                <button class="btn-gold" style="margin-top:8px;width:100%;justify-content:center;height:42px;" id="btnSaveVideo" onclick="window.savePortfolioVideoNow()">💾 Save Video to Live Portfolio →</button>
+              </div>
+            </div>
+
+            <!-- Video List Filter -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+              <div style="display:flex;gap:8px;">
+                <button class="btn-sm btn-gold" id="vfilter-all" onclick="filterCmsVideos('all')">All Videos (<span id="count-all-vids">0</span>)</button>
+                <button class="btn-sm btn-outline" id="vfilter-vert" onclick="filterCmsVideos('vertical')">📱 Vertical (9:16)</button>
+                <button class="btn-sm btn-outline" id="vfilter-horiz" onclick="filterCmsVideos('horizontal')">🖥️ Horizontal (16:9)</button>
+              </div>
+            </div>
+
+            <!-- Videos Table / List -->
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Live <em>Portfolio Videos</em></div></div>
+              <div class="table-scroll-wrap">
+                <table class="dash-table">
+                  <thead>
+                    <tr>
+                      <th>Preview</th>
+                      <th>Title</th>
+                      <th>Format</th>
+                      <th>Niche Tag</th>
+                      <th>Order</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cmsVideosTbody">
+                    <tr><td colspan="6" style="text-align:center;color:var(--t2);padding:20px;">Loading portfolio videos from Firestore...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- WEBSITE CMS TAB -->
+          <div id="cms-tab-portfolio_web" style="display:none;">
+            <div class="dash-card" style="margin-bottom:24px;">
+              <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div class="dash-card-title">＋ Add / Update <em>Website Project</em></div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn-outline btn-sm" onclick="window.seedDefaultPortfolioWebsites()">↺ Import Starter Websites</button>
+                  <button class="btn-gold btn-sm" onclick="window.resetWebsiteForm()">＋ Add New Website</button>
+                </div>
+              </div>
+              <div class="dash-form" id="webForm">
+                <input type="hidden" id="web-id" value=""/>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Website / Client Name *</label>
+                    <input id="web-name" type="text" placeholder="e.g. D Plus Cure / News Flash Daily"/>
+                  </div>
+                  <div class="field">
+                    <label>Live Website URL *</label>
+                    <input id="web-url" type="text" placeholder="https://dpluscure.com"/>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Industry / Niche Category *</label>
+                    <input id="web-niche" type="text" placeholder="e.g. Healthcare E-Commerce / Media News Portal"/>
+                  </div>
+                  <div class="field">
+                    <label>Speed / Performance Score</label>
+                    <input id="web-speed" type="text" placeholder="e.g. 98/100" value="98/100"/>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Tech Stack Badges (Comma-separated) *</label>
+                    <input id="web-tech" type="text" placeholder="WordPress, WooCommerce, PHP, Elementor"/>
+                  </div>
+                  <div class="field">
+                    <label>Display Sort Order (Number)</label>
+                    <input id="web-order" type="number" placeholder="1, 2, 3..." value="1"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Screenshot / Mockup Image URL (Optional)</label>
+                  <input id="web-screenshot" type="text" placeholder="https://.../screenshot.jpg (Optional - if blank, live iframe preview is used)"/>
+                </div>
+                <button class="btn-gold" style="margin-top:8px;width:100%;justify-content:center;height:42px;" id="btnSaveWeb" onclick="window.savePortfolioWebsiteNow()">💾 Save Website Project →</button>
+              </div>
+            </div>
+
+            <!-- Websites Table -->
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Live <em>Website Projects</em></div></div>
+              <div class="table-scroll-wrap">
+                <table class="dash-table">
+                  <thead>
+                    <tr>
+                      <th>Project Name</th>
+                      <th>Live Link</th>
+                      <th>Niche</th>
+                      <th>Tech Stack</th>
+                      <th>Speed</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cmsWebsitesTbody">
+                    <tr><td colspan="6" style="text-align:center;color:var(--t2);padding:20px;">Loading website projects from Firestore...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TESTIMONIALS TAB -->
+          <div id="cms-tab-testimonials" style="display:none;">
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Client <em>Testimonials Manager</em></div></div>
+              <p style="font-size:0.88rem;color:var(--t2);margin-bottom:14px;">Manage verified client ratings and testimonials shown across the homepage.</p>
+              <div id="testimonialsList">Manage reviews in the ⭐ Reviews &amp; Feedback section.</div>
+            </div>
+          </div>
+
+          <!-- FAQS TAB -->
+          <div id="cms-tab-faqs" style="display:none;">
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Frequently Asked <em>Questions (FAQs)</em></div></div>
+              <p style="font-size:0.88rem;color:var(--t2);margin-bottom:14px;">Manage standard client questions shown in the FAQ accordion.</p>
+              <div id="faqsList">Configured with official agency FAQ schema.</div>
+            </div>
+          </div>
+
+          <!-- CONTACT INFO TAB -->
+          <div id="cms-tab-contact" style="display:none;">
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Official Contact <em>&amp; Support Info</em></div></div>
+              <div class="dash-form">
+                <div class="field"><label>Official WhatsApp Number</label><input type="text" value="+91 9476766340" readonly/></div>
+                <div class="field"><label>Official Booking Email</label><input type="text" value="editzaarbooking@gmail.com" readonly/></div>
+                <div class="field"><label>Official UPI ID</label><input type="text" value="nbikram704@okhdfcbank" readonly/></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ROLES & PERMISSIONS -->
@@ -1095,6 +2049,7 @@
       currentUser = user;
       document.getElementById('adminEmail').textContent = user.email;
       initRealtimeListeners();
+    initPortfolioCmsListeners();
 
     // Realtime Firestore Coupons Synchronization
     onSnapshot(collection(db, 'coupons'), (snap) => {
@@ -2099,7 +3054,386 @@
       }
       _prevClientCount = clients.length;
     };
-  </script>
+  
+  // ============================================================
+  // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
+  // ============================================================
+  var allCmsVideos = [];
+  var allCmsWebsites = [];
+  var currentVidFilter = 'all';
+
+  window.switchCmsTab = function(tabName) {
+    var tabs = ['portfolio_videos', 'portfolio_web', 'testimonials', 'faqs', 'contact'];
+    tabs.forEach(function(t) {
+      var btn = document.getElementById('tab-cms-' + (t === 'portfolio_videos' ? 'video' : (t === 'portfolio_web' ? 'web' : (t === 'testimonials' ? 'testi' : (t === 'faqs' ? 'faq' : 'contact')))));
+      var container = document.getElementById('cms-tab-' + t);
+      if (btn) {
+        if (t === tabName) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+      if (container) {
+        if (t === tabName) container.style.display = 'block';
+        else container.style.display = 'none';
+      }
+    });
+  };
+
+  // Real-time listener for Portfolio Videos
+  function initPortfolioCmsListeners() {
+    try {
+      onSnapshot(collection(db, 'portfolio_videos'), function(snapshot) {
+        allCmsVideos = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsVideos.push(data);
+        });
+        allCmsVideos.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsVideos();
+      }, function(err) {
+        console.error('Error listening to portfolio_videos:', err);
+      });
+
+      onSnapshot(collection(db, 'portfolio_websites'), function(snapshot) {
+        allCmsWebsites = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsWebsites.push(data);
+        });
+        allCmsWebsites.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsWebsites();
+      }, function(err) {
+        console.error('Error listening to portfolio_websites:', err);
+      });
+    } catch(e) {
+      console.error('initPortfolioCmsListeners error:', e);
+    }
+  }
+
+  function renderCmsVideos() {
+    var tbody = document.getElementById('cmsVideosTbody');
+    if (!tbody) return;
+
+    var countEl = document.getElementById('count-all-vids');
+    if (countEl) countEl.innerText = allCmsVideos.length;
+
+    var filtered = allCmsVideos.filter(function(v) {
+      if (currentVidFilter === 'all') return true;
+      return v.type === currentVidFilter;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No videos added yet. Click <strong>"＋ Add New Video"</strong> or <strong>"↺ Import Starter Videos"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function(v) {
+      var isVert = v.type === 'vertical';
+      var badge = isVert ? '<span style="background:rgba(255,184,0,0.15);color:var(--gold);padding:4px 8px;border-radius:12px;font-size:0.76rem;">📱 9:16 Vertical</span>' : '<span style="background:rgba(0,200,255,0.15);color:#00c8ff;padding:4px 8px;border-radius:12px;font-size:0.76rem;">🖥️ 16:9 Horizontal</span>';
+      
+      html += `<tr>
+        <td style="width:80px;">
+          <div style="width:60px;height:${isVert ? '80px' : '45px'};background:#000;border-radius:6px;overflow:hidden;position:relative;">
+            <video src="${v.videoUrl}" style="width:100%;height:100%;object-fit:cover;" muted></video>
+          </div>
+        </td>
+        <td><strong>${v.title || 'Untitled'}</strong></td>
+        <td>${badge}</td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${v.niche || 'General'}</span></td>
+        <td>${v.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsVideo('${v.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsVideo('${v.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderCmsWebsites() {
+    var tbody = document.getElementById('cmsWebsitesTbody');
+    if (!tbody) return;
+
+    if (allCmsWebsites.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No website projects added yet. Click <strong>"＋ Add New Website"</strong> or <strong>"↺ Import Starter Websites"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsWebsites.forEach(function(w) {
+      html += `<tr>
+        <td><strong>${w.name || 'Untitled'}</strong></td>
+        <td><a href="${w.url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">${w.url || '-'} ↗</a></td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${w.niche || 'Web'}</span></td>
+        <td style="font-size:0.8rem;color:var(--t2);">${w.tech || 'Custom'}</td>
+        <td><span style="color:#27c93f;font-weight:600;">⚡ ${w.speed || '98/100'}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsWebsite('${w.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsWebsite('${w.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  window.filterCmsVideos = function(type) {
+    currentVidFilter = type;
+    var bAll = document.getElementById('vfilter-all');
+    var bVert = document.getElementById('vfilter-vert');
+    var bHoriz = document.getElementById('vfilter-horiz');
+    if (bAll) bAll.className = type === 'all' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bVert) bVert.className = type === 'vertical' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bHoriz) bHoriz.className = type === 'horizontal' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    renderCmsVideos();
+  };
+
+  window.resetVideoForm = function() {
+    document.getElementById('vid-id').value = '';
+    document.getElementById('vid-type').value = 'vertical';
+    document.getElementById('vid-title').value = '';
+    document.getElementById('vid-niche').value = '';
+    document.getElementById('vid-order').value = (allCmsVideos.length + 1);
+    document.getElementById('vid-url').value = '';
+    document.getElementById('vid-poster').value = '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Save Video to Live Portfolio →';
+  };
+
+  window.editCmsVideo = function(id) {
+    var v = allCmsVideos.find(function(item) { return item.id === id; });
+    if (!v) return;
+    document.getElementById('vid-id').value = v.id;
+    document.getElementById('vid-type').value = v.type || 'vertical';
+    document.getElementById('vid-title').value = v.title || '';
+    document.getElementById('vid-niche').value = v.niche || '';
+    document.getElementById('vid-order').value = v.order || 1;
+    document.getElementById('vid-url').value = v.videoUrl || '';
+    document.getElementById('vid-poster').value = v.posterUrl || '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Update Video Changes →';
+    document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioVideoNow = async function() {
+    var id = document.getElementById('vid-id').value;
+    var type = document.getElementById('vid-type').value;
+    var title = document.getElementById('vid-title').value.trim();
+    var niche = document.getElementById('vid-niche').value.trim();
+    var order = parseInt(document.getElementById('vid-order').value) || 1;
+    var videoUrl = document.getElementById('vid-url').value.trim();
+    var posterUrl = document.getElementById('vid-poster').value.trim();
+
+    if (!title || !videoUrl) {
+      alert('Please provide both Video Title and Video Stream URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveVideo');
+    btn.disabled = true;
+    btn.innerText = 'Saving to Live Portfolio...';
+
+    try {
+      var payload = {
+        title: title,
+        type: type,
+        niche: niche || 'Creative',
+        order: order,
+        videoUrl: videoUrl,
+        posterUrl: posterUrl,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_videos', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_videos'), payload);
+      }
+
+      window.resetVideoForm();
+      alert('✅ Video saved successfully! It is now LIVE on editzaar.in/work in real-time.');
+    } catch(err) {
+      console.error('Error saving portfolio video:', err);
+      alert('Error saving video: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Video to Live Portfolio →';
+    }
+  };
+
+  window.deleteCmsVideo = async function(id) {
+    if (!confirm('Are you sure you want to remove this video from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_videos', id));
+      alert('✅ Video deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting video:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  window.resetWebsiteForm = function() {
+    document.getElementById('web-id').value = '';
+    document.getElementById('web-name').value = '';
+    document.getElementById('web-url').value = '';
+    document.getElementById('web-niche').value = '';
+    document.getElementById('web-speed').value = '98/100';
+    document.getElementById('web-tech').value = '';
+    document.getElementById('web-order').value = (allCmsWebsites.length + 1);
+    document.getElementById('web-screenshot').value = '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Save Website Project →';
+  };
+
+  window.editCmsWebsite = function(id) {
+    var w = allCmsWebsites.find(function(item) { return item.id === id; });
+    if (!w) return;
+    document.getElementById('web-id').value = w.id;
+    document.getElementById('web-name').value = w.name || '';
+    document.getElementById('web-url').value = w.url || '';
+    document.getElementById('web-niche').value = w.niche || '';
+    document.getElementById('web-speed').value = w.speed || '98/100';
+    document.getElementById('web-tech').value = w.tech || '';
+    document.getElementById('web-order').value = w.order || 1;
+    document.getElementById('web-screenshot').value = w.screenshot || '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Update Website Project →';
+    document.getElementById('webForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioWebsiteNow = async function() {
+    var id = document.getElementById('web-id').value;
+    var name = document.getElementById('web-name').value.trim();
+    var url = document.getElementById('web-url').value.trim();
+    var niche = document.getElementById('web-niche').value.trim();
+    var speed = document.getElementById('web-speed').value.trim() || '98/100';
+    var tech = document.getElementById('web-tech').value.trim();
+    var order = parseInt(document.getElementById('web-order').value) || 1;
+    var screenshot = document.getElementById('web-screenshot').value.trim();
+
+    if (!name || !url) {
+      alert('Please provide Website Name and URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveWeb');
+    btn.disabled = true;
+    btn.innerText = 'Saving Website...';
+
+    try {
+      var payload = {
+        name: name,
+        url: url,
+        niche: niche || 'Web Development',
+        speed: speed,
+        tech: tech || 'HTML5, CSS3, JavaScript',
+        order: order,
+        screenshot: screenshot,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_websites', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_websites'), payload);
+      }
+
+      window.resetWebsiteForm();
+      alert('✅ Website project saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.error('Error saving website:', err);
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Website Project →';
+    }
+  };
+
+  window.deleteCmsWebsite = async function(id) {
+    if (!confirm('Are you sure you want to remove this website from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_websites', id));
+      alert('✅ Website project deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting website:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  // Seed default starter items if empty
+  window.seedDefaultPortfolioVideos = async function() {
+    if (allCmsVideos.length > 0 && !confirm('You already have portfolio videos. Add default starter videos anyway?')) return;
+    
+    var starters = [
+      { type: 'vertical', title: 'Cinematic Reel', niche: 'Creative', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4', order: 1 },
+      { type: 'vertical', title: 'Motion Graphics', niche: 'Creative / Motion', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4', order: 2 },
+      { type: 'vertical', title: 'Ai Video Commercial', niche: 'Ai / Commercial', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4', order: 3 },
+      { type: 'vertical', title: 'Animated Reel', niche: 'Motion Graphics', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4', order: 4 },
+      { type: 'vertical', title: 'Real Estate & Vastu', niche: 'Real Estate', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4', order: 5 },
+      { type: 'vertical', title: 'Medical & Healthcare Reel', niche: 'Medical / Health', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4', order: 6 },
+      { type: 'vertical', title: 'Music & Brand Video Reel', niche: 'Music Video', url: 'https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4', order: 7 },
+      { type: 'horizontal', title: 'Deep-Dive Explainer', niche: 'Explainer / EdTech', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4', order: 1 },
+      { type: 'horizontal', title: 'Documentary Style Story', niche: 'Documentary', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4', order: 2 },
+      { type: 'horizontal', title: 'Corporate & Finance Breakdown', niche: 'Corporate / Finance', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4', order: 3 },
+      { type: 'horizontal', title: 'Lifestyle Chronological Montage', niche: 'Lifestyle', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4', order: 4 },
+      { type: 'horizontal', title: '2D Motion Video', niche: '2D Animation', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4', order: 5 },
+      { type: 'horizontal', title: 'Educational & Informational', niche: 'Educational', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4', order: 6 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_videos'), {
+          title: s.title,
+          type: s.type,
+          niche: s.niche,
+          videoUrl: s.url,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter videos populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding videos: ' + err.message);
+    }
+  };
+
+  window.seedDefaultPortfolioWebsites = async function() {
+    if (allCmsWebsites.length > 0 && !confirm('You already have website projects. Add default starter websites anyway?')) return;
+    
+    var starters = [
+      { name: 'D Plus Cure', url: 'https://dpluscure.com', niche: 'Healthcare E-Commerce', tech: 'WordPress, WooCommerce, PHP, Elementor', speed: '92/100', order: 1 },
+      { name: 'News Flash Daily', url: 'https://newsflashdaily.in', niche: 'News & Media Portal', tech: 'WordPress, SEO Suite, AMP, Custom Theme', speed: '96/100', order: 2 },
+      { name: 'Editzaar Agency', url: 'https://editzaar.in', niche: 'Creative Agency Portfolio', tech: 'HTML5, CSS3, JavaScript, Firebase Cloud', speed: '98/100', order: 3 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_websites'), {
+          name: s.name,
+          url: s.url,
+          niche: s.niche,
+          tech: s.tech,
+          speed: s.speed,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter websites populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding websites: ' + err.message);
+    }
+  };
+
+</script>
 
   <!-- BOTTOM NAVIGATION (Mobile) -->
   <nav class="bottom-nav" id="adminBottomNav">
@@ -2133,7 +3467,386 @@
         if (m) m.style.display = 'flex';
       }
     };
-  </script>
+  
+  // ============================================================
+  // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
+  // ============================================================
+  var allCmsVideos = [];
+  var allCmsWebsites = [];
+  var currentVidFilter = 'all';
+
+  window.switchCmsTab = function(tabName) {
+    var tabs = ['portfolio_videos', 'portfolio_web', 'testimonials', 'faqs', 'contact'];
+    tabs.forEach(function(t) {
+      var btn = document.getElementById('tab-cms-' + (t === 'portfolio_videos' ? 'video' : (t === 'portfolio_web' ? 'web' : (t === 'testimonials' ? 'testi' : (t === 'faqs' ? 'faq' : 'contact')))));
+      var container = document.getElementById('cms-tab-' + t);
+      if (btn) {
+        if (t === tabName) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+      if (container) {
+        if (t === tabName) container.style.display = 'block';
+        else container.style.display = 'none';
+      }
+    });
+  };
+
+  // Real-time listener for Portfolio Videos
+  function initPortfolioCmsListeners() {
+    try {
+      onSnapshot(collection(db, 'portfolio_videos'), function(snapshot) {
+        allCmsVideos = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsVideos.push(data);
+        });
+        allCmsVideos.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsVideos();
+      }, function(err) {
+        console.error('Error listening to portfolio_videos:', err);
+      });
+
+      onSnapshot(collection(db, 'portfolio_websites'), function(snapshot) {
+        allCmsWebsites = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsWebsites.push(data);
+        });
+        allCmsWebsites.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsWebsites();
+      }, function(err) {
+        console.error('Error listening to portfolio_websites:', err);
+      });
+    } catch(e) {
+      console.error('initPortfolioCmsListeners error:', e);
+    }
+  }
+
+  function renderCmsVideos() {
+    var tbody = document.getElementById('cmsVideosTbody');
+    if (!tbody) return;
+
+    var countEl = document.getElementById('count-all-vids');
+    if (countEl) countEl.innerText = allCmsVideos.length;
+
+    var filtered = allCmsVideos.filter(function(v) {
+      if (currentVidFilter === 'all') return true;
+      return v.type === currentVidFilter;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No videos added yet. Click <strong>"＋ Add New Video"</strong> or <strong>"↺ Import Starter Videos"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function(v) {
+      var isVert = v.type === 'vertical';
+      var badge = isVert ? '<span style="background:rgba(255,184,0,0.15);color:var(--gold);padding:4px 8px;border-radius:12px;font-size:0.76rem;">📱 9:16 Vertical</span>' : '<span style="background:rgba(0,200,255,0.15);color:#00c8ff;padding:4px 8px;border-radius:12px;font-size:0.76rem;">🖥️ 16:9 Horizontal</span>';
+      
+      html += `<tr>
+        <td style="width:80px;">
+          <div style="width:60px;height:${isVert ? '80px' : '45px'};background:#000;border-radius:6px;overflow:hidden;position:relative;">
+            <video src="${v.videoUrl}" style="width:100%;height:100%;object-fit:cover;" muted></video>
+          </div>
+        </td>
+        <td><strong>${v.title || 'Untitled'}</strong></td>
+        <td>${badge}</td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${v.niche || 'General'}</span></td>
+        <td>${v.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsVideo('${v.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsVideo('${v.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderCmsWebsites() {
+    var tbody = document.getElementById('cmsWebsitesTbody');
+    if (!tbody) return;
+
+    if (allCmsWebsites.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No website projects added yet. Click <strong>"＋ Add New Website"</strong> or <strong>"↺ Import Starter Websites"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsWebsites.forEach(function(w) {
+      html += `<tr>
+        <td><strong>${w.name || 'Untitled'}</strong></td>
+        <td><a href="${w.url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">${w.url || '-'} ↗</a></td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${w.niche || 'Web'}</span></td>
+        <td style="font-size:0.8rem;color:var(--t2);">${w.tech || 'Custom'}</td>
+        <td><span style="color:#27c93f;font-weight:600;">⚡ ${w.speed || '98/100'}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsWebsite('${w.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsWebsite('${w.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  window.filterCmsVideos = function(type) {
+    currentVidFilter = type;
+    var bAll = document.getElementById('vfilter-all');
+    var bVert = document.getElementById('vfilter-vert');
+    var bHoriz = document.getElementById('vfilter-horiz');
+    if (bAll) bAll.className = type === 'all' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bVert) bVert.className = type === 'vertical' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bHoriz) bHoriz.className = type === 'horizontal' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    renderCmsVideos();
+  };
+
+  window.resetVideoForm = function() {
+    document.getElementById('vid-id').value = '';
+    document.getElementById('vid-type').value = 'vertical';
+    document.getElementById('vid-title').value = '';
+    document.getElementById('vid-niche').value = '';
+    document.getElementById('vid-order').value = (allCmsVideos.length + 1);
+    document.getElementById('vid-url').value = '';
+    document.getElementById('vid-poster').value = '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Save Video to Live Portfolio →';
+  };
+
+  window.editCmsVideo = function(id) {
+    var v = allCmsVideos.find(function(item) { return item.id === id; });
+    if (!v) return;
+    document.getElementById('vid-id').value = v.id;
+    document.getElementById('vid-type').value = v.type || 'vertical';
+    document.getElementById('vid-title').value = v.title || '';
+    document.getElementById('vid-niche').value = v.niche || '';
+    document.getElementById('vid-order').value = v.order || 1;
+    document.getElementById('vid-url').value = v.videoUrl || '';
+    document.getElementById('vid-poster').value = v.posterUrl || '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Update Video Changes →';
+    document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioVideoNow = async function() {
+    var id = document.getElementById('vid-id').value;
+    var type = document.getElementById('vid-type').value;
+    var title = document.getElementById('vid-title').value.trim();
+    var niche = document.getElementById('vid-niche').value.trim();
+    var order = parseInt(document.getElementById('vid-order').value) || 1;
+    var videoUrl = document.getElementById('vid-url').value.trim();
+    var posterUrl = document.getElementById('vid-poster').value.trim();
+
+    if (!title || !videoUrl) {
+      alert('Please provide both Video Title and Video Stream URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveVideo');
+    btn.disabled = true;
+    btn.innerText = 'Saving to Live Portfolio...';
+
+    try {
+      var payload = {
+        title: title,
+        type: type,
+        niche: niche || 'Creative',
+        order: order,
+        videoUrl: videoUrl,
+        posterUrl: posterUrl,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_videos', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_videos'), payload);
+      }
+
+      window.resetVideoForm();
+      alert('✅ Video saved successfully! It is now LIVE on editzaar.in/work in real-time.');
+    } catch(err) {
+      console.error('Error saving portfolio video:', err);
+      alert('Error saving video: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Video to Live Portfolio →';
+    }
+  };
+
+  window.deleteCmsVideo = async function(id) {
+    if (!confirm('Are you sure you want to remove this video from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_videos', id));
+      alert('✅ Video deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting video:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  window.resetWebsiteForm = function() {
+    document.getElementById('web-id').value = '';
+    document.getElementById('web-name').value = '';
+    document.getElementById('web-url').value = '';
+    document.getElementById('web-niche').value = '';
+    document.getElementById('web-speed').value = '98/100';
+    document.getElementById('web-tech').value = '';
+    document.getElementById('web-order').value = (allCmsWebsites.length + 1);
+    document.getElementById('web-screenshot').value = '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Save Website Project →';
+  };
+
+  window.editCmsWebsite = function(id) {
+    var w = allCmsWebsites.find(function(item) { return item.id === id; });
+    if (!w) return;
+    document.getElementById('web-id').value = w.id;
+    document.getElementById('web-name').value = w.name || '';
+    document.getElementById('web-url').value = w.url || '';
+    document.getElementById('web-niche').value = w.niche || '';
+    document.getElementById('web-speed').value = w.speed || '98/100';
+    document.getElementById('web-tech').value = w.tech || '';
+    document.getElementById('web-order').value = w.order || 1;
+    document.getElementById('web-screenshot').value = w.screenshot || '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Update Website Project →';
+    document.getElementById('webForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioWebsiteNow = async function() {
+    var id = document.getElementById('web-id').value;
+    var name = document.getElementById('web-name').value.trim();
+    var url = document.getElementById('web-url').value.trim();
+    var niche = document.getElementById('web-niche').value.trim();
+    var speed = document.getElementById('web-speed').value.trim() || '98/100';
+    var tech = document.getElementById('web-tech').value.trim();
+    var order = parseInt(document.getElementById('web-order').value) || 1;
+    var screenshot = document.getElementById('web-screenshot').value.trim();
+
+    if (!name || !url) {
+      alert('Please provide Website Name and URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveWeb');
+    btn.disabled = true;
+    btn.innerText = 'Saving Website...';
+
+    try {
+      var payload = {
+        name: name,
+        url: url,
+        niche: niche || 'Web Development',
+        speed: speed,
+        tech: tech || 'HTML5, CSS3, JavaScript',
+        order: order,
+        screenshot: screenshot,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_websites', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_websites'), payload);
+      }
+
+      window.resetWebsiteForm();
+      alert('✅ Website project saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.error('Error saving website:', err);
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Website Project →';
+    }
+  };
+
+  window.deleteCmsWebsite = async function(id) {
+    if (!confirm('Are you sure you want to remove this website from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_websites', id));
+      alert('✅ Website project deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting website:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  // Seed default starter items if empty
+  window.seedDefaultPortfolioVideos = async function() {
+    if (allCmsVideos.length > 0 && !confirm('You already have portfolio videos. Add default starter videos anyway?')) return;
+    
+    var starters = [
+      { type: 'vertical', title: 'Cinematic Reel', niche: 'Creative', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4', order: 1 },
+      { type: 'vertical', title: 'Motion Graphics', niche: 'Creative / Motion', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4', order: 2 },
+      { type: 'vertical', title: 'Ai Video Commercial', niche: 'Ai / Commercial', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4', order: 3 },
+      { type: 'vertical', title: 'Animated Reel', niche: 'Motion Graphics', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4', order: 4 },
+      { type: 'vertical', title: 'Real Estate & Vastu', niche: 'Real Estate', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4', order: 5 },
+      { type: 'vertical', title: 'Medical & Healthcare Reel', niche: 'Medical / Health', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4', order: 6 },
+      { type: 'vertical', title: 'Music & Brand Video Reel', niche: 'Music Video', url: 'https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4', order: 7 },
+      { type: 'horizontal', title: 'Deep-Dive Explainer', niche: 'Explainer / EdTech', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4', order: 1 },
+      { type: 'horizontal', title: 'Documentary Style Story', niche: 'Documentary', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4', order: 2 },
+      { type: 'horizontal', title: 'Corporate & Finance Breakdown', niche: 'Corporate / Finance', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4', order: 3 },
+      { type: 'horizontal', title: 'Lifestyle Chronological Montage', niche: 'Lifestyle', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4', order: 4 },
+      { type: 'horizontal', title: '2D Motion Video', niche: '2D Animation', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4', order: 5 },
+      { type: 'horizontal', title: 'Educational & Informational', niche: 'Educational', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4', order: 6 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_videos'), {
+          title: s.title,
+          type: s.type,
+          niche: s.niche,
+          videoUrl: s.url,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter videos populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding videos: ' + err.message);
+    }
+  };
+
+  window.seedDefaultPortfolioWebsites = async function() {
+    if (allCmsWebsites.length > 0 && !confirm('You already have website projects. Add default starter websites anyway?')) return;
+    
+    var starters = [
+      { name: 'D Plus Cure', url: 'https://dpluscure.com', niche: 'Healthcare E-Commerce', tech: 'WordPress, WooCommerce, PHP, Elementor', speed: '92/100', order: 1 },
+      { name: 'News Flash Daily', url: 'https://newsflashdaily.in', niche: 'News & Media Portal', tech: 'WordPress, SEO Suite, AMP, Custom Theme', speed: '96/100', order: 2 },
+      { name: 'Editzaar Agency', url: 'https://editzaar.in', niche: 'Creative Agency Portfolio', tech: 'HTML5, CSS3, JavaScript, Firebase Cloud', speed: '98/100', order: 3 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_websites'), {
+          name: s.name,
+          url: s.url,
+          niche: s.niche,
+          tech: s.tech,
+          speed: s.speed,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter websites populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding websites: ' + err.message);
+    }
+  };
+
+</script>
   <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
     <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
       <div style="font-size:2rem;margin-bottom:12px">&#128241;</div>
@@ -2402,6 +4115,385 @@
       window.EditzaarCoupons.subscribe(() => window.renderAdminCouponsTable());
     }
     setTimeout(() => { window.renderAdminCouponsTable(); }, 100);
+
+
+  // ============================================================
+  // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
+  // ============================================================
+  var allCmsVideos = [];
+  var allCmsWebsites = [];
+  var currentVidFilter = 'all';
+
+  window.switchCmsTab = function(tabName) {
+    var tabs = ['portfolio_videos', 'portfolio_web', 'testimonials', 'faqs', 'contact'];
+    tabs.forEach(function(t) {
+      var btn = document.getElementById('tab-cms-' + (t === 'portfolio_videos' ? 'video' : (t === 'portfolio_web' ? 'web' : (t === 'testimonials' ? 'testi' : (t === 'faqs' ? 'faq' : 'contact')))));
+      var container = document.getElementById('cms-tab-' + t);
+      if (btn) {
+        if (t === tabName) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+      if (container) {
+        if (t === tabName) container.style.display = 'block';
+        else container.style.display = 'none';
+      }
+    });
+  };
+
+  // Real-time listener for Portfolio Videos
+  function initPortfolioCmsListeners() {
+    try {
+      onSnapshot(collection(db, 'portfolio_videos'), function(snapshot) {
+        allCmsVideos = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsVideos.push(data);
+        });
+        allCmsVideos.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsVideos();
+      }, function(err) {
+        console.error('Error listening to portfolio_videos:', err);
+      });
+
+      onSnapshot(collection(db, 'portfolio_websites'), function(snapshot) {
+        allCmsWebsites = [];
+        snapshot.forEach(function(docSnap) {
+          var data = docSnap.data();
+          data.id = docSnap.id;
+          allCmsWebsites.push(data);
+        });
+        allCmsWebsites.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        renderCmsWebsites();
+      }, function(err) {
+        console.error('Error listening to portfolio_websites:', err);
+      });
+    } catch(e) {
+      console.error('initPortfolioCmsListeners error:', e);
+    }
+  }
+
+  function renderCmsVideos() {
+    var tbody = document.getElementById('cmsVideosTbody');
+    if (!tbody) return;
+
+    var countEl = document.getElementById('count-all-vids');
+    if (countEl) countEl.innerText = allCmsVideos.length;
+
+    var filtered = allCmsVideos.filter(function(v) {
+      if (currentVidFilter === 'all') return true;
+      return v.type === currentVidFilter;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No videos added yet. Click <strong>"＋ Add New Video"</strong> or <strong>"↺ Import Starter Videos"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(function(v) {
+      var isVert = v.type === 'vertical';
+      var badge = isVert ? '<span style="background:rgba(255,184,0,0.15);color:var(--gold);padding:4px 8px;border-radius:12px;font-size:0.76rem;">📱 9:16 Vertical</span>' : '<span style="background:rgba(0,200,255,0.15);color:#00c8ff;padding:4px 8px;border-radius:12px;font-size:0.76rem;">🖥️ 16:9 Horizontal</span>';
+      
+      html += `<tr>
+        <td style="width:80px;">
+          <div style="width:60px;height:${isVert ? '80px' : '45px'};background:#000;border-radius:6px;overflow:hidden;position:relative;">
+            <video src="${v.videoUrl}" style="width:100%;height:100%;object-fit:cover;" muted></video>
+          </div>
+        </td>
+        <td><strong>${v.title || 'Untitled'}</strong></td>
+        <td>${badge}</td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${v.niche || 'General'}</span></td>
+        <td>${v.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsVideo('${v.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsVideo('${v.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderCmsWebsites() {
+    var tbody = document.getElementById('cmsWebsitesTbody');
+    if (!tbody) return;
+
+    if (allCmsWebsites.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No website projects added yet. Click <strong>"＋ Add New Website"</strong> or <strong>"↺ Import Starter Websites"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsWebsites.forEach(function(w) {
+      html += `<tr>
+        <td><strong>${w.name || 'Untitled'}</strong></td>
+        <td><a href="${w.url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">${w.url || '-'} ↗</a></td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${w.niche || 'Web'}</span></td>
+        <td style="font-size:0.8rem;color:var(--t2);">${w.tech || 'Custom'}</td>
+        <td><span style="color:#27c93f;font-weight:600;">⚡ ${w.speed || '98/100'}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsWebsite('${w.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsWebsite('${w.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  window.filterCmsVideos = function(type) {
+    currentVidFilter = type;
+    var bAll = document.getElementById('vfilter-all');
+    var bVert = document.getElementById('vfilter-vert');
+    var bHoriz = document.getElementById('vfilter-horiz');
+    if (bAll) bAll.className = type === 'all' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bVert) bVert.className = type === 'vertical' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    if (bHoriz) bHoriz.className = type === 'horizontal' ? 'btn-sm btn-gold' : 'btn-sm btn-outline';
+    renderCmsVideos();
+  };
+
+  window.resetVideoForm = function() {
+    document.getElementById('vid-id').value = '';
+    document.getElementById('vid-type').value = 'vertical';
+    document.getElementById('vid-title').value = '';
+    document.getElementById('vid-niche').value = '';
+    document.getElementById('vid-order').value = (allCmsVideos.length + 1);
+    document.getElementById('vid-url').value = '';
+    document.getElementById('vid-poster').value = '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Save Video to Live Portfolio →';
+  };
+
+  window.editCmsVideo = function(id) {
+    var v = allCmsVideos.find(function(item) { return item.id === id; });
+    if (!v) return;
+    document.getElementById('vid-id').value = v.id;
+    document.getElementById('vid-type').value = v.type || 'vertical';
+    document.getElementById('vid-title').value = v.title || '';
+    document.getElementById('vid-niche').value = v.niche || '';
+    document.getElementById('vid-order').value = v.order || 1;
+    document.getElementById('vid-url').value = v.videoUrl || '';
+    document.getElementById('vid-poster').value = v.posterUrl || '';
+    document.getElementById('btnSaveVideo').innerText = '💾 Update Video Changes →';
+    document.getElementById('videoForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioVideoNow = async function() {
+    var id = document.getElementById('vid-id').value;
+    var type = document.getElementById('vid-type').value;
+    var title = document.getElementById('vid-title').value.trim();
+    var niche = document.getElementById('vid-niche').value.trim();
+    var order = parseInt(document.getElementById('vid-order').value) || 1;
+    var videoUrl = document.getElementById('vid-url').value.trim();
+    var posterUrl = document.getElementById('vid-poster').value.trim();
+
+    if (!title || !videoUrl) {
+      alert('Please provide both Video Title and Video Stream URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveVideo');
+    btn.disabled = true;
+    btn.innerText = 'Saving to Live Portfolio...';
+
+    try {
+      var payload = {
+        title: title,
+        type: type,
+        niche: niche || 'Creative',
+        order: order,
+        videoUrl: videoUrl,
+        posterUrl: posterUrl,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_videos', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_videos'), payload);
+      }
+
+      window.resetVideoForm();
+      alert('✅ Video saved successfully! It is now LIVE on editzaar.in/work in real-time.');
+    } catch(err) {
+      console.error('Error saving portfolio video:', err);
+      alert('Error saving video: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Video to Live Portfolio →';
+    }
+  };
+
+  window.deleteCmsVideo = async function(id) {
+    if (!confirm('Are you sure you want to remove this video from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_videos', id));
+      alert('✅ Video deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting video:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  window.resetWebsiteForm = function() {
+    document.getElementById('web-id').value = '';
+    document.getElementById('web-name').value = '';
+    document.getElementById('web-url').value = '';
+    document.getElementById('web-niche').value = '';
+    document.getElementById('web-speed').value = '98/100';
+    document.getElementById('web-tech').value = '';
+    document.getElementById('web-order').value = (allCmsWebsites.length + 1);
+    document.getElementById('web-screenshot').value = '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Save Website Project →';
+  };
+
+  window.editCmsWebsite = function(id) {
+    var w = allCmsWebsites.find(function(item) { return item.id === id; });
+    if (!w) return;
+    document.getElementById('web-id').value = w.id;
+    document.getElementById('web-name').value = w.name || '';
+    document.getElementById('web-url').value = w.url || '';
+    document.getElementById('web-niche').value = w.niche || '';
+    document.getElementById('web-speed').value = w.speed || '98/100';
+    document.getElementById('web-tech').value = w.tech || '';
+    document.getElementById('web-order').value = w.order || 1;
+    document.getElementById('web-screenshot').value = w.screenshot || '';
+    document.getElementById('btnSaveWeb').innerText = '💾 Update Website Project →';
+    document.getElementById('webForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioWebsiteNow = async function() {
+    var id = document.getElementById('web-id').value;
+    var name = document.getElementById('web-name').value.trim();
+    var url = document.getElementById('web-url').value.trim();
+    var niche = document.getElementById('web-niche').value.trim();
+    var speed = document.getElementById('web-speed').value.trim() || '98/100';
+    var tech = document.getElementById('web-tech').value.trim();
+    var order = parseInt(document.getElementById('web-order').value) || 1;
+    var screenshot = document.getElementById('web-screenshot').value.trim();
+
+    if (!name || !url) {
+      alert('Please provide Website Name and URL.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveWeb');
+    btn.disabled = true;
+    btn.innerText = 'Saving Website...';
+
+    try {
+      var payload = {
+        name: name,
+        url: url,
+        niche: niche || 'Web Development',
+        speed: speed,
+        tech: tech || 'HTML5, CSS3, JavaScript',
+        order: order,
+        screenshot: screenshot,
+        active: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (id) {
+        await updateDoc(doc(db, 'portfolio_websites', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'portfolio_websites'), payload);
+      }
+
+      window.resetWebsiteForm();
+      alert('✅ Website project saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.error('Error saving website:', err);
+      alert('Error: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '💾 Save Website Project →';
+    }
+  };
+
+  window.deleteCmsWebsite = async function(id) {
+    if (!confirm('Are you sure you want to remove this website from your live portfolio?')) return;
+    try {
+      await deleteDoc(doc(db, 'portfolio_websites', id));
+      alert('✅ Website project deleted from live portfolio.');
+    } catch(err) {
+      console.error('Error deleting website:', err);
+      alert('Error: ' + err.message);
+    }
+  };
+
+  // Seed default starter items if empty
+  window.seedDefaultPortfolioVideos = async function() {
+    if (allCmsVideos.length > 0 && !confirm('You already have portfolio videos. Add default starter videos anyway?')) return;
+    
+    var starters = [
+      { type: 'vertical', title: 'Cinematic Reel', niche: 'Creative', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4', order: 1 },
+      { type: 'vertical', title: 'Motion Graphics', niche: 'Creative / Motion', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4', order: 2 },
+      { type: 'vertical', title: 'Ai Video Commercial', niche: 'Ai / Commercial', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4', order: 3 },
+      { type: 'vertical', title: 'Animated Reel', niche: 'Motion Graphics', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4', order: 4 },
+      { type: 'vertical', title: 'Real Estate & Vastu', niche: 'Real Estate', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4', order: 5 },
+      { type: 'vertical', title: 'Medical & Healthcare Reel', niche: 'Medical / Health', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4', order: 6 },
+      { type: 'vertical', title: 'Music & Brand Video Reel', niche: 'Music Video', url: 'https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4', order: 7 },
+      { type: 'horizontal', title: 'Deep-Dive Explainer', niche: 'Explainer / EdTech', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4', order: 1 },
+      { type: 'horizontal', title: 'Documentary Style Story', niche: 'Documentary', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4', order: 2 },
+      { type: 'horizontal', title: 'Corporate & Finance Breakdown', niche: 'Corporate / Finance', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4', order: 3 },
+      { type: 'horizontal', title: 'Lifestyle Chronological Montage', niche: 'Lifestyle', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4', order: 4 },
+      { type: 'horizontal', title: '2D Motion Video', niche: '2D Animation', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4', order: 5 },
+      { type: 'horizontal', title: 'Educational & Informational', niche: 'Educational', url: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4', order: 6 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_videos'), {
+          title: s.title,
+          type: s.type,
+          niche: s.niche,
+          videoUrl: s.url,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter videos populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding videos: ' + err.message);
+    }
+  };
+
+  window.seedDefaultPortfolioWebsites = async function() {
+    if (allCmsWebsites.length > 0 && !confirm('You already have website projects. Add default starter websites anyway?')) return;
+    
+    var starters = [
+      { name: 'D Plus Cure', url: 'https://dpluscure.com', niche: 'Healthcare E-Commerce', tech: 'WordPress, WooCommerce, PHP, Elementor', speed: '92/100', order: 1 },
+      { name: 'News Flash Daily', url: 'https://newsflashdaily.in', niche: 'News & Media Portal', tech: 'WordPress, SEO Suite, AMP, Custom Theme', speed: '96/100', order: 2 },
+      { name: 'Editzaar Agency', url: 'https://editzaar.in', niche: 'Creative Agency Portfolio', tech: 'HTML5, CSS3, JavaScript, Firebase Cloud', speed: '98/100', order: 3 }
+    ];
+
+    try {
+      for (var i = 0; i < starters.length; i++) {
+        var s = starters[i];
+        await addDoc(collection(db, 'portfolio_websites'), {
+          name: s.name,
+          url: s.url,
+          niche: s.niche,
+          tech: s.tech,
+          speed: s.speed,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter websites populated into Firestore successfully!');
+    } catch(err) {
+      alert('Error seeding websites: ' + err.message);
+    }
+  };
 
 </script>
 </body>
