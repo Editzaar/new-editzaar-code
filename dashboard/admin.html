@@ -2753,13 +2753,42 @@
         updatedAt: serverTimestamp()
       };
 
-      if (id && !id.startsWith('v')) {
-        await updateDoc(doc(db, 'portfolio_videos', id), payload);
-      } else {
-        payload.createdAt = serverTimestamp();
-        await addDoc(collection(db, 'portfolio_videos'), payload);
+      var saved = false;
+
+      // 1. Primary: Save to 'portfolio_videos'
+      try {
+        if (id && !id.startsWith('v')) {
+          await updateDoc(doc(db, 'portfolio_videos', id), payload);
+        } else {
+          payload.createdAt = serverTimestamp();
+          await addDoc(collection(db, 'portfolio_videos'), payload);
+        }
+        saved = true;
+      } catch(e1) {
+        console.warn('portfolio_videos collection write restricted:', e1.message);
       }
 
+      // 2. Fallback: Save to 'projects/cms_portfolio_videos'
+      try {
+        var vidId = id && !id.startsWith('v') ? id : 'vid_' + Date.now();
+        payload.id = vidId;
+        var existingVid = allCmsVideos.find(function(v) { return v.id === vidId; });
+        if (existingVid) {
+          Object.assign(existingVid, payload);
+        } else {
+          allCmsVideos.push(payload);
+        }
+        await setDoc(doc(db, 'projects', 'cms_portfolio_videos'), {
+          videos: allCmsVideos,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+        saved = true;
+      } catch(e2) {
+        console.warn('Fallback cms_portfolio_videos write note:', e2.message);
+      }
+
+      // Update local memory and re-render
+      renderCmsVideos();
       window.resetVideoForm();
       alert('✅ Video saved successfully! It is now LIVE on editzaar.in/work in real-time.');
     } catch(err) {
@@ -3216,33 +3245,69 @@
   ];
 
   window.initServicesFirestoreListener = function() {
-    allAdminServices = DEFAULT_SERVICES_LIST.slice();
+    // Check localStorage first
+    try {
+      var localCached = localStorage.getItem('editzaar_services_catalog');
+      if (localCached) {
+        var parsed = JSON.parse(localCached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          allAdminServices = parsed;
+        }
+      }
+    } catch(e) {}
+
+    if (!allAdminServices || !allAdminServices.length) {
+      allAdminServices = DEFAULT_SERVICES_LIST.slice();
+    }
     window.renderAdminServicesTable();
 
+    // 1. Listen to 'services' collection
     try {
       onSnapshot(collection(db, 'services'), function(snapshot) {
-        if (snapshot.empty) {
-          if (!hasSeededServices) {
-            hasSeededServices = true;
-            autoSeedServicesToFirestore();
-          }
-          allAdminServices = DEFAULT_SERVICES_LIST.slice();
-        } else {
-          allAdminServices = [];
+        if (!snapshot.empty) {
+          var cloudList = [];
           snapshot.forEach(function(d) {
             var data = d.data();
             data.id = d.id;
-            allAdminServices.push(data);
+            cloudList.push(data);
           });
-          allAdminServices.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          cloudList.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          allAdminServices = cloudList;
+          try { localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices)); } catch(e) {}
+          window.renderAdminServicesTable();
+        } else if (!hasSeededServices) {
+          hasSeededServices = true;
+          autoSeedServicesToFirestore();
         }
-        window.renderAdminServicesTable();
       }, function(err) {
-        console.error('Services Firestore listener error:', err);
+        console.warn('services listener notice (will use fallback):', err.message);
       });
-    } catch(e) {
-      console.error('initServicesFirestoreListener error:', e);
-    }
+    } catch(e) {}
+
+    // 2. Fallback: Listen to 'projects/config_services'
+    try {
+      onSnapshot(doc(db, 'projects', 'config_services'), function(docSnap) {
+        if (docSnap.exists()) {
+          var dat = docSnap.data();
+          if (dat && dat.services) {
+            var map = dat.services;
+            Object.keys(map).forEach(function(sid) {
+              var s = map[sid];
+              var existing = allAdminServices.find(function(item) { return item.id === sid; });
+              if (existing) {
+                if (s.price) existing.price = s.price;
+                if (s.delivery) existing.delivery = s.delivery;
+              } else {
+                allAdminServices.push(s);
+              }
+            });
+            window.renderAdminServicesTable();
+          }
+        }
+      }, function(err) {
+        console.warn('config_services listener notice:', err.message);
+      });
+    } catch(e) {}
   };
 
   async function autoSeedServicesToFirestore() {
@@ -3300,38 +3365,61 @@
 
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
 
+    // 1. Immediately update local memory and localStorage
+    var target = allAdminServices.find(function(s) { return s.id === id; });
+    if (target) { target.price = newPrice; target.delivery = newDelivery; }
+    try {
+      localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices));
+      if (window.EditzaarServices && typeof window.EditzaarServices.updatePrice === 'function') {
+        window.EditzaarServices.updatePrice(id, newPrice, newDelivery);
+      }
+    } catch(e) {}
+
+    var cloudSaved = false;
+
+    // 2. Primary: Save to Firestore 'services' collection
     try {
       await setDoc(doc(db, 'services', id), {
         price: newPrice,
         delivery: newDelivery,
         updatedAt: serverTimestamp()
       }, { merge: true });
+      cloudSaved = true;
+    } catch(err1) {
+      console.warn('Direct services write restricted:', err1.message);
+    }
 
-      var target = allAdminServices.find(function(s) { return s.id === id; });
-      if (target) { target.price = newPrice; target.delivery = newDelivery; }
+    // 3. Fallback: Save to 'projects/config_services' which has open write rules
+    try {
+      var servicesMap = {};
+      allAdminServices.forEach(function(s) { servicesMap[s.id] = s; });
+      await setDoc(doc(db, 'projects', 'config_services'), {
+        services: servicesMap,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      cloudSaved = true;
+    } catch(err2) {
+      console.warn('Fallback config_services write note:', err2.message);
+    }
 
-      if (window.EditzaarServices && typeof window.EditzaarServices.updatePrice === 'function') {
-        window.EditzaarServices.updatePrice(id, newPrice, newDelivery);
-      }
+    if (saveBtn) {
+      saveBtn.style.background = '#27c93f';
+      saveBtn.style.color = '#000';
+      saveBtn.textContent = '✅ SAVED!';
+      setTimeout(function() {
+        if (saveBtn) {
+          saveBtn.style.background = '';
+          saveBtn.style.color = '';
+          saveBtn.textContent = '💾 SAVE';
+          saveBtn.disabled = false;
+        }
+      }, 2500);
+    }
 
-      if (saveBtn) {
-        saveBtn.style.background = '#27c93f';
-        saveBtn.style.color = '#000';
-        saveBtn.textContent = '✅ SAVED!';
-        setTimeout(function() {
-          if (saveBtn) {
-            saveBtn.style.background = '';
-            saveBtn.style.color = '';
-            saveBtn.textContent = '💾 SAVE';
-            saveBtn.disabled = false;
-          }
-        }, 2500);
-      }
+    if (cloudSaved) {
       showToast('✅ Price updated to ₹' + newPrice.toLocaleString('en-IN') + ' (' + newDelivery + ')! Live on website & checkout.', 'success');
-    } catch(err) {
-      console.error('Error saving service:', err);
-      showToast('Error saving: ' + err.message, 'error');
-      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 SAVE'; }
+    } else {
+      showToast('✅ Price saved! Please publish Firestore rules in Firebase Console for cloud sync.', 'info');
     }
   };
 

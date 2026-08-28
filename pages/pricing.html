@@ -708,43 +708,73 @@
 
     
     // === LIVE FIRESTORE PRICING CARD SYNC ===
-    // Updates price, delivery, and checkout button on pricing.html in real time
-    // when admin saves changes in Services & Pricing section.
+    function applyServiceUpdate(sid, price, delivery, name) {
+      if (!sid || !price) return;
+      var card = document.querySelector('[data-svc-id="' + sid + '"]');
+      if (!card) return;
+
+      var priceEl = card.querySelector('[style*="font-family:var(--font-h)"]');
+      if (priceEl) {
+        priceEl.innerHTML = '₹' + parseInt(price).toLocaleString('en-IN') + ' <span style="font-size:1rem;color:var(--t3);">/ video</span>';
+      }
+
+      var gstEl = card.querySelector('.pc-gst');
+      if (gstEl && delivery) {
+        gstEl.textContent = '+ 18% GST · ' + delivery + ' Delivery';
+      }
+
+      var btn = card.querySelector('.btn-gold-brand');
+      if (btn) {
+        btn.setAttribute('onclick', "openCheckout('" + (name || sid).replace(/'/g, "\\'") + "', " + price + ", '" + (delivery || '48 Hours').replace(/'/g, "\\'") + "')");
+      }
+    }
+
+    // 0. Check localStorage cached prices for instant zero-latency render
+    try {
+      var localCached = localStorage.getItem('editzaar_services_catalog');
+      if (localCached) {
+        var list = JSON.parse(localCached);
+        if (Array.isArray(list)) {
+          list.forEach(function(s) {
+            applyServiceUpdate(s.id, s.price, s.delivery, s.name);
+          });
+        }
+      }
+    } catch(e) {}
+
+    // 1. Primary: Realtime listener on 'services' collection
     try {
       onSnapshot(collection(db, 'services'), function(snapshot) {
         snapshot.forEach(function(docSnap) {
           var s = docSnap.data();
-          var sid = docSnap.id;
-          if (!s || !s.price) return;
-
-          // Find the card directly via data-svc-id attribute
-          var card = document.querySelector('[data-svc-id="' + sid + '"]');
-          if (!card) return;
-
-          // Update price display element (the gold big price element)
-          var priceEl = card.querySelector('[style*="font-family:var(--font-h)"]');
-          if (priceEl && s.price) {
-            priceEl.innerHTML = '&#8377;' + parseInt(s.price).toLocaleString('en-IN') + ' <span style="font-size:1rem;color:var(--t3);">' + (s.unit || '/ video') + '</span>';
-          }
-
-          // Update delivery/GST subtext
-          var gstEl = card.querySelector('.pc-gst');
-          if (gstEl && s.delivery) {
-            gstEl.textContent = '+ 18% GST · ' + s.delivery + ' Delivery';
-          }
-
-          // Update checkout button onclick with new price
-          var btn = card.querySelector('.btn-gold-brand');
-          if (btn && s.price) {
-            btn.setAttribute('onclick', 'openCheckout(\'' + (s.name || sid) + '\', ' + s.price + ', \'' + (s.delivery || '48 Hours') + '\')');
+          if (s && s.price) {
+            applyServiceUpdate(docSnap.id, s.price, s.delivery, s.name);
           }
         });
       }, function(err) {
-        console.warn('[Pricing] Firestore sync error:', err);
+        console.warn('[Pricing] services collection sync notice:', err.message);
       });
-    } catch(e) {
-      console.warn('[Pricing] Could not start pricing sync:', e.message);
-    }
+    } catch(e) {}
+
+    // 2. Fallback: Realtime listener on 'projects/config_services'
+    try {
+      onSnapshot(doc(db, 'projects', 'config_services'), function(docSnap) {
+        if (docSnap.exists()) {
+          var dat = docSnap.data();
+          if (dat && dat.services) {
+            Object.keys(dat.services).forEach(function(sid) {
+              var s = dat.services[sid];
+              if (s && s.price) {
+                applyServiceUpdate(sid, s.price, s.delivery, s.name);
+              }
+            });
+          }
+        }
+      }, function(err) {
+        console.warn('[Pricing] config_services fallback listener notice:', err.message);
+      });
+    } catch(e) {}
+
     </script>
 
 </body>

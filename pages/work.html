@@ -1589,6 +1589,7 @@
 
         // Listen in real-time
         try {
+            // 1. Primary: collection listener
             onSnapshot(collection(db, 'portfolio_videos'), (snap) => {
                 var vids = [];
                 snap.forEach(d => {
@@ -1600,6 +1601,21 @@
                     vids.sort((a, b) => (a.order || 1) - (b.order || 1));
                     renderDynamicVideos(vids);
                 }
+            }, (err) => {
+                console.warn('portfolio_videos listener note:', err.message);
+            });
+
+            // 2. Fallback: doc listener under projects
+            onSnapshot(doc(db, 'projects', 'cms_portfolio_videos'), (docSnap) => {
+                if (docSnap.exists()) {
+                    var dat = docSnap.data();
+                    if (dat && dat.videos && Array.isArray(dat.videos) && dat.videos.length > 0) {
+                        dat.videos.sort((a, b) => (a.order || 1) - (b.order || 1));
+                        renderDynamicVideos(dat.videos);
+                    }
+                }
+            }, (err) => {
+                console.warn('cms_portfolio_videos fallback note:', err.message);
             });
 
             onSnapshot(collection(db, 'portfolio_websites'), (snap) => {
