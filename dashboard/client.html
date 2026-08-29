@@ -1721,7 +1721,11 @@
       if(!p || p.length < 6) return showToast('Password must be at least 6 characters','error');
       try {
         await updatePassword(auth.currentUser, p);
-        showToast('Password updated!','success');
+        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+          tempPass: p,
+          updatedAt: serverTimestamp()
+        });
+        showToast('Password updated successfully and synced! ✅','success');
         document.getElementById('set-password').value = '';
       } catch(e) {
         showToast(e.message, 'error');

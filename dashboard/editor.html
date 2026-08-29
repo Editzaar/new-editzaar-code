@@ -83,7 +83,27 @@
         </div>
         <div class="project-detail-grid">
           <div>
-            <div class="dash-card">
+            <!-- Account Security & Change Password Card -->
+        <div class="dash-card" style="margin-bottom: 24px;">
+          <div class="dash-card-header" style="margin-bottom:12px;">
+            <div class="dash-card-title">🔐 Account Security &amp; <em>Password</em></div>
+            <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;">Real-Time Sync</span>
+          </div>
+          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;">Change your editor account password. Changes take effect immediately and sync with your portal credentials.</p>
+          <div class="dash-form">
+            <div class="form-grid-2">
+              <div class="field">
+                <label>New Password (min. 6 characters) *</label>
+                <input type="password" id="editorNewPassInp" placeholder="Enter new strong password"/>
+              </div>
+              <div class="field" style="display:flex;align-items:flex-end;">
+                <button class="btn-gold" style="height:42px;width:100%;justify-content:center;" id="btnChangeEditorPass" onclick="window.changeEditorPassword()">Update My Password 🔒</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
               <div class="dash-card-header">
                 <div class="dash-card-title" id="detailTitle">—</div>
               </div>
@@ -280,7 +300,7 @@
 
   <script type="module">
     import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut }
+    import { getAuth, onAuthStateChanged, signOut, updatePassword }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc,
              query, where, onSnapshot, serverTimestamp }

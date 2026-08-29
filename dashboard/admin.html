@@ -5442,12 +5442,21 @@
         return;
       }
 
+      // 1. Instant optimistic in-memory UI update
+      var ed = editors.find(function(e) { return e.id === userId; });
+      if (ed) ed.tempPass = newPass;
+      var cl = clients.find(function(c) { return c.id === userId; });
+      if (cl) cl.tempPass = newPass;
+      renderEditors();
+      renderClients();
+
+      // 2. Real-time Firestore sync
       try {
         await updateDoc(doc(db, 'users', userId), {
           tempPass: newPass,
           updatedAt: serverTimestamp()
         });
-        showToast('Password for ' + userEmail + ' updated in real-time! ✅', 'success');
+        showToast('Password for ' + userEmail + ' updated to "' + newPass + '" in real-time! ✅', 'success');
       } catch(err) {
         console.error('Error updating password:', err);
         showToast('Error updating password: ' + err.message, 'error');
