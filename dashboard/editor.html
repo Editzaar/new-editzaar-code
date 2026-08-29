@@ -147,6 +147,75 @@
         </div>
       </section>
 
+      <!-- ── SECTION: MY EARNINGS & PAYOUTS ── -->
+      <section id="sec-earnings" style="display:none;">
+        <div class="dash-topbar">
+          <div class="dash-page-title">My Earnings &amp; <em>Payouts</em></div>
+          <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;"><span class="live-dot" style="background:#28C840;"></span> Direct Bank / UPI Settlement</span>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="stat-card-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-card-label">Total Lifetime Earnings</div>
+            <div class="stat-card-value" style="color:var(--gold);" id="editorLifetimeEarnings">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Pending Payouts (Ready)</div>
+            <div class="stat-card-value" style="color:#FFB800;" id="editorPendingPayouts">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Cleared &amp; Received</div>
+            <div class="stat-card-value" style="color:#28C840;" id="editorClearedEarnings">₹0</div>
+          </div>
+        </div>
+
+        <!-- Payout Receiving Details Card -->
+        <div class="dash-card" style="margin-bottom: 24px;">
+          <div class="dash-card-header" style="margin-bottom:12px;">
+            <div class="dash-card-title">💳 My Payout <em>Receiving Details</em></div>
+          </div>
+          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;">Editzaar Admin will send your video editing payouts directly to this UPI ID or Bank Account upon project delivery.</p>
+          <div class="dash-form">
+            <div class="form-grid-2">
+              <div class="field">
+                <label>My UPI ID (e.g. yourname@okhdfcbank / yourname@paytm) *</label>
+                <input type="text" id="editorMyUpiInp" placeholder="e.g. 9876543210@upi"/>
+              </div>
+              <div class="field">
+                <label>Account Number &amp; IFSC (Optional Alternate)</label>
+                <input type="text" id="editorMyBankInp" placeholder="e.g. HDFC0001234 - Acc 50100234..."/>
+              </div>
+            </div>
+            <button class="btn-gold btn-sm" id="btnSaveEditorPayoutDetails" onclick="window.saveEditorPayoutDetails()">Save Payout Details ✅</button>
+          </div>
+        </div>
+
+        <!-- Earnings Ledger Table -->
+        <div class="dash-card">
+          <div class="dash-card-header" style="margin-bottom:16px;">
+            <div class="dash-card-title">Project Earnings <em>Ledger</em></div>
+          </div>
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>Client</th>
+                  <th>Project Status</th>
+                  <th>My Agreed Earning</th>
+                  <th>Payout Status</th>
+                  <th>Payout Reference</th>
+                </tr>
+              </thead>
+              <tbody id="editorEarningsTbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:24px;">Loading your earnings ledger…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -213,7 +282,7 @@
         document.getElementById('statTotal').textContent  = projects.length;
         document.getElementById('statActive').textContent = projects.filter(p=>p.status!=='done').length;
         document.getElementById('statDone').textContent   = projects.filter(p=>p.status==='done').length;
-        renderProjects(projects);
+        renderProjects(projects); renderEditorEarnings(); loadEditorProfileDetails();
       }, (err) => console.error('Projects listener error:', err));
     }
 
@@ -548,6 +617,109 @@
     onAuthStateChanged(_auth, function(user) {
       if (user) saveFcmToken(user.uid);
     });
+  
+    // ============================================================
+    // EDITOR EARNINGS & PAYOUTS ENGINE
+    // ============================================================
+    function renderEditorEarnings() {
+      var tbody = document.getElementById('editorEarningsTbody');
+      if (!tbody) return;
+
+      var myProjects = projects.filter(function(p) { return p.editorId === currentUser.uid; });
+
+      var lifetime = 0;
+      var pending = 0;
+      var cleared = 0;
+
+      myProjects.forEach(function(p) {
+        var earn = p.editorPayout || 0;
+        lifetime += earn;
+        if (p.editorPayoutStatus === 'paid') {
+          cleared += earn;
+        } else if (earn > 0) {
+          pending += earn;
+        }
+      });
+
+      document.getElementById('editorLifetimeEarnings') && (document.getElementById('editorLifetimeEarnings').textContent = '₹' + lifetime.toLocaleString());
+      document.getElementById('editorPendingPayouts') && (document.getElementById('editorPendingPayouts').textContent = '₹' + pending.toLocaleString());
+      document.getElementById('editorClearedEarnings') && (document.getElementById('editorClearedEarnings').textContent = '₹' + cleared.toLocaleString());
+
+      if (!myProjects.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:28px;">No projects assigned to you yet.</td></tr>';
+        return;
+      }
+
+      var html = '';
+      myProjects.forEach(function(p) {
+        var earn = p.editorPayout || 0;
+        var statusBadge = '';
+        if (p.editorPayoutStatus === 'paid') {
+          statusBadge = '<span class="status-badge status-done">Cleared &amp; Paid ✅</span>';
+        } else if (p.status === 'done' || p.deliveryUrl) {
+          statusBadge = '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">⚡ Ready for Payout</span>';
+        } else {
+          statusBadge = '<span class="status-badge status-pending">In Production ⏳</span>';
+        }
+
+        var refText = '—';
+        if (p.editorPaidTxnId) {
+          refText = '<strong style="color:var(--gold);font-size:0.8rem;">UTR: ' + p.editorPaidTxnId + '</strong>'
+            + (p.editorPaidAt ? '<br/><small style="color:var(--t3);">' + new Date(p.editorPaidAt).toLocaleDateString('en-IN') + '</small>' : '');
+        }
+
+        html += '<tr>'
+          + '<td><strong>' + (p.title || 'Untitled') + '</strong></td>'
+          + '<td>👤 ' + (p.clientName || 'Client') + '</td>'
+          + '<td><span class="status-badge status-' + (p.status||'pending') + '">' + (p.status||'pending').toUpperCase() + '</span></td>'
+          + '<td><strong style="color:var(--gold);font-size:1rem;">₹' + earn.toLocaleString() + '</strong></td>'
+          + '<td>' + statusBadge + '</td>'
+          + '<td>' + refText + '</td>'
+          + '</tr>';
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    window.saveEditorPayoutDetails = async function() {
+      var upi = (document.getElementById('editorMyUpiInp')?.value || '').trim();
+      var bank = (document.getElementById('editorMyBankInp')?.value || '').trim();
+
+      if (!upi && !bank) {
+        showToast('Please enter at least your UPI ID to receive payouts.', 'error');
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          editorUpi: upi,
+          editorBankDetails: bank,
+          updatedAt: serverTimestamp()
+        });
+        showToast('Payout details saved successfully! ✅', 'success');
+      } catch(err) {
+        console.error('Error saving payout details:', err);
+        showToast('Error saving details: ' + err.message, 'error');
+      }
+    };
+
+    // Load editor saved payout details
+    async function loadEditorProfileDetails() {
+      if (!currentUser) return;
+      try {
+        var userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        if (userDoc.exists()) {
+          var dat = userDoc.data();
+          if (dat.editorUpi && document.getElementById('editorMyUpiInp')) {
+            document.getElementById('editorMyUpiInp').value = dat.editorUpi;
+          }
+          if (dat.editorBankDetails && document.getElementById('editorMyBankInp')) {
+            document.getElementById('editorMyBankInp').value = dat.editorBankDetails;
+          }
+        }
+      } catch(e) {}
+    }
+
   </script>
 </body>
 </html>

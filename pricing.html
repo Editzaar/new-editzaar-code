@@ -407,6 +407,10 @@
             <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
           </div>
           <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
+          <div style="margin-top:12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 14px;">
+            <label for="chkUtrNum" style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;display:block;margin-bottom:4px;">🧾 UPI Transaction / UTR Number (Optional)</label>
+            <input type="text" id="chkUtrNum" placeholder="e.g. 423589012345 (from GPay / PhonePe / Paytm)" style="width:100%;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-family:var(--font-b);font-size:0.88rem;"/>
+          </div>
         </div>
 
         <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
@@ -724,6 +728,7 @@
       const gstin   = document.getElementById('chkGstin').value.trim();
       const brief   = document.getElementById('chkBrief').value.trim();
       const footage = document.getElementById('chkFootage').value.trim();
+      const utrNum  = (document.getElementById('chkUtrNum')?.value || '').trim();
 
       if (!name || !phone || !email || !brief) {
         alert('Please fill in your Name, Phone, Email, and Project Brief requirements.');
@@ -756,7 +761,8 @@
                       `• Email: ${email}\n` +
                       `• Brand/Company: ${brand || 'N/A'}\n` +
                       `• Client GSTIN: ${gstin || 'N/A (Individual)'}\n\n` +
-                      `💳 *UPI PAYMENT ID:* nbikram704@okhdfcbank (Bikram Nath)\n\n` +
+                      `💳 *UPI PAYMENT ID:* nbikram704@okhdfcbank (Bikram Nath)\n` +
+                      (utrNum ? `🧾 *PAYMENT UTR / REF ID:* ${utrNum}\n\n` : `\n`) +
                       `📝 *REQUIREMENT BRIEF:*\n${brief}\n\n` +
                       `📁 *RAW FOOTAGE / ASSET LINK:*\n${footage || 'Not attached (will upload in portal)'}\n\n` +
                       `-----------------------------------\n` +

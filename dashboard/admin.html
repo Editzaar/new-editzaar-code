@@ -839,6 +839,7 @@
         <div class="sidebar-nav-item" data-section="revenue"><span class="nav-icon">💰</span> Revenue &amp; Payments</div>
         <div class="sidebar-nav-item" data-section="payments"><span class="nav-icon">💳</span> Payment Management</div>
         <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">🧾</span> Invoices &amp; GST</div>
+        <div class="sidebar-nav-item" data-section="payouts"><span class="nav-icon">✂️</span> Editor Payouts &amp; Margins</div>
 
         <div class="sidebar-nav-section">Communication</div>
         <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat</div>
@@ -1146,9 +1147,121 @@
       </section>
 
       <!-- PAYMENT MANAGEMENT -->
+            <!-- ── SECTION: CLIENT PAYMENT VERIFICATION DESK (UPGRADED) ── -->
       <section id="sec-payments" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Payment <em>Management</em></div></div>
-        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Client</th><th>Project</th><th>Amount (w/ GST)</th><th>Status</th><th>Actions</th></tr></thead><tbody id="paymentTbody"></tbody></table></div></div>
+        <div class="dash-topbar">
+          <div class="dash-page-title">Payment <em>Verification &amp; Escrow Desk</em></div>
+          <span class="live-badge"><span class="live-dot"></span> Dual-Milestone Tracking</span>
+        </div>
+
+        <div class="stat-card-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-card-label">Total Billed (w/ GST)</div>
+            <div class="stat-card-value" id="payDeskTotal">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Advance Cleared</div>
+            <div class="stat-card-value" style="color:#28C840;" id="payDeskAdvCleared">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Balance Pending</div>
+            <div class="stat-card-value" style="color:#FFB800;" id="payDeskBalPending">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">⚡ Needs UTR Verification</div>
+            <div class="stat-card-value" style="color:#FF5F57;" id="payDeskNeedsVerifyCount">0</div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div class="tab-group" style="margin:0;">
+              <button class="tab-btn active" id="btnPayFilterAll" onclick="window.filterPaymentDesk('all')">All Projects</button>
+              <button class="tab-btn" id="btnPayFilterVerify" onclick="window.filterPaymentDesk('verify')">⚡ Needs UTR Verification</button>
+              <button class="tab-btn" id="btnPayFilterBalDue" onclick="window.filterPaymentDesk('bal_due')">⏳ Balance Due</button>
+              <button class="tab-btn" id="btnPayFilterPaid" onclick="window.filterPaymentDesk('paid')">✅ Fully Cleared</button>
+            </div>
+            <div style="font-size:0.82rem;color:var(--t2);">UPI Deposit: <strong style="color:var(--gold);">nbikram704@okhdfcbank</strong></div>
+          </div>
+
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Client &amp; Project</th>
+                  <th>Total Value (w/ GST)</th>
+                  <th>50% Advance Milestone</th>
+                  <th>50% Final Balance</th>
+                  <th>Delivery Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="paymentTbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:24px;">Loading payment ledger…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: EDITOR PAYOUTS & AGENCY PROFIT MARGINS (NEW) ── -->
+      <section id="sec-payouts" style="display:none;">
+        <div class="dash-topbar">
+          <div class="dash-page-title">Editor Payouts &amp; <em>Agency Profit Margins</em></div>
+          <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;"><span class="live-dot" style="background:#28C840;"></span> Net Profit Intelligence</span>
+        </div>
+
+        <!-- Profit & Margin Executive Metric Cards -->
+        <div class="stat-card-grid" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-card-label">Gross Client Revenue</div>
+            <div class="stat-card-value" style="color:var(--gold);" id="marginGrossRev">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Total Editor Costs</div>
+            <div class="stat-card-value" style="color:#FF5F57;" id="marginEditorCosts">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Net Agency Profit</div>
+            <div class="stat-card-value" style="color:#28C840;" id="marginNetProfit">₹0</div>
+            <div style="font-size:0.75rem;color:var(--t2);margin-top:2px;" id="marginPercentBadge">0% Avg Margin</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Pending Editor Payouts</div>
+            <div class="stat-card-value" style="color:#FFB800;" id="marginPendingPayouts">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Cleared Payouts</div>
+            <div class="stat-card-value" style="color:#4A90D9;" id="marginClearedPayouts">₹0</div>
+          </div>
+        </div>
+
+        <!-- Editor Payouts & Economics Ledger -->
+        <div class="dash-card">
+          <div class="dash-card-header" style="margin-bottom:16px;">
+            <div class="dash-card-title">Project Economics &amp; <em>Editor Payouts Ledger</em></div>
+            <div style="font-size:0.82rem;color:var(--t2);">Real-time tracking of Editor fees, agency net profit, and payout clearance</div>
+          </div>
+
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Project &amp; Client</th>
+                  <th>Assigned Editor</th>
+                  <th>Client Price (Base)</th>
+                  <th>Editor Fee (Cost)</th>
+                  <th>Net Profit / Margin</th>
+                  <th>Payout Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="editorPayoutsTbody">
+                <tr><td colspan="7" style="text-align:center;color:var(--t3);padding:24px;">Loading payouts ledger…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- NOTIFICATIONS -->
@@ -1761,6 +1874,34 @@
           </div>
         </div>
 
+        <!-- PAYMENT GATEWAY CONFIGURATION CARD -->
+        <div class="dash-card" style="margin-bottom:20px;">
+          <div class="dash-card-header">
+            <div class="dash-card-title">💳 Payment Gateway <em>&amp; Checkout Settings</em></div>
+            <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;">0% Commission Mode Active</span>
+          </div>
+          <div class="dash-form">
+            <div class="field">
+              <label>Default Payment Engine</label>
+              <select id="set-pay-mode">
+                <option value="upi_free" selected>⚡ Free Custom Dynamic UPI Engine (0% Gateway Fee - Recommended)</option>
+                <option value="razorpay">💳 Automated Razorpay Gateway (Credit/Debit Cards, Netbanking)</option>
+              </select>
+            </div>
+            <div class="form-grid-2">
+              <div class="field">
+                <label>Razorpay Key ID (Optional)</label>
+                <input id="set-rzp-key" type="text" placeholder="rzp_live_..."/>
+              </div>
+              <div class="field">
+                <label>Razorpay Key Secret (Optional)</label>
+                <input id="set-rzp-secret" type="password" placeholder="Key Secret"/>
+              </div>
+            </div>
+            <button class="btn-gold btn-sm" id="btnSaveGatewaySettings" onclick="window.saveGatewaySettings()">Save Payment Gateway Settings ✅</button>
+          </div>
+        </div>
+
         <div class="dash-card" style="border-color:rgba(255,95,87,0.3);background:rgba(255,95,87,0.03);">
           <div class="dash-card-header"><div class="dash-card-title" style="color:var(--red);">🧹 Fresh Start <em>Data Cleaner</em></div></div>
           <p style="font-size:0.88rem;color:var(--t2);margin-bottom:16px;">Use these tools to wipe old test records and start fresh with real clients and real editors.</p>
@@ -1786,7 +1927,8 @@
         <div class="field"><label>Assign Client</label><select id="np-client"><option value="">Select client…</option></select></div>
         <div class="field"><label>Assign Editor (Manual)</label><select id="np-editor"><option value="">Select editor…</option></select></div>
         <div class="field"><label>Deadline</label><input id="np-deadline" type="date"/></div>
-        <div class="field"><label>Invoice Amount (₹)</label><input id="np-invoice" type="number" placeholder="5000"/></div>
+        <div class="field"><label>Client Invoice Amount (₹)</label><input id="np-invoice" type="number" placeholder="5000"/></div>
+        <div class="field"><label>Editor Payout Fee (₹) [Cost to Agency]</label><input id="np-editor-payout" type="number" placeholder="e.g. 1800"/></div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateProject">Create Project</button>
       </div>
     </div>
@@ -1846,7 +1988,8 @@
           <textarea id="es-description" rows="3" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--t1);font-family:var(--font-b);font-size:0.9rem;" placeholder="Client requirements, creative brief, references…"></textarea>
         </div>
         <div class="field"><label>Assign / Change Editor</label><select id="es-editor"><option value="">Select editor…</option></select></div>
-        <div class="field"><label>Base Amount (₹)</label><input id="es-invoice" type="number"/></div>
+        <div class="field"><label>Client Base Amount (₹)</label><input id="es-invoice" type="number"/></div>
+        <div class="field"><label>Editor Payout Fee (₹) [Cost to Agency]</label><input id="es-editor-payout" type="number" placeholder="e.g. 1800"/></div>
         <div class="field"><label>Estimated Deadline Date</label><input id="es-deadline" type="date"/></div>
         <div class="field"><label>Tax Status / Issue Official GST Invoice?</label>
           <select id="es-paid">
@@ -2141,7 +2284,7 @@
         });
         renderStats(); renderRecentProjects(); renderAllProjects(); renderInvoices(); renderChatProjectList();
         renderAttention(); renderWorkflow(); renderWorkload(); renderPerformance();
-        renderRevenue(); renderPayments(); renderRevisions(); renderStorage();
+        renderRevenue(); renderPayments(); renderEditorPayouts(); renderRevisions(); renderStorage();
         renderCalendar(); renderAnalytics(); renderBookings();
       }, (err) => console.error('Projects listener error:', err));
     }
@@ -2611,11 +2754,19 @@
       const editorId = document.getElementById('np-editor').value;
       const deadline = document.getElementById('np-deadline').value;
       const invoice  = parseFloat(document.getElementById('np-invoice').value)||0;
+      const editorPayout = parseFloat(document.getElementById('np-editor-payout')?.value)||0;
       if (!title || !clientId) { showToast('Please fill in title and client.','error'); return; }
       await addDoc(collection(db,'projects'),{
         title, description:desc, clientId, editorId: editorId || '',
         deadline: deadline ? new Date(deadline) : null,
-        invoiceAmount: invoice, invoicePaid: false,
+        invoiceAmount: invoice,
+        totalAmount: Math.round(invoice * 1.18),
+        advanceRequired: Math.round(invoice * 1.18 * 0.5),
+        balanceRequired: Math.round(invoice * 1.18 * 0.5),
+        editorPayout: editorPayout,
+        editorPayoutStatus: 'pending',
+        advanceStatus: 'unpaid',
+        balanceStatus: 'unpaid', invoicePaid: false,
         status: 'pending', createdAt: serverTimestamp()
       });
       showToast('Project created! ✅','success');
@@ -2627,6 +2778,8 @@
       document.getElementById('es-pid').value    = pid;
       document.getElementById('es-status').value = status || p.status || 'pending';
       document.getElementById('es-invoice').value= amount !== undefined ? amount : (p.invoiceAmount || 0);
+      const epInp = document.getElementById('es-editor-payout');
+      if (epInp) epInp.value = p.editorPayout || 0;
       document.getElementById('es-paid').value   = String(paid !== undefined ? paid : (p.invoicePaid || false));
       document.getElementById('es-editor').value = editorId || p.editorId || '';
 
@@ -2653,7 +2806,27 @@
       const deadVal  = document.getElementById('es-deadline').value;
 
       const descVal  = (document.getElementById('es-description')?.value || '').trim();
-      const upData = { status, invoiceAmount:amount, invoicePaid:paid, editorId, description: descVal };
+      const editorPayoutVal = parseFloat(document.getElementById('es-editor-payout')?.value)||0;
+      const totVal = Math.round(amount * 1.18);
+      const advReqVal = Math.round(totVal * 0.5);
+      const upData = {
+        status,
+        invoiceAmount: amount,
+        totalAmount: totVal,
+        advanceRequired: advReqVal,
+        balanceRequired: totVal - advReqVal,
+        invoicePaid: paid,
+        editorId,
+        description: descVal,
+        editorPayout: editorPayoutVal
+      };
+      if (paid) {
+        upData.advancePaid = true;
+        upData.balancePaid = true;
+        upData.advanceStatus = 'verified';
+        upData.balanceStatus = 'verified';
+        upData.deliveryLocked = false;
+      }
       if (deadVal) {
         upData.deadline = new Date(deadVal);
       }
@@ -2974,21 +3147,296 @@
       tb.innerHTML = projects.filter(p=>p.invoicePaid).slice(0,10).map(p => `<tr><td>${p.title}</td><td>${nameOf(p.clientId)}</td><td>₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</td><td>${dateStr(p.deadline)}</td></tr>`).join('');
     }
 
+    // ============================================================
+    // DUAL-MILESTONE PAYMENT VERIFICATION & ESCROW ENGINE
+    // ============================================================
+    var _payFilterMode = 'all';
+
+    window.filterPaymentDesk = function(mode) {
+      _payFilterMode = mode;
+      ['All', 'Verify', 'BalDue', 'Paid'].forEach(function(m) {
+        var btn = document.getElementById('btnPayFilter' + m);
+        if (btn) btn.classList.remove('active');
+      });
+      if (mode === 'all') document.getElementById('btnPayFilterAll')?.classList.add('active');
+      if (mode === 'verify') document.getElementById('btnPayFilterVerify')?.classList.add('active');
+      if (mode === 'bal_due') document.getElementById('btnPayFilterBalDue')?.classList.add('active');
+      if (mode === 'paid') document.getElementById('btnPayFilterPaid')?.classList.add('active');
+      renderPayments();
+    };
+
     function renderPayments() {
-      const tb = document.getElementById('paymentTbody');
-      const payP = projects.filter(p => p.invoiceAmount > 0);
-      tb.innerHTML = payP.map(p => `<tr><td>${nameOf(p.clientId)}</td><td>${p.title}</td><td>₹${Math.round((p.invoiceAmount||0)*1.18).toLocaleString()}</td>
-        <td>${p.invoicePaid ? '<span style="color:var(--green)">Paid</span>' : '<span style="color:var(--red)">Unpaid</span>'}</td>
-        <td>
-          ${!p.invoicePaid ? `<button class="btn-outline btn-sm" onclick="markPaid('${p.id}')">Mark Paid</button>` : ''}
-          <button class="btn-outline btn-sm" onclick="navigator.clipboard.writeText('Pay ₹${Math.round((p.invoiceAmount||0)*1.18)} to nbikram704@okhdfcbank');showToast('Copied!')">Copy UPI</button>
-        </td></tr>`).join('');
+      var tbody = document.getElementById('paymentTbody');
+      if (!tbody) return;
+
+      var withInv = projects.filter(function(p) { return (p.invoiceAmount || 0) > 0; });
+      
+      var totalBilled = 0;
+      var advCleared = 0;
+      var balPending = 0;
+      var needsVerifyCount = 0;
+
+      withInv.forEach(function(p) {
+        var base = p.invoiceAmount || 0;
+        var tot = p.totalAmount || Math.round(base * 1.18);
+        var advReq = p.advanceRequired || Math.round(tot * 0.5);
+        var balReq = tot - advReq;
+
+        totalBilled += tot;
+        if (p.advancePaid) advCleared += advReq;
+        if (!p.invoicePaid && !p.balancePaid) balPending += balReq;
+
+        if (p.advanceStatus === 'submitted' || p.balanceStatus === 'submitted') {
+          needsVerifyCount++;
+        }
+      });
+
+      document.getElementById('payDeskTotal') && (document.getElementById('payDeskTotal').textContent = '₹' + totalBilled.toLocaleString());
+      document.getElementById('payDeskAdvCleared') && (document.getElementById('payDeskAdvCleared').textContent = '₹' + advCleared.toLocaleString());
+      document.getElementById('payDeskBalPending') && (document.getElementById('payDeskBalPending').textContent = '₹' + balPending.toLocaleString());
+      document.getElementById('payDeskNeedsVerifyCount') && (document.getElementById('payDeskNeedsVerifyCount').textContent = needsVerifyCount);
+
+      // Filtering
+      var list = withInv;
+      if (_payFilterMode === 'verify') {
+        list = list.filter(function(p) { return p.advanceStatus === 'submitted' || p.balanceStatus === 'submitted'; });
+      } else if (_payFilterMode === 'bal_due') {
+        list = list.filter(function(p) { return !p.invoicePaid && !p.balancePaid; });
+      } else if (_payFilterMode === 'paid') {
+        list = list.filter(function(p) { return p.invoicePaid || (p.advancePaid && p.balancePaid); });
+      }
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:28px;">No projects matching current payment filter.</td></tr>';
+        return;
+      }
+
+      var html = '';
+      list.forEach(function(p) {
+        var base = p.invoiceAmount || 0;
+        var tot = p.totalAmount || Math.round(base * 1.18);
+        var advReq = p.advanceRequired || Math.round(tot * 0.5);
+        var balReq = tot - advReq;
+
+        var isAdvPaid = p.advancePaid || p.invoicePaid;
+        var isBalPaid = p.balancePaid || p.invoicePaid;
+
+        // Advance column pill
+        var advHtml = '';
+        if (isAdvPaid) {
+          advHtml = '<span class="status-badge status-done">₹' + advReq.toLocaleString() + ' (Cleared ✅)</span>';
+          if (p.advanceTxnId) advHtml += '<div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">UTR: ' + p.advanceTxnId + '</div>';
+        } else if (p.advanceStatus === 'submitted') {
+          advHtml = '<span class="status-badge" style="background:#FF5F57;color:#fff;font-weight:700;">⚡ UTR: ' + (p.advanceTxnId || 'Submitted') + '</span>'
+            + '<div style="margin-top:4px;"><button class="btn-gold btn-sm" style="height:26px;font-size:0.75rem;" onclick="window.verifyProjectPayment(\'' + p.id + '\', \'advance\')">✅ Verify Advance</button></div>';
+        } else {
+          advHtml = '<span class="status-badge status-pending">₹' + advReq.toLocaleString() + ' (Unpaid ⏳)</span>';
+        }
+
+        // Balance column pill
+        var balHtml = '';
+        if (isBalPaid) {
+          balHtml = '<span class="status-badge status-done">₹' + balReq.toLocaleString() + ' (Cleared ✅)</span>';
+          if (p.balanceTxnId) balHtml += '<div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">UTR: ' + p.balanceTxnId + '</div>';
+        } else if (p.balanceStatus === 'submitted') {
+          balHtml = '<span class="status-badge" style="background:#FF5F57;color:#fff;font-weight:700;">⚡ UTR: ' + (p.balanceTxnId || 'Submitted') + '</span>'
+            + '<div style="margin-top:4px;"><button class="btn-gold btn-sm" style="height:26px;font-size:0.75rem;" onclick="window.verifyProjectPayment(\'' + p.id + '\', \'balance\')">✅ Verify Balance</button></div>';
+        } else {
+          balHtml = '<span class="status-badge status-pending">₹' + balReq.toLocaleString() + ' (Due on Finish)</span>';
+        }
+
+        // Delivery lock status
+        var deliveryHtml = '';
+        if (p.deliveryUrl) {
+          if (isBalPaid) {
+            deliveryHtml = '<span style="color:#28C840;font-weight:700;font-size:0.8rem;">🔓 Unlocked (Delivered)</span>';
+          } else {
+            deliveryHtml = '<span style="color:#FF5F57;font-weight:700;font-size:0.8rem;">🔒 Locked (Awaiting Balance)</span>';
+          }
+        } else {
+          deliveryHtml = '<span style="color:var(--t3);font-size:0.8rem;">— In Production —</span>';
+        }
+
+        // Actions
+        var actionsHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
+        if (!isBalPaid) {
+          actionsHtml += '<button class="btn-outline btn-sm" onclick="window.sendWhatsAppBalanceReminder(\'' + p.id + '\')" title="Send pre-drafted WhatsApp reminder with UPI">📲 WhatsApp Reminder</button>';
+          actionsHtml += '<button class="btn-outline btn-sm" onclick="window.quickMarkFullPaid(\'' + p.id + '\')">Mark 100% Paid</button>';
+        } else {
+          actionsHtml += '<span style="color:#28C840;font-size:0.82rem;font-weight:600;">✅ Fully Settled</span>';
+        }
+        actionsHtml += '</div>';
+
+        html += '<tr>'
+          + '<td><strong>' + (p.title || 'Untitled') + '</strong><br/><span style="color:var(--t2);font-size:0.82rem;">👤 ' + (nameOf(p.clientId) || 'Client') + '</span></td>'
+          + '<td><strong style="color:var(--gold);font-size:0.95rem;">₹' + tot.toLocaleString() + '</strong><br/><small style="color:var(--t3);">Base ₹' + base.toLocaleString() + ' + 18% GST</small></td>'
+          + '<td>' + advHtml + '</td>'
+          + '<td>' + balHtml + '</td>'
+          + '<td>' + deliveryHtml + '</td>'
+          + '<td>' + actionsHtml + '</td>'
+          + '</tr>';
+      });
+
+      tbody.innerHTML = html;
     }
 
-    window.markPaid = async (pid) => {
-      await updateDoc(doc(db, 'projects', pid), { invoicePaid: true });
-      showToast('Marked as paid!');
+    window.verifyProjectPayment = async function(pid, milestone) {
+      var proj = projects.find(function(p) { return p.id === pid; });
+      if (!proj) return;
+
+      var upData = {};
+      if (milestone === 'advance') {
+        upData.advancePaid = true;
+        upData.advanceStatus = 'verified';
+        if (proj.status === 'pending') upData.status = 'in_progress';
+      } else if (milestone === 'balance') {
+        upData.balancePaid = true;
+        upData.balanceStatus = 'verified';
+        upData.invoicePaid = true;
+        upData.deliveryLocked = false;
+        if (proj.editorPayout && !proj.editorPayoutStatus) {
+          upData.editorPayoutStatus = 'ready_for_payout';
+        }
+      }
+
+      await updateDoc(doc(db, 'projects', pid), upData);
+      showToast('Payment milestone verified! ✅', 'success');
     };
+
+    window.quickMarkFullPaid = async function(pid) {
+      if (!confirm('Confirm full 100% payment receipt for this project?')) return;
+      await updateDoc(doc(db, 'projects', pid), {
+        advancePaid: true,
+        advanceStatus: 'verified',
+        balancePaid: true,
+        balanceStatus: 'verified',
+        invoicePaid: true,
+        deliveryLocked: false,
+        editorPayoutStatus: 'ready_for_payout'
+      });
+      showToast('Project marked as 100% Fully Paid! ✅', 'success');
+    };
+
+    window.sendWhatsAppBalanceReminder = function(pid) {
+      var proj = projects.find(function(p) { return p.id === pid; });
+      if (!proj) return;
+      var base = proj.invoiceAmount || 0;
+      var tot = proj.totalAmount || Math.round(base * 1.18);
+      var adv = proj.advanceRequired || Math.round(tot * 0.5);
+      var bal = tot - adv;
+      var clientName = nameOf(proj.clientId) || 'Client';
+
+      var msg = `Hi ${clientName}! 👋\n\n`
+        + `Your project *"${proj.title}"* is ready! 🎉\n\n`
+        + `💵 *Pending Final Balance:* ₹${bal.toLocaleString()}\n`
+        + `💳 *Official UPI ID:* nbikram704@okhdfcbank (Bikram Nath)\n\n`
+        + `Once completed, please reply here with your 12-digit UPI UTR Number to instantly receive your high-resolution final deliverables and Tax Invoice. Thank you! — Team Editzaar`;
+
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    };
+
+    // ============================================================
+    // EDITOR PAYOUTS & AGENCY PROFIT MARGINS ENGINE
+    // ============================================================
+    function renderEditorPayouts() {
+      var tbody = document.getElementById('editorPayoutsTbody');
+      if (!tbody) return;
+
+      var grossRev = 0;
+      var editorCosts = 0;
+      var pendingPayouts = 0;
+      var clearedPayouts = 0;
+
+      projects.forEach(function(p) {
+        var base = p.invoiceAmount || 0;
+        var cost = p.editorPayout || 0;
+        grossRev += base;
+        editorCosts += cost;
+
+        if (p.editorPayoutStatus === 'paid') {
+          clearedPayouts += cost;
+        } else if (cost > 0) {
+          pendingPayouts += cost;
+        }
+      });
+
+      var netProfit = grossRev - editorCosts;
+      var avgMargin = grossRev > 0 ? Math.round((netProfit / grossRev) * 100) : 0;
+
+      document.getElementById('marginGrossRev') && (document.getElementById('marginGrossRev').textContent = '₹' + grossRev.toLocaleString());
+      document.getElementById('marginEditorCosts') && (document.getElementById('marginEditorCosts').textContent = '₹' + editorCosts.toLocaleString());
+      document.getElementById('marginNetProfit') && (document.getElementById('marginNetProfit').textContent = '₹' + netProfit.toLocaleString());
+      document.getElementById('marginPercentBadge') && (document.getElementById('marginPercentBadge').textContent = avgMargin + '% Net Margin');
+      document.getElementById('marginPendingPayouts') && (document.getElementById('marginPendingPayouts').textContent = '₹' + pendingPayouts.toLocaleString());
+      document.getElementById('marginClearedPayouts') && (document.getElementById('marginClearedPayouts').textContent = '₹' + clearedPayouts.toLocaleString());
+
+      if (!projects.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:28px;">No projects found.</td></tr>';
+        return;
+      }
+
+      var html = '';
+      projects.forEach(function(p) {
+        var base = p.invoiceAmount || 0;
+        var cost = p.editorPayout || 0;
+        var profit = base - cost;
+        var marginPct = base > 0 ? Math.round((profit / base) * 100) : 0;
+
+        var editorObj = editors.find(function(e) { return e.id === p.editorId; });
+        var editorName = editorObj ? (editorObj.name || editorObj.email) : 'Unassigned';
+        var editorUpi = editorObj?.editorUpi || '';
+
+        // Payout status pill
+        var statusPill = '';
+        if (p.editorPayoutStatus === 'paid') {
+          statusPill = '<span class="status-badge status-done">Cleared ✅</span>'
+            + (p.editorPaidTxnId ? '<div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">UTR: ' + p.editorPaidTxnId + '</div>' : '');
+        } else if (p.status === 'done' || p.deliveryUrl) {
+          statusPill = '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">⚡ Ready for Payout</span>';
+        } else {
+          statusPill = '<span class="status-badge status-pending">In Production ⏳</span>';
+        }
+
+        // Action button
+        var actionBtn = '';
+        if (p.editorPayoutStatus === 'paid') {
+          actionBtn = '<span style="color:#28C840;font-size:0.8rem;font-weight:600;">Paid on ' + (p.editorPaidAt ? new Date(p.editorPaidAt).toLocaleDateString('en-IN') : 'Archive') + '</span>';
+        } else if (cost > 0) {
+          actionBtn = '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
+            + (editorUpi ? '<button class="btn-outline btn-sm" onclick="navigator.clipboard.writeText(\'' + editorUpi + '\');showToast(\'Copied UPI: ' + editorUpi + '\')">Copy UPI</button>' : '')
+            + '<button class="btn-gold btn-sm" onclick="window.clearEditorPayout(\'' + p.id + '\', ' + cost + ')">Clear Payout (₹' + cost.toLocaleString() + ')</button>'
+            + '</div>';
+        } else {
+          actionBtn = '<button class="btn-outline btn-sm" onclick="openEditStatus(\'' + p.id + '\',\'' + p.status + '\',' + (p.invoiceAmount||0) + ',' + (p.invoicePaid||false) + ',\'' + (p.editorId||'') + '\')">Set Editor Fee</button>';
+        }
+
+        html += '<tr>'
+          + '<td><strong>' + (p.title || 'Untitled') + '</strong><br/><span style="color:var(--t2);font-size:0.82rem;">👤 ' + (nameOf(p.clientId) || 'Client') + '</span></td>'
+          + '<td><strong>' + editorName + '</strong>' + (editorUpi ? '<br/><small style="color:var(--gold);">UPI: ' + editorUpi + '</small>' : '') + '</td>'
+          + '<td>₹' + base.toLocaleString() + '</td>'
+          + '<td><strong style="color:#FF5F57;">₹' + cost.toLocaleString() + '</strong></td>'
+          + '<td><strong style="color:#28C840;">₹' + profit.toLocaleString() + '</strong> <span style="font-size:0.75rem;color:var(--t2);">(' + marginPct + '%)</span></td>'
+          + '<td>' + statusPill + '</td>'
+          + '<td>' + actionBtn + '</td>'
+          + '</tr>';
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    window.clearEditorPayout = async function(pid, amount) {
+      var utr = prompt('Enter 12-digit Bank/UPI Reference (UTR) for ₹' + amount + ' payout to Editor:');
+      if (!utr) return;
+
+      await updateDoc(doc(db, 'projects', pid), {
+        editorPayoutStatus: 'paid',
+        editorPaidTxnId: utr.trim(),
+        editorPaidAt: new Date().toISOString()
+      });
+
+      showToast('Editor payout of ₹' + amount + ' marked as cleared! ✅', 'success');
+    };
+    
 
     document.getElementById('btnSendNotif').addEventListener('click', async () => {
       const target = document.getElementById('notif-target').value;
@@ -3237,6 +3685,9 @@
       }
       if (name === 'coupons' && typeof window.renderAdminCouponsTable === 'function') {
         window.renderAdminCouponsTable();
+      }
+      if (name === 'payouts' && typeof renderEditorPayouts === 'function') {
+        renderEditorPayouts();
       }
       if (name === 'reports' && typeof window.loadReport === 'function') {
         window.loadReport();

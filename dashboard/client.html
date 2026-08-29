@@ -488,7 +488,20 @@
               <div id="deliverySection" style="display:none;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--r);padding:20px;">
                 <div style="font-size: 13px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎉 Final Video Delivered!</div>
                 <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;" id="detailDeliveryNote">Your editor has delivered your final edit.</div>
-                <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold">🎬 Open Delivered Video / Drive →</a>
+                
+                <!-- UNLOCKED DOWNLOAD -->
+                <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold" style="display:none;">🎬 Open Delivered Video / Drive →</a>
+
+                <!-- LOCKED WRAPPER -->
+                <div id="deliveryLockedWrap" style="display:none;background:rgba(255,95,87,0.08);border:1.5px solid rgba(255,95,87,0.35);border-radius:12px;padding:16px;margin-top:8px;">
+                  <div style="font-weight:700;color:#FF5F57;font-size:1rem;margin-bottom:6px;">🔒 Final 4K Download Locked</div>
+                  <p style="font-size:0.85rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">
+                    Your finished 4K video is ready for high-speed download! Please clear your remaining balance of <strong style="color:var(--gold);" id="txtDeliveryBalAmount">₹0</strong> to instantly unlock your files and official Tax Invoice.
+                  </p>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                    <button type="button" class="btn-gold btn-sm" onclick="window.openBalancePayModal()">💳 Pay Remaining Balance via UPI</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -578,6 +591,12 @@
               <button type="button" class="btn-gold btn-sm" id="btnApplyCnpCoupon" onclick="window.applyCnpCoupon()">Apply</button>
             </div>
             <div id="cnpCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
+          <!-- UPI PAYMENT PROOF SUBMISSION -->
+          <div style="margin-top:14px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🧾 Submit UPI Transaction Reference / UTR *</div>
+            <p style="font-size:0.8rem;color:var(--t2);margin-bottom:8px;">Scan the QR code above to pay your booking deposit, then enter the 12-digit UPI Reference / UTR number from your payment app (Google Pay, PhonePe, Paytm, etc.):</p>
+            <input type="text" id="cnpUtrInp" placeholder="e.g. 423589012345 (12-digit UTR)" style="width:100%;height:38px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-family:var(--font-b);font-size:0.9rem;"/>
+          </div>
           </div>
 
           <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--gold-border);">
@@ -1110,23 +1129,49 @@
       let html = '';
       projects.forEach(p => {
         const base = p.invoiceAmount || 0;
-        const total = base + Math.round(base * 0.18);
-        const paid = p.invoicePaid ? total : Math.round(total / 2);
-        const pending = total - paid;
+        const total = p.totalAmount || Math.round(base * 1.18);
+        const adv = p.advanceRequired || Math.round(total * 0.5);
+        const bal = p.balanceRequired || (total - adv);
+
+        const isAdvPaid = p.advancePaid || p.invoicePaid;
+        const isBalPaid = p.balancePaid || p.invoicePaid;
+
+        const currentPaid = (isAdvPaid ? adv : 0) + (isBalPaid ? bal : 0);
+        const currentPending = total - currentPaid;
         
         payTotal += total;
-        payPaid += paid;
-        payPending += pending;
+        payPaid += currentPaid;
+        payPending += currentPending;
         
         html += `
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
-            <div>
-              <div style="font-weight:600;">${p.title}</div>
-              <div style="font-size:0.88rem; color:var(--t2);">Total: ₹${total.toLocaleString()}</div>
+          <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+              <div>
+                <div style="font-weight:700;font-size:1rem;color:var(--t1);">${p.title}</div>
+                <div style="font-size:0.82rem;color:var(--t2);">Total Package: <strong style="color:var(--gold);">₹${total.toLocaleString()}</strong> (incl. 18% GST)</div>
+              </div>
+              <div>
+                ${currentPending === 0 ? '<span class="status-badge status-done">100% Fully Cleared ✅</span>' : '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">Pending: ₹' + currentPending.toLocaleString() + '</span>'}
+              </div>
             </div>
-            <div style="text-align:right;">
-              <div style="color: ${pending>0 ? '#FF4D4D' : 'var(--green)'}; font-weight:600;">Pending: ₹${pending.toLocaleString()}</div>
-              <span class="status-badge status-${p.invoicePaid?'done':'pending'}">${p.invoicePaid?'Fully Paid':'50% Paid'}</span>
+
+            <!-- Milestones Grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="background:rgba(0,0,0,0.3);padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+                <div style="font-size:11px;color:var(--t3);text-transform:uppercase;font-weight:700;">1. 50% Advance Booking</div>
+                <div style="font-size:0.95rem;font-weight:700;color:var(--t1);margin-top:2px;">₹${adv.toLocaleString()}</div>
+                <div style="margin-top:4px;">
+                  ${isAdvPaid ? '<span style="color:#28C840;font-size:0.8rem;font-weight:600;">Cleared ✅</span>' : (p.advanceStatus==='submitted' ? '<span style="color:var(--gold);font-size:0.8rem;font-weight:600;">🔎 Under Verification</span>' : '<span style="color:#FF5F57;font-size:0.8rem;font-weight:600;">⏳ Awaiting Deposit</span>')}
+                </div>
+              </div>
+
+              <div style="background:rgba(0,0,0,0.3);padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+                <div style="font-size:11px;color:var(--t3);text-transform:uppercase;font-weight:700;">2. 50% Final Balance</div>
+                <div style="font-size:0.95rem;font-weight:700;color:var(--t1);margin-top:2px;">₹${bal.toLocaleString()}</div>
+                <div style="margin-top:4px;">
+                  ${isBalPaid ? '<span style="color:#28C840;font-size:0.8rem;font-weight:600;">Cleared ✅ (Unlocked)</span>' : (p.balanceStatus==='submitted' ? '<span style="color:var(--gold);font-size:0.8rem;font-weight:600;">🔎 Under Verification</span>' : (p.deliveryUrl ? '<button class="btn-gold btn-sm" style="height:24px;font-size:0.75rem;" onclick="openProject(\'' + p.id + '\')">💳 Pay to Unlock</button>' : '<span style="color:var(--t3);font-size:0.8rem;">Due on Completion</span>'))}
+                </div>
+              </div>
             </div>
           </div>
         `;
@@ -1498,7 +1543,16 @@
         invoicePaid: enteredDeposit >= activeCnpTotal,
         status: 'pending',
         createdAt: serverTimestamp(),
-        deadline: deadline
+        deadline: deadline,
+        totalAmount: activeCnpTotal,
+        advanceRequired: activeCnpAdvance,
+        balanceRequired: activeCnpTotal - activeCnpAdvance,
+        advancePaid: enteredDeposit >= activeCnpTotal,
+        advanceTxnId: (document.getElementById('cnpUtrInp')?.value || '').trim(),
+        advanceStatus: (document.getElementById('cnpUtrInp')?.value || '').trim() ? 'submitted' : 'unpaid',
+        balancePaid: enteredDeposit >= activeCnpTotal,
+        balanceStatus: enteredDeposit >= activeCnpTotal ? 'verified' : 'unpaid',
+        deliveryLocked: enteredDeposit < activeCnpTotal
       });
 
       showToast('Project booked! Acknowledgment receipt created ✅','success');
@@ -1548,9 +1602,25 @@
       
       const delivSec = document.getElementById('deliverySection');
       if(currentProject.deliveryUrl) {
-        const delHref = formatExternalUrl(currentProject.deliveryUrl);
         delivSec.style.display = 'block';
-        document.getElementById('deliveryDownloadBtn').href = delHref;
+        var isFullyPaid = currentProject.invoicePaid || (currentProject.advancePaid && currentProject.balancePaid);
+        var downloadBtn = document.getElementById('deliveryDownloadBtn');
+        var lockedWrap  = document.getElementById('deliveryLockedWrap');
+        
+        if (isFullyPaid) {
+          if (downloadBtn) {
+            downloadBtn.style.display = 'inline-flex';
+            downloadBtn.href = formatExternalUrl(currentProject.deliveryUrl);
+          }
+          if (lockedWrap) lockedWrap.style.display = 'none';
+        } else {
+          if (downloadBtn) downloadBtn.style.display = 'none';
+          if (lockedWrap) {
+            lockedWrap.style.display = 'block';
+            var balDue = currentProject.balanceRequired || Math.round((currentProject.totalAmount||(currentProject.invoiceAmount||0)*1.18) * 0.5);
+            document.getElementById('txtDeliveryBalAmount') && (document.getElementById('txtDeliveryBalAmount').textContent = '₹' + balDue.toLocaleString());
+          }
+        }
       } else {
         delivSec.style.display = 'none';
       }
@@ -1942,5 +2012,36 @@
       if (user) saveFcmToken(user.uid);
     });
   </script>
+  <!-- MODAL: PAY REMAINING BALANCE -->
+  <div class="modal-overlay" id="modalPayBalance">
+    <div class="modal-box" style="max-width: 480px;">
+      <button class="modal-close" data-close="modalPayBalance">✕</button>
+      <div class="modal-title">Pay Remaining <em>Project Balance</em></div>
+      <p style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;">Scan to pay the remaining 50% balance for <strong id="txtBalModalProjTitle" style="color:var(--t1);">this project</strong>.</p>
+      
+      <!-- Dynamic QR Box -->
+      <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
+        <img id="qrBalModalImg" src="" alt="UPI QR Code" style="width:180px;height:180px;display:block;margin:0 auto 10px;"/>
+        <div style="color:#000;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Scan with GPay, PhonePe, Paytm, BHIM</div>
+      </div>
+
+      <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span style="color:var(--t2);font-size:0.85rem;">Balance to Pay:</span>
+          <strong style="color:var(--gold);font-size:1.1rem;" id="txtBalModalAmount">₹0</strong>
+        </div>
+        <div style="font-size:0.75rem;color:var(--t3);">UPI ID: <strong>nbikram704@okhdfcbank</strong> (Bikram Nath)</div>
+      </div>
+
+      <div class="dash-form">
+        <div class="field">
+          <label>Enter 12-Digit UPI Reference (UTR) *</label>
+          <input type="text" id="balModalUtrInp" placeholder="e.g. 423589012345" style="text-transform:uppercase;"/>
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnSubmitBalanceUtr" onclick="window.submitBalanceUtrProof()">Submit Balance Proof &amp; Unlock Files →</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
