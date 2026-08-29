@@ -278,6 +278,9 @@
         </div>
 
         <!-- 1. Monthly Earnings Breakdown Summary Table -->
+        <!-- Live Editor Compensation Card -->
+        <div id="detailEditorEarnBanner" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg, rgba(255,184,0,0.08) 0%, rgba(0,0,0,0.4) 100%);border:1px solid var(--gold-border);border-radius:12px;margin-bottom:16px;"></div>
+
         <div class="dash-card" style="margin-bottom: 24px;">
           <div class="dash-card-header" style="margin-bottom:14px;">
             <div class="dash-card-title">📅 Monthly Income <em>Breakdown</em></div>
@@ -547,12 +550,27 @@
       container.innerHTML = projects.map(p=>{
         const cName = allUsers[p.clientId]?.name || 'Client';
         const clientLabel = canViewContact ? cName : `Client Ref #${p.id.substring(0,6).toUpperCase()}`;
+        const myEarning = p.editorPayout !== undefined && p.editorPayout !== null && p.editorPayout !== 0 ? p.editorPayout : (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
+        const payoutStatusBadge = p.editorPayoutStatus === 'paid' 
+          ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Paid &amp; Cleared (Bank)</span>' 
+          : '<span class="status-badge" style="background:rgba(255,184,0,0.12);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⏳ Due upon Finish</span>';
+
         return `
         <div class="project-card">
           <div class="project-card-top">
             <div class="project-card-title">${p.title||'Untitled'}</div>
             ${badge(p.status)}
           </div>
+
+          <!-- Live Real-Time Editor Earning Banner -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 10px;padding:8px 12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:0.75rem;color:var(--t3);text-transform:uppercase;font-weight:700;">💰 Your Earning:</span>
+              <strong style="color:var(--gold);font-size:1.05rem;letter-spacing:0.02em;">₹${myEarning.toLocaleString()}</strong>
+            </div>
+            <div>${payoutStatusBadge}</div>
+          </div>
+
           <div class="project-card-meta">Client: <span style="color:var(--gold);font-weight:600;">${clientLabel}</span> · Deadline: ${dateStr(p.deadline)}</div>
           <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
           <div class="project-card-actions">
@@ -569,6 +587,22 @@
 
       document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
       document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
+      
+      const earnVal = currentProject.editorPayout !== undefined && currentProject.editorPayout !== null && currentProject.editorPayout !== 0 ? currentProject.editorPayout : (currentProject.invoiceAmount ? Math.round(currentProject.invoiceAmount * 0.5) : 1000);
+      const isPaid = currentProject.editorPayoutStatus === 'paid';
+      const elEarnBanner = document.getElementById('detailEditorEarnBanner');
+      if (elEarnBanner) {
+        elEarnBanner.innerHTML = `
+          <div>
+            <div style="font-size:0.72rem;color:var(--t3);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;">💰 Your Agreed Project Earning</div>
+            <div style="font-size:1.4rem;font-weight:800;color:var(--gold);margin-top:2px;">₹${earnVal.toLocaleString()}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.72rem;color:var(--t3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Payroll Status</div>
+            ${isPaid ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);padding:4px 10px;font-size:11px;font-weight:700;">✅ Paid to Bank (UTR: ' + (currentProject.editorPaidTxnId || 'Verified') + ')</span>' : '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);padding:4px 10px;font-size:11px;font-weight:700;">⏳ Payable upon Delivery</span>'}
+          </div>
+        `;
+      }
       
       const perm = currentUser.permissions || {};
       const canViewContact = currentUser.role === 'admin' || perm.viewContact === true;

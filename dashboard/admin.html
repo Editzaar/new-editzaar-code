@@ -785,7 +785,38 @@
       align-items: center;
       gap: 6px;
     }
-  </style>
+  
+    /* 5-Column Compact Executive Grid for Payroll & Margins */
+    #sec-payouts .stat-card-grid {
+      display: grid !important;
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 10px !important;
+      margin-bottom: 16px !important;
+    }
+    @media (max-width: 1200px) {
+      #sec-payouts .stat-card-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+    }
+    @media (max-width: 768px) {
+      #sec-payouts .stat-card-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+    #sec-payouts .stat-card {
+      padding: 10px 12px !important;
+      border-radius: 10px !important;
+    }
+    #sec-payouts .stat-card-label {
+      font-size: 0.68rem !important;
+      font-weight: 700 !important;
+      margin-bottom: 4px !important;
+    }
+    #sec-payouts .stat-card-value {
+      font-size: 1.25rem !important;
+      font-weight: 800 !important;
+    }
+</style>
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="../manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
@@ -839,7 +870,7 @@
         <div class="sidebar-nav-item" data-section="revenue"><span class="nav-icon">💰</span> Revenue &amp; Payments</div>
         <div class="sidebar-nav-item" data-section="payments"><span class="nav-icon">💳</span> Payment Management</div>
         <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">🧾</span> Invoices &amp; GST</div>
-        <div class="sidebar-nav-item" data-section="payouts"><span class="nav-icon">✂️</span> Editor Payouts &amp; Margins</div>
+        <div class="sidebar-nav-item" data-section="payouts"><span class="nav-icon">✂️</span> Editor Payroll &amp; Margins</div>
 
         <div class="sidebar-nav-section">Communication</div>
         <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat</div>
@@ -1207,12 +1238,12 @@
       <!-- ── SECTION: EDITOR PAYOUTS & AGENCY PROFIT MARGINS (NEW) ── -->
       <section id="sec-payouts" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">Editor Payouts &amp; <em>Agency Profit Margins</em></div>
+          <div class="dash-page-title">Editor Payroll &amp; <em>Agency Profit Margins</em></div>
           <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;"><span class="live-dot" style="background:#28C840;"></span> Net Profit Intelligence</span>
         </div>
 
         <!-- Profit & Margin Executive Metric Cards -->
-        <div class="stat-card-grid" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 20px;">
+        <div class="stat-card-grid" style="display:grid !important; grid-template-columns: repeat(5, 1fr) !important; gap:10px !important; margin-bottom: 16px !important;">
           <div class="stat-card">
             <div class="stat-card-label">Gross Client Revenue</div>
             <div class="stat-card-value" style="color:var(--gold);" id="marginGrossRev">₹0</div>
