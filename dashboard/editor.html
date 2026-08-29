@@ -348,7 +348,25 @@
 
       </section>
 
-          <!-- ── SECTION: PROFILE & PAYOUT BANKING SETTINGS (DEDICATED) ── -->
+          
+      <!-- ── SECTION: PROJECT MESSAGES ── -->
+      <section id="sec-messages" style="display:none;">
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-page-title">Project <em>Messages</em></div>
+            <div class="dash-page-sub">Direct communication with your project team. Privacy-protected.</div>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div style="text-align:center;padding:60px 24px;color:var(--t3);">
+            <div style="font-size:2.5rem;margin-bottom:16px;">💬</div>
+            <div style="font-size:1rem;font-weight:600;color:var(--t2);margin-bottom:8px;">Select a Project to Chat</div>
+            <div style="font-size:0.85rem;">Go to <strong>My Projects & Works</strong> and click the <strong>💬 Message</strong> button on any project to open the project chat.</div>
+          </div>
+        </div>
+      </section>
+
+    <!-- ── SECTION: PROFILE & PAYOUT BANKING SETTINGS (DEDICATED) ── -->
       <section id="sec-settings" style="display:none;">
         <div class="dash-topbar">
           <div>
@@ -436,7 +454,7 @@
     import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, updatePassword }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc,
+    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc,
              query, where, onSnapshot, serverTimestamp }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -473,6 +491,61 @@
       loadUsers();
       loadProjects();
     });
+
+    
+    window.openChatWith = async function(projectId, projectTitle) {
+      currentProject = window._activeEditorProjectsList?.find(p => p.id === projectId) || { id: projectId, title: projectTitle };
+      showSection('messages');
+      var msgHeader = document.getElementById('msgProjectTitle');
+      if (msgHeader) msgHeader.textContent = projectTitle || 'Project Chat';
+      // Load chat messages
+      if (chatUnsub) chatUnsub();
+      var chatQuery = query(collection(db,'messages'), where('projectId','==',projectId));
+      chatUnsub = onSnapshot(chatQuery, (snap) => {
+        var msgs = snap.docs.map(d=>({id:d.id,...d.data()}));
+        msgs.sort((a,b)=>(a.createdAt?.toMillis?a.createdAt.toMillis():0)-(b.createdAt?.toMillis?b.createdAt.toMillis():0));
+        var box = document.getElementById('chatMsgBox');
+        if (box) {
+          if (!msgs.length) {
+            box.innerHTML = '<div style="text-align:center;color:var(--t3);padding:32px;">No messages yet. Start the conversation!</div>';
+          } else {
+            box.innerHTML = msgs.map(m => {
+              var isMine = m.senderId === currentUser?.uid;
+              return `<div style="display:flex;justify-content:${isMine?'flex-end':'flex-start'};margin-bottom:10px;">
+                <div style="max-width:75%;background:${isMine?'var(--gold)':'rgba(255,255,255,0.07)'};color:${isMine?'#000':'var(--t1)'};padding:10px 14px;border-radius:12px;font-size:0.85rem;">
+                  <div style="font-weight:600;font-size:0.75rem;margin-bottom:4px;opacity:0.7;">${m.senderName || 'Team'}</div>
+                  <div>${filterChatPrivacy(m.text || '')}</div>
+                  <div style="font-size:0.7rem;opacity:0.5;margin-top:4px;text-align:right;">${dateStr(m.createdAt)}</div>
+                </div>
+              </div>`;
+            }).join('');
+            box.scrollTop = box.scrollHeight;
+          }
+        }
+      });
+    };
+
+    
+    window.sendEditorMessage = async function() {
+      var inp = document.getElementById('chatInputEditor');
+      var text = (inp?.value || '').trim();
+      if (!text || !currentProject) return;
+      if (!currentUser) return;
+      inp.value = '';
+      try {
+        await addDoc(collection(db,'messages'), {
+          projectId: currentProject.id,
+          senderId: currentUser.uid,
+          senderName: currentUser.name || 'Editor',
+          senderRole: 'editor',
+          text: text,
+          createdAt: serverTimestamp()
+        });
+      } catch(e) {
+        console.error('Send message error:', e);
+        showToast('Failed to send message. Try again.', 'error');
+      }
+    };
 
     document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>location.href='/dashboard/index.html'));
 
@@ -1192,5 +1265,6 @@
     document.getElementById('btnSaveEditorPayoutDetails')?.addEventListener('click', window.saveEditorPayoutDetails);
     document.getElementById('btnChangeEditorPass')?.addEventListener('click', window.changeEditorPassword);
   </script>
+  <script src="../js/main.js?v=3.2" defer></script>
 </body>
 </html>
