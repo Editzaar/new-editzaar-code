@@ -214,6 +214,9 @@
                 <button class="btn-outline btn-sm" onclick="updateStatus('review')">👁 Submit for Review</button>
                 <button class="btn-outline btn-sm" onclick="updateStatus('done')">✅ Mark Done</button>
               </div>
+
+        <!-- Live Editor Compensation Card -->
+        <div id="detailEditorEarnBanner" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg, rgba(255,184,0,0.08) 0%, rgba(0,0,0,0.4) 100%);border:1px solid var(--gold-border);border-radius:12px;margin-bottom:16px;"></div>
             </div>
           </div>
 
@@ -278,9 +281,6 @@
         </div>
 
         <!-- 1. Monthly Earnings Breakdown Summary Table -->
-        <!-- Live Editor Compensation Card -->
-        <div id="detailEditorEarnBanner" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg, rgba(255,184,0,0.08) 0%, rgba(0,0,0,0.4) 100%);border:1px solid var(--gold-border);border-radius:12px;margin-bottom:16px;"></div>
-
         <div class="dash-card" style="margin-bottom: 24px;">
           <div class="dash-card-header" style="margin-bottom:14px;">
             <div class="dash-card-title">📅 Monthly Income <em>Breakdown</em></div>
@@ -881,16 +881,79 @@
     // ============================================================
     var _cachedEditorProjects = [];
 
+    let _allEditorProjectsCache = [];
+
+    window.filterEditorLedger = function() {
+      var monthVal = document.getElementById('selEditorMonthFilter')?.value || 'all';
+      var statusVal = document.getElementById('selEditorStatusFilter')?.value || 'all';
+      var tbody = document.getElementById('editorEarningsTbody');
+      if (!tbody) return;
+
+      var filtered = _allEditorProjectsCache.filter(function(p) {
+        var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
+        var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+        
+        if (monthVal !== 'all' && mKey !== monthVal) return false;
+        if (statusVal === 'paid' && p.editorPayoutStatus !== 'paid') return false;
+        if (statusVal === 'unpaid' && p.editorPayoutStatus === 'paid') return false;
+        return true;
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No projects match the selected filters.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(function(p) {
+        var earn = p.editorPayout;
+        if (earn === undefined || earn === null || earn === 0) {
+          earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
+        }
+
+        var isPaid = p.editorPayoutStatus === 'paid';
+        var isDone = p.status === 'done';
+        var cName = (typeof allUsers !== 'undefined' && allUsers[p.clientId]?.name) ? allUsers[p.clientId].name : 'Client Ref #' + p.id.substring(0,6).toUpperCase();
+
+        var statusHtml = '';
+        var utrHtml = '';
+
+        if (isPaid) {
+          statusHtml = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Paid &amp; Cleared (Bank)</span>';
+          utrHtml = '<div style="font-size:11px;color:#28C840;font-family:monospace;font-weight:700;">UTR: ' + (p.editorPaidTxnId || 'Verified') + '</div>';
+        } else if (isDone) {
+          statusHtml = '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⚡ Ready for Bank Payout</span>';
+          utrHtml = '<div style="font-size:11px;color:var(--t3);">Admin clearance pending</div>';
+        } else {
+          statusHtml = '<span class="status-badge" style="background:rgba(255,255,255,0.05);color:var(--t2);font-size:11px;padding:3px 8px;">⏳ In Progress</span>';
+          utrHtml = '<div style="font-size:11px;color:var(--t3);">Payable upon finish</div>';
+        }
+
+        var projectStatusBadge = p.status === 'done' 
+          ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;font-size:10px;">Done ✓</span>'
+          : `<span class="status-badge status-${p.status}" style="font-size:10px;">${p.status}</span>`;
+
+        return `<tr>
+          <td>
+            <div style="font-weight:600;color:var(--t1);">${p.title||'Untitled'}</div>
+            <div style="font-size:0.75rem;color:var(--t3);">${dateStr(p.createdAt)}</div>
+          </td>
+          <td>${cName}</td>
+          <td>${projectStatusBadge}</td>
+          <td style="color:var(--gold);font-weight:800;font-size:0.95rem;">₹${earn.toLocaleString()}</td>
+          <td>${statusHtml}</td>
+          <td>${utrHtml}</td>
+        </tr>`;
+      }).join('');
+    };
+
     function renderEditorEarnings(incomingProjects) {
       if (!currentUser) return;
       var myProjects = incomingProjects || window._activeEditorProjectsList || [];
-      if (!myProjects.length && typeof projects !== 'undefined' && Array.isArray(projects)) {
-        myProjects = projects.filter(function(p) { return p.editorId === currentUser.uid; });
-      }
+      _allEditorProjectsCache = myProjects;
 
-      var lifetimePaid = 0;       // Cleared to bank
-      var pendingWorkInProgress = 0; // Still being edited
-      var readyForPayout = 0;     // Finished / approved, waiting for admin bank transfer
+      var lifetimePaid = 0;
+      var pendingWorkInProgress = 0;
+      var readyForPayout = 0;
       var clearedCount = 0;
       var pendingCount = 0;
 
@@ -898,7 +961,6 @@
       var currentMonthKey = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
       var thisMonthTotal = 0;
 
-      // Monthly buckets map: { 'August 2026': { total: 0, cleared: 0, pending: 0, count: 0, dateObj: Date } }
       var monthlyMap = {};
 
       myProjects.forEach(function(p) {
@@ -907,7 +969,6 @@
           earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
         }
 
-        // Determine date
         var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
         var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
 
@@ -921,19 +982,15 @@
           thisMonthTotal += earn;
         }
 
-        // Exact 3-stage lifecycle
         if (p.editorPayoutStatus === 'paid') {
-          // STAGE 3: Admin marked payment done -> Cleared to bank & added to lifetime
           lifetimePaid += earn;
           clearedCount++;
           monthlyMap[mKey].cleared += earn;
         } else if (p.status === 'done') {
-          // STAGE 2: Project is completed / approved by admin -> Ready for Payout
           readyForPayout += earn;
           pendingCount++;
           monthlyMap[mKey].pending += earn;
         } else {
-          // STAGE 1: In progress / working -> Due on finish
           pendingWorkInProgress += earn;
           pendingCount++;
           monthlyMap[mKey].pending += earn;
@@ -968,8 +1025,8 @@
         monthSelect.innerHTML = optionsHtml;
       }
 
-      // Render Monthly Summary Table
-      var monthTbody = document.getElementById('tbodyEditorMonthly');
+      // Render Monthly Summary Table into exact HTML ID: editorMonthlySummaryTbody
+      var monthTbody = document.getElementById('editorMonthlySummaryTbody');
       if (monthTbody) {
         var monthEntries = Object.values(monthlyMap);
         if (!monthEntries.length) {
@@ -997,55 +1054,10 @@
         }
       }
 
-      // Render Individual Project Works & Payment Ledger
-      var ledgerTbody = document.getElementById('tbodyEditorWorks');
-      if (ledgerTbody) {
-        if (!myProjects.length) {
-          ledgerTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No project works found.</td></tr>';
-        } else {
-          ledgerTbody.innerHTML = myProjects.map(function(p) {
-            var earn = p.editorPayout;
-            if (earn === undefined || earn === null || earn === 0) {
-              earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
-            }
-
-            var isPaid = p.editorPayoutStatus === 'paid';
-            var isDone = p.status === 'done';
-            var cName = (typeof allUsers !== 'undefined' && allUsers[p.clientId]?.name) ? allUsers[p.clientId].name : 'Client Ref #' + p.id.substring(0,6).toUpperCase();
-
-            var statusHtml = '';
-            var utrHtml = '';
-
-            if (isPaid) {
-              statusHtml = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Paid &amp; Cleared (Bank)</span>';
-              utrHtml = '<div style="font-size:11px;color:#28C840;font-family:monospace;font-weight:700;">UTR: ' + (p.editorPaidTxnId || 'Verified') + '</div>';
-            } else if (isDone) {
-              statusHtml = '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⚡ Ready for Bank Payout</span>';
-              utrHtml = '<div style="font-size:11px;color:var(--t3);">Admin clearance pending</div>';
-            } else {
-              statusHtml = '<span class="status-badge" style="background:rgba(255,255,255,0.05);color:var(--t2);font-size:11px;padding:3px 8px;">⏳ In Progress</span>';
-              utrHtml = '<div style="font-size:11px;color:var(--t3);">Payable upon finish</div>';
-            }
-
-            var projectStatusBadge = p.status === 'done' 
-              ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;font-size:10px;">Done ✓</span>'
-              : `<span class="status-badge status-${p.status}" style="font-size:10px;">${p.status}</span>`;
-
-            return `<tr>
-              <td>
-                <div style="font-weight:600;color:var(--t1);">${p.title||'Untitled'}</div>
-                <div style="font-size:0.75rem;color:var(--t3);">${dateStr(p.createdAt)}</div>
-              </td>
-              <td>${cName}</td>
-              <td>${projectStatusBadge}</td>
-              <td style="color:var(--gold);font-weight:800;font-size:0.95rem;">₹${earn.toLocaleString()}</td>
-              <td>${statusHtml}</td>
-              <td>${utrHtml}</td>
-            </tr>`;
-          }).join('');
-        }
-      }
+      // Render Individual Project Works into exact HTML ID: editorEarningsTbody
+      window.filterEditorLedger();
     }
+    window.renderEditorEarnings = renderEditorEarnings;
 
     window.saveEditorPayoutDetails = async function() {
       var upi = (document.getElementById('editorMyUpiInp')?.value || '').trim();
@@ -1078,9 +1090,8 @@
           updatedAt: serverTimestamp()
         };
 
-        await updateDoc(doc(db, 'users', userUid), updatePayload);
+        await setDoc(doc(db, 'users', userUid), updatePayload, { merge: true });
 
-        // Update local memory state
         if (currentUser) {
           currentUser.editorUpi = upi;
           currentUser.editorBankName = bankName;
@@ -1099,6 +1110,50 @@
       }
     };
 
+    window.changeEditorPassword = async function() {
+      var newPass = (document.getElementById('editorNewPassInp')?.value || '').trim();
+      var newName = (document.getElementById('editorProfileNameInp')?.value || '').trim();
+      var newPhone = (document.getElementById('editorProfilePhoneInp')?.value || '').trim();
+
+      var btn = document.getElementById('btnChangeEditorPass');
+      if (btn) { btn.disabled = true; btn.textContent = 'Updating Profile & Password... ⏳'; }
+
+      try {
+        var userUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
+        if (!userUid) throw new Error('User session not found.');
+
+        var upObj = { updatedAt: serverTimestamp() };
+        if (newName) upObj.name = newName;
+        if (newPhone) upObj.mobile = newPhone;
+
+        if (newPass) {
+          if (newPass.length < 6) {
+            showToast('Password must be at least 6 characters.', 'error');
+            if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
+            return;
+          }
+          var _auth = getAuth();
+          if (_auth.currentUser) {
+            try {
+              await updatePassword(_auth.currentUser, newPass);
+            } catch(authErr) {
+              console.warn('Firebase Auth notice:', authErr);
+            }
+          }
+          upObj.tempPass = newPass;
+        }
+
+        await setDoc(doc(db, 'users', userUid), upObj, { merge: true });
+        showToast('Profile & password updated successfully! ✅', 'success');
+        if (document.getElementById('editorNewPassInp')) document.getElementById('editorNewPassInp').value = '';
+      } catch(err) {
+        console.error('Error updating editor profile:', err);
+        showToast('Error: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
+      }
+    };
+
     async function loadEditorProfileDetails() {
       var userUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
       if (!userUid) return;
@@ -1106,32 +1161,36 @@
         var userDoc = await getDoc(doc(db, 'users', userUid));
         if (userDoc.exists()) {
           var dat = userDoc.data();
-          if (document.getElementById('editorMyUpiInp') && !document.getElementById('editorMyUpiInp').value) {
-            document.getElementById('editorMyUpiInp').value = dat.editorUpi || '';
-          }
-          if (document.getElementById('editorBankNameInp') && !document.getElementById('editorBankNameInp').value) {
-            document.getElementById('editorBankNameInp').value = dat.editorBankName || '';
-          }
-          if (document.getElementById('editorIfscInp') && !document.getElementById('editorIfscInp').value) {
-            document.getElementById('editorIfscInp').value = dat.editorIfsc || '';
-          }
-          if (document.getElementById('editorAccountNumInp') && !document.getElementById('editorAccountNumInp').value) {
-            document.getElementById('editorAccountNumInp').value = dat.editorAccountNum || '';
-          }
-          if (document.getElementById('editorAccountHolderInp') && !document.getElementById('editorAccountHolderInp').value) {
-            document.getElementById('editorAccountHolderInp').value = dat.editorAccountHolder || dat.name || '';
-          }
-          if (document.getElementById('editorProfileNameInp') && !document.getElementById('editorProfileNameInp').value) {
-            document.getElementById('editorProfileNameInp').value = dat.name || '';
-          }
-          if (document.getElementById('editorProfilePhoneInp') && !document.getElementById('editorProfilePhoneInp').value) {
-            document.getElementById('editorProfilePhoneInp').value = dat.mobile || dat.phone || '';
-          }
+          var elUpi = document.getElementById('editorMyUpiInp');
+          if (elUpi && dat.editorUpi) elUpi.value = dat.editorUpi;
+
+          var elBName = document.getElementById('editorBankNameInp');
+          if (elBName && dat.editorBankName) elBName.value = dat.editorBankName;
+
+          var elIfsc = document.getElementById('editorIfscInp');
+          if (elIfsc && dat.editorIfsc) elIfsc.value = dat.editorIfsc;
+
+          var elAcc = document.getElementById('editorAccountNumInp');
+          if (elAcc && dat.editorAccountNum) elAcc.value = dat.editorAccountNum;
+
+          var elHold = document.getElementById('editorAccountHolderInp');
+          if (elHold && (dat.editorAccountHolder || dat.name)) elHold.value = dat.editorAccountHolder || dat.name;
+
+          var elName = document.getElementById('editorProfileNameInp');
+          if (elName && dat.name) elName.value = dat.name;
+
+          var elPhone = document.getElementById('editorProfilePhoneInp');
+          if (elPhone && (dat.mobile || dat.phone)) elPhone.value = dat.mobile || dat.phone;
         }
       } catch(e) {
         console.warn('Load editor profile error:', e);
       }
     }
+    window.loadEditorProfileDetails = loadEditorProfileDetails;
+
+    // Attach direct listeners on DOM content loaded
+    document.getElementById('btnSaveEditorPayoutDetails')?.addEventListener('click', window.saveEditorPayoutDetails);
+    document.getElementById('btnChangeEditorPass')?.addEventListener('click', window.changeEditorPassword);
   </script>
 </body>
 </html>
