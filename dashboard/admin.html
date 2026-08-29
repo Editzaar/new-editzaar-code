@@ -3451,7 +3451,7 @@
         } else if (cost > 0) {
           actionBtn = '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
             + (editorUpi ? '<button class="btn-outline btn-sm" onclick="navigator.clipboard.writeText(\'' + editorUpi + '\');showToast(\'Copied UPI: ' + editorUpi + '\')">Copy UPI</button>' : '')
-            + '<button class="btn-gold btn-sm" onclick="window.clearEditorPayout(\'' + p.id + '\', ' + cost + ')">Clear Payout (₹' + cost.toLocaleString() + ')</button>'
+            + '<button class="btn-gold btn-sm" onclick="window.openEditorPayrollModal(\'' + p.id + '\', ' + cost + ')">Clear Payout (₹' + cost.toLocaleString() + ')</button>'
             + '</div>';
         } else {
           actionBtn = '<button class="btn-outline btn-sm" onclick="openEditStatus(\'' + p.id + '\',\'' + p.status + '\',' + (p.invoiceAmount||0) + ',' + (p.invoicePaid||false) + ',\'' + (p.editorId||'') + '\')">Set Editor Fee</button>';
@@ -3471,17 +3471,76 @@
       tbody.innerHTML = html;
     }
 
-    window.clearEditorPayout = async function(pid, amount) {
-      var utr = prompt('Enter 12-digit Bank/UPI Reference (UTR) for ₹' + amount + ' payout to Editor:');
-      if (!utr) return;
+    var _activePayrollPid = null;
+    var _activePayrollAmount = 0;
+    var _activePayrollEditorObj = null;
 
-      await updateDoc(doc(db, 'projects', pid), {
-        editorPayoutStatus: 'paid',
-        editorPaidTxnId: utr.trim(),
-        editorPaidAt: new Date().toISOString()
-      });
+    window.openEditorPayrollModal = function(pid, amount) {
+      var proj = projects.find(function(p) { return p.id === pid; });
+      if (!proj) return;
+      var ed = editors.find(function(e) { return e.id === proj.editorId; });
 
-      showToast('Editor payout of ₹' + amount + ' marked as cleared! ✅', 'success');
+      _activePayrollPid = pid;
+      _activePayrollAmount = amount;
+      _activePayrollEditorObj = ed;
+
+      document.getElementById('txtPayrollEditorName') && (document.getElementById('txtPayrollEditorName').textContent = ed ? (ed.name || ed.email) : 'Editor');
+      document.getElementById('txtPayrollProjectTitle') && (document.getElementById('txtPayrollProjectTitle').textContent = proj.title || 'Project');
+      document.getElementById('txtPayrollAmount') && (document.getElementById('txtPayrollAmount').textContent = '₹' + amount.toLocaleString());
+
+      var upiText = ed?.editorUpi || 'Not uploaded yet';
+      document.getElementById('txtPayrollUpi') && (document.getElementById('txtPayrollUpi').textContent = upiText);
+
+      var bankText = ed?.editorBankDetails || (ed?.editorBankName ? (ed.editorBankName + ' · Acc: ' + (ed.editorAccountNum||'—') + ' · IFSC: ' + (ed.editorIfsc||'—')) : 'Not uploaded yet');
+      document.getElementById('txtPayrollBank') && (document.getElementById('txtPayrollBank').textContent = bankText);
+
+      if (document.getElementById('payrollUtrInp')) document.getElementById('payrollUtrInp').value = '';
+
+      openModal('modalEditorPayrollPay');
+    };
+
+    window.copyPayrollField = function(type) {
+      if (!_activePayrollEditorObj) return;
+      var text = '';
+      if (type === 'upi') {
+        text = _activePayrollEditorObj.editorUpi || '';
+      } else if (type === 'bank') {
+        text = _activePayrollEditorObj.editorBankDetails || ('Bank: ' + (_activePayrollEditorObj.editorBankName||'') + '\nAcc: ' + (_activePayrollEditorObj.editorAccountNum||'') + '\nIFSC: ' + (_activePayrollEditorObj.editorIfsc||'') + '\nHolder: ' + (_activePayrollEditorObj.editorAccountHolder||_activePayrollEditorObj.name||''));
+      }
+      if (text) {
+        navigator.clipboard.writeText(text);
+        showToast('Copied to clipboard! 📋', 'success');
+      } else {
+        showToast('No details uploaded by editor yet.', 'info');
+      }
+    };
+
+    window.confirmEditorPayrollClearance = async function() {
+      if (!_activePayrollPid) return;
+      var utr = (document.getElementById('payrollUtrInp')?.value || '').trim();
+      if (!utr) {
+        showToast('Please enter the bank UTR / Reference number.', 'error');
+        return;
+      }
+
+      var btn = document.getElementById('btnConfirmPayrollClearance');
+      if (btn) { btn.disabled = true; btn.textContent = 'Clearing Payout... ⏳'; }
+
+      try {
+        await updateDoc(doc(db, 'projects', _activePayrollPid), {
+          editorPayoutStatus: 'paid',
+          editorPaidTxnId: utr,
+          editorPaidAt: new Date().toISOString()
+        });
+
+        closeModal('modalEditorPayrollPay');
+        showToast('Editor payout of ₹' + _activePayrollAmount.toLocaleString() + ' marked as cleared! ✅', 'success');
+      } catch(err) {
+        console.error('Error clearing payout:', err);
+        showToast('Error: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Confirm Payout & Clear Balance ✅'; }
+      }
     };
     
 
@@ -5479,5 +5538,57 @@
     };
 
   </script>
+  <!-- ══ MODAL: ADMIN EDITOR PAYROLL & BANK CLEARANCE ══ -->
+  <div class="modal-overlay" id="modalEditorPayrollPay">
+    <div class="modal-box" style="max-width: 520px;">
+      <button class="modal-close" data-close="modalEditorPayrollPay">✕</button>
+      <div class="modal-title">Clear Editor <em>Payroll &amp; Payout</em></div>
+      <p style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;">Transfer funds to the video editor and log the bank UTR reference.</p>
+      
+      <!-- Editor Banking Info Card -->
+      <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div>
+            <div style="font-weight:700;font-size:1.05rem;color:var(--t1);" id="txtPayrollEditorName">Editor Name</div>
+            <div style="font-size:0.8rem;color:var(--t2);" id="txtPayrollProjectTitle">Project Title</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;color:var(--t3);text-transform:uppercase;font-weight:700;">Payout Amount</div>
+            <strong style="color:var(--gold);font-size:1.3rem;" id="txtPayrollAmount">₹0</strong>
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px dashed var(--border);margin:10px 0;"/>
+
+        <!-- UPI Details -->
+        <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <span style="font-size:0.75rem;color:var(--t3);text-transform:uppercase;font-weight:700;">UPI ID: </span>
+            <strong style="color:var(--gold);font-size:0.92rem;" id="txtPayrollUpi">Not Uploaded</strong>
+          </div>
+          <button class="btn-outline btn-sm" id="btnCopyPayrollUpi" style="height:26px;font-size:11px;" onclick="window.copyPayrollField('upi')">📋 Copy UPI</button>
+        </div>
+
+        <!-- Bank Details -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <span style="font-size:0.75rem;color:var(--t3);text-transform:uppercase;font-weight:700;">Bank Details: </span>
+            <div style="font-size:0.85rem;color:var(--t1);line-height:1.4;margin-top:2px;" id="txtPayrollBank">Not Uploaded</div>
+          </div>
+          <button class="btn-outline btn-sm" id="btnCopyPayrollBank" style="height:26px;font-size:11px;" onclick="window.copyPayrollField('bank')">📋 Copy Bank</button>
+        </div>
+      </div>
+
+      <!-- Clearance Form -->
+      <div class="dash-form">
+        <div class="field">
+          <label>Bank / UPI Transaction Reference (UTR) *</label>
+          <input type="text" id="payrollUtrInp" placeholder="e.g. 423589012345 (12-digit UTR from your bank app)" style="text-transform:uppercase;"/>
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnConfirmPayrollClearance" onclick="window.confirmEditorPayrollClearance()">Confirm Payout &amp; Clear Balance ✅</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

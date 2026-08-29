@@ -136,6 +136,9 @@
         <div class="sidebar-nav-section">Communication</div>
         <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Project Messages</div>
 
+        <div class="sidebar-nav-section">Settings &amp; Banking</div>
+        <div class="sidebar-nav-item" data-section="settings"><span class="nav-icon">⚙️</span> Profile &amp; Payout Settings</div>
+
         <div class="sidebar-nav-section">Main Site</div>
         <a class="sidebar-nav-item" href="../index.html" style="text-decoration:none;"><span class="nav-icon">🏠</span> Home Page</a>
         <a class="sidebar-nav-item" href="../work.html" style="text-decoration:none;"><span class="nav-icon">🎬</span> Agency Portfolio</a></nav>
@@ -170,27 +173,7 @@
         </div>
         <div class="project-detail-grid">
           <div>
-            <!-- Account Security & Change Password Card -->
-        <div class="dash-card" style="margin-bottom: 24px;">
-          <div class="dash-card-header" style="margin-bottom:12px;">
-            <div class="dash-card-title">🔐 Account Security &amp; <em>Password</em></div>
-            <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;">Real-Time Sync</span>
-          </div>
-          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;">Change your editor account password. Changes take effect immediately and sync with your portal credentials.</p>
-          <div class="dash-form">
-            <div class="form-grid-2">
-              <div class="field">
-                <label>New Password (min. 6 characters) *</label>
-                <input type="password" id="editorNewPassInp" placeholder="Enter new strong password"/>
-              </div>
-              <div class="field" style="display:flex;align-items:flex-end;">
-                <button class="btn-gold" style="height:42px;width:100%;justify-content:center;" id="btnChangeEditorPass" onclick="window.changeEditorPassword()">Update My Password 🔒</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-card">
+                  <div class="dash-card">
               <div class="dash-card-header">
                 <div class="dash-card-title" id="detailTitle">—</div>
               </div>
@@ -378,6 +361,87 @@
               </div>
             </div>
             <button class="btn-gold btn-sm" id="btnSaveEditorPayoutDetails" onclick="window.saveEditorPayoutDetails()">Save Payout Details ✅</button>
+          </div>
+        </div>
+      </section>
+
+          <!-- ── SECTION: PROFILE & PAYOUT BANKING SETTINGS (DEDICATED) ── -->
+      <section id="sec-settings" style="display:none;">
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-page-title">Profile &amp; <em>Payout Banking Settings</em></div>
+            <div style="font-size:0.85rem;color:var(--t2);margin-top:2px;">Upload and manage your UPI ID and Bank Account details for instant payroll clearance by Admin.</div>
+          </div>
+          <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;"><span class="live-dot" style="background:#28C840;"></span> Verified Payroll Sync</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <!-- 1. Payout Receiving Banking & UPI Details -->
+          <div class="dash-card">
+            <div class="dash-card-header" style="margin-bottom:12px;">
+              <div class="dash-card-title">💳 My Payout <em>Receiving Details</em></div>
+              <span class="live-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">Admin Payroll</span>
+            </div>
+            <p style="font-size:0.82rem;color:var(--t2);margin-bottom:14px;">Editzaar Admin will send your video editing payments directly to these details upon project delivery.</p>
+            
+            <div class="dash-form">
+              <div class="field">
+                <label>Official UPI ID (GPay / PhonePe / Paytm / BHIM) *</label>
+                <input type="text" id="editorMyUpiInp" placeholder="e.g. 9876543210@okhdfcbank / yourname@paytm"/>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="field">
+                  <label>Bank Name</label>
+                  <input type="text" id="editorBankNameInp" placeholder="e.g. HDFC Bank / SBI / ICICI"/>
+                </div>
+                <div class="field">
+                  <label>IFSC Code</label>
+                  <input type="text" id="editorIfscInp" placeholder="e.g. HDFC0001234" style="text-transform:uppercase;"/>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="field">
+                  <label>Account Number</label>
+                  <input type="text" id="editorAccountNumInp" placeholder="e.g. 5010023456789"/>
+                </div>
+                <div class="field">
+                  <label>Account Holder Name</label>
+                  <input type="text" id="editorAccountHolderInp" placeholder="e.g. Vishal Kumar"/>
+                </div>
+              </div>
+
+              <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnSaveEditorPayoutDetails" onclick="window.saveEditorPayoutDetails()">Save Payout &amp; Banking Details ✅</button>
+            </div>
+          </div>
+
+          <!-- 2. Account Security & Password -->
+          <div class="dash-card">
+            <div class="dash-card-header" style="margin-bottom:12px;">
+              <div class="dash-card-title">🔐 Account Security &amp; <em>Password</em></div>
+              <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;">Real-Time Sync</span>
+            </div>
+            <p style="font-size:0.82rem;color:var(--t2);margin-bottom:14px;">Change your editor account password. Changes take effect immediately and sync with your portal credentials.</p>
+            
+            <div class="dash-form">
+              <div class="field">
+                <label>Editor Display Name</label>
+                <input type="text" id="editorProfileNameInp" placeholder="Your Name"/>
+              </div>
+
+              <div class="field">
+                <label>Phone / WhatsApp Number</label>
+                <input type="text" id="editorProfilePhoneInp" placeholder="e.g. +91 9876543210"/>
+              </div>
+
+              <div class="field">
+                <label>New Password (min. 6 characters) *</label>
+                <input type="password" id="editorNewPassInp" placeholder="Enter new strong password"/>
+              </div>
+
+              <button class="btn-outline" style="width:100%;justify-content:center;height:42px;" id="btnChangeEditorPass" onclick="window.changeEditorPassword()">Update Password &amp; Profile 🔒</button>
+            </div>
           </div>
         </div>
       </section>
@@ -624,7 +688,7 @@
     document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
     document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 
-    const sections = ['projects', 'detail', 'chat', 'earnings'];
+    const sections = ['projects', 'detail', 'chat', 'earnings', 'settings'];
     function showSection(name) {
       sections.forEach(s => {
         const el = document.getElementById('sec-' + s);
@@ -633,6 +697,9 @@
       document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === name));
       if (name === 'earnings' && typeof renderEditorEarnings === 'function') {
         renderEditorEarnings();
+      }
+      if (name === 'settings' && typeof loadEditorProfileDetails === 'function') {
+        loadEditorProfileDetails();
       }
     }
     window.showSection=showSection;
@@ -983,23 +1050,76 @@
 
     window.saveEditorPayoutDetails = async function() {
       var upi = (document.getElementById('editorMyUpiInp')?.value || '').trim();
-      var bank = (document.getElementById('editorMyBankInp')?.value || '').trim();
+      var bankName = (document.getElementById('editorBankNameInp')?.value || '').trim();
+      var ifsc = (document.getElementById('editorIfscInp')?.value || '').trim().toUpperCase();
+      var accNum = (document.getElementById('editorAccountNumInp')?.value || '').trim();
+      var accHolder = (document.getElementById('editorAccountHolderInp')?.value || '').trim();
 
-      if (!upi && !bank) {
-        showToast('Please enter at least your UPI ID to receive payouts.', 'error');
+      if (!upi && !accNum) {
+        showToast('Please enter at least your UPI ID or Bank Account Number.', 'error');
         return;
       }
+
+      var btn = document.getElementById('btnSaveEditorPayoutDetails');
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving Banking Details... ⏳'; }
 
       try {
         await updateDoc(doc(db, 'users', currentUser.uid), {
           editorUpi: upi,
-          editorBankDetails: bank,
+          editorBankName: bankName,
+          editorIfsc: ifsc,
+          editorAccountNum: accNum,
+          editorAccountHolder: accHolder,
+          editorBankDetails: (bankName ? bankName + ' - ' : '') + (accNum ? 'Acc: ' + accNum : '') + (ifsc ? ' (IFSC: ' + ifsc + ')' : ''),
           updatedAt: serverTimestamp()
         });
-        showToast('Payout receiving details saved successfully! ✅', 'success');
+        showToast('Banking and UPI details saved successfully! ✅', 'success');
       } catch(err) {
-        console.error('Error saving payout details:', err);
-        showToast('Error saving details: ' + err.message, 'error');
+        console.error('Error saving banking details:', err);
+        showToast('Error: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Save Payout & Banking Details ✅'; }
+      }
+    };
+
+    window.changeEditorPassword = async function() {
+      var newPass = (document.getElementById('editorNewPassInp')?.value || '').trim();
+      var newName = (document.getElementById('editorProfileNameInp')?.value || '').trim();
+      var newPhone = (document.getElementById('editorProfilePhoneInp')?.value || '').trim();
+
+      var btn = document.getElementById('btnChangeEditorPass');
+      if (btn) { btn.disabled = true; btn.textContent = 'Updating Profile & Password... ⏳'; }
+
+      try {
+        var upObj = { updatedAt: serverTimestamp() };
+        if (newName) upObj.name = newName;
+        if (newPhone) upObj.mobile = newPhone;
+
+        if (newPass) {
+          if (newPass.length < 6) {
+            showToast('Password must be at least 6 characters.', 'error');
+            if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
+            return;
+          }
+          var _auth = getAuth();
+          if (_auth.currentUser) {
+            try {
+              await updatePassword(_auth.currentUser, newPass);
+            } catch(authErr) {
+              console.warn('Firebase Auth notice:', authErr);
+            }
+          }
+          upObj.tempPass = newPass;
+        }
+
+        await updateDoc(doc(db, 'users', currentUser.uid), upObj);
+        showToast('Profile & password updated successfully! ✅', 'success');
+        if (document.getElementById('editorNewPassInp')) document.getElementById('editorNewPassInp').value = '';
+      } catch(err) {
+        console.error('Error updating editor profile:', err);
+        showToast('Error: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
       }
     };
 
@@ -1009,12 +1129,13 @@
         var userDoc = await getDoc(doc(db, 'users', currentUser.uid));
         if (userDoc.exists()) {
           var dat = userDoc.data();
-          if (dat.editorUpi && document.getElementById('editorMyUpiInp')) {
-            document.getElementById('editorMyUpiInp').value = dat.editorUpi;
-          }
-          if (dat.editorBankDetails && document.getElementById('editorMyBankInp')) {
-            document.getElementById('editorMyBankInp').value = dat.editorBankDetails;
-          }
+          if (document.getElementById('editorMyUpiInp')) document.getElementById('editorMyUpiInp').value = dat.editorUpi || '';
+          if (document.getElementById('editorBankNameInp')) document.getElementById('editorBankNameInp').value = dat.editorBankName || '';
+          if (document.getElementById('editorIfscInp')) document.getElementById('editorIfscInp').value = dat.editorIfsc || '';
+          if (document.getElementById('editorAccountNumInp')) document.getElementById('editorAccountNumInp').value = dat.editorAccountNum || '';
+          if (document.getElementById('editorAccountHolderInp')) document.getElementById('editorAccountHolderInp').value = dat.editorAccountHolder || dat.name || '';
+          if (document.getElementById('editorProfileNameInp')) document.getElementById('editorProfileNameInp').value = dat.name || '';
+          if (document.getElementById('editorProfilePhoneInp')) document.getElementById('editorProfilePhoneInp').value = dat.mobile || dat.phone || '';
         }
       } catch(e) {}
     }
