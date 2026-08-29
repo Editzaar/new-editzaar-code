@@ -345,27 +345,7 @@
           </div>
         </div>
 
-        <!-- 3. Payout Receiving Details Card -->
-        <div class="dash-card">
-          <div class="dash-card-header" style="margin-bottom:12px;">
-            <div class="dash-card-title">💳 My Payout <em>Receiving Bank / UPI Details</em></div>
-            <span class="live-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">Editzaar Direct Payout</span>
-          </div>
-          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;">Editzaar Admin will send your video editing earnings directly to this UPI ID or Bank Account when projects are delivered.</p>
-          <div class="dash-form">
-            <div class="form-grid-2">
-              <div class="field">
-                <label>My UPI ID (e.g. yourname@okhdfcbank / yourname@paytm) *</label>
-                <input type="text" id="editorMyUpiInp" placeholder="e.g. 9876543210@upi"/>
-              </div>
-              <div class="field">
-                <label>Account Number &amp; IFSC (Optional Alternate)</label>
-                <input type="text" id="editorMyBankInp" placeholder="e.g. HDFC0001234 - Acc 50100234..."/>
-              </div>
-            </div>
-            <button class="btn-gold btn-sm" id="btnSaveEditorPayoutDetails" onclick="window.saveEditorPayoutDetails()">Save Payout Details ✅</button>
-          </div>
-        </div>
+
       </section>
 
           <!-- ── SECTION: PROFILE & PAYOUT BANKING SETTINGS (DEDICATED) ── -->
@@ -1083,15 +1063,33 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Saving Banking Details... ⏳'; }
 
       try {
-        await updateDoc(doc(db, 'users', currentUser.uid), {
+        var userUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
+        if (!userUid) throw new Error('User session not found. Please log in again.');
+
+        var bankSummary = (bankName ? bankName + ' · ' : '') + (accNum ? 'Acc: ' + accNum : '') + (ifsc ? ' (IFSC: ' + ifsc + ')' : '') + (accHolder ? ' · ' + accHolder : '');
+
+        var updatePayload = {
           editorUpi: upi,
           editorBankName: bankName,
           editorIfsc: ifsc,
           editorAccountNum: accNum,
           editorAccountHolder: accHolder,
-          editorBankDetails: (bankName ? bankName + ' - ' : '') + (accNum ? 'Acc: ' + accNum : '') + (ifsc ? ' (IFSC: ' + ifsc + ')' : ''),
+          editorBankDetails: bankSummary,
           updatedAt: serverTimestamp()
-        });
+        };
+
+        await updateDoc(doc(db, 'users', userUid), updatePayload);
+
+        // Update local memory state
+        if (currentUser) {
+          currentUser.editorUpi = upi;
+          currentUser.editorBankName = bankName;
+          currentUser.editorIfsc = ifsc;
+          currentUser.editorAccountNum = accNum;
+          currentUser.editorAccountHolder = accHolder;
+          currentUser.editorBankDetails = bankSummary;
+        }
+
         showToast('Banking and UPI details saved successfully! ✅', 'success');
       } catch(err) {
         console.error('Error saving banking details:', err);
@@ -1101,62 +1099,38 @@
       }
     };
 
-    window.changeEditorPassword = async function() {
-      var newPass = (document.getElementById('editorNewPassInp')?.value || '').trim();
-      var newName = (document.getElementById('editorProfileNameInp')?.value || '').trim();
-      var newPhone = (document.getElementById('editorProfilePhoneInp')?.value || '').trim();
-
-      var btn = document.getElementById('btnChangeEditorPass');
-      if (btn) { btn.disabled = true; btn.textContent = 'Updating Profile & Password... ⏳'; }
-
-      try {
-        var upObj = { updatedAt: serverTimestamp() };
-        if (newName) upObj.name = newName;
-        if (newPhone) upObj.mobile = newPhone;
-
-        if (newPass) {
-          if (newPass.length < 6) {
-            showToast('Password must be at least 6 characters.', 'error');
-            if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
-            return;
-          }
-          var _auth = getAuth();
-          if (_auth.currentUser) {
-            try {
-              await updatePassword(_auth.currentUser, newPass);
-            } catch(authErr) {
-              console.warn('Firebase Auth notice:', authErr);
-            }
-          }
-          upObj.tempPass = newPass;
-        }
-
-        await updateDoc(doc(db, 'users', currentUser.uid), upObj);
-        showToast('Profile & password updated successfully! ✅', 'success');
-        if (document.getElementById('editorNewPassInp')) document.getElementById('editorNewPassInp').value = '';
-      } catch(err) {
-        console.error('Error updating editor profile:', err);
-        showToast('Error: ' + err.message, 'error');
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
-      }
-    };
-
     async function loadEditorProfileDetails() {
-      if (!currentUser) return;
+      var userUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
+      if (!userUid) return;
       try {
-        var userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        var userDoc = await getDoc(doc(db, 'users', userUid));
         if (userDoc.exists()) {
           var dat = userDoc.data();
-          if (document.getElementById('editorMyUpiInp')) document.getElementById('editorMyUpiInp').value = dat.editorUpi || '';
-          if (document.getElementById('editorBankNameInp')) document.getElementById('editorBankNameInp').value = dat.editorBankName || '';
-          if (document.getElementById('editorIfscInp')) document.getElementById('editorIfscInp').value = dat.editorIfsc || '';
-          if (document.getElementById('editorAccountNumInp')) document.getElementById('editorAccountNumInp').value = dat.editorAccountNum || '';
-          if (document.getElementById('editorAccountHolderInp')) document.getElementById('editorAccountHolderInp').value = dat.editorAccountHolder || dat.name || '';
-          if (document.getElementById('editorProfileNameInp')) document.getElementById('editorProfileNameInp').value = dat.name || '';
-          if (document.getElementById('editorProfilePhoneInp')) document.getElementById('editorProfilePhoneInp').value = dat.mobile || dat.phone || '';
+          if (document.getElementById('editorMyUpiInp') && !document.getElementById('editorMyUpiInp').value) {
+            document.getElementById('editorMyUpiInp').value = dat.editorUpi || '';
+          }
+          if (document.getElementById('editorBankNameInp') && !document.getElementById('editorBankNameInp').value) {
+            document.getElementById('editorBankNameInp').value = dat.editorBankName || '';
+          }
+          if (document.getElementById('editorIfscInp') && !document.getElementById('editorIfscInp').value) {
+            document.getElementById('editorIfscInp').value = dat.editorIfsc || '';
+          }
+          if (document.getElementById('editorAccountNumInp') && !document.getElementById('editorAccountNumInp').value) {
+            document.getElementById('editorAccountNumInp').value = dat.editorAccountNum || '';
+          }
+          if (document.getElementById('editorAccountHolderInp') && !document.getElementById('editorAccountHolderInp').value) {
+            document.getElementById('editorAccountHolderInp').value = dat.editorAccountHolder || dat.name || '';
+          }
+          if (document.getElementById('editorProfileNameInp') && !document.getElementById('editorProfileNameInp').value) {
+            document.getElementById('editorProfileNameInp').value = dat.name || '';
+          }
+          if (document.getElementById('editorProfilePhoneInp') && !document.getElementById('editorProfilePhoneInp').value) {
+            document.getElementById('editorProfilePhoneInp').value = dat.mobile || dat.phone || '';
+          }
         }
-      } catch(e) {}
+      } catch(e) {
+        console.warn('Load editor profile error:', e);
+      }
     }
   </script>
 </body>

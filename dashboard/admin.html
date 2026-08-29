@@ -3509,7 +3509,9 @@
     window.openEditorPayrollModal = function(pid, amount) {
       var proj = projects.find(function(p) { return p.id === pid; });
       if (!proj) return;
-      var ed = editors.find(function(e) { return e.id === proj.editorId; });
+      
+      // Get latest editor profile from allUsers or editors array
+      var ed = (typeof allUsers !== 'undefined' && allUsers[proj.editorId]) ? allUsers[proj.editorId] : editors.find(function(e) { return e.id === proj.editorId; });
 
       _activePayrollPid = pid;
       _activePayrollAmount = amount;
@@ -3522,7 +3524,7 @@
       var upiText = ed?.editorUpi || 'Not uploaded yet';
       document.getElementById('txtPayrollUpi') && (document.getElementById('txtPayrollUpi').textContent = upiText);
 
-      var bankText = ed?.editorBankDetails || (ed?.editorBankName ? (ed.editorBankName + ' · Acc: ' + (ed.editorAccountNum||'—') + ' · IFSC: ' + (ed.editorIfsc||'—')) : 'Not uploaded yet');
+      var bankText = ed?.editorBankDetails || (ed?.editorBankName ? (ed.editorBankName + ' · Acc: ' + (ed.editorAccountNum||'—') + ' · IFSC: ' + (ed.editorIfsc||'—') + (ed.editorAccountHolder ? ' · ' + ed.editorAccountHolder : '')) : 'Not uploaded yet');
       document.getElementById('txtPayrollBank') && (document.getElementById('txtPayrollBank').textContent = bankText);
 
       if (document.getElementById('payrollUtrInp')) document.getElementById('payrollUtrInp').value = '';
