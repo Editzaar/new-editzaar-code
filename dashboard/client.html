@@ -1511,57 +1511,91 @@
     });
 
     document.getElementById('btnSubmitClientProject').addEventListener('click', async () => {
-      const title = document.getElementById('cnp-title').value.trim();
-      const rawVal = cnpServiceSelect.value;
-      const [serviceName, priceStr] = rawVal.split('|');
-      const isCustom = serviceName.includes('Custom Service');
-      const customName = document.getElementById('cnp-custom-name').value.trim();
-      const finalServiceName = isCustom && customName ? customName : serviceName;
-      const gstin = document.getElementById('cnp-gstin').value.trim();
-      const desc = document.getElementById('cnp-desc').value.trim();
-      const footage = document.getElementById('cnp-footage').value.trim();
-      const enteredDeposit = parseInt(document.getElementById('cnpCustomPayAmount').value) || 0;
+      const btn = document.getElementById('btnSubmitClientProject');
+      const titleInput = document.getElementById('cnp-title');
+      let title = titleInput ? titleInput.value.trim() : '';
 
-      if (!title) { showToast('Please enter a project title.','error'); return; }
+      const rawVal = cnpServiceSelect.value || 'Shorts & Instagram Reels|1000|48 Hours';
+      const parts = rawVal.split('|');
+      const serviceName = parts[0] || 'Video Service';
+      const isCustom = serviceName.includes('Custom Service');
+      const customName = document.getElementById('cnp-custom-name') ? document.getElementById('cnp-custom-name').value.trim() : '';
+      const finalServiceName = isCustom && customName ? customName : serviceName;
+
+      // Auto fallback if title is not typed
+      if (!title) {
+        title = finalServiceName;
+      }
+
+      const gstin = document.getElementById('cnp-gstin') ? document.getElementById('cnp-gstin').value.trim() : '';
+      const desc = document.getElementById('cnp-desc') ? document.getElementById('cnp-desc').value.trim() : '';
+      const footage = document.getElementById('cnp-footage') ? document.getElementById('cnp-footage').value.trim() : '';
+      const enteredDeposit = parseInt(document.getElementById('cnpCustomPayAmount')?.value) || 0;
+      const utr = (document.getElementById('cnpUtrInp')?.value || '').trim();
+
+      const totAmount = parseInt(activeCnpTotal) || (parseInt(activeCnpBase) ? Math.round(activeCnpBase * 1.18) : 1180);
+      const advReq = Math.round(totAmount * 0.5);
+      const balReq = totAmount - advReq;
 
       const deadline = new Date();
       deadline.setDate(deadline.getDate() + (serviceName.includes('Web') ? 10 : 3));
 
-      await addDoc(collection(db, 'projects'), {
-        title: title + ' (' + finalServiceName + ')',
-        serviceName: finalServiceName,
-        description: desc,
-        clientId: currentUser.uid,
-        clientName: currentUser.name || 'Client',
-        clientEmail: currentUser.email || '',
-        clientGstin: gstin || '',
-        editorId: '',
-        rawFootageUrl: footage,
-        deliveryUrl: '',
-        invoiceAmount: activeCnpTotal,
-        depositPaidAmount: enteredDeposit,
-        invoicePaid: enteredDeposit >= activeCnpTotal,
-        status: 'pending',
-        createdAt: serverTimestamp(),
-        deadline: deadline,
-        totalAmount: activeCnpTotal,
-        advanceRequired: activeCnpAdvance,
-        balanceRequired: activeCnpTotal - activeCnpAdvance,
-        advancePaid: enteredDeposit >= activeCnpTotal,
-        advanceTxnId: (document.getElementById('cnpUtrInp')?.value || '').trim(),
-        advanceStatus: (document.getElementById('cnpUtrInp')?.value || '').trim() ? 'submitted' : 'unpaid',
-        balancePaid: enteredDeposit >= activeCnpTotal,
-        balanceStatus: enteredDeposit >= activeCnpTotal ? 'verified' : 'unpaid',
-        deliveryLocked: enteredDeposit < activeCnpTotal
-      });
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Submitting Booking Request... ⏳';
+      }
 
-      showToast('Project booked! Acknowledgment receipt created ✅','success');
-      modalClientNewProject.classList.remove('open');
-      document.getElementById('cnp-title').value = '';
-      document.getElementById('cnp-desc').value = '';
-      document.getElementById('cnp-footage').value = '';
-      document.getElementById('cnp-custom-name').value = '';
-      document.getElementById('cnp-custom-budget').value = '';
+      try {
+        const cUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : 'client_' + Date.now());
+        const cName = currentUser ? (currentUser.name || currentUser.displayName) : 'Client';
+        const cEmail = currentUser ? currentUser.email : (auth.currentUser ? auth.currentUser.email : '');
+
+        await addDoc(collection(db, 'projects'), {
+          title: title + (title.includes(finalServiceName) ? '' : ' (' + finalServiceName + ')'),
+          serviceName: finalServiceName,
+          description: desc,
+          clientId: cUid,
+          clientName: cName,
+          clientEmail: cEmail,
+          clientGstin: gstin,
+          editorId: '',
+          rawFootageUrl: footage,
+          deliveryUrl: '',
+          invoiceAmount: activeCnpBase || Math.round(totAmount / 1.18),
+          totalAmount: totAmount,
+          advanceRequired: advReq,
+          balanceRequired: balReq,
+          depositPaidAmount: enteredDeposit,
+          advancePaid: enteredDeposit >= totAmount,
+          advanceTxnId: utr,
+          advanceStatus: utr ? 'submitted' : (enteredDeposit > 0 ? 'submitted' : 'unpaid'),
+          balancePaid: enteredDeposit >= totAmount,
+          balanceStatus: enteredDeposit >= totAmount ? 'verified' : 'unpaid',
+          deliveryLocked: enteredDeposit < totAmount,
+          invoicePaid: enteredDeposit >= totAmount,
+          status: 'pending',
+          createdAt: serverTimestamp(),
+          deadline: deadline
+        });
+
+        showToast('Project booked successfully! Acknowledgment receipt created ✅', 'success');
+        modalClientNewProject.classList.remove('open');
+        
+        if (titleInput) titleInput.value = '';
+        if (document.getElementById('cnp-desc')) document.getElementById('cnp-desc').value = '';
+        if (document.getElementById('cnp-footage')) document.getElementById('cnp-footage').value = '';
+        if (document.getElementById('cnp-custom-name')) document.getElementById('cnp-custom-name').value = '';
+        if (document.getElementById('cnp-custom-budget')) document.getElementById('cnp-custom-budget').value = '';
+        if (document.getElementById('cnpUtrInp')) document.getElementById('cnpUtrInp').value = '';
+      } catch(err) {
+        console.error('Booking submission error:', err);
+        showToast('Error booking project: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Confirm Booking & Submit Request →';
+        }
+      }
     });
 
     window.openProject = async (pid) => {
