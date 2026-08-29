@@ -2457,32 +2457,37 @@
       tbody.innerHTML = editors.map(e=>{
         const activeCount = projects.filter(p=>p.editorId===e.id && p.status!=='done').length;
         const curRole = e.role || 'editor';
+        const displayPass = e.tempPass || 'Configured';
         return `
         <tr>
           <td><strong>${e.name||'Staff'}</strong></td>
           <td>${e.email}</td>
-          <td><span class="pass-pill">${e.tempPass||'Configured'}</span></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="pass-pill" onclick="window.editUserPassword('${e.id}','${e.email}','${e.tempPass||''}')" style="cursor:pointer;background:rgba(255,184,0,0.12);border:1px solid var(--gold-border);color:var(--t1);font-weight:600;padding:3px 8px;border-radius:6px;" title="Click to edit or set password">
+                ${displayPass} ✏️
+              </span>
+              <button class="btn-outline btn-sm" style="height:24px;padding:0 6px;font-size:10px;" onclick="window.copyUserCredentials('${e.name||'Staff'}','${e.email}','${e.tempPass||''}','editor')" title="Copy login info">📋 Copy</button>
+            </div>
+          </td>
           <td>
             <select class="editor-assign-select" style="font-weight:600;" onchange="updateStaffRole('${e.id}', this.value)">
-              <option value="editor" ${curRole==='editor'?'selected':''}>🎬 Freelance Editor (Privacy Masked)</option>
+              <option value="editor" ${curRole==='editor'?'selected':''}>🎬 Freelance Editor</option>
               <option value="manager" ${curRole==='manager'?'selected':''}>🛡️ Operations Manager</option>
               <option value="admin" ${curRole==='admin'?'selected':''}>👑 Administrator</option>
             </select>
           </td>
-          <td>${activeCount}</td>
+          <td><strong style="color:var(--gold);">${activeCount}</strong></td>
           <td>
-            <button class="btn-gold btn-sm" onclick="openStaffPermissions('${e.id}')">🔐 Permissions</button>
-            <button class="btn-outline btn-sm" onclick="openModal('modalNewProject')">＋ Assign Project</button>
-            <button class="btn-danger" onclick="deleteUser('${e.id}','${e.name||e.email}')">Delete</button>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+              <button class="btn-gold btn-sm" onclick="openStaffPermModal('${e.id}')" style="background:#B88200;font-size:11px;font-weight:700;letter-spacing:0.04em;">🔐 PERMISSIONS</button>
+              <button class="btn-outline btn-sm" onclick="assignProjectToEditorModal('${e.id}')">＋ Assign Project</button>
+              <button class="btn-danger btn-sm" onclick="deleteEditor('${e.id}')">Delete</button>
+            </div>
           </td>
         </tr>`;
       }).join('');
     }
-
-    window.updateStaffRole = async (uid, newRole) => {
-      await updateDoc(doc(db, 'users', uid), { role: newRole });
-      showToast(`Role updated to ${newRole.toUpperCase()}! ✅`, 'success');
-    };
 
     function renderClients() {
       const tbody = document.getElementById('clientsTbody');
@@ -2495,7 +2500,14 @@
           <td><strong>${c.name||'Client'}</strong><br/><small style="color:var(--t3);font-size: 12px;">UID: ${c.id.substring(0,8)}…</small></td>
           <td>${c.email||'—'}</td>
           <td><span style="color:var(--gold);font-size:0.85rem;">${mobileDisplay}</span></td>
-          <td><span class="pass-pill">${c.tempPass||'—'}</span></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="pass-pill" onclick="window.editUserPassword('${c.id}','${c.email||''}','${c.tempPass||''}')" style="cursor:pointer;background:rgba(255,184,0,0.12);border:1px solid var(--gold-border);color:var(--t1);font-weight:600;padding:3px 8px;border-radius:6px;" title="Click to edit or set password">
+                ${c.tempPass || 'Set Pass ✏️'}
+              </span>
+              <button class="btn-outline btn-sm" style="height:24px;padding:0 6px;font-size:10px;" onclick="window.copyUserCredentials('${c.name||'Client'}','${c.email||''}','${c.tempPass||''}','client')" title="Copy login info">📋 Copy</button>
+            </div>
+          </td>
           <td>${projCount}</td>
           <td>
             <select class="editor-assign-select" onchange="assignClientEditor('${c.id}', this.value)">
@@ -5413,6 +5425,50 @@
     onAuthStateChanged(_auth, function(user) {
       if (user) saveFcmToken(user.uid);
     });
+  
+    // ============================================================
+    // REAL-TIME PASSWORD MANAGEMENT & CREDENTIALS ENGINE
+    // ============================================================
+    window.editUserPassword = async function(userId, userEmail, currentPass) {
+      var promptVal = prompt('🔑 Set / Update Password for ' + userEmail + ':\n\n(This updates in real-time in the dashboard and user records)', currentPass || '');
+      if (promptVal === null) return; // Cancelled
+      var newPass = promptVal.trim();
+      if (!newPass) {
+        showToast('Password cannot be empty.', 'error');
+        return;
+      }
+      if (newPass.length < 6) {
+        showToast('Password should be at least 6 characters.', 'error');
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, 'users', userId), {
+          tempPass: newPass,
+          updatedAt: serverTimestamp()
+        });
+        showToast('Password for ' + userEmail + ' updated in real-time! ✅', 'success');
+      } catch(err) {
+        console.error('Error updating password:', err);
+        showToast('Error updating password: ' + err.message, 'error');
+      }
+    };
+
+    window.copyUserCredentials = function(name, email, pass, role) {
+      var text = '🎬 *Editzaar Portal Credentials*\n\n'
+        + '👤 *Name:* ' + name + '\n'
+        + '📧 *Email:* ' + email + '\n'
+        + '🔑 *Password:* ' + (pass || '(Your set password)') + '\n'
+        + '🌐 *Login URL:* https://editzaar.in/dashboard/\n\n'
+        + 'Please sign in to access your ' + (role === 'editor' ? 'Editor Workspace & Earnings' : 'Client Portal & Projects') + '.';
+
+      navigator.clipboard.writeText(text).then(function() {
+        showToast('Credentials copied to clipboard! Ready to WhatsApp / SMS. 📋', 'success');
+      }).catch(function() {
+        showToast('Email: ' + email + ' | Pass: ' + pass, 'info');
+      });
+    };
+
   </script>
 </body>
 </html>
