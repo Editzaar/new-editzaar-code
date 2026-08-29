@@ -2362,10 +2362,13 @@
           <td>
             <div class="mobile-cell-row">
               <span class="mobile-cell-label">Editor:</span>
-              <select class="editor-assign-select" style="min-width:140px;" onchange="assignProjectEditor('${p.id}', this.value)">
-                <option value="">Unassigned</option>
-                ${editors.map(e=>`<option value="${e.id}" ${e.id===p.editorId?'selected':''}>${e.name || e.email}</option>`).join('')}
-              </select>
+              <div>
+                <select class="editor-assign-select" style="min-width:140px;" onchange="assignProjectEditor('${p.id}', this.value)">
+                  <option value="">Unassigned</option>
+                  ${editors.map(e=>`<option value="${e.id}" ${e.id===p.editorId?'selected':''}>${e.name || e.email}</option>`).join('')}
+                </select>
+                ${p.editorId ? `<div style="margin-top:4px;font-size:0.78rem;color:var(--gold);font-weight:600;">Earning: ₹${(p.editorPayout||0).toLocaleString()} <a href="javascript:void(0)" onclick="window.editEditorFeePrompt('${p.id}', ${p.editorPayout||0})" style="color:var(--t3);text-decoration:underline;margin-left:4px;font-weight:400;">(Edit)</a></div>` : ''}
+              </div>
             </div>
           </td>
 
@@ -2404,8 +2407,40 @@
     }
 
     window.assignProjectEditor = async (pid, editorId) => {
-      await updateDoc(doc(db, 'projects', pid), { editorId });
-      showToast('Editor assigned to project! ✅', 'success');
+      if (!editorId) {
+        await updateDoc(doc(db, 'projects', pid), {
+          editorId: '',
+          editorPayout: 0,
+          editorPayoutStatus: 'pending'
+        });
+        showToast('Project unassigned.');
+        return;
+      }
+
+      var proj = projects.find(function(p) { return p.id === pid; }) || {};
+      var currentFee = proj.editorPayout || 1500;
+      var promptVal = prompt('Assigning Editor. Mention the agreed Editor Payout Fee (₹) for this project:', currentFee);
+      if (promptVal === null) return; // User cancelled
+      
+      var fee = parseFloat(promptVal) || 0;
+
+      await updateDoc(doc(db, 'projects', pid), {
+        editorId: editorId,
+        editorPayout: fee,
+        editorPayoutStatus: proj.editorPayoutStatus === 'paid' ? 'paid' : 'pending'
+      });
+
+      showToast('Editor assigned with ₹' + fee.toLocaleString() + ' payout fee! ✅', 'success');
+    };
+
+    window.editEditorFeePrompt = async function(pid, currentFee) {
+      var promptVal = prompt('Update Editor Payout Fee (₹) for this project:', currentFee || 0);
+      if (promptVal === null) return;
+      var fee = parseFloat(promptVal) || 0;
+      await updateDoc(doc(db, 'projects', pid), {
+        editorPayout: fee
+      });
+      showToast('Editor fee updated to ₹' + fee.toLocaleString() + '! ✅', 'success');
     };
 
     window.assignClientEditor = async (clientId, assignedEditor) => {
@@ -3669,7 +3704,7 @@
     });
 
     // Section Routing
-    const sections = ['overview','projects','editors','clients','broadcast','chat','invoices',
+    const sections = ['overview','projects','editors','clients','broadcast','chat','invoices','payouts',
       'attention','workflow','workload','performance','revenue','payments','notifications','automations',
       'revisions','storage','calendar','analytics','reports','bookings','services','coupons',
       'reviews','tickets','cms','roles','settings'];

@@ -42,11 +42,16 @@
       <a href="../" class="sidebar-logo" title="Back to Main Website">EDIT<em>ZAAR</em> ↗</a>
       <div class="sidebar-role-badge">🎬 Editor</div>
       <nav class="sidebar-nav">
-        <div class="sidebar-nav-section">My Work</div>
-        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
+        <div class="sidebar-nav-section">My Workspace</div>
+        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects &amp; Works</div>
+        <div class="sidebar-nav-item" data-section="earnings"><span class="nav-icon">💰</span> My Earnings &amp; Payouts</div>
+
         <div class="sidebar-nav-section">Communication</div>
-        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Messages</div>
-      </nav>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Project Messages</div>
+
+        <div class="sidebar-nav-section">Main Site</div>
+        <a class="sidebar-nav-item" href="../index.html" style="text-decoration:none;"><span class="nav-icon">🏠</span> Home Page</a>
+        <a class="sidebar-nav-item" href="../work.html" style="text-decoration:none;"><span class="nav-icon">🎬</span> Agency Portfolio</a></nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="editorEmail">Loading…</div>
         <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
@@ -148,34 +153,112 @@
       </section>
 
       <!-- ── SECTION: MY EARNINGS & PAYOUTS ── -->
+            <!-- ── SECTION: MY EARNINGS & MONTHLY PAYOUTS (COMPLETE ENGINE) ── -->
       <section id="sec-earnings" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">My Earnings &amp; <em>Payouts</em></div>
+          <div>
+            <div class="dash-page-title">My Earnings &amp; <em>Monthly Payouts</em></div>
+            <div style="font-size:0.85rem;color:var(--t2);margin-top:2px;">Track all project earnings, monthly income, cleared bank payouts, and pending balances.</div>
+          </div>
           <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;"><span class="live-dot" style="background:#28C840;"></span> Direct Bank / UPI Settlement</span>
         </div>
 
-        <!-- Metric Cards -->
-        <div class="stat-card-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+        <!-- 4 Executive Financial Metric Cards -->
+        <div class="stat-card-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
           <div class="stat-card">
-            <div class="stat-card-label">Total Lifetime Earnings</div>
+            <div class="stat-card-label">Total Worked (Lifetime)</div>
             <div class="stat-card-value" style="color:var(--gold);" id="editorLifetimeEarnings">₹0</div>
+            <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorTotalProjectsCount">0 Total Projects</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-label">Pending Payouts (Ready)</div>
-            <div class="stat-card-value" style="color:#FFB800;" id="editorPendingPayouts">₹0</div>
+            <div class="stat-card-label">This Month's Work</div>
+            <div class="stat-card-value" style="color:#4A90D9;" id="editorThisMonthEarnings">₹0</div>
+            <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorThisMonthLabel">Current Month</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-label">Cleared &amp; Received</div>
+            <div class="stat-card-label">Cleared &amp; Paid (Bank)</div>
             <div class="stat-card-value" style="color:#28C840;" id="editorClearedEarnings">₹0</div>
+            <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorClearedProjectsCount">0 Paid Projects</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Pending / Unpaid Balance</div>
+            <div class="stat-card-value" style="color:#FFB800;" id="editorPendingPayouts">₹0</div>
+            <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorPendingProjectsCount">0 Pending Clearance</div>
           </div>
         </div>
 
-        <!-- Payout Receiving Details Card -->
+        <!-- 1. Monthly Earnings Breakdown Summary Table -->
         <div class="dash-card" style="margin-bottom: 24px;">
-          <div class="dash-card-header" style="margin-bottom:12px;">
-            <div class="dash-card-title">💳 My Payout <em>Receiving Details</em></div>
+          <div class="dash-card-header" style="margin-bottom:14px;">
+            <div class="dash-card-title">📅 Monthly Income <em>Breakdown</em></div>
+            <div style="font-size:0.82rem;color:var(--t2);">Your earnings grouped by calendar month</div>
           </div>
-          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;">Editzaar Admin will send your video editing payouts directly to this UPI ID or Bank Account upon project delivery.</p>
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Month &amp; Year</th>
+                  <th>Projects Edited</th>
+                  <th>Total Amount Worked</th>
+                  <th>Cleared (Paid)</th>
+                  <th>Pending Balance</th>
+                  <th>Monthly Status</th>
+                </tr>
+              </thead>
+              <tbody id="editorMonthlySummaryTbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px;">Calculating monthly income…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. Interactive Project Works & Payment Ledger -->
+        <div class="dash-card" style="margin-bottom: 24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div>
+              <div class="dash-card-title">Project Works &amp; <em>Payment Ledger</em></div>
+              <div style="font-size:0.82rem;color:var(--t2);">Detailed record of every project you edited and its individual payment clearance</div>
+            </div>
+
+            <!-- Filters -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <select id="selEditorMonthFilter" class="filter-select" style="min-width:140px;height:36px;" onchange="window.filterEditorLedger()">
+                <option value="all">All Months</option>
+              </select>
+              <select id="selEditorStatusFilter" class="filter-select" style="min-width:140px;height:36px;" onchange="window.filterEditorLedger()">
+                <option value="all">All Payment Statuses</option>
+                <option value="unpaid">⏳ Pending / Unpaid</option>
+                <option value="paid">✅ Cleared &amp; Paid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Project Name &amp; Brief</th>
+                  <th>Client</th>
+                  <th>Editing Status</th>
+                  <th>My Agreed Earning</th>
+                  <th>Payment Clearance Status</th>
+                  <th>Bank / UPI UTR Proof</th>
+                </tr>
+              </thead>
+              <tbody id="editorEarningsTbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:24px;">Loading your earnings ledger…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. Payout Receiving Details Card -->
+        <div class="dash-card">
+          <div class="dash-card-header" style="margin-bottom:12px;">
+            <div class="dash-card-title">💳 My Payout <em>Receiving Bank / UPI Details</em></div>
+            <span class="live-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">Editzaar Direct Payout</span>
+          </div>
+          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;">Editzaar Admin will send your video editing earnings directly to this UPI ID or Bank Account when projects are delivered.</p>
           <div class="dash-form">
             <div class="form-grid-2">
               <div class="field">
@@ -188,30 +271,6 @@
               </div>
             </div>
             <button class="btn-gold btn-sm" id="btnSaveEditorPayoutDetails" onclick="window.saveEditorPayoutDetails()">Save Payout Details ✅</button>
-          </div>
-        </div>
-
-        <!-- Earnings Ledger Table -->
-        <div class="dash-card">
-          <div class="dash-card-header" style="margin-bottom:16px;">
-            <div class="dash-card-title">Project Earnings <em>Ledger</em></div>
-          </div>
-          <div class="table-scroll-wrap" style="overflow-x:auto;">
-            <table class="dash-table">
-              <thead>
-                <tr>
-                  <th>Project Name</th>
-                  <th>Client</th>
-                  <th>Project Status</th>
-                  <th>My Agreed Earning</th>
-                  <th>Payout Status</th>
-                  <th>Payout Reference</th>
-                </tr>
-              </thead>
-              <tbody id="editorEarningsTbody">
-                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:24px;">Loading your earnings ledger…</td></tr>
-              </tbody>
-            </table>
           </div>
         </div>
       </section>
@@ -460,6 +519,9 @@
 
     const sections = ['projects','detail','chat'];
     function showSection(name) {
+      if (name === 'earnings' && typeof renderEditorEarnings === 'function') {
+        renderEditorEarnings();
+      }
       sections.forEach(s=>{ document.getElementById('sec-'+s).style.display=s===name?'block':'none'; });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.section===name));
     }
@@ -619,67 +681,189 @@
     });
   
     // ============================================================
-    // EDITOR EARNINGS & PAYOUTS ENGINE
     // ============================================================
-    function renderEditorEarnings() {
-      var tbody = document.getElementById('editorEarningsTbody');
-      if (!tbody) return;
+    // EDITOR EARNINGS, MONTHLY BREAKDOWN & LEDGER ENGINE
+    // ============================================================
+    var _cachedEditorProjects = [];
 
+    function renderEditorEarnings() {
+      if (!currentUser) return;
       var myProjects = projects.filter(function(p) { return p.editorId === currentUser.uid; });
+      _cachedEditorProjects = myProjects;
 
       var lifetime = 0;
       var pending = 0;
       var cleared = 0;
+      var clearedCount = 0;
+      var pendingCount = 0;
+
+      var now = new Date();
+      var currentMonthKey = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+      var thisMonthTotal = 0;
+
+      // Monthly buckets map: { 'August 2026': { total: 0, cleared: 0, pending: 0, count: 0, dateObj: Date } }
+      var monthlyMap = {};
 
       myProjects.forEach(function(p) {
         var earn = p.editorPayout || 0;
         lifetime += earn;
+
+        // Determine date
+        var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
+        var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+
+        if (!monthlyMap[mKey]) {
+          monthlyMap[mKey] = { key: mKey, total: 0, cleared: 0, pending: 0, count: 0, dateObj: pDate };
+        }
+        monthlyMap[mKey].count++;
+        monthlyMap[mKey].total += earn;
+
+        if (mKey === currentMonthKey) {
+          thisMonthTotal += earn;
+        }
+
         if (p.editorPayoutStatus === 'paid') {
           cleared += earn;
-        } else if (earn > 0) {
-          pending += earn;
+          clearedCount++;
+          monthlyMap[mKey].cleared += earn;
+        } else {
+          if (earn > 0) {
+            pending += earn;
+            pendingCount++;
+            monthlyMap[mKey].pending += earn;
+          }
         }
       });
 
+      // Update Metric Cards
       document.getElementById('editorLifetimeEarnings') && (document.getElementById('editorLifetimeEarnings').textContent = '₹' + lifetime.toLocaleString());
-      document.getElementById('editorPendingPayouts') && (document.getElementById('editorPendingPayouts').textContent = '₹' + pending.toLocaleString());
-      document.getElementById('editorClearedEarnings') && (document.getElementById('editorClearedEarnings').textContent = '₹' + cleared.toLocaleString());
+      document.getElementById('editorTotalProjectsCount') && (document.getElementById('editorTotalProjectsCount').textContent = myProjects.length + ' Total Projects');
 
-      if (!myProjects.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:28px;">No projects assigned to you yet.</td></tr>';
+      document.getElementById('editorThisMonthEarnings') && (document.getElementById('editorThisMonthEarnings').textContent = '₹' + thisMonthTotal.toLocaleString());
+      document.getElementById('editorThisMonthLabel') && (document.getElementById('editorThisMonthLabel').textContent = currentMonthKey);
+
+      document.getElementById('editorClearedEarnings') && (document.getElementById('editorClearedEarnings').textContent = '₹' + cleared.toLocaleString());
+      document.getElementById('editorClearedProjectsCount') && (document.getElementById('editorClearedProjectsCount').textContent = clearedCount + ' Projects Cleared');
+
+      document.getElementById('editorPendingPayouts') && (document.getElementById('editorPendingPayouts').textContent = '₹' + pending.toLocaleString());
+      document.getElementById('editorPendingProjectsCount') && (document.getElementById('editorPendingProjectsCount').textContent = pendingCount + ' Projects Pending');
+
+      // Populate Month Filter Dropdown
+      var monthSelect = document.getElementById('selEditorMonthFilter');
+      if (monthSelect) {
+        var currentSelected = monthSelect.value;
+        var monthKeys = Object.keys(monthlyMap);
+        var optionsHtml = '<option value="all">All Months (' + monthKeys.length + ')</option>';
+        monthKeys.forEach(function(mk) {
+          optionsHtml += '<option value="' + mk + '" ' + (mk === currentSelected ? 'selected' : '') + '>' + mk + ' (₹' + monthlyMap[mk].total.toLocaleString() + ')</option>';
+        });
+        monthSelect.innerHTML = optionsHtml;
+      }
+
+      // Render Monthly Summary Table
+      var monthlyTbody = document.getElementById('editorMonthlySummaryTbody');
+      if (monthlyTbody) {
+        var monthList = Object.values(monthlyMap);
+        monthList.sort(function(a, b) { return b.dateObj.getTime() - a.dateObj.getTime(); });
+
+        if (!monthList.length) {
+          monthlyTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:24px;">No monthly earnings recorded yet.</td></tr>';
+        } else {
+          monthlyTbody.innerHTML = monthList.map(function(m) {
+            var statusBadge = '';
+            if (m.total > 0 && m.pending === 0) {
+              statusBadge = '<span class="status-badge status-done">100% Fully Cleared ✅</span>';
+            } else if (m.cleared > 0 && m.pending > 0) {
+              statusBadge = '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">Partially Paid (₹' + m.pending.toLocaleString() + ' Due)</span>';
+            } else {
+              statusBadge = '<span class="status-badge status-pending">Unpaid (₹' + m.pending.toLocaleString() + ' Due)</span>';
+            }
+
+            return '<tr>'
+              + '<td><strong style="color:var(--t1);font-size:0.95rem;">📅 ' + m.key + '</strong></td>'
+              + '<td><span style="font-weight:600;">' + m.count + ' videos edited</span></td>'
+              + '<td><strong style="color:var(--gold);font-size:1rem;">₹' + m.total.toLocaleString() + '</strong></td>'
+              + '<td><strong style="color:#28C840;">₹' + m.cleared.toLocaleString() + '</strong></td>'
+              + '<td><strong style="color:' + (m.pending > 0 ? '#FFB800' : 'var(--t3)') + ';">₹' + m.pending.toLocaleString() + '</strong></td>'
+              + '<td>' + statusBadge + '</td>'
+              + '</tr>';
+          }).join('');
+        }
+      }
+
+      // Render Project Works Ledger
+      window.filterEditorLedger();
+    }
+
+    window.filterEditorLedger = function() {
+      var tbody = document.getElementById('editorEarningsTbody');
+      if (!tbody) return;
+
+      var monthFilter = document.getElementById('selEditorMonthFilter')?.value || 'all';
+      var statusFilter = document.getElementById('selEditorStatusFilter')?.value || 'all';
+
+      var list = _cachedEditorProjects;
+
+      if (monthFilter !== 'all') {
+        list = list.filter(function(p) {
+          var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
+          var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+          return mKey === monthFilter;
+        });
+      }
+
+      if (statusFilter === 'paid') {
+        list = list.filter(function(p) { return p.editorPayoutStatus === 'paid'; });
+      } else if (statusFilter === 'unpaid') {
+        list = list.filter(function(p) { return p.editorPayoutStatus !== 'paid'; });
+      }
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:28px;">No projects match the selected month/payment filter.</td></tr>';
         return;
       }
 
       var html = '';
-      myProjects.forEach(function(p) {
+      list.forEach(function(p) {
         var earn = p.editorPayout || 0;
+        var isPaid = p.editorPayoutStatus === 'paid';
+
         var statusBadge = '';
-        if (p.editorPayoutStatus === 'paid') {
-          statusBadge = '<span class="status-badge status-done">Cleared &amp; Paid ✅</span>';
+        if (isPaid) {
+          statusBadge = '<span class="status-badge status-done">CLEARED &amp; PAID ✅</span>';
         } else if (p.status === 'done' || p.deliveryUrl) {
-          statusBadge = '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">⚡ Ready for Payout</span>';
+          statusBadge = '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">⚡ READY FOR PAYOUT (₹' + earn.toLocaleString() + ')</span>';
         } else {
-          statusBadge = '<span class="status-badge status-pending">In Production ⏳</span>';
+          statusBadge = '<span class="status-badge status-pending">IN PRODUCTION (₹' + earn.toLocaleString() + ' Due)</span>';
         }
 
-        var refText = '—';
-        if (p.editorPaidTxnId) {
-          refText = '<strong style="color:var(--gold);font-size:0.8rem;">UTR: ' + p.editorPaidTxnId + '</strong>'
-            + (p.editorPaidAt ? '<br/><small style="color:var(--t3);">' + new Date(p.editorPaidAt).toLocaleDateString('en-IN') + '</small>' : '');
+        var proofText = '<span style="color:var(--t3);">— Awaiting Clearance —</span>';
+        if (isPaid && p.editorPaidTxnId) {
+          proofText = '<strong style="color:var(--gold);font-size:0.82rem;">UTR: ' + p.editorPaidTxnId + '</strong>'
+            + (p.editorPaidAt ? '<div style="color:var(--t3);font-size:0.75rem;margin-top:2px;">Paid: ' + new Date(p.editorPaidAt).toLocaleDateString('en-IN') + '</div>' : '');
+        }
+
+        var pDateStr = '—';
+        if (p.createdAt) {
+          var d = p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt);
+          pDateStr = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
         html += '<tr>'
-          + '<td><strong>' + (p.title || 'Untitled') + '</strong></td>'
-          + '<td>👤 ' + (p.clientName || 'Client') + '</td>'
-          + '<td><span class="status-badge status-' + (p.status||'pending') + '">' + (p.status||'pending').toUpperCase() + '</span></td>'
-          + '<td><strong style="color:var(--gold);font-size:1rem;">₹' + earn.toLocaleString() + '</strong></td>'
+          + '<td>'
+          + '  <div style="font-weight:700;font-size:0.95rem;color:var(--t1);">' + (p.title || 'Untitled Edit') + '</div>'
+          + '  <div style="font-size:0.8rem;color:var(--t3);margin-top:2px;">📅 Assigned: ' + pDateStr + '</div>'
+          + '</td>'
+          + '<td><span style="font-weight:600;color:var(--t2);">👤 ' + (p.clientName || 'Direct Client') + '</span></td>'
+          + '<td><span class="status-badge status-' + (p.status || 'pending') + '">' + (p.status || 'pending').toUpperCase() + '</span></td>'
+          + '<td><strong style="color:var(--gold);font-size:1.05rem;">₹' + earn.toLocaleString() + '</strong></td>'
           + '<td>' + statusBadge + '</td>'
-          + '<td>' + refText + '</td>'
+          + '<td>' + proofText + '</td>'
           + '</tr>';
       });
 
       tbody.innerHTML = html;
-    }
+    };
 
     window.saveEditorPayoutDetails = async function() {
       var upi = (document.getElementById('editorMyUpiInp')?.value || '').trim();
@@ -696,14 +880,13 @@
           editorBankDetails: bank,
           updatedAt: serverTimestamp()
         });
-        showToast('Payout details saved successfully! ✅', 'success');
+        showToast('Payout receiving details saved successfully! ✅', 'success');
       } catch(err) {
         console.error('Error saving payout details:', err);
         showToast('Error saving details: ' + err.message, 'error');
       }
     };
 
-    // Load editor saved payout details
     async function loadEditorProfileDetails() {
       if (!currentUser) return;
       try {
@@ -719,7 +902,6 @@
         }
       } catch(e) {}
     }
-
   </script>
 </body>
 </html>
