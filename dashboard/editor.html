@@ -509,13 +509,17 @@
         const allProj = snap.docs.map(d=>({id:d.id,...d.data()}));
         const perm = currentUser.permissions || {};
         const canViewAll = currentUser.role === 'admin' || perm.viewAll === true;
-        const projects = canViewAll ? allProj : allProj.filter(p => p.editorId === currentUser.uid || (allUsers[p.clientId] && allUsers[p.clientId].assignedEditor === currentUser.uid));
+        const editorProjects = canViewAll ? allProj : allProj.filter(p => p.editorId === currentUser.uid || (allUsers[p.clientId] && allUsers[p.clientId].assignedEditor === currentUser.uid));
         
-        projects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
-        document.getElementById('statTotal').textContent  = projects.length;
-        document.getElementById('statActive').textContent = projects.filter(p=>p.status!=='done').length;
-        document.getElementById('statDone').textContent   = projects.filter(p=>p.status==='done').length;
-        renderProjects(projects); renderEditorEarnings(); loadEditorProfileDetails();
+        editorProjects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
+        window._activeEditorProjectsList = editorProjects;
+        
+        document.getElementById('statTotal').textContent  = editorProjects.length;
+        document.getElementById('statActive').textContent = editorProjects.filter(p=>p.status!=='done').length;
+        document.getElementById('statDone').textContent   = editorProjects.filter(p=>p.status==='done').length;
+        renderProjects(editorProjects); 
+        renderEditorEarnings(editorProjects); 
+        loadEditorProfileDetails();
       }, (err) => console.error('Projects listener error:', err));
     }
 
@@ -897,14 +901,16 @@
     // ============================================================
     var _cachedEditorProjects = [];
 
-    function renderEditorEarnings() {
+    function renderEditorEarnings(incomingProjects) {
       if (!currentUser) return;
-      var myProjects = projects.filter(function(p) { return p.editorId === currentUser.uid; });
-      _cachedEditorProjects = myProjects;
+      var myProjects = incomingProjects || window._activeEditorProjectsList || [];
+      if (!myProjects.length && typeof projects !== 'undefined' && Array.isArray(projects)) {
+        myProjects = projects.filter(function(p) { return p.editorId === currentUser.uid; });
+      }
 
-      var lifetime = 0;
-      var pending = 0;
-      var cleared = 0;
+      var lifetimePaid = 0;       // Cleared to bank
+      var pendingWorkInProgress = 0; // Still being edited
+      var readyForPayout = 0;     // Finished / approved, waiting for admin bank transfer
       var clearedCount = 0;
       var pendingCount = 0;
 
@@ -920,7 +926,6 @@
         if (earn === undefined || earn === null || earn === 0) {
           earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
         }
-        lifetime += earn;
 
         // Determine date
         var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
@@ -936,31 +941,40 @@
           thisMonthTotal += earn;
         }
 
+        // Exact 3-stage lifecycle
         if (p.editorPayoutStatus === 'paid') {
-          cleared += earn;
+          // STAGE 3: Admin marked payment done -> Cleared to bank & added to lifetime
+          lifetimePaid += earn;
           clearedCount++;
           monthlyMap[mKey].cleared += earn;
+        } else if (p.status === 'done') {
+          // STAGE 2: Project is completed / approved by admin -> Ready for Payout
+          readyForPayout += earn;
+          pendingCount++;
+          monthlyMap[mKey].pending += earn;
         } else {
-          if (earn > 0) {
-            pending += earn;
-            pendingCount++;
-            monthlyMap[mKey].pending += earn;
-          }
+          // STAGE 1: In progress / working -> Due on finish
+          pendingWorkInProgress += earn;
+          pendingCount++;
+          monthlyMap[mKey].pending += earn;
         }
       });
 
-      // Update Metric Cards
-      document.getElementById('editorLifetimeEarnings') && (document.getElementById('editorLifetimeEarnings').textContent = '₹' + lifetime.toLocaleString());
+      var totalPendingToReceive = readyForPayout + pendingWorkInProgress;
+      var totalLifetimeWorked = lifetimePaid + totalPendingToReceive;
+
+      // Update 4 Metric Cards
+      document.getElementById('editorLifetimeEarnings') && (document.getElementById('editorLifetimeEarnings').textContent = '₹' + totalLifetimeWorked.toLocaleString());
       document.getElementById('editorTotalProjectsCount') && (document.getElementById('editorTotalProjectsCount').textContent = myProjects.length + ' Total Projects');
 
       document.getElementById('editorThisMonthEarnings') && (document.getElementById('editorThisMonthEarnings').textContent = '₹' + thisMonthTotal.toLocaleString());
       document.getElementById('editorThisMonthLabel') && (document.getElementById('editorThisMonthLabel').textContent = currentMonthKey);
 
-      document.getElementById('editorClearedEarnings') && (document.getElementById('editorClearedEarnings').textContent = '₹' + cleared.toLocaleString());
-      document.getElementById('editorClearedProjectsCount') && (document.getElementById('editorClearedProjectsCount').textContent = clearedCount + ' Projects Cleared');
+      document.getElementById('editorClearedEarnings') && (document.getElementById('editorClearedEarnings').textContent = '₹' + lifetimePaid.toLocaleString());
+      document.getElementById('editorClearedProjectsCount') && (document.getElementById('editorClearedProjectsCount').textContent = clearedCount + ' Cleared (Bank)');
 
-      document.getElementById('editorPendingPayouts') && (document.getElementById('editorPendingPayouts').textContent = '₹' + pending.toLocaleString());
-      document.getElementById('editorPendingProjectsCount') && (document.getElementById('editorPendingProjectsCount').textContent = pendingCount + ' Projects Pending');
+      document.getElementById('editorPendingPayouts') && (document.getElementById('editorPendingPayouts').textContent = '₹' + totalPendingToReceive.toLocaleString());
+      document.getElementById('editorPendingProjectsCount') && (document.getElementById('editorPendingProjectsCount').textContent = (readyForPayout > 0 ? ('₹' + readyForPayout.toLocaleString() + ' Ready for Payout') : (pendingCount + ' In Progress')));
 
       // Populate Month Filter Dropdown
       var monthSelect = document.getElementById('selEditorMonthFilter');
@@ -969,118 +983,89 @@
         var monthKeys = Object.keys(monthlyMap);
         var optionsHtml = '<option value="all">All Months (' + monthKeys.length + ')</option>';
         monthKeys.forEach(function(mk) {
-          optionsHtml += '<option value="' + mk + '" ' + (mk === currentSelected ? 'selected' : '') + '>' + mk + ' (₹' + monthlyMap[mk].total.toLocaleString() + ')</option>';
+          optionsHtml += '<option value="' + mk + '" ' + (mk === currentSelected ? 'selected' : '') + '>' + mk + '</option>';
         });
         monthSelect.innerHTML = optionsHtml;
       }
 
       // Render Monthly Summary Table
-      var monthlyTbody = document.getElementById('editorMonthlySummaryTbody');
-      if (monthlyTbody) {
-        var monthList = Object.values(monthlyMap);
-        monthList.sort(function(a, b) { return b.dateObj.getTime() - a.dateObj.getTime(); });
-
-        if (!monthList.length) {
-          monthlyTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:24px;">No monthly earnings recorded yet.</td></tr>';
+      var monthTbody = document.getElementById('tbodyEditorMonthly');
+      if (monthTbody) {
+        var monthEntries = Object.values(monthlyMap);
+        if (!monthEntries.length) {
+          monthTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No monthly income recorded yet. Complete projects to see breakdown.</td></tr>';
         } else {
-          monthlyTbody.innerHTML = monthList.map(function(m) {
+          monthTbody.innerHTML = monthEntries.map(function(m) {
             var statusBadge = '';
-            if (m.total > 0 && m.pending === 0) {
-              statusBadge = '<span class="status-badge status-done">100% Fully Cleared ✅</span>';
+            if (m.pending === 0 && m.cleared > 0) {
+              statusBadge = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Payout Cleared</span>';
             } else if (m.cleared > 0 && m.pending > 0) {
-              statusBadge = '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">Partially Paid (₹' + m.pending.toLocaleString() + ' Due)</span>';
+              statusBadge = '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⚡ Partially Cleared</span>';
             } else {
-              statusBadge = '<span class="status-badge status-pending">Unpaid (₹' + m.pending.toLocaleString() + ' Due)</span>';
+              statusBadge = '<span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);font-size:11px;padding:3px 8px;">⏳ Pending Payout</span>';
             }
 
-            return '<tr>'
-              + '<td><strong style="color:var(--t1);font-size:0.95rem;">📅 ' + m.key + '</strong></td>'
-              + '<td><span style="font-weight:600;">' + m.count + ' videos edited</span></td>'
-              + '<td><strong style="color:var(--gold);font-size:1rem;">₹' + m.total.toLocaleString() + '</strong></td>'
-              + '<td><strong style="color:#28C840;">₹' + m.cleared.toLocaleString() + '</strong></td>'
-              + '<td><strong style="color:' + (m.pending > 0 ? '#FFB800' : 'var(--t3)') + ';">₹' + m.pending.toLocaleString() + '</strong></td>'
-              + '<td>' + statusBadge + '</td>'
-              + '</tr>';
+            return `<tr>
+              <td><strong>${m.key}</strong></td>
+              <td>${m.count} Videos</td>
+              <td style="color:var(--gold);font-weight:700;">₹${m.total.toLocaleString()}</td>
+              <td style="color:#28C840;font-weight:600;">₹${m.cleared.toLocaleString()}</td>
+              <td style="color:${m.pending>0?'#FFB800':'var(--t3)'};font-weight:600;">₹${m.pending.toLocaleString()}</td>
+              <td>${statusBadge}</td>
+            </tr>`;
           }).join('');
         }
       }
 
-      // Render Project Works Ledger
-      window.filterEditorLedger();
-    }
-
-    window.filterEditorLedger = function() {
-      var tbody = document.getElementById('editorEarningsTbody');
-      if (!tbody) return;
-
-      var monthFilter = document.getElementById('selEditorMonthFilter')?.value || 'all';
-      var statusFilter = document.getElementById('selEditorStatusFilter')?.value || 'all';
-
-      var list = _cachedEditorProjects;
-
-      if (monthFilter !== 'all') {
-        list = list.filter(function(p) {
-          var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
-          var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
-          return mKey === monthFilter;
-        });
-      }
-
-      if (statusFilter === 'paid') {
-        list = list.filter(function(p) { return p.editorPayoutStatus === 'paid'; });
-      } else if (statusFilter === 'unpaid') {
-        list = list.filter(function(p) { return p.editorPayoutStatus !== 'paid'; });
-      }
-
-      if (!list.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:28px;">No projects match the selected month/payment filter.</td></tr>';
-        return;
-      }
-
-      var html = '';
-      list.forEach(function(p) {
-        var earn = p.editorPayout;
-        if (earn === undefined || earn === null || earn === 0) {
-          earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
-        }
-        var isPaid = p.editorPayoutStatus === 'paid';
-
-        var statusBadge = '';
-        if (isPaid) {
-          statusBadge = '<span class="status-badge status-done">CLEARED &amp; PAID ✅</span>';
-        } else if (p.status === 'done' || p.deliveryUrl) {
-          statusBadge = '<span class="status-badge" style="background:#FFB800;color:#000;font-weight:700;">⚡ READY FOR PAYOUT (₹' + earn.toLocaleString() + ')</span>';
+      // Render Individual Project Works & Payment Ledger
+      var ledgerTbody = document.getElementById('tbodyEditorWorks');
+      if (ledgerTbody) {
+        if (!myProjects.length) {
+          ledgerTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No project works found.</td></tr>';
         } else {
-          statusBadge = '<span class="status-badge status-pending">IN PRODUCTION (₹' + earn.toLocaleString() + ' Due)</span>';
+          ledgerTbody.innerHTML = myProjects.map(function(p) {
+            var earn = p.editorPayout;
+            if (earn === undefined || earn === null || earn === 0) {
+              earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
+            }
+
+            var isPaid = p.editorPayoutStatus === 'paid';
+            var isDone = p.status === 'done';
+            var cName = (typeof allUsers !== 'undefined' && allUsers[p.clientId]?.name) ? allUsers[p.clientId].name : 'Client Ref #' + p.id.substring(0,6).toUpperCase();
+
+            var statusHtml = '';
+            var utrHtml = '';
+
+            if (isPaid) {
+              statusHtml = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Paid &amp; Cleared (Bank)</span>';
+              utrHtml = '<div style="font-size:11px;color:#28C840;font-family:monospace;font-weight:700;">UTR: ' + (p.editorPaidTxnId || 'Verified') + '</div>';
+            } else if (isDone) {
+              statusHtml = '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⚡ Ready for Bank Payout</span>';
+              utrHtml = '<div style="font-size:11px;color:var(--t3);">Admin clearance pending</div>';
+            } else {
+              statusHtml = '<span class="status-badge" style="background:rgba(255,255,255,0.05);color:var(--t2);font-size:11px;padding:3px 8px;">⏳ In Progress</span>';
+              utrHtml = '<div style="font-size:11px;color:var(--t3);">Payable upon finish</div>';
+            }
+
+            var projectStatusBadge = p.status === 'done' 
+              ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;font-size:10px;">Done ✓</span>'
+              : `<span class="status-badge status-${p.status}" style="font-size:10px;">${p.status}</span>`;
+
+            return `<tr>
+              <td>
+                <div style="font-weight:600;color:var(--t1);">${p.title||'Untitled'}</div>
+                <div style="font-size:0.75rem;color:var(--t3);">${dateStr(p.createdAt)}</div>
+              </td>
+              <td>${cName}</td>
+              <td>${projectStatusBadge}</td>
+              <td style="color:var(--gold);font-weight:800;font-size:0.95rem;">₹${earn.toLocaleString()}</td>
+              <td>${statusHtml}</td>
+              <td>${utrHtml}</td>
+            </tr>`;
+          }).join('');
         }
-
-        var proofText = '<span style="color:var(--t3);">— Awaiting Clearance —</span>';
-        if (isPaid && p.editorPaidTxnId) {
-          proofText = '<strong style="color:var(--gold);font-size:0.82rem;">UTR: ' + p.editorPaidTxnId + '</strong>'
-            + (p.editorPaidAt ? '<div style="color:var(--t3);font-size:0.75rem;margin-top:2px;">Paid: ' + new Date(p.editorPaidAt).toLocaleDateString('en-IN') + '</div>' : '');
-        }
-
-        var pDateStr = '—';
-        if (p.createdAt) {
-          var d = p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt);
-          pDateStr = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-        }
-
-        html += '<tr>'
-          + '<td>'
-          + '  <div style="font-weight:700;font-size:0.95rem;color:var(--t1);">' + (p.title || 'Untitled Edit') + '</div>'
-          + '  <div style="font-size:0.8rem;color:var(--t3);margin-top:2px;">📅 Assigned: ' + pDateStr + '</div>'
-          + '</td>'
-          + '<td><span style="font-weight:600;color:var(--t2);">👤 ' + (p.clientName || 'Direct Client') + '</span></td>'
-          + '<td><span class="status-badge status-' + (p.status || 'pending') + '">' + (p.status || 'pending').toUpperCase() + '</span></td>'
-          + '<td><strong style="color:var(--gold);font-size:1.05rem;">₹' + earn.toLocaleString() + '</strong></td>'
-          + '<td>' + statusBadge + '</td>'
-          + '<td>' + proofText + '</td>'
-          + '</tr>';
-      });
-
-      tbody.innerHTML = html;
-    };
+      }
+    }
 
     window.saveEditorPayoutDetails = async function() {
       var upi = (document.getElementById('editorMyUpiInp')?.value || '').trim();
