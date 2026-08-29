@@ -537,13 +537,16 @@
     document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
     document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 
-    const sections = ['projects','detail','chat'];
+    const sections = ['projects', 'detail', 'chat', 'earnings'];
     function showSection(name) {
+      sections.forEach(s => {
+        const el = document.getElementById('sec-' + s);
+        if (el) el.style.display = (s === name ? 'block' : 'none');
+      });
+      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === name));
       if (name === 'earnings' && typeof renderEditorEarnings === 'function') {
         renderEditorEarnings();
       }
-      sections.forEach(s=>{ document.getElementById('sec-'+s).style.display=s===name?'block':'none'; });
-      document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.section===name));
     }
     window.showSection=showSection;
     document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
