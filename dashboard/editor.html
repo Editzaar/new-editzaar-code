@@ -3,204 +3,401 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Editor Dashboard — Editzaar</title>
+  <title>Editor Dashboard v2 — Editzaar</title>
   <meta name="robots" content="noindex,nofollow"/>
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=270.0" rel="stylesheet"/>
   <link rel="stylesheet" href="css/dashboard.css?v=300.0"/>
+  
+  <script src="../js/services-config.js?v=310.0"></script>
+  <script src="../js/theme.js?v=310.0"></script>
+
   <style>
     /* ============================================================
-       COMPACT & SLEEK LUXURY DESIGN SYSTEM
+       V2 COMPACT & SLEEK LUXURY DESIGN SYSTEM
        ============================================================ */
-    .dash-topbar {
-      margin-bottom: 14px !important;
+    :root {
+      --gold: #FFB800;
+      --gold-border: rgba(255, 184, 0, 0.2);
+      --bg-main: #0D0D0D;
+      --bg-sidebar: #111111;
+      --green: #28C840;
+      --red: #FF3B30;
+      --cyan: #00B4D8;
+      --orange: #FF9500;
+      --t1: #FFFFFF;
+      --t2: rgba(255,255,255,0.7);
+      --t3: rgba(255,255,255,0.5);
+      --border: rgba(255,255,255,0.08);
     }
-    .dash-page-title {
-      font-size: 1.35rem !important;
-      font-weight: 700 !important;
+    html[data-theme="light"] {
+      --bg-main: #F9FAFB;
+      --bg-sidebar: #FFFFFF;
+      --t1: #111827;
+      --t2: #4B5563;
+      --t3: #6B7280;
+      --border: #E5E7EB;
     }
+    
+    body { margin: 0; padding: 0; font-family: 'Outfit', sans-serif; background: var(--bg-main); color: var(--t1); }
+    
+    .v2-layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
 
-    /* 4-Column Responsive Compact Metric Grid */
-    .stat-card-grid {
-      display: grid !important;
-      grid-template-columns: repeat(4, 1fr) !important;
-      gap: 12px !important;
-      margin-bottom: 16px !important;
-    }
+    /* SIDEBAR V2 */
+    .v2-sidebar { background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; z-index: 100;}
+    .v2-profile { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 24px; }
+    .v2-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FFB800, #FFA000); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
+    .v2-profile-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; color: var(--t1); }
+    .v2-role-badge { font-size: 0.7rem; background: rgba(255,184,0,0.1); color: var(--gold); padding: 3px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+    .v2-profile-email { font-size: 0.75rem; color: var(--t3); word-break: break-all;}
+
+    .v2-nav-label { font-size: 0.7rem; color: var(--t3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin: 16px 0 8px 8px; }
+    .v2-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: var(--t2); text-decoration: none; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-bottom: 4px; }
+    .v2-nav-item:hover { background: rgba(255,255,255,0.05); color: var(--t1); }
+    html[data-theme="light"] .v2-nav-item:hover { background: rgba(0,0,0,0.04); }
+    .v2-nav-item.active { background: rgba(255,184,0,0.1); color: var(--gold); border: 1px solid var(--gold-border); font-weight: 600; }
+    .v2-nav-divider { height: 1px; background: var(--border); margin: 12px 0; }
+    
+    .v2-branding { margin-top: auto; text-align: center; padding-top: 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--t3); font-style: italic;}
+    .v2-branding em { color: var(--gold); font-style: normal; font-weight: 600; font-family: 'Outfit', sans-serif;}
+
+    /* MAIN AREA */
+    .v2-main { padding: 24px 32px; overflow-y: auto; height: 100vh; box-sizing: border-box; }
+    .dash-topbar { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;}
+    .dash-page-title { font-size: 1.35rem; font-weight: 700; color: var(--t1);}
+    .dash-page-title em { color: var(--gold); font-style: normal;}
+
+    /* NEW STAT CARDS */
+    .v2-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .v2-stat-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    html[data-theme="light"] .v2-stat-card { background: #FFFFFF; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+    .v2-stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+    .v2-stat-card.pending::before { background: var(--orange); }
+    .v2-stat-card.completed::before { background: var(--green); }
+    .v2-stat-card.total::before { background: var(--gold); }
+    .v2-stat-card.avail::before { background: var(--cyan); }
+    
+    .v2-stat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .v2-stat-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .pending .v2-stat-icon { background: rgba(255, 149, 0, 0.1); color: var(--orange); }
+    .completed .v2-stat-icon { background: rgba(40, 200, 64, 0.1); color: var(--green); }
+    .total .v2-stat-icon { background: rgba(255, 184, 0, 0.1); color: var(--gold); }
+    .avail .v2-stat-icon { background: rgba(0, 180, 216, 0.1); color: var(--cyan); }
+    .v2-stat-label { font-size: 0.75rem; color: var(--t2); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    
+    .v2-stat-vals { display: flex; justify-content: space-between; align-items: flex-end; }
+    .v2-stat-val-block { display: flex; flex-direction: column; }
+    .v2-val-num { font-size: 1.5rem; font-weight: 800; line-height: 1.2; color: var(--t1); }
+    .v2-val-sub { font-size: 0.75rem; color: var(--t3); margin-top: 2px;}
+
+    /* AVAIL CARD EXTRAS */
+    .v2-avail-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .v2-avail-btns { display: flex; gap: 8px; margin-top: 10px; }
+    .v2-btn-sm { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--t1); border-radius: 6px; padding: 4px 10px; font-size: 0.7rem; cursor: pointer; transition: 0.2s; }
+    html[data-theme="light"] .v2-btn-sm { background: #F3F4F6; color: #111; }
+    .v2-btn-sm:hover { background: rgba(255,255,255,0.1); }
+    html[data-theme="light"] .v2-btn-sm:hover { background: #E5E7EB; }
+
+    /* PANELS WRAPPER */
+    .v2-panels-wrapper { display: grid; grid-template-columns: 1fr 260px; gap: 24px; }
+
+    /* CENTER PANEL */
+    .v2-center-panel { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column;}
+    html[data-theme="light"] .v2-center-panel { background: #FFFFFF; }
+    .v2-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; gap: 20px; }
+    .dash-tab-btn { background: none; border: none; color: var(--t3); font-size: 0.95rem; font-weight: 600; font-family: 'Outfit', sans-serif; padding: 0 0 10px 0; cursor: pointer; position: relative; }
+    .dash-tab-btn.active { color: var(--gold); }
+    .dash-tab-btn.active::after { content:''; position:absolute; bottom:-1px; left:0; width:100%; height:2px; background:var(--gold); }
+    .v2-view-all { margin-left: auto; color: var(--gold); font-size: 0.85rem; text-decoration: none; cursor: pointer; padding-bottom: 10px; font-weight: 500;}
+    .v2-tab-content { flex: 1; overflow-y: auto;}
+
+    /* RIGHT PANEL */
+    .v2-right-panel { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    html[data-theme="light"] .v2-right-panel { background: #FFFFFF; }
+    .v2-earn-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 600; font-size: 1rem; color: var(--t1);}
+    .v2-earn-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+    html[data-theme="light"] .v2-earn-box { background: #F9FAFB; }
+    .v2-earn-label { font-size: 0.72rem; color: var(--t3); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.05em;}
+    .v2-earn-val { font-size: 1.5rem; font-weight: 800; color: var(--gold); }
+    
+    .v2-activity-list { margin: 20px 0; }
+    .v2-act-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--t2); margin-bottom: 12px; }
+    .v2-act-dot { width: 8px; height: 8px; border-radius: 50%; }
+    
+    .v2-btn-big-gold { display: block; width: 100%; background: linear-gradient(135deg, #FFB800, #FFA000); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 700; text-align: center; cursor: pointer; text-decoration: none; font-size: 0.9rem; transition: 0.2s;}
+    .v2-btn-big-gold:hover { opacity: 0.9; transform: translateY(-1px);}
+
+    /* OLD STYLES OVERRIDES FOR COPIED SECTIONS */
+    .stat-card-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 12px !important; margin-bottom: 16px !important; }
+    .stat-card { background: linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,184,0,0.02) 100%) !important; border: 1px solid var(--gold-border) !important; border-radius: 10px !important; padding: 12px 14px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important; transition: all 0.2s ease !important; }
+    html[data-theme="light"] .stat-card { background: #FFFFFF !important; border-color: #E2E4E8 !important; box-shadow: 0 2px 10px rgba(0,0,0,0.03) !important; }
+    .stat-card-label { font-size: 0.7rem !important; color: var(--t3) !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; font-weight: 700 !important; margin-bottom: 4px !important; }
+    .stat-card-value { font-size: 1.35rem !important; font-weight: 800 !important; line-height: 1.1 !important; }
+    .dash-card { padding: 16px 18px !important; margin-bottom: 16px !important; border-radius: 12px !important; background: rgba(255,255,255,0.02); border: 1px solid var(--border); }
+    html[data-theme="light"] .dash-card { background: #FFFFFF !important; border-color: #E2E4E8 !important; }
+    .dash-table th { padding: 10px 12px !important; font-size: 0.72rem !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; }
+    .dash-table td { padding: 11px 12px !important; font-size: 0.84rem !important; vertical-align: middle !important; }
+    .link-input-box { background: rgba(255,255,255,0.03); border: 1px dashed var(--gold-border); border-radius: var(--r); padding: 14px; margin-bottom: 14px; }
+    
+    /* HIDE ALL SECTIONS INITIALLY */
+    section { display: none; }
+    #sec-dashboard { display: block; }
+
+    /* MOBILE / RESPONSIVE */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; }
+    .sidebar-overlay.active { display: block; }
+    .sidebar-toggle { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 999; background: var(--gold); color: #000; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer;}
+    
     @media (max-width: 1024px) {
-      .stat-card-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-      }
+      .v2-stats-grid, .stat-card-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .v2-panels-wrapper { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .v2-layout { display: block; }
+      .v2-sidebar { position: fixed; left: -260px; top: 0; bottom: 0; width: 220px; transition: 0.3s ease; }
+      .v2-sidebar.open { left: 0; }
+      .v2-main { padding: 20px 16px; height: auto; padding-bottom: 80px;}
+      .sidebar-toggle { display: block; }
     }
     @media (max-width: 540px) {
-      .stat-card-grid {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 8px !important;
-      }
-    }
-
-    .stat-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,184,0,0.02) 100%) !important;
-      border: 1px solid var(--gold-border) !important;
-      border-radius: 10px !important;
-      padding: 12px 14px !important;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-      transition: all 0.2s ease !important;
-    }
-    html[data-theme="light"] .stat-card {
-      background: #FFFFFF !important;
-      border-color: #E2E4E8 !important;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03) !important;
-    }
-    .stat-card:hover {
-      border-color: var(--gold) !important;
-      transform: translateY(-1px) !important;
-    }
-    .stat-card-label {
-      font-size: 0.7rem !important;
-      color: var(--t3) !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.06em !important;
-      font-weight: 700 !important;
-      margin-bottom: 4px !important;
-    }
-    html[data-theme="light"] .stat-card-label {
-      color: #6B7280 !important;
-    }
-    .stat-card-value {
-      font-size: 1.35rem !important;
-      font-weight: 800 !important;
-      line-height: 1.1 !important;
-    }
-
-    .dash-card {
-      padding: 16px 18px !important;
-      margin-bottom: 16px !important;
-      border-radius: 12px !important;
-    }
-    html[data-theme="light"] .dash-card {
-      background: #FFFFFF !important;
-      border-color: #E2E4E8 !important;
-    }
-
-    .dash-table th {
-      padding: 10px 12px !important;
-      font-size: 0.72rem !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.06em !important;
-    }
-    .dash-table td {
-      padding: 11px 12px !important;
-      font-size: 0.84rem !important;
-      vertical-align: middle !important;
-    }
-
-    .link-input-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px dashed var(--gold-border);
-      border-radius: var(--r);
-      padding: 14px;
-      margin-bottom: 14px;
+      .v2-stats-grid, .stat-card-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
     }
   </style>
+
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="../manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Editzaar">
-  <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
-  <script src="../js/services-config.js?v=310.0"></script>
-  <script src="../js/theme.js?v=310.0"></script>
 </head>
 <body>
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   <div class="toast" id="toast"></div>
-
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
-  <div class="dash-shell">
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <a href="../" class="sidebar-logo" title="Back to Main Website">EDIT<em>ZAAR</em> ↗</a>
-      <div class="sidebar-role-badge">🎬 Editor</div>
-      <nav class="sidebar-nav">
-        <div class="sidebar-nav-section">My Workspace</div>
-        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects &amp; Works</div>
-        <div class="sidebar-nav-item" data-section="earnings"><span class="nav-icon">💰</span> My Earnings &amp; Payouts</div>
+  
+  <div class="push-notif" id="pushNotif">
+    <div class="push-notif-icon" id="pushNotifIcon">💬</div>
+    <div class="push-notif-content">
+      <div class="push-notif-title" id="pushNotifTitle">Notification</div>
+      <div class="push-notif-text" id="pushNotifText">...</div>
+    </div>
+  </div>
 
-        <div class="sidebar-nav-section">Communication</div>
-        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Project Messages</div>
-
-        <div class="sidebar-nav-section">Settings &amp; Banking</div>
-        <div class="sidebar-nav-item" data-section="settings"><span class="nav-icon">⚙️</span> Profile &amp; Payout Settings</div>
-
-        <div class="sidebar-nav-section">Main Site</div>
-        <a class="sidebar-nav-item" href="../index.html" style="text-decoration:none;"><span class="nav-icon">🏠</span> Home Page</a>
-        <a class="sidebar-nav-item" href="../work.html" style="text-decoration:none;"><span class="nav-icon">🎬</span> Agency Portfolio</a></nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user-info" id="editorEmail">Loading…</div>
-        <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
+  <div class="v2-layout">
+    
+    <!-- V2 SIDEBAR -->
+    <aside class="v2-sidebar" id="sidebar">
+      <div class="v2-profile">
+        <div class="v2-avatar" id="editorAvatar">ED</div>
+        <div class="v2-profile-name" id="editorName">Loading...</div>
+        <div class="v2-role-badge">Video Editor</div>
+        <div class="v2-profile-email" id="editorEmail"></div>
       </div>
+      
+      <div class="v2-nav-label">Menu</div>
+      <div class="v2-nav-item active" data-section="dashboard" onclick="window.showSection('dashboard')">🏠 Dashboard</div>
+      <div class="v2-nav-item" data-section="projects" onclick="window.showSection('projects')">📁 My Projects</div>
+      <div class="v2-nav-item" data-section="earnings" onclick="window.showSection('earnings')">💰 My Earnings</div>
+      <div class="v2-nav-item" data-section="messages" onclick="window.showSection('messages')">💬 Project Messages</div>
+      <div class="v2-nav-item" data-section="settings" onclick="window.showSection('settings')">⚙️ Profile &amp; Settings</div>
+      
+      <div class="v2-nav-divider"></div>
+      
+      <a href="../index.html" class="v2-nav-item">🏠 Home Page</a>
+      <a href="../work.html" class="v2-nav-item">🎬 Agency Portfolio</a>
+      
+      <div class="v2-nav-divider"></div>
+      
+      <div class="v2-nav-item v2-signout" id="signoutBtn">🚪 Sign Out</div>
+      
+      <div class="v2-branding">EDIT<em>ZAAR</em></div>
     </aside>
 
-    <!-- MAIN -->
-    <main class="dash-main">
+    <!-- V2 MAIN CONTENT -->
+    <main class="v2-main">
+      
+      <!-- ── SECTION: DASHBOARD (V2) ── -->
+      <section id="sec-dashboard">
+        <div class="dash-topbar">
+          <div class="dash-page-title">Welcome back, <em id="dashWelcomeName">Editor</em>!</div>
+          <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.2rem;">🌙/☀️</button>
+        </div>
 
-      <!-- ── SECTION: MY PROJECTS ── -->
+        <!-- 4 STAT CARDS -->
+        <div class="v2-stats-grid">
+          <!-- Pending -->
+          <div class="v2-stat-card pending">
+            <div class="v2-stat-header">
+              <div class="v2-stat-icon">⏳</div>
+              <div class="v2-stat-label">Pending Requests</div>
+            </div>
+            <div class="v2-stat-vals">
+              <div class="v2-stat-val-block">
+                <div class="v2-val-num" id="v2PendingCount">0</div>
+                <div class="v2-val-sub">Orders</div>
+              </div>
+              <div class="v2-stat-val-block" style="text-align:right;">
+                <div class="v2-val-num" style="color:var(--orange);" id="v2PendingMoney">₹0</div>
+                <div class="v2-val-sub">Est. Earnings</div>
+              </div>
+            </div>
+          </div>
+          <!-- Completed -->
+          <div class="v2-stat-card completed">
+            <div class="v2-stat-header">
+              <div class="v2-stat-icon">✅</div>
+              <div class="v2-stat-label">Completed Works</div>
+            </div>
+            <div class="v2-stat-vals">
+              <div class="v2-stat-val-block">
+                <div class="v2-val-num" id="v2DoneCount">0</div>
+                <div class="v2-val-sub">Orders</div>
+              </div>
+              <div class="v2-stat-val-block" style="text-align:right;">
+                <div class="v2-val-num" style="color:var(--green);" id="v2DoneMoney">₹0</div>
+                <div class="v2-val-sub">Earned</div>
+              </div>
+            </div>
+          </div>
+          <!-- Total -->
+          <div class="v2-stat-card total">
+            <div class="v2-stat-header">
+              <div class="v2-stat-icon">📁</div>
+              <div class="v2-stat-label">Total Assigned</div>
+            </div>
+            <div class="v2-stat-vals">
+              <div class="v2-stat-val-block">
+                <div class="v2-val-num" id="v2TotalCount">0</div>
+                <div class="v2-val-sub">Orders</div>
+              </div>
+              <div class="v2-stat-val-block" style="text-align:right;">
+                <div class="v2-val-num" style="color:var(--gold);" id="v2TotalMoney">₹0</div>
+                <div class="v2-val-sub">Lifetime Value</div>
+              </div>
+            </div>
+          </div>
+          <!-- Availability Status -->
+          <div class="v2-stat-card avail">
+            <div class="v2-stat-header">
+              <div class="v2-stat-icon">🔔</div>
+              <div class="v2-stat-label">Availability Status</div>
+            </div>
+            <div style="font-weight:600;font-size:0.95rem;margin-bottom:4px;color:var(--t1);">
+              <span class="v2-avail-dot" id="v2OnlineDot"></span><span id="v2StatusLabel">Online &amp; Available</span>
+            </div>
+            <div class="v2-val-sub" id="v2LastRefreshed">Refreshed: --:--</div>
+            <div class="v2-avail-btns">
+              <button class="v2-btn-sm" onclick="window.refreshAvailability()">Refresh Now</button>
+              <button class="v2-btn-sm" id="v2InactiveBtn" onclick="window.toggleAvailability()">Make Inactive</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="v2-panels-wrapper v2-dashboard-body">
+          <!-- CENTER PANEL -->
+          <div class="v2-center-panel">
+            <div class="v2-tabs">
+              <button class="dash-tab-btn" id="tabBooking" onclick="window.switchDashTab('requests')">Booking Requests</button>
+              <button class="dash-tab-btn active" id="tabActive" onclick="window.switchDashTab('active')">Active Orders</button>
+              <div class="v2-view-all" onclick="window.showSection('projects')">View all →</div>
+            </div>
+            <div class="v2-tab-content" id="v2TabContent">
+              <div style="padding:40px 20px;text-align:center;color:var(--t3);">Loading projects...</div>
+            </div>
+          </div>
+
+          <!-- RIGHT EARNINGS PANEL -->
+          <div class="v2-right-panel">
+            <div class="v2-earn-header">
+              Earnings &amp; Activity
+              <span style="cursor:pointer;font-size:1.1rem;color:var(--t3);" onclick="window.showSection('earnings')" title="View Earnings">🪙</span>
+            </div>
+            <div class="v2-earn-box">
+              <div class="v2-earn-label">This Week</div>
+              <div class="v2-earn-val" id="v2WeekEarn">₹0</div>
+            </div>
+            <div class="v2-earn-box">
+              <div class="v2-earn-label">This Month</div>
+              <div class="v2-earn-val" id="v2MonthEarn">₹0</div>
+            </div>
+            
+            <div class="v2-activity-list">
+              <div class="v2-act-item">
+                <div class="v2-act-dot" style="background:var(--orange);"></div>
+                <div id="v2ActivityOngoing">0 Active Works</div>
+              </div>
+              <div class="v2-act-item">
+                <div class="v2-act-dot" style="background:var(--green);"></div>
+                <div id="v2ActivityCompleted">0 Total Finished</div>
+              </div>
+              <div class="v2-act-item">
+                <div class="v2-act-dot" style="background:var(--gold);"></div>
+                <div id="v2ActivityReady">0 Awaiting Payout</div>
+              </div>
+              <div class="v2-act-item">
+                <div class="v2-act-dot" style="background:var(--cyan);"></div>
+                <div id="v2ActivityCleared">0 Paid to Bank</div>
+              </div>
+            </div>
+            
+            <button class="v2-btn-big-gold" onclick="window.showSection('earnings')">View All Earnings 💰</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: MY PROJECTS (Copied verbatim) ── -->
       <section id="sec-projects">
         <div class="dash-topbar">
           <div class="dash-page-title">My <em>Projects</em></div>
-          <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
         </div>
-        <div class="stats-row">
-          <div class="stat-card"><div class="stat-card-label">Total Assigned</div><div class="stat-card-value" id="statTotal">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">In Progress</div><div class="stat-card-value" id="statActive">—</div></div>
-          <div class="stat-card"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">—</div></div>
+        <div class="stats-row" style="display:flex;gap:12px;margin-bottom:16px;">
+          <div class="dash-card" style="flex:1;"><div class="stat-card-label">Total Assigned</div><div class="stat-card-value" id="statTotal">—</div></div>
+          <div class="dash-card" style="flex:1;"><div class="stat-card-label">In Progress</div><div class="stat-card-value" id="statActive">—</div></div>
+          <div class="dash-card" style="flex:1;"><div class="stat-card-label">Completed</div><div class="stat-card-value" id="statDone">—</div></div>
         </div>
         <div id="projectsList"></div>
       </section>
 
-      <!-- ── SECTION: PROJECT DETAIL ── -->
-      <section id="sec-detail" style="display:none;">
+      <!-- ── SECTION: PROJECT DETAIL (Copied verbatim) ── -->
+      <section id="sec-detail">
         <div class="dash-topbar">
-          <button class="btn-outline" onclick="showSection('projects')">← Back to Projects</button>
+          <button class="v2-btn-sm" style="padding:8px 14px; font-size:0.85rem;" onclick="window.showSection('projects')">← Back to Projects</button>
           <div id="detailStatus"></div>
         </div>
-        <div class="project-detail-grid">
+        <div class="project-detail-grid" style="display:grid;grid-template-columns:1fr 340px;gap:20px;">
           <div>
-                  <div class="dash-card">
-              <div class="dash-card-header">
-                <div class="dash-card-title" id="detailTitle">—</div>
+            <div class="dash-card">
+              <div class="dash-card-header" style="margin-bottom:12px;">
+                <div class="dash-page-title" id="detailTitle" style="font-size:1.2rem;">—</div>
               </div>
               <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;line-height:1.7;" id="detailDesc">—</div>
               <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
                 <div><div style="font-size: 12px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Client</div><div style="font-size:0.9rem;" id="detailClient">—</div></div>
                 <div>
-                  <div style="font-size: 12px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline (Change Date)</div>
+                  <div style="font-size: 12px;color:var(--t3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Estimated Deadline</div>
                   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <input type="date" id="editorDeadlineInput" style="background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:6px;padding:5px 10px;color:var(--gold);font-family:var(--font-b);font-size:0.85rem;outline:none;cursor:pointer;"/>
-                    <button class="btn-gold btn-sm" id="btnUpdateEditorDeadline" style="padding:5px 12px;font-size: 13px;">Update Date 📅</button>
+                    <input type="date" id="editorDeadlineInput" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--gold);font-family:var(--font-b);font-size:0.85rem;outline:none;cursor:pointer;"/>
+                    <button class="v2-btn-sm" id="btnUpdateEditorDeadline" style="padding:6px 12px;">Update Date 📅</button>
                   </div>
                 </div>
               </div>
 
               <!-- Raw Footage Link View -->
-              <div style="margin-bottom:20px;background:rgba(255,184,0,0.05);border:1px solid var(--gold-border);border-radius:var(--r);padding:16px;">
+              <div style="margin-bottom:20px;background:rgba(255,184,0,0.05);border:1px solid var(--gold-border);border-radius:12px;padding:16px;">
                 <div style="font-size: 12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">📁 Client's Raw Footage Link</div>
                 <div id="rawFootageLink" style="font-size:0.88rem;color:var(--t2);">No link saved by client yet.</div>
               </div>
 
               <!-- Submit Final Delivery Link -->
-              <div class="link-input-box">
-                <div style="font-size: 12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎬 Final Delivered Video Link (Google Drive / Frame.io / Vimeo)</div>
-                <div class="flex-input-row">
+              <div class="link-input-box" style="border-radius:12px;">
+                <div style="font-size: 12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">🎬 Final Delivered Video Link</div>
+                <div style="display:flex; gap:10px;">
                   <input type="url" id="deliveryLinkInput" placeholder="https://drive.google.com/..." style="flex:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color: var(--t1);font-size:0.88rem;outline:none;"/>
-                  <button class="btn-gold btn-sm" id="btnSaveDeliveryLink">Save Delivery Link</button>
+                  <button class="v2-btn-sm" style="background:var(--gold);color:#000;" id="btnSaveDeliveryLink">Save Delivery</button>
                 </div>
                 <div id="deliveryLinkDisplay" style="margin-top:10px;font-size:0.88rem;"></div>
               </div>
@@ -208,240 +405,191 @@
 
             <!-- Status Controls -->
             <div class="dash-card">
-              <div class="dash-card-header"><div class="dash-card-title">Update <em>Status</em></div></div>
+              <div style="font-weight:700; margin-bottom:12px;">Update Status</div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn-outline btn-sm" onclick="updateStatus('in_progress')">🔄 In Progress</button>
-                <button class="btn-outline btn-sm" onclick="updateStatus('review')">👁 Submit for Review</button>
-                <button class="btn-outline btn-sm" onclick="updateStatus('done')">✅ Mark Done</button>
+                <button class="v2-btn-sm" onclick="window.updateStatus('in_progress')">🔄 In Progress</button>
+                <button class="v2-btn-sm" onclick="window.updateStatus('review')">👁 Submit for Review</button>
+                <button class="v2-btn-sm" onclick="window.updateStatus('done')">✅ Mark Done</button>
               </div>
 
-        <!-- Live Editor Compensation Card -->
-        <div id="detailEditorEarnBanner" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg, rgba(255,184,0,0.08) 0%, rgba(0,0,0,0.4) 100%);border:1px solid var(--gold-border);border-radius:12px;margin-bottom:16px;"></div>
+              <div id="detailEditorEarnBanner" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg, rgba(255,184,0,0.08) 0%, rgba(0,0,0,0.4) 100%);border:1px solid var(--gold-border);border-radius:12px;margin-top:16px;"></div>
             </div>
           </div>
 
           <!-- Chat Panel -->
-          <div class="dash-card">
-            <div class="dash-card-header"><div class="dash-card-title">Chat with <em>Client</em></div></div>
-            <div class="chat-container">
-              <div class="chat-messages" id="chatMessages"></div>
-              <div class="chat-input-row">
-                <input class="chat-input" id="chatInput" placeholder="Type a message or paste a link…"/>
-                <button class="chat-send-btn" id="btnSendMsg" title="Send message">➤</button>
+          <div class="dash-card" style="display:flex;flex-direction:column;height:600px;padding:0;">
+            <div style="padding:16px; border-bottom:1px solid var(--border); font-weight:700;">Chat with Client</div>
+            <div class="chat-container" style="flex:1; display:flex; flex-direction:column; padding:16px; overflow:hidden;">
+              <div class="chat-messages" id="chatMessages" style="flex:1; overflow-y:auto; margin-bottom:12px;"></div>
+              <div style="display:flex; gap:8px;">
+                <input class="chat-input" id="chatInput" placeholder="Type message…" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:10px;color:var(--t1);"/>
+                <button class="v2-btn-sm" style="background:var(--gold);color:#000;" id="btnSendMsg">➤</button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ── SECTION: MESSAGES ── -->
-      <section id="sec-chat" style="display:none;">
+      <!-- ── SECTION: CHAT (Hidden, mostly handled in messages now) ── -->
+      <section id="sec-chat">
         <div class="dash-topbar"><div class="dash-page-title">Messages</div></div>
-        <div class="dash-card">
-          <div class="empty-state">
-            <div class="empty-icon">💬</div>
-            <div class="empty-text">Open a project from "My Projects" to chat with your client.</div>
+        <div class="dash-card"><div class="empty-state">💬 Open a project to chat.</div></div>
+      </section>
+
+      <!-- ── SECTION: MESSAGES ── -->
+      <section id="sec-messages">
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-page-title">Project <em>Messages</em></div>
+            <div style="font-size:0.85rem;color:var(--t2);">Direct communication with your project team.</div>
+          </div>
+        </div>
+        <div class="dash-card" style="display:flex; flex-direction:column; height: 70vh; padding:0;">
+          <div style="padding:16px; border-bottom:1px solid var(--border); font-weight:700;" id="msgProjectTitle">Select a Project to Chat</div>
+          <div class="chat-messages" id="chatMsgBox" style="flex:1; overflow-y:auto; padding:16px;">
+            <div style="text-align:center;padding:60px 24px;color:var(--t3);">
+              <div style="font-size:2.5rem;margin-bottom:16px;">💬</div>
+              <div style="font-size:1rem;font-weight:600;color:var(--t2);margin-bottom:8px;">Select a Project to Chat</div>
+              <div style="font-size:0.85rem;">Go to <strong>My Projects</strong> and click Open Project.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; padding:16px; border-top: 1px solid var(--border);">
+            <input class="chat-input" id="chatInputEditor" placeholder="Type a message…" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:10px;color:var(--t1);"/>
+            <button class="v2-btn-sm" style="background:var(--gold);color:#000;padding:10px 16px;" onclick="window.sendEditorMessage()">Send</button>
           </div>
         </div>
       </section>
 
-      <!-- ── SECTION: MY EARNINGS & PAYOUTS ── -->
-            <!-- ── SECTION: MY EARNINGS & MONTHLY PAYOUTS (COMPLETE ENGINE) ── -->
-      <section id="sec-earnings" style="display:none;">
+      <!-- ── SECTION: EARNINGS ── -->
+      <section id="sec-earnings">
         <div class="dash-topbar">
           <div>
             <div class="dash-page-title">My Earnings &amp; <em>Monthly Payouts</em></div>
-            <div style="font-size:0.85rem;color:var(--t2);margin-top:2px;">Track all project earnings, monthly income, cleared bank payouts, and pending balances.</div>
+            <div style="font-size:0.85rem;color:var(--t2);margin-top:2px;">Track all project earnings, cleared bank payouts, and pending balances.</div>
           </div>
-          <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;"><span class="live-dot" style="background:#28C840;"></span> Direct Bank / UPI Settlement</span>
         </div>
 
-        <!-- 4 Executive Financial Metric Cards -->
-        <div class="stat-card-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+        <div class="stat-card-grid">
           <div class="stat-card">
-            <div class="stat-card-label">Total Worked (Lifetime)</div>
+            <div class="stat-card-label">Total Worked</div>
             <div class="stat-card-value" style="color:var(--gold);" id="editorLifetimeEarnings">₹0</div>
             <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorTotalProjectsCount">0 Total Projects</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-label">This Month's Work</div>
-            <div class="stat-card-value" style="color:#4A90D9;" id="editorThisMonthEarnings">₹0</div>
+            <div class="stat-card-label">This Month</div>
+            <div class="stat-card-value" style="color:var(--cyan);" id="editorThisMonthEarnings">₹0</div>
             <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorThisMonthLabel">Current Month</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-label">Cleared &amp; Paid (Bank)</div>
-            <div class="stat-card-value" style="color:#28C840;" id="editorClearedEarnings">₹0</div>
+            <div class="stat-card-label">Cleared &amp; Paid</div>
+            <div class="stat-card-value" style="color:var(--green);" id="editorClearedEarnings">₹0</div>
             <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorClearedProjectsCount">0 Paid Projects</div>
           </div>
           <div class="stat-card">
-            <div class="stat-card-label">Pending / Unpaid Balance</div>
-            <div class="stat-card-value" style="color:#FFB800;" id="editorPendingPayouts">₹0</div>
-            <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorPendingProjectsCount">0 Pending Clearance</div>
+            <div class="stat-card-label">Pending / Unpaid</div>
+            <div class="stat-card-value" style="color:var(--orange);" id="editorPendingPayouts">₹0</div>
+            <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;" id="editorPendingProjectsCount">0 Pending</div>
           </div>
         </div>
 
-        <!-- 1. Monthly Earnings Breakdown Summary Table -->
-        <div class="dash-card" style="margin-bottom: 24px;">
-          <div class="dash-card-header" style="margin-bottom:14px;">
-            <div class="dash-card-title">📅 Monthly Income <em>Breakdown</em></div>
-            <div style="font-size:0.82rem;color:var(--t2);">Your earnings grouped by calendar month</div>
-          </div>
-          <div class="table-scroll-wrap" style="overflow-x:auto;">
-            <table class="dash-table">
-              <thead>
-                <tr>
-                  <th>Month &amp; Year</th>
-                  <th>Projects Edited</th>
-                  <th>Total Amount Worked</th>
-                  <th>Cleared (Paid)</th>
-                  <th>Pending Balance</th>
-                  <th>Monthly Status</th>
-                </tr>
+        <div class="dash-card">
+          <div style="margin-bottom:14px; font-weight:700;">📅 Monthly Income Breakdown</div>
+          <div style="overflow-x:auto;">
+            <table class="dash-table" style="width:100%; text-align:left; border-collapse:collapse;">
+              <thead style="border-bottom:1px solid var(--border);">
+                <tr><th>Month &amp; Year</th><th>Projects</th><th>Total</th><th>Cleared</th><th>Pending</th><th>Status</th></tr>
               </thead>
               <tbody id="editorMonthlySummaryTbody">
-                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:20px;">Calculating monthly income…</td></tr>
+                <tr><td colspan="6" style="text-align:center;padding:20px;">Calculating...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- 2. Interactive Project Works & Payment Ledger -->
-        <div class="dash-card" style="margin-bottom: 24px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
-            <div>
-              <div class="dash-card-title">Project Works &amp; <em>Payment Ledger</em></div>
-              <div style="font-size:0.82rem;color:var(--t2);">Detailed record of every project you edited and its individual payment clearance</div>
-            </div>
-
-            <!-- Filters -->
-            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-              <select id="selEditorMonthFilter" class="filter-select" style="min-width:140px;height:36px;" onchange="window.filterEditorLedger()">
-                <option value="all">All Months</option>
-              </select>
-              <select id="selEditorStatusFilter" class="filter-select" style="min-width:140px;height:36px;" onchange="window.filterEditorLedger()">
-                <option value="all">All Payment Statuses</option>
-                <option value="unpaid">⏳ Pending / Unpaid</option>
-                <option value="paid">✅ Cleared &amp; Paid</option>
+        <div class="dash-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+            <div style="font-weight:700;">Project Works &amp; Payment Ledger</div>
+            <div style="display:flex;gap:10px;">
+              <select id="selEditorMonthFilter" onchange="window.filterEditorLedger()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:6px 10px;border-radius:6px;outline:none;"><option value="all">All Months</option></select>
+              <select id="selEditorStatusFilter" onchange="window.filterEditorLedger()" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:6px 10px;border-radius:6px;outline:none;">
+                <option value="all">All Statuses</option>
+                <option value="unpaid">⏳ Pending</option>
+                <option value="paid">✅ Cleared</option>
               </select>
             </div>
           </div>
-
-          <div class="table-scroll-wrap" style="overflow-x:auto;">
-            <table class="dash-table">
-              <thead>
-                <tr>
-                  <th>Project Name &amp; Brief</th>
-                  <th>Client</th>
-                  <th>Editing Status</th>
-                  <th>My Agreed Earning</th>
-                  <th>Payment Clearance Status</th>
-                  <th>Bank / UPI UTR Proof</th>
-                </tr>
+          <div style="overflow-x:auto;">
+            <table class="dash-table" style="width:100%; text-align:left; border-collapse:collapse;">
+              <thead style="border-bottom:1px solid var(--border);">
+                <tr><th>Project</th><th>Client</th><th>Status</th><th>Earning</th><th>Payment</th><th>UTR Proof</th></tr>
               </thead>
               <tbody id="editorEarningsTbody">
-                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:24px;">Loading your earnings ledger…</td></tr>
+                <tr><td colspan="6" style="text-align:center;padding:20px;">Loading ledger…</td></tr>
               </tbody>
             </table>
           </div>
         </div>
-
-
       </section>
 
-          
-      <!-- ── SECTION: PROJECT MESSAGES ── -->
-      <section id="sec-messages" style="display:none;">
+      <!-- ── SECTION: SETTINGS ── -->
+      <section id="sec-settings">
         <div class="dash-topbar">
           <div>
-            <div class="dash-page-title">Project <em>Messages</em></div>
-            <div class="dash-page-sub">Direct communication with your project team. Privacy-protected.</div>
+            <div class="dash-page-title">Profile &amp; <em>Settings</em></div>
+            <div style="font-size:0.85rem;color:var(--t2);">Manage UPI/Bank details and account security.</div>
           </div>
-        </div>
-        <div class="dash-card">
-          <div style="text-align:center;padding:60px 24px;color:var(--t3);">
-            <div style="font-size:2.5rem;margin-bottom:16px;">💬</div>
-            <div style="font-size:1rem;font-weight:600;color:var(--t2);margin-bottom:8px;">Select a Project to Chat</div>
-            <div style="font-size:0.85rem;">Go to <strong>My Projects & Works</strong> and click the <strong>💬 Message</strong> button on any project to open the project chat.</div>
-          </div>
-        </div>
-      </section>
-
-    <!-- ── SECTION: PROFILE & PAYOUT BANKING SETTINGS (DEDICATED) ── -->
-      <section id="sec-settings" style="display:none;">
-        <div class="dash-topbar">
-          <div>
-            <div class="dash-page-title">Profile &amp; <em>Payout Banking Settings</em></div>
-            <div style="font-size:0.85rem;color:var(--t2);margin-top:2px;">Upload and manage your UPI ID and Bank Account details for instant payroll clearance by Admin.</div>
-          </div>
-          <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;"><span class="live-dot" style="background:#28C840;"></span> Verified Payroll Sync</span>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <!-- 1. Payout Receiving Banking & UPI Details -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:20px;">
+          <!-- Banking Details -->
           <div class="dash-card">
-            <div class="dash-card-header" style="margin-bottom:12px;">
-              <div class="dash-card-title">💳 My Payout <em>Receiving Details</em></div>
-              <span class="live-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">Admin Payroll</span>
-            </div>
-            <p style="font-size:0.82rem;color:var(--t2);margin-bottom:14px;">Editzaar Admin will send your video editing payments directly to these details upon project delivery.</p>
-            
-            <div class="dash-form">
-              <div class="field">
-                <label>Official UPI ID (GPay / PhonePe / Paytm / BHIM) *</label>
-                <input type="text" id="editorMyUpiInp" placeholder="e.g. 9876543210@okhdfcbank / yourname@paytm"/>
+            <div style="font-weight:700;margin-bottom:16px;">💳 Payout Receiving Details</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div>
+                <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">UPI ID *</div>
+                <input type="text" id="editorMyUpiInp" placeholder="e.g. 9876543210@upi" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
               </div>
-
-              <div class="form-grid-2">
-                <div class="field">
-                  <label>Bank Name</label>
-                  <input type="text" id="editorBankNameInp" placeholder="e.g. HDFC Bank / SBI / ICICI"/>
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;">
+                  <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">Bank Name</div>
+                  <input type="text" id="editorBankNameInp" placeholder="HDFC Bank" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
                 </div>
-                <div class="field">
-                  <label>IFSC Code</label>
-                  <input type="text" id="editorIfscInp" placeholder="e.g. HDFC0001234" style="text-transform:uppercase;"/>
+                <div style="flex:1;">
+                  <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">IFSC Code</div>
+                  <input type="text" id="editorIfscInp" placeholder="HDFC0001" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;text-transform:uppercase;"/>
                 </div>
               </div>
-
-              <div class="form-grid-2">
-                <div class="field">
-                  <label>Account Number</label>
-                  <input type="text" id="editorAccountNumInp" placeholder="e.g. 5010023456789"/>
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;">
+                  <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">Account Number</div>
+                  <input type="text" id="editorAccountNumInp" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
                 </div>
-                <div class="field">
-                  <label>Account Holder Name</label>
-                  <input type="text" id="editorAccountHolderInp" placeholder="e.g. Vishal Kumar"/>
+                <div style="flex:1;">
+                  <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">Account Holder Name</div>
+                  <input type="text" id="editorAccountHolderInp" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
                 </div>
               </div>
-
-              <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnSaveEditorPayoutDetails" onclick="window.saveEditorPayoutDetails()">Save Payout &amp; Banking Details ✅</button>
+              <button class="v2-btn-big-gold" style="margin-top:10px;" id="btnSaveEditorPayoutDetails" onclick="window.saveEditorPayoutDetails()">Save Banking Details</button>
             </div>
           </div>
 
-          <!-- 2. Account Security & Password -->
+          <!-- Profile & Security -->
           <div class="dash-card">
-            <div class="dash-card-header" style="margin-bottom:12px;">
-              <div class="dash-card-title">🔐 Account Security &amp; <em>Password</em></div>
-              <span class="live-badge" style="background:rgba(40,200,64,0.1);color:#28C840;">Real-Time Sync</span>
-            </div>
-            <p style="font-size:0.82rem;color:var(--t2);margin-bottom:14px;">Change your editor account password. Changes take effect immediately and sync with your portal credentials.</p>
-            
-            <div class="dash-form">
-              <div class="field">
-                <label>Editor Display Name</label>
-                <input type="text" id="editorProfileNameInp" placeholder="Your Name"/>
+            <div style="font-weight:700;margin-bottom:16px;">🔐 Account Security &amp; Profile</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div>
+                <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">Display Name</div>
+                <input type="text" id="editorProfileNameInp" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
               </div>
-
-              <div class="field">
-                <label>Phone / WhatsApp Number</label>
-                <input type="text" id="editorProfilePhoneInp" placeholder="e.g. +91 9876543210"/>
+              <div>
+                <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">Phone Number</div>
+                <input type="text" id="editorProfilePhoneInp" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
               </div>
-
-              <div class="field">
-                <label>New Password (min. 6 characters) *</label>
-                <input type="password" id="editorNewPassInp" placeholder="Enter new strong password"/>
+              <div>
+                <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">New Password (min 6 chars)</div>
+                <input type="password" id="editorNewPassInp" placeholder="Enter new password" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
               </div>
-
-              <button class="btn-outline" style="width:100%;justify-content:center;height:42px;" id="btnChangeEditorPass" onclick="window.changeEditorPassword()">Update Password &amp; Profile 🔒</button>
+              <button class="v2-btn-sm" style="padding:12px;margin-top:10px;font-size:0.9rem;font-weight:600;" id="btnChangeEditorPass" onclick="window.changeEditorPassword()">Update Profile &amp; Password</button>
             </div>
           </div>
         </div>
@@ -450,55 +598,419 @@
     </main>
   </div>
 
+  <!-- BOTTOM NAVIGATION (Mobile) -->
+  <nav class="bottom-nav" id="editorBottomNav">
+    <div class="bottom-nav-item active" id="bnav-dashboard" onclick="window.showSection('dashboard');setActiveBottomNav('bnav-dashboard')">
+      <span class="bnav-icon">🏠</span>Home
+    </div>
+    <div class="bottom-nav-item" id="bnav-projects" onclick="window.showSection('projects');setActiveBottomNav('bnav-projects')">
+      <span class="bnav-icon">📁</span>Projects
+    </div>
+    <div class="bottom-nav-item" id="bnav-chat" onclick="window.showSection('messages');setActiveBottomNav('bnav-chat')">
+      <span class="bnav-icon" style="position:relative;">💬<span class="notif-badge" id="chatBadge" style="display:none;position:absolute;top:-5px;right:-10px;background:red;color:white;border-radius:50%;font-size:10px;padding:2px 5px;">!</span></span>Msgs
+    </div>
+  </nav>
+
+  <!-- PWA INSTALL MODAL -->
+  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
+    <div style="background: var(--bg-main);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
+      <h3 style="color:var(--gold);margin-bottom:8px">Install Editzaar App</h3>
+      <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
+      <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
+        <div>1. Tap <strong>Share</strong> at bottom of Safari</div>
+        <div>2. Tap <strong>Add to Home Screen</strong></div>
+      </div>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:var(--gold);color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
+    </div>
+  </div>
+
   <script type="module">
-    import { initializeApp }            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, updatePassword }
-                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc,
-             query, where, onSnapshot, serverTimestamp }
-                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, doc, getDoc, updateDoc, setDoc, addDoc, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey:            "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
-      authDomain:        "editzaar-fa8d9.firebaseapp.com",
-      projectId:         "editzaar-fa8d9",
-      storageBucket:     "editzaar-fa8d9.firebasestorage.app",
+      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain: "editzaar-fa8d9.firebaseapp.com",
+      projectId: "editzaar-fa8d9",
+      storageBucket: "editzaar-fa8d9.firebasestorage.app",
       messagingSenderId: "419930711716",
-      appId:             "1:419930711716:web:b1504f651e397a14726831"
+      appId: "1:419930711716:web:b1504f651e397a14726831"
     };
 
-    const app     = initializeApp(firebaseConfig);
-    const auth    = getAuth(app);
-    const db      = getFirestore(app);
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
     let currentUser = null, currentProject = null, chatUnsub = null;
     let allUsers = {};
+    window._activeEditorProjectsList = [];
+    let currentDashTab = 'active';
+
+    const sections = ['dashboard','projects','detail','chat','earnings','messages','settings'];
+    
+    window.showSection = function(name) {
+      sections.forEach(s => {
+        const el = document.getElementById('sec-' + s);
+        if (el) el.style.display = (s === name ? 'block' : 'none');
+      });
+      document.querySelectorAll('.v2-nav-item').forEach(el => {
+        if(el.dataset.section) {
+          el.classList.toggle('active', el.dataset.section === name);
+        }
+      });
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+      }
+      if (name === 'dashboard') {
+        if (typeof window.renderDashboardTab === 'function') window.renderDashboardTab();
+        if (typeof window.renderDashboardSidePanel === 'function') window.renderDashboardSidePanel(window._activeEditorProjectsList || []);
+      }
+      if (name === 'earnings') {
+        if (typeof window.renderEditorEarnings === 'function') window.renderEditorEarnings(window._activeEditorProjectsList);
+      }
+      if (name === 'settings') {
+        if (typeof window.loadEditorProfileDetails === 'function') window.loadEditorProfileDetails();
+      }
+    };
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('index.html'); return; }
       const snap = await getDoc(doc(db,'users',user.uid));
-      if (!snap.exists()) {
-        window.location.replace('client.html');
-        return;
-      }
+      if (!snap.exists()) { window.location.replace('client.html'); return; }
+      
       const role = snap.data().role;
       if (role !== 'editor' && role !== 'manager' && role !== 'admin') {
         window.location.replace('/dashboard/client.html');
         return;
       }
+      
       currentUser = { uid:user.uid, ...snap.data() };
-      document.getElementById('editorEmail').textContent = user.email;
+      
+      // Update Sidebar UI
+      const n = currentUser.name || 'Editor User';
+      (document.getElementById('editorName') || document.getElementById('sidebarEditorName')).textContent = n;
+      document.getElementById('dashWelcomeName').textContent = n.split(' ')[0];
+      (document.getElementById('editorEmail') || document.getElementById('sidebarEditorEmail')).textContent = user.email || '';
+      
+      // Initials Avatar
+      const parts = n.trim().split(' ');
+      let init = 'ED';
+      if(parts.length > 1) {
+        init = (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+      } else if (parts[0]) {
+        init = parts[0].substring(0,2).toUpperCase();
+      }
+      (document.getElementById('editorAvatar') || document.getElementById('sidebarAvatarInitials')).textContent = init;
+      
       loadUsers();
       loadProjects();
+      window.loadAvailabilityStatus();
     });
 
+    document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(()=>location.href='/dashboard/index.html'));
+
+    function loadUsers() {
+      onSnapshot(collection(db,'users'), (snap) => {
+        snap.forEach(d=>{ allUsers[d.id]=d.data(); });
+      });
+    }
+
+    let projectsUnsub = null;
+    function loadProjects() {
+      if (projectsUnsub) projectsUnsub();
+      projectsUnsub = onSnapshot(collection(db,'projects'), (snap) => {
+        const allProj = snap.docs.map(d=>({id:d.id,...d.data()}));
+        const perm = currentUser.permissions || {};
+        const canViewAll = currentUser.role === 'admin' || perm.viewAll === true;
+        
+        const editorProjects = canViewAll ? allProj : allProj.filter(p => 
+          p.editorId === currentUser.uid || (allUsers[p.clientId] && allUsers[p.clientId].assignedEditor === currentUser.uid)
+        );
+        
+        editorProjects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
+        window._activeEditorProjectsList = editorProjects;
+        
+        // Update old stats
+        document.getElementById('statTotal').textContent  = editorProjects.length;
+        document.getElementById('statActive').textContent = editorProjects.filter(p=>p.status!=='done').length;
+        document.getElementById('statDone').textContent   = editorProjects.filter(p=>p.status==='done').length;
+        
+        renderProjects(editorProjects); 
+        window.renderEditorEarnings(editorProjects); 
+        window.renderDashboardTab();
+        
+      }, (err) => console.error('Projects listener error:', err));
+    }
+
+    // Availability Logic
+    window.loadAvailabilityStatus = async function() {
+      if (!currentUser) return;
+      const docRef = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const data = snap.data();
+        const status = data.availabilityStatus || 'inactive';
+        const dateObj = data.availabilityUpdatedAt ? (data.availabilityUpdatedAt.toDate ? data.availabilityUpdatedAt.toDate() : new Date(data.availabilityUpdatedAt)) : new Date();
+        window.updateAvailabilityUI(status, dateObj);
+      }
+    };
     
+    window.updateAvailabilityUI = function(status, dateObj) {
+      const dot = document.getElementById('v2OnlineDot') || document.getElementById('v2AvailDot');
+      const lbl = document.getElementById('v2StatusLabel') || document.getElementById('v2AvailLabel');
+      const timeEl = document.getElementById('v2LastRefreshed') || document.getElementById('v2AvailTime');
+      const btnToggle = document.getElementById('v2InactiveBtn') || document.getElementById('btnAvailToggle');
+      
+      if (status === 'online') {
+        dot.style.background = '#28C840';
+        lbl.textContent = 'Online & Available';
+        lbl.style.color = 'var(--green)';
+        btnToggle.textContent = 'Make Inactive';
+      } else {
+        dot.style.background = '#FF3B30';
+        lbl.textContent = 'Inactive / Busy';
+        lbl.style.color = 'var(--red)';
+        btnToggle.textContent = 'Go Online';
+      }
+      
+      if (dateObj) {
+        timeEl.textContent = 'Refreshed: ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }
+    };
+    
+    window.refreshAvailability = async function() {
+      if (!currentUser) return;
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        availabilityStatus: 'online',
+        availabilityUpdatedAt: serverTimestamp()
+      }, { merge: true });
+      showToast('Availability refreshed!');
+      window.loadAvailabilityStatus();
+    };
+    
+    window.toggleAvailability = async function() {
+      if (!currentUser) return;
+      const lbl = document.getElementById('v2AvailLabel').textContent;
+      const newStatus = lbl.includes('Online') ? 'inactive' : 'online';
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        availabilityStatus: newStatus,
+        availabilityUpdatedAt: serverTimestamp()
+      }, { merge: true });
+      showToast('Availability marked as ' + newStatus);
+      window.loadAvailabilityStatus();
+    };
+
+    // Dashboard Tabs
+    window.switchDashTab = function(tab) {
+      currentDashTab = tab;
+      document.querySelectorAll('.dash-tab-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('tab' + (tab === 'requests' || tab === 'booking' ? 'Booking' : 'Active')) || 
+                        document.getElementById('dashTab' + tab);
+      if (activeBtn) activeBtn.classList.add('active');
+      window.renderDashboardTab();
+    };
+    
+    window.renderDashboardTab = function() {
+      const projs = window._activeEditorProjectsList || [];
+      const container = document.getElementById('v2TabContent');
+      let filtered = [];
+      if (currentDashTab === 'requests') {
+        filtered = projs.filter(p => p.status === 'pending');
+      } else {
+        filtered = projs.filter(p => p.status === 'in_progress' || p.status === 'review' || p.status === 'revision');
+      }
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--t3);background:rgba(255,255,255,0.02);border-radius:12px;border:1px dashed rgba(255,255,255,0.1);">No projects found for this tab.</div>';
+        return;
+      }
+      
+      container.innerHTML = filtered.map(p => {
+        const cName = allUsers[p.clientId]?.name || 'Client';
+        const myEarning = p.editorPayout || (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
+        return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;font-size:1.05rem;color:var(--t1);margin-bottom:4px;">${p.title||'Untitled'}</div>
+            <div style="font-size:0.85rem;color:var(--t2);">Client: <span style="color:var(--gold);">${cName}</span> • Date: ${dateStr(p.createdAt)}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="margin-bottom:6px;">${badge(p.status)}</div>
+            <div style="font-weight:700;color:var(--gold);font-size:1.1rem;">₹${myEarning.toLocaleString()}</div>
+          </div>
+        </div>`;
+      }).join('');
+    };
+
+    window.renderDashboardSidePanel = function(projs) {
+      let pCount = 0, pMoney = 0, dCount = 0, dMoney = 0;
+      let tCount = projs.length, tMoney = 0;
+      let wMoney = 0, mMoney = 0;
+      let onCount = 0, cCount = 0, rCount = 0, cbCount = 0;
+      
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const currentMonthKey = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+
+      projs.forEach(p => {
+        const earn = p.editorPayout || (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
+        tMoney += earn;
+        
+        const pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
+        const mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+        
+        if (pDate >= oneWeekAgo) wMoney += earn;
+        if (mKey === currentMonthKey) mMoney += earn;
+        
+        if (p.status === 'pending') { pCount++; pMoney += earn; }
+        if (p.status === 'done') {
+          dCount++; dMoney += earn; cCount++;
+          if (p.editorPayoutStatus === 'paid') cbCount++; else rCount++;
+        }
+        if (['in_progress','review','revision'].includes(p.status)) { onCount++; }
+      });
+      
+      document.getElementById('v2PendingCount').textContent = pCount;
+      document.getElementById('v2PendingMoney').textContent = '₹' + pMoney.toLocaleString();
+      document.getElementById('v2DoneCount').textContent = dCount;
+      document.getElementById('v2DoneMoney').textContent = '₹' + dMoney.toLocaleString();
+      document.getElementById('v2TotalCount').textContent = tCount;
+      document.getElementById('v2TotalMoney').textContent = '₹' + tMoney.toLocaleString();
+      document.getElementById('v2WeekEarn').textContent = '₹' + wMoney.toLocaleString();
+      document.getElementById('v2MonthEarn').textContent = '₹' + mMoney.toLocaleString();
+      
+      document.getElementById('v2ActivityOngoing').textContent = onCount + ' Active Works';
+      document.getElementById('v2ActivityCompleted').textContent = cCount + ' Total Finished';
+      document.getElementById('v2ActivityReady').textContent = rCount + ' Awaiting Payout';
+      document.getElementById('v2ActivityCleared').textContent = cbCount + ' Paid to Bank';
+    };
+
+    // Helper functions from old editor.html
+    const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
+    function badge(s){ return `<span class="status-badge status-${s}" style="background:rgba(255,184,0,0.1);color:var(--gold);padding:4px 8px;border-radius:4px;font-size:0.75rem;font-weight:700;">${STATUS_LABELS[s]||s}</span>`; }
+    function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+    function filterChatPrivacy(text) {
+      if (!text) return '';
+      let filtered = text;
+      filtered = filtered.replace(/(\+?91[\-\s]?)?[6-9]\d{9}/g, '<span title="Protected">🔒 [Hidden]</span>');
+      filtered = filtered.replace(/\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/g, '<span title="Protected">🔒 [Hidden]</span>');
+      filtered = filtered.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '<span title="Protected">🔒 [Hidden]</span>');
+      filtered = filtered.replace(/(?:^|\s)@([a-zA-Z0-9._]{4,})/g, ' <span title="Protected">🔒 [Hidden]</span>');
+      filtered = filtered.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+      return filtered;
+    }
+
+    function renderProjects(projects) {
+      const container = document.getElementById('projectsList');
+      if (!projects.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-text">No projects assigned to you yet.</div></div>';
+        return;
+      }
+      const perm = currentUser.permissions || {};
+      const canViewContact = currentUser.role === 'admin' || perm.viewContact === true;
+      
+      container.innerHTML = projects.map(p=>{
+        const cName = allUsers[p.clientId]?.name || 'Client';
+        const clientLabel = canViewContact ? cName : `Client Ref #${p.id.substring(0,6).toUpperCase()}`;
+        const myEarning = p.editorPayout || (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
+        const payoutStatusBadge = p.editorPayoutStatus === 'paid' 
+          ? '<span style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;border-radius:4px;">✅ Paid &amp; Cleared (Bank)</span>' 
+          : '<span style="background:rgba(255,184,0,0.12);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;border-radius:4px;">⏳ Due upon Finish</span>';
+
+        return `
+        <div class="dash-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-weight:700;font-size:1.1rem;">${p.title||'Untitled'}</div>
+            ${badge(p.status)}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 10px;padding:8px 12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:8px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:0.75rem;color:var(--t3);text-transform:uppercase;font-weight:700;">💰 Your Earning:</span>
+              <strong style="color:var(--gold);font-size:1.05rem;letter-spacing:0.02em;">₹${myEarning.toLocaleString()}</strong>
+            </div>
+            <div>${payoutStatusBadge}</div>
+          </div>
+          <div style="font-size:0.85rem;margin-bottom:8px;">Client: <span style="color:var(--gold);font-weight:600;">${clientLabel}</span> · Deadline: ${dateStr(p.deadline)}</div>
+          <div style="font-size:0.88rem;color:var(--t2);margin-bottom:16px;">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
+          <div>
+            <button class="v2-btn-sm" style="background:var(--gold);color:#000;font-weight:600;padding:8px 16px;" onclick="window.openProject('${p.id}')">Open Project &amp; Chat →</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.openProject = async (pid) => {
+      const snap = await getDoc(doc(db,'projects',pid));
+      if (!snap.exists()) return;
+      currentProject = {id:pid,...snap.data()};
+
+      document.getElementById('detailTitle').textContent = currentProject.title||'Untitled';
+      document.getElementById('detailDesc').textContent = currentProject.description||'No brief provided.';
+      
+      const earnVal = currentProject.editorPayout || (currentProject.invoiceAmount ? Math.round(currentProject.invoiceAmount * 0.5) : 1000);
+      const isPaid = currentProject.editorPayoutStatus === 'paid';
+      const elEarnBanner = document.getElementById('detailEditorEarnBanner');
+      if (elEarnBanner) {
+        elEarnBanner.innerHTML = `
+          <div>
+            <div style="font-size:0.72rem;color:var(--t3);text-transform:uppercase;font-weight:700;">💰 Your Agreed Project Earning</div>
+            <div style="font-size:1.4rem;font-weight:800;color:var(--gold);margin-top:2px;">₹${earnVal.toLocaleString()}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.72rem;color:var(--t3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Payroll Status</div>
+            ${isPaid ? '<span style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);padding:4px 10px;font-size:11px;font-weight:700;border-radius:4px;">✅ Paid to Bank</span>' : '<span style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);padding:4px 10px;font-size:11px;font-weight:700;border-radius:4px;">⏳ Payable upon Delivery</span>'}
+          </div>
+        `;
+      }
+      
+      const perm = currentUser.permissions || {};
+      const canViewContact = currentUser.role === 'admin' || perm.viewContact === true;
+      const clientName = allUsers[currentProject.clientId]?.name || 'Client';
+      
+      document.getElementById('detailClient').innerHTML = canViewContact 
+        ? `<strong style="color:var(--t1);">${clientName}</strong>`
+        : `<span style="color:var(--gold);font-weight:600;">Client Ref #${currentProject.id.substring(0,6).toUpperCase()}</span>`;
+      
+      if (currentProject.deadline) {
+        const dObj = currentProject.deadline.toDate ? currentProject.deadline.toDate() : new Date(currentProject.deadline);
+        if (!isNaN(dObj.getTime())) document.getElementById('editorDeadlineInput').value = dObj.toISOString().split('T')[0];
+      } else {
+        document.getElementById('editorDeadlineInput').value = '';
+      }
+      
+      function formatExternalUrl(url) {
+        if (!url) return '';
+        url = url.trim();
+        return /^https?:\/\//i.test(url) ? url : 'https://' + url;
+      }
+
+      const rawEl = document.getElementById('rawFootageLink');
+      if (currentProject.rawFootageUrl) {
+        rawEl.innerHTML = `<span style="color:var(--green);">✓ Link saved:</span> <a href="${formatExternalUrl(currentProject.rawFootageUrl)}" target="_blank" style="color:var(--gold);font-weight:600;text-decoration:underline;">Open Raw Footage ↗</a>`;
+      } else { rawEl.textContent = 'No drive link provided by client yet.'; }
+
+      const delInput = document.getElementById('deliveryLinkInput');
+      const delDisp  = document.getElementById('deliveryLinkDisplay');
+      if (currentProject.deliveryUrl) {
+        delInput.value = currentProject.deliveryUrl;
+        delDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${formatExternalUrl(currentProject.deliveryUrl)}" target="_blank" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
+      } else {
+        delInput.value = '';
+        delDisp.innerHTML = '<span style="color:var(--t3);">No delivery link saved yet.</span>';
+      }
+
+      window.showSection('detail');
+      window.loadChat(pid);
+    };
+
     window.openChatWith = async function(projectId, projectTitle) {
       currentProject = window._activeEditorProjectsList?.find(p => p.id === projectId) || { id: projectId, title: projectTitle };
-      showSection('messages');
+      window.showSection('messages');
       var msgHeader = document.getElementById('msgProjectTitle');
       if (msgHeader) msgHeader.textContent = projectTitle || 'Project Chat';
-      // Load chat messages
+      
       if (chatUnsub) chatUnsub();
       var chatQuery = query(collection(db,'messages'), where('projectId','==',projectId));
       chatUnsub = onSnapshot(chatQuery, (snap) => {
@@ -525,224 +1037,23 @@
       });
     };
 
-    
     window.sendEditorMessage = async function() {
       var inp = document.getElementById('chatInputEditor');
       var text = (inp?.value || '').trim();
-      if (!text || !currentProject) return;
-      if (!currentUser) return;
+      if (!text || !currentProject || !currentUser) return;
       inp.value = '';
-      try {
-        await addDoc(collection(db,'messages'), {
-          projectId: currentProject.id,
-          senderId: currentUser.uid,
-          senderName: currentUser.name || 'Editor',
-          senderRole: 'editor',
-          text: text,
-          createdAt: serverTimestamp()
-        });
-      } catch(e) {
-        console.error('Send message error:', e);
-        showToast('Failed to send message. Try again.', 'error');
-      }
+      await addDoc(collection(db,'messages'), {
+        projectId: currentProject.id,
+        senderId: currentUser.uid,
+        senderName: currentUser.name || 'Editor',
+        senderRole: 'editor',
+        text: text,
+        createdAt: serverTimestamp()
+      });
     };
 
-    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>location.href='/dashboard/index.html'));
-
-    function loadUsers() {
-      onSnapshot(collection(db,'users'), (snap) => {
-        snap.forEach(d=>{ allUsers[d.id]=d.data(); });
-      }, (err) => console.error('Users listener error:', err));
-    }
-
-    let projectsUnsub = null;
-    function loadProjects() {
-      if (projectsUnsub) projectsUnsub();
-      onSnapshot(collection(db,'projects'), (snap) => {
-        const allProj = snap.docs.map(d=>({id:d.id,...d.data()}));
-        const perm = currentUser.permissions || {};
-        const canViewAll = currentUser.role === 'admin' || perm.viewAll === true;
-        const editorProjects = canViewAll ? allProj : allProj.filter(p => p.editorId === currentUser.uid || (allUsers[p.clientId] && allUsers[p.clientId].assignedEditor === currentUser.uid));
-        
-        editorProjects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
-        window._activeEditorProjectsList = editorProjects;
-        
-        document.getElementById('statTotal').textContent  = editorProjects.length;
-        document.getElementById('statActive').textContent = editorProjects.filter(p=>p.status!=='done').length;
-        document.getElementById('statDone').textContent   = editorProjects.filter(p=>p.status==='done').length;
-        renderProjects(editorProjects); 
-        renderEditorEarnings(editorProjects); 
-        loadEditorProfileDetails();
-      }, (err) => console.error('Projects listener error:', err));
-    }
-
-    const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',review:'In Review',revision:'Revision Requested',done:'Completed ✓'};
-    function badge(s){ return `<span class="status-badge status-${s}">${STATUS_LABELS[s]||s}</span>`; }
-    function dateStr(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
-
-    function filterChatPrivacy(text) {
-      if (!text) return '';
-      let filtered = text;
-      // Mask 10-digit Indian & international phone numbers (+91, spaces, dashes)
-      filtered = filtered.replace(/(\+?91[\-\s]?)?[6-9]\d{9}/g, '<span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [Phone/WhatsApp Hidden]</span>');
-      filtered = filtered.replace(/\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/g, '<span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [Contact Number Hidden]</span>');
-      // Mask email addresses
-      filtered = filtered.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '<span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [Email Hidden]</span>');
-      // Mask direct social handles (@username)
-      filtered = filtered.replace(/(?:^|\s)@([a-zA-Z0-9._]{4,})/g, ' <span class="privacy-mask" title="Protected by Editzaar Agency">🔒 [@handle Hidden]</span>');
-      // Format safe links
-      filtered = filtered.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
-      return filtered;
-    }
-
-    function renderProjects(projects) {
-      const container = document.getElementById('projectsList');
-      if (!projects.length) {
-        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-text">No projects assigned to you yet.</div></div>';
-        return;
-      }
-      const perm = currentUser.permissions || {};
-      const canViewContact = currentUser.role === 'admin' || perm.viewContact === true;
-      
-      container.innerHTML = projects.map(p=>{
-        const cName = allUsers[p.clientId]?.name || 'Client';
-        const clientLabel = canViewContact ? cName : `Client Ref #${p.id.substring(0,6).toUpperCase()}`;
-        const myEarning = p.editorPayout !== undefined && p.editorPayout !== null && p.editorPayout !== 0 ? p.editorPayout : (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
-        const payoutStatusBadge = p.editorPayoutStatus === 'paid' 
-          ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Paid &amp; Cleared (Bank)</span>' 
-          : '<span class="status-badge" style="background:rgba(255,184,0,0.12);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⏳ Due upon Finish</span>';
-
-        return `
-        <div class="project-card">
-          <div class="project-card-top">
-            <div class="project-card-title">${p.title||'Untitled'}</div>
-            ${badge(p.status)}
-          </div>
-
-          <!-- Live Real-Time Editor Earning Banner -->
-          <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 10px;padding:8px 12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:8px;">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span style="font-size:0.75rem;color:var(--t3);text-transform:uppercase;font-weight:700;">💰 Your Earning:</span>
-              <strong style="color:var(--gold);font-size:1.05rem;letter-spacing:0.02em;">₹${myEarning.toLocaleString()}</strong>
-            </div>
-            <div>${payoutStatusBadge}</div>
-          </div>
-
-          <div class="project-card-meta">Client: <span style="color:var(--gold);font-weight:600;">${clientLabel}</span> · Deadline: ${dateStr(p.deadline)}</div>
-          <div style="font-size:0.88rem;color:var(--t2);">${(p.description||'').substring(0,120)}${p.description?.length>120?'…':''}</div>
-          <div class="project-card-actions">
-            <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">Open Project &amp; Chat →</button>
-          </div>
-        </div>`;
-      }).join('');
-    }
-
-    window.openProject = async (pid) => {
-      const snap = await getDoc(doc(db,'projects',pid));
-      if (!snap.exists()) return;
-      currentProject = {id:pid,...snap.data()};
-
-      document.getElementById('detailTitle').textContent    = currentProject.title||'Untitled';
-      document.getElementById('detailDesc').textContent     = currentProject.description||'No brief provided.';
-      
-      const earnVal = currentProject.editorPayout !== undefined && currentProject.editorPayout !== null && currentProject.editorPayout !== 0 ? currentProject.editorPayout : (currentProject.invoiceAmount ? Math.round(currentProject.invoiceAmount * 0.5) : 1000);
-      const isPaid = currentProject.editorPayoutStatus === 'paid';
-      const elEarnBanner = document.getElementById('detailEditorEarnBanner');
-      if (elEarnBanner) {
-        elEarnBanner.innerHTML = `
-          <div>
-            <div style="font-size:0.72rem;color:var(--t3);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;">💰 Your Agreed Project Earning</div>
-            <div style="font-size:1.4rem;font-weight:800;color:var(--gold);margin-top:2px;">₹${earnVal.toLocaleString()}</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:0.72rem;color:var(--t3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Payroll Status</div>
-            ${isPaid ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);padding:4px 10px;font-size:11px;font-weight:700;">✅ Paid to Bank (UTR: ' + (currentProject.editorPaidTxnId || 'Verified') + ')</span>' : '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);padding:4px 10px;font-size:11px;font-weight:700;">⏳ Payable upon Delivery</span>'}
-          </div>
-        `;
-      }
-      
-      const perm = currentUser.permissions || {};
-      const canViewContact = currentUser.role === 'admin' || perm.viewContact === true;
-      const clientName = allUsers[currentProject.clientId]?.name || 'Client';
-      const clientEmail = allUsers[currentProject.clientId]?.email || '';
-      
-      if (canViewContact) {
-        document.getElementById('detailClient').innerHTML = `<strong style="color:var(--t1);">${clientName}</strong> ${clientEmail ? `<small style="color:var(--gold);margin-left:6px;">(${clientEmail})</small>` : ''}`;
-      } else {
-        document.getElementById('detailClient').innerHTML = `<span style="color:var(--gold);font-weight:600;">Client Ref #${currentProject.id.substring(0,6).toUpperCase()} (Privacy Protected)</span>`;
-      }
-      if (currentProject.deadline) {
-        const dObj = currentProject.deadline.toDate ? currentProject.deadline.toDate() : new Date(currentProject.deadline);
-        if (!isNaN(dObj.getTime())) {
-          document.getElementById('editorDeadlineInput').value = dObj.toISOString().split('T')[0];
-        }
-      } else {
-        document.getElementById('editorDeadlineInput').value = '';
-      }
-      function formatExternalUrl(url) {
-        if (!url) return '';
-        url = url.trim();
-        if (!/^https?:\/\//i.test(url)) {
-          return 'https://' + url;
-        }
-        return url;
-      }
-
-      // Raw footage view
-      const rawEl = document.getElementById('rawFootageLink');
-      if (currentProject.rawFootageUrl) {
-        const rawHref = formatExternalUrl(currentProject.rawFootageUrl);
-        rawEl.innerHTML = `<span style="color:var(--green);">✓ Link saved by client:</span> <a href="${rawHref}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:600;text-decoration:underline;">Open Raw Footage Drive Link ↗</a>`;
-      } else { rawEl.textContent = 'No drive link provided by client yet.'; }
-
-      // Delivery link view/input
-      const delInput = document.getElementById('deliveryLinkInput');
-      const delDisp  = document.getElementById('deliveryLinkDisplay');
-      if (currentProject.deliveryUrl) {
-        const delHref = formatExternalUrl(currentProject.deliveryUrl);
-        delInput.value = currentProject.deliveryUrl;
-        delDisp.innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${delHref}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
-      } else {
-        delInput.value = '';
-        delDisp.innerHTML = '<span style="color:var(--t3);">No delivery link saved yet.</span>';
-      }
-
-      showSection('detail');
-      loadChat(pid);
-    };
-
-    document.getElementById('btnUpdateEditorDeadline').addEventListener('click', async () => {
-      const dVal = document.getElementById('editorDeadlineInput').value;
-      if (!dVal || !currentProject) { showToast('Please select a deadline date.', 'error'); return; }
-      const newD = new Date(dVal);
-      await updateDoc(doc(db, 'projects', currentProject.id), { deadline: newD });
-      currentProject.deadline = newD;
-      showToast('Project deadline updated! 📅✅', 'success');
-    });
-
-    /* Save Final Delivery Link */
-    document.getElementById('btnSaveDeliveryLink').addEventListener('click', async ()=>{
-      let url = document.getElementById('deliveryLinkInput').value.trim();
-      if (!url || !currentProject) { showToast('Please enter a valid link.','error'); return; }
-      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-      await updateDoc(doc(db,'projects',currentProject.id),{ deliveryUrl: url, status: 'review' });
-      currentProject.deliveryUrl = url;
-      currentProject.status = 'review';
-      document.getElementById('detailStatus').innerHTML = badge('review');
-      document.getElementById('deliveryLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Open Delivered Video Link ↗</a>`;
-      showToast('Delivery link saved & status updated to In Review! ✅','success');
-    });
-
-    window.updateStatus = async (status) => {
-      if (!currentProject) return;
-      await updateDoc(doc(db,'projects',currentProject.id),{status});
-      currentProject.status=status;
-      document.getElementById('detailStatus').innerHTML=badge(status);
-      showToast('Status updated to '+STATUS_LABELS[status],'success');
-    };
-
-    /* Real-time Chat with Client Privacy Anti-Poaching Filter */
-    function loadChat(pid) {
+    // Chat in project detail
+    window.loadChat = function(pid) {
       if (chatUnsub) chatUnsub();
       const q = collection(db,'projects',pid,'chat');
       chatUnsub = onSnapshot(q,snap=>{
@@ -753,227 +1064,66 @@
         msgs.forEach(m=>{
           const isMe=m.senderId===currentUser.uid;
           const div=document.createElement('div');
-          div.className='chat-msg '+(isMe?'mine':'theirs');
-          const perm = currentUser.permissions || {};
-          const shouldMask = currentUser.role !== 'admin' && perm.maskChat !== false;
+          div.style.cssText = `margin-bottom:10px; display:flex; justify-content:${isMe?'flex-end':'flex-start'}`;
+          const shouldMask = currentUser.role !== 'admin' && (currentUser.permissions?.maskChat !== false);
           let formattedText = shouldMask ? filterChatPrivacy(m.text) : m.text;
-          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
-            <div class="chat-msg-bubble">${formattedText}</div>`;
+          
+          div.innerHTML=`<div style="max-width:80%;background:${isMe?'var(--gold)':'rgba(255,255,255,0.07)'};color:${isMe?'#000':'var(--t1)'};padding:10px;border-radius:10px;font-size:0.85rem;">
+              <div style="font-size:0.7rem;opacity:0.6;margin-bottom:4px;">${m.senderName}</div>
+              <div>${formattedText}</div>
+            </div>`;
           container.appendChild(div);
         });
         container.scrollTop=container.scrollHeight;
       });
-    }
-
-    async function sendMessage() {
+    };
+    
+    document.getElementById('btnSendMsg')?.addEventListener('click', async () => {
       const input=document.getElementById('chatInput');
       const text=input.value.trim();
       if (!text||!currentProject) return;
       input.value='';
       await addDoc(collection(db,'projects',currentProject.id,'chat'),{
-        senderId:   currentUser.uid,
+        senderId: currentUser.uid,
         senderName: currentUser.name||'Editor',
         text, timestamp:serverTimestamp()
       });
-    }
-    document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
-    document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
-
-    const sections = ['projects', 'detail', 'chat', 'earnings', 'messages', 'settings'];
-    function showSection(name) {
-      sections.forEach(s => {
-        const el = document.getElementById('sec-' + s);
-        if (el) el.style.display = (s === name ? 'block' : 'none');
-      });
-      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === name));
-      if (name === 'earnings') {
-        var projs = window._activeEditorProjectsList || [];
-        if (projs.length > 0) {
-          if (typeof window.renderEditorEarnings === 'function') window.renderEditorEarnings(projs);
-        } else {
-          // Projects not loaded yet — fetch directly from Firestore
-          var tbody = document.getElementById('editorEarningsTbody');
-          var mTbody = document.getElementById('editorMonthlySummaryTbody');
-          if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">Loading your projects...</td></tr>';
-          if (mTbody) mTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">Loading...</td></tr>';
-          // Try again in 800ms (wait for onSnapshot)
-          setTimeout(function() {
-            var refreshed = window._activeEditorProjectsList || [];
-            if (typeof window.renderEditorEarnings === 'function') window.renderEditorEarnings(refreshed);
-          }, 800);
-        }
-      }
-      if (name === 'settings') {
-        if (typeof window.loadEditorProfileDetails === 'function') window.loadEditorProfileDetails();
-      }
-    }
-    window.showSection=showSection;
-    document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
-
-    function showToast(msg,type='success'){
-      const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type+' show';
-      setTimeout(()=>t.classList.remove('show'),3500);
-    }
-    // Sidebar handled by overlay JS below
-  
-    // Sidebar overlay for mobile
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    document.getElementById('sidebarToggle').addEventListener('click', () => {
-      const sidebar = document.getElementById('sidebar');
-      const isOpen = sidebar.classList.toggle('open');
-      sidebarOverlay.classList.toggle('active', isOpen);
     });
-    if (sidebarOverlay) {
-      sidebarOverlay.addEventListener('click', () => {
-        document.getElementById('sidebar').classList.remove('open');
-        sidebarOverlay.classList.remove('active');
-      });
-    }
-    // Push Notification system
-    function showPushNotif(icon, title, text, duration=4000) {
-      const el    = document.getElementById('pushNotif');
-      const iEl   = document.getElementById('pushNotifIcon');
-      const tEl   = document.getElementById('pushNotifTitle');
-      const dEl   = document.getElementById('pushNotifText');
-      if (!el) return;
-      iEl.textContent = icon;
-      tEl.textContent = title;
-      dEl.textContent = text;
-      el.classList.add('show');
-      clearTimeout(el._timer);
-      el._timer = setTimeout(() => el.classList.remove('show'), duration);
-    }
-    window.showPushNotif = showPushNotif;
-    // Bottom nav helper
-    function setActiveBottomNav(id) {
-      document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
-      const el = document.getElementById(id);
-      if (el) el.classList.add('active');
-    }
 
-    // Show project detail tab in bottom nav when opened
-    const _origOpenProject = window.openProject;
-    // Chat badge + push notif for new messages
-    function showNewMsgNotif(senderName) {
-      const badge = document.getElementById('chatBadge');
-      if (badge) badge.style.display = 'flex';
-      showPushNotif('💬', 'New Message from Client', senderName + ' sent a new message in the project chat.');
-    }
-  </script>
-
-  <!-- BOTTOM NAVIGATION (Mobile) -->
-  <nav class="bottom-nav" id="editorBottomNav">
-    <div class="bottom-nav-item active" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')">
-      <span class="bnav-icon">📁</span>Projects
-    </div>
-    <div class="bottom-nav-item" id="bnav-detail" style="display:none;" onclick="showSection('detail');setActiveBottomNav('bnav-detail')">
-      <span class="bnav-icon">🎬</span>Edit
-    </div>
-    <div class="bottom-nav-item" id="bnav-chat" onclick="showSection('chat');setActiveBottomNav('bnav-chat')">
-      <span class="bnav-icon" style="position:relative;">💬<span class="notif-badge" id="chatBadge" style="display:none;">!</span></span>Msgs
-    </div>
-  </nav>
-    <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js')
-        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
-        .catch(function(err) { console.warn('[SW] Error:', err); });
-    }
-    let _deferredInstallPrompt = null;
-    window.addEventListener('beforeinstallprompt', function(e) {
-      e.preventDefault();
-      _deferredInstallPrompt = e;
+    document.getElementById('btnUpdateEditorDeadline')?.addEventListener('click', async () => {
+      const dVal = document.getElementById('editorDeadlineInput').value;
+      if (!dVal || !currentProject) return;
+      const newD = new Date(dVal);
+      await updateDoc(doc(db, 'projects', currentProject.id), { deadline: newD });
+      showToast('Project deadline updated! 📅✅', 'success');
     });
-    window._triggerInstall = function() {
-      if (_deferredInstallPrompt) {
-        _deferredInstallPrompt.prompt();
-        _deferredInstallPrompt.userChoice.then(function(choice) {
-          console.log('[PWA] User choice:', choice.outcome);
-          _deferredInstallPrompt = null;
-        });
-      } else {
-        const m = document.getElementById('ios-install-modal');
-        if (m) m.style.display = 'flex';
-      }
+
+    document.getElementById('btnSaveDeliveryLink')?.addEventListener('click', async ()=>{
+      let url = document.getElementById('deliveryLinkInput').value.trim();
+      if (!url || !currentProject) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      await updateDoc(doc(db,'projects',currentProject.id),{ deliveryUrl: url, status: 'review' });
+      document.getElementById('detailStatus').innerHTML = badge('review');
+      showToast('Delivery link saved & status updated! ✅','success');
+    });
+
+    window.updateStatus = async (status) => {
+      if (!currentProject) return;
+      await updateDoc(doc(db,'projects',currentProject.id),{status});
+      document.getElementById('detailStatus').innerHTML=badge(status);
+      showToast('Status updated!','success');
     };
-  </script>
-  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
-    <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
-      <div style="font-size:2rem;margin-bottom:12px">&#128241;</div>
-      <h3 style="color:#FFB800;font-family:'Outfit',sans-serif;margin-bottom:8px">Install Editzaar App</h3>
-      <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
-      <div style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
-        <div>1. Tap <strong style="color:#FFB800">Share</strong> &#127758; at bottom of Safari</div>
-        <div>2. Tap <strong style="color:#FFB800">Add to Home Screen</strong></div>
-      </div>
-      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
-    </div>
-  </div>
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-    import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
-    import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-    const _fcmApp = initializeApp({
-      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
-      authDomain: "editzaar-fa8d9.firebaseapp.com",
-      projectId: "editzaar-fa8d9",
-      storageBucket: "editzaar-fa8d9.appspot.com",
-      messagingSenderId: "419930711716",
-      appId: "1:419930711716:web:b1504f651e397a14726831"
-    }, 'fcm-instance');
-
-    const _messaging = getMessaging(_fcmApp);
-    const _auth = getAuth(_fcmApp);
-    const _db = getFirestore(_fcmApp);
-
-    async function saveFcmToken(userId) {
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') return;
-        const token = await getToken(_messaging, {
-          vapidKey: 'REPLACE_WITH_YOUR_VAPID_KEY',
-          serviceWorkerRegistration: await navigator.serviceWorker.ready
-        });
-        if (token) {
-          await setDoc(doc(_db, 'users', userId), { fcmToken: token, fcmUpdated: new Date().toISOString() }, { merge: true });
-        }
-      } catch (err) {}
-    }
-
-    onMessage(_messaging, function(payload) {
-      const title = (payload.notification && payload.notification.title) || 'Editzaar';
-      const body  = (payload.notification && payload.notification.body)  || '';
-      const div = document.createElement('div');
-      div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;background: var(--bg-card);border:1px solid #FFB800;color: var(--t1);padding:14px 20px;border-radius:12px;font-size:0.9rem;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.6)';
-      div.innerHTML = '<strong style="color:#FFB800">' + title + '</strong><br>' + body;
-      document.body.appendChild(div);
-      setTimeout(function(){ div.remove(); }, 5000);
-    });
-
-    onAuthStateChanged(_auth, function(user) {
-      if (user) saveFcmToken(user.uid);
-    });
-  
-    // ============================================================
-    // ============================================================
-    // EDITOR EARNINGS, MONTHLY BREAKDOWN & LEDGER ENGINE
-    // ============================================================
-    var _cachedEditorProjects = [];
-
+    // Earnings Engine
     let _allEditorProjectsCache = [];
-
     window.filterEditorLedger = function() {
       var monthVal = document.getElementById('selEditorMonthFilter')?.value || 'all';
       var statusVal = document.getElementById('selEditorStatusFilter')?.value || 'all';
       var tbody = document.getElementById('editorEarningsTbody');
-      if (!tbody) { console.warn('editorEarningsTbody not found'); return; }
-
+      
       var filtered = _allEditorProjectsCache.filter(function(p) {
         var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
         var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
-        
         if (monthVal !== 'all' && mKey !== monthVal) return false;
         if (statusVal === 'paid' && p.editorPayoutStatus !== 'paid') return false;
         if (statusVal === 'unpaid' && p.editorPayoutStatus === 'paid') return false;
@@ -981,158 +1131,97 @@
       });
 
       if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px 16px;color:var(--t3);"><div style="font-size:1.8rem;margin-bottom:8px;">📂</div><div style="font-weight:600;color:var(--t2);margin-bottom:4px;">No Projects Yet</div><div>Projects assigned to you by admin will appear here automatically.</div></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px 16px;color:var(--t3);">No Projects Found</td></tr>';
         return;
       }
-
       tbody.innerHTML = filtered.map(function(p) {
-        var earn = (p.editorPayout !== undefined && p.editorPayout !== null && p.editorPayout > 0) ? p.editorPayout : (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
-
+        var earn = p.editorPayout || (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
         var isPaid = p.editorPayoutStatus === 'paid';
-        var isDone = p.status === 'done';
-        var cName = (typeof allUsers !== 'undefined' && allUsers[p.clientId]?.name) ? allUsers[p.clientId].name : 'Client Ref #' + p.id.substring(0,6).toUpperCase();
-
-        var statusHtml = '';
-        var utrHtml = '';
-
-        if (isPaid) {
-          statusHtml = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Paid &amp; Cleared (Bank)</span>';
-          utrHtml = '<div style="font-size:11px;color:#28C840;font-family:monospace;font-weight:700;">UTR: ' + (p.editorPaidTxnId || 'Verified') + '</div>';
-        } else if (isDone) {
-          statusHtml = '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⚡ Ready for Bank Payout</span>';
-          utrHtml = '<div style="font-size:11px;color:var(--t3);">Admin clearance pending</div>';
-        } else {
-          statusHtml = '<span class="status-badge" style="background:rgba(255,255,255,0.05);color:var(--t2);font-size:11px;padding:3px 8px;">⏳ In Progress</span>';
-          utrHtml = '<div style="font-size:11px;color:var(--t3);">Payable upon finish</div>';
-        }
-
-        var projectStatusBadge = p.status === 'done' 
-          ? '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;font-size:10px;">Done ✓</span>'
-          : `<span class="status-badge status-${p.status}" style="font-size:10px;">${p.status}</span>`;
-
+        var cName = allUsers[p.clientId]?.name || 'Client Ref';
+        
+        var statusHtml = isPaid ? '<span style="color:var(--green);">✅ Cleared</span>' : (p.status==='done'?'<span style="color:var(--gold);">⚡ Ready</span>':'<span style="color:var(--t2);">⏳ Pending</span>');
+        
         return `<tr>
-          <td>
-            <div style="font-weight:600;color:var(--t1);">${p.title||'Untitled'}</div>
-            <div style="font-size:0.75rem;color:var(--t3);">${dateStr(p.createdAt)}</div>
-          </td>
+          <td><div style="font-weight:600;">${p.title||'Untitled'}</div><div style="font-size:0.75rem;color:var(--t3);">${dateStr(p.createdAt)}</div></td>
           <td>${cName}</td>
-          <td>${projectStatusBadge}</td>
-          <td style="color:var(--gold);font-weight:800;font-size:0.95rem;">₹${earn.toLocaleString()}</td>
+          <td>${badge(p.status)}</td>
+          <td style="color:var(--gold);font-weight:800;">₹${earn.toLocaleString()}</td>
           <td>${statusHtml}</td>
-          <td>${utrHtml}</td>
+          <td style="font-size:0.8rem;color:var(--t3);">${isPaid ? 'UTR: '+(p.editorPaidTxnId||'Verified') : 'Pending'}</td>
         </tr>`;
       }).join('');
     };
 
-    function renderEditorEarnings(incomingProjects) {
+    window.renderEditorEarnings = function(incomingProjects) {
       if (!currentUser) return;
       var myProjects = incomingProjects || window._activeEditorProjectsList || [];
       _allEditorProjectsCache = myProjects;
 
-      var lifetimePaid = 0;
-      var pendingWorkInProgress = 0;
-      var readyForPayout = 0;
-      var clearedCount = 0;
-      var pendingCount = 0;
-
+      var lifetimePaid = 0, pendingWorkInProgress = 0, readyForPayout = 0;
+      var clearedCount = 0, pendingCount = 0;
+      var thisMonthTotal = 0;
       var now = new Date();
       var currentMonthKey = now.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
-      var thisMonthTotal = 0;
-
       var monthlyMap = {};
 
       myProjects.forEach(function(p) {
-        var earn = (p.editorPayout !== undefined && p.editorPayout !== null && p.editorPayout > 0) ? p.editorPayout : (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
-
+        var earn = p.editorPayout || (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
         var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
         var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
 
-        if (!monthlyMap[mKey]) {
-          monthlyMap[mKey] = { key: mKey, total: 0, cleared: 0, pending: 0, count: 0, dateObj: pDate };
-        }
+        if (!monthlyMap[mKey]) monthlyMap[mKey] = { key: mKey, total: 0, cleared: 0, pending: 0, count: 0 };
         monthlyMap[mKey].count++;
         monthlyMap[mKey].total += earn;
 
-        if (mKey === currentMonthKey) {
-          thisMonthTotal += earn;
-        }
+        if (mKey === currentMonthKey) thisMonthTotal += earn;
 
         if (p.editorPayoutStatus === 'paid') {
-          lifetimePaid += earn;
-          clearedCount++;
-          monthlyMap[mKey].cleared += earn;
+          lifetimePaid += earn; clearedCount++; monthlyMap[mKey].cleared += earn;
         } else if (p.status === 'done') {
-          readyForPayout += earn;
-          pendingCount++;
-          monthlyMap[mKey].pending += earn;
+          readyForPayout += earn; pendingCount++; monthlyMap[mKey].pending += earn;
         } else {
-          pendingWorkInProgress += earn;
-          pendingCount++;
-          monthlyMap[mKey].pending += earn;
+          pendingWorkInProgress += earn; pendingCount++; monthlyMap[mKey].pending += earn;
         }
       });
 
       var totalPendingToReceive = readyForPayout + pendingWorkInProgress;
       var totalLifetimeWorked = lifetimePaid + totalPendingToReceive;
 
-      // Update 4 Metric Cards
       document.getElementById('editorLifetimeEarnings') && (document.getElementById('editorLifetimeEarnings').textContent = '₹' + totalLifetimeWorked.toLocaleString());
       document.getElementById('editorTotalProjectsCount') && (document.getElementById('editorTotalProjectsCount').textContent = myProjects.length + ' Total Projects');
-
       document.getElementById('editorThisMonthEarnings') && (document.getElementById('editorThisMonthEarnings').textContent = '₹' + thisMonthTotal.toLocaleString());
-      document.getElementById('editorThisMonthLabel') && (document.getElementById('editorThisMonthLabel').textContent = currentMonthKey);
-
       document.getElementById('editorClearedEarnings') && (document.getElementById('editorClearedEarnings').textContent = '₹' + lifetimePaid.toLocaleString());
-      document.getElementById('editorClearedProjectsCount') && (document.getElementById('editorClearedProjectsCount').textContent = clearedCount + ' Cleared (Bank)');
-
       document.getElementById('editorPendingPayouts') && (document.getElementById('editorPendingPayouts').textContent = '₹' + totalPendingToReceive.toLocaleString());
-      document.getElementById('editorPendingProjectsCount') && (document.getElementById('editorPendingProjectsCount').textContent = (readyForPayout > 0 ? ('₹' + readyForPayout.toLocaleString() + ' Ready for Payout') : (pendingCount + ' In Progress')));
 
-      // Populate Month Filter Dropdown
       var monthSelect = document.getElementById('selEditorMonthFilter');
       if (monthSelect) {
-        var currentSelected = monthSelect.value;
-        var monthKeys = Object.keys(monthlyMap);
-        var optionsHtml = '<option value="all">All Months (' + monthKeys.length + ')</option>';
-        monthKeys.forEach(function(mk) {
-          optionsHtml += '<option value="' + mk + '" ' + (mk === currentSelected ? 'selected' : '') + '>' + mk + '</option>';
-        });
+        var optionsHtml = '<option value="all">All Months</option>';
+        Object.keys(monthlyMap).forEach(function(mk) { optionsHtml += '<option value="' + mk + '">' + mk + '</option>'; });
         monthSelect.innerHTML = optionsHtml;
       }
 
-      // Render Monthly Summary Table into exact HTML ID: editorMonthlySummaryTbody
       var monthTbody = document.getElementById('editorMonthlySummaryTbody');
       if (monthTbody) {
         var monthEntries = Object.values(monthlyMap);
         if (!monthEntries.length) {
-          monthTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px 16px;color:var(--t3);"><div style="font-size:1.8rem;margin-bottom:8px;">📅</div><div style="font-weight:600;color:var(--t2);margin-bottom:4px;">No Monthly Data</div><div>Complete your first project to see monthly income breakdown.</div></td></tr>';
+          monthTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px 16px;color:var(--t3);">No Monthly Data</td></tr>';
         } else {
           monthTbody.innerHTML = monthEntries.map(function(m) {
-            var statusBadge = '';
-            if (m.pending === 0 && m.cleared > 0) {
-              statusBadge = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:11px;padding:3px 8px;font-weight:700;">✅ Payout Cleared</span>';
-            } else if (m.cleared > 0 && m.pending > 0) {
-              statusBadge = '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);border:1px solid var(--gold-border);font-size:11px;padding:3px 8px;font-weight:700;">⚡ Partially Cleared</span>';
-            } else {
-              statusBadge = '<span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);font-size:11px;padding:3px 8px;">⏳ Pending Payout</span>';
-            }
-
             return `<tr>
               <td><strong>${m.key}</strong></td>
               <td>${m.count} Videos</td>
               <td style="color:var(--gold);font-weight:700;">₹${m.total.toLocaleString()}</td>
-              <td style="color:#28C840;font-weight:600;">₹${m.cleared.toLocaleString()}</td>
-              <td style="color:${m.pending>0?'#FFB800':'var(--t3)'};font-weight:600;">₹${m.pending.toLocaleString()}</td>
-              <td>${statusBadge}</td>
+              <td style="color:var(--green);font-weight:600;">₹${m.cleared.toLocaleString()}</td>
+              <td style="color:${m.pending>0?'var(--orange)':'var(--t3)'};font-weight:600;">₹${m.pending.toLocaleString()}</td>
+              <td>${m.pending===0?'✅ Cleared':'⏳ Pending'}</td>
             </tr>`;
           }).join('');
         }
       }
 
-      // Render Individual Project Works into exact HTML ID: editorEarningsTbody
       window.filterEditorLedger();
-    }
-    window.renderEditorEarnings = renderEditorEarnings;
+      if (typeof window.renderDashboardSidePanel === 'function') window.renderDashboardSidePanel(myProjects);
+    };
 
     window.saveEditorPayoutDetails = async function() {
       var upi = (document.getElementById('editorMyUpiInp')?.value || '').trim();
@@ -1141,47 +1230,23 @@
       var accNum = (document.getElementById('editorAccountNumInp')?.value || '').trim();
       var accHolder = (document.getElementById('editorAccountHolderInp')?.value || '').trim();
 
-      if (!upi && !accNum) {
-        showToast('Please enter at least your UPI ID or Bank Account Number.', 'error');
-        return;
-      }
-
-      var btn = document.getElementById('btnSaveEditorPayoutDetails');
-      if (btn) { btn.disabled = true; btn.textContent = 'Saving Banking Details... ⏳'; }
+      if (!upi && !accNum) { showToast('Please enter UPI ID or Bank Account Number.', 'error'); return; }
 
       try {
-        var userUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
-        if (!userUid) throw new Error('User session not found. Please log in again.');
+        var userUid = currentUser?.uid;
+        if (!userUid) throw new Error('User session not found.');
 
         var bankSummary = (bankName ? bankName + ' · ' : '') + (accNum ? 'Acc: ' + accNum : '') + (ifsc ? ' (IFSC: ' + ifsc + ')' : '') + (accHolder ? ' · ' + accHolder : '');
 
-        var updatePayload = {
-          editorUpi: upi,
-          editorBankName: bankName,
-          editorIfsc: ifsc,
-          editorAccountNum: accNum,
-          editorAccountHolder: accHolder,
-          editorBankDetails: bankSummary,
-          updatedAt: serverTimestamp()
-        };
+        await setDoc(doc(db, 'users', userUid), {
+          editorUpi: upi, editorBankName: bankName, editorIfsc: ifsc,
+          editorAccountNum: accNum, editorAccountHolder: accHolder,
+          editorBankDetails: bankSummary, updatedAt: serverTimestamp()
+        }, { merge: true });
 
-        await setDoc(doc(db, 'users', userUid), updatePayload, { merge: true });
-
-        if (currentUser) {
-          currentUser.editorUpi = upi;
-          currentUser.editorBankName = bankName;
-          currentUser.editorIfsc = ifsc;
-          currentUser.editorAccountNum = accNum;
-          currentUser.editorAccountHolder = accHolder;
-          currentUser.editorBankDetails = bankSummary;
-        }
-
-        showToast('Banking and UPI details saved successfully! ✅', 'success');
+        showToast('Banking details saved successfully! ✅', 'success');
       } catch(err) {
-        console.error('Error saving banking details:', err);
         showToast('Error: ' + err.message, 'error');
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Save Payout & Banking Details ✅'; }
       }
     };
 
@@ -1190,11 +1255,8 @@
       var newName = (document.getElementById('editorProfileNameInp')?.value || '').trim();
       var newPhone = (document.getElementById('editorProfilePhoneInp')?.value || '').trim();
 
-      var btn = document.getElementById('btnChangeEditorPass');
-      if (btn) { btn.disabled = true; btn.textContent = 'Updating Profile & Password... ⏳'; }
-
       try {
-        var userUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
+        var userUid = currentUser?.uid;
         if (!userUid) throw new Error('User session not found.');
 
         var upObj = { updatedAt: serverTimestamp() };
@@ -1202,71 +1264,59 @@
         if (newPhone) upObj.mobile = newPhone;
 
         if (newPass) {
-          if (newPass.length < 6) {
-            showToast('Password must be at least 6 characters.', 'error');
-            if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
-            return;
-          }
-          var _auth = getAuth();
-          if (_auth.currentUser) {
-            try {
-              await updatePassword(_auth.currentUser, newPass);
-            } catch(authErr) {
-              console.warn('Firebase Auth notice:', authErr);
-            }
-          }
+          if (newPass.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
+          if (auth.currentUser) await updatePassword(auth.currentUser, newPass);
           upObj.tempPass = newPass;
         }
 
         await setDoc(doc(db, 'users', userUid), upObj, { merge: true });
-        showToast('Profile & password updated successfully! ✅', 'success');
-        if (document.getElementById('editorNewPassInp')) document.getElementById('editorNewPassInp').value = '';
+        showToast('Profile & password updated! ✅', 'success');
+        document.getElementById('editorNewPassInp').value = '';
       } catch(err) {
-        console.error('Error updating editor profile:', err);
         showToast('Error: ' + err.message, 'error');
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Update Password & Profile 🔒'; }
       }
     };
 
-    async function loadEditorProfileDetails() {
-      var userUid = currentUser ? currentUser.uid : (auth.currentUser ? auth.currentUser.uid : null);
+    window.loadEditorProfileDetails = async function() {
+      var userUid = currentUser?.uid;
       if (!userUid) return;
       try {
-        var userDoc = await getDoc(doc(db, 'users', userUid));
-        if (userDoc.exists()) {
-          var dat = userDoc.data();
-          var elUpi = document.getElementById('editorMyUpiInp');
-          if (elUpi && dat.editorUpi) elUpi.value = dat.editorUpi;
-
-          var elBName = document.getElementById('editorBankNameInp');
-          if (elBName && dat.editorBankName) elBName.value = dat.editorBankName;
-
-          var elIfsc = document.getElementById('editorIfscInp');
-          if (elIfsc && dat.editorIfsc) elIfsc.value = dat.editorIfsc;
-
-          var elAcc = document.getElementById('editorAccountNumInp');
-          if (elAcc && dat.editorAccountNum) elAcc.value = dat.editorAccountNum;
-
-          var elHold = document.getElementById('editorAccountHolderInp');
-          if (elHold && (dat.editorAccountHolder || dat.name)) elHold.value = dat.editorAccountHolder || dat.name;
-
-          var elName = document.getElementById('editorProfileNameInp');
-          if (elName && dat.name) elName.value = dat.name;
-
-          var elPhone = document.getElementById('editorProfilePhoneInp');
-          if (elPhone && (dat.mobile || dat.phone)) elPhone.value = dat.mobile || dat.phone;
+        var snap = await getDoc(doc(db, 'users', userUid));
+        if (snap.exists()) {
+          var dat = snap.data();
+          if (dat.editorUpi) document.getElementById('editorMyUpiInp').value = dat.editorUpi;
+          if (dat.editorBankName) document.getElementById('editorBankNameInp').value = dat.editorBankName;
+          if (dat.editorIfsc) document.getElementById('editorIfscInp').value = dat.editorIfsc;
+          if (dat.editorAccountNum) document.getElementById('editorAccountNumInp').value = dat.editorAccountNum;
+          if (dat.editorAccountHolder || dat.name) document.getElementById('editorAccountHolderInp').value = dat.editorAccountHolder || dat.name;
+          if (dat.name) document.getElementById('editorProfileNameInp').value = dat.name;
+          if (dat.mobile || dat.phone) document.getElementById('editorProfilePhoneInp').value = dat.mobile || dat.phone;
         }
-      } catch(e) {
-        console.warn('Load editor profile error:', e);
-      }
-    }
-    window.loadEditorProfileDetails = loadEditorProfileDetails;
+      } catch(e) {}
+    };
 
-    // Attach direct listeners on DOM content loaded
-    document.getElementById('btnSaveEditorPayoutDetails')?.addEventListener('click', window.saveEditorPayoutDetails);
-    document.getElementById('btnChangeEditorPass')?.addEventListener('click', window.changeEditorPassword);
+    // UI Helpers
+    function showToast(msg,type='success'){
+      const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type+' show';
+      setTimeout(()=>t.classList.remove('show'),3500);
+    }
+    window.showToast = showToast;
+    
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').classList.add('active');
+    });
+    document.getElementById('sidebarOverlay').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+    });
+    
+    function setActiveBottomNav(id) {
+      document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(id)?.classList.add('active');
+    }
+    window.setActiveBottomNav = setActiveBottomNav;
+
   </script>
-  <script src="../js/main.js?v=3.2" defer></script>
 </body>
 </html>

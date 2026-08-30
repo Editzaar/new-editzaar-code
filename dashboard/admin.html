@@ -2491,7 +2491,13 @@
         const displayPass = e.tempPass || 'Configured';
         return `
         <tr>
-          <td><strong>${e.name||'Staff'}</strong></td>
+          <td>
+            <strong>${e.name||'Staff'}</strong>
+            ${e.availabilityStatus === 'inactive' 
+              ? `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(255,59,48,0.12);color:#FF3B30;border:1px solid rgba(255,59,48,0.3);margin-left:6px;cursor:pointer;" onclick="window.adminToggleEditorAvailability('${e.id}','inactive')" title="Click to toggle availability">⚪ INACTIVE</span>`
+              : `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(40,200,64,0.12);color:#28C840;border:1px solid rgba(40,200,64,0.3);margin-left:6px;cursor:pointer;" onclick="window.adminToggleEditorAvailability('${e.id}','online')" title="Click to toggle availability"><span style="width:5px;height:5px;border-radius:50%;background:#28C840;"></span>ONLINE</span>`
+            }
+          </td>
           <td>${e.email}</td>
           <td>
             <div style="display:flex;align-items:center;gap:6px;">
