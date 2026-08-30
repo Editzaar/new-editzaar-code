@@ -2534,7 +2534,7 @@ id="modalStaffPermissions">
             </div>
           </td>
           <td>
-            <select class="editor-assign-select" style="font-weight:600;" onchange="updateStaffRole('${e.id}', this.value)">
+            <select class="editor-assign-select" style="font-weight:600;" onchange="window.updateStaffRole('${e.id}', this.value)">
               <option value="editor" ${curRole==='editor'?'selected':''}>🎬 Freelance Editor</option>
               <option value="manager" ${curRole==='manager'?'selected':''}>🛡️ Operations Manager</option>
               <option value="admin" ${curRole==='admin'?'selected':''}>👑 Administrator</option>
@@ -2543,9 +2543,9 @@ id="modalStaffPermissions">
           <td><strong style="color:var(--gold);">${activeCount}</strong></td>
           <td>
             <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-              <button class="btn-gold btn-sm" onclick="openStaffPermModal('${e.id}')" style="background:#B88200;font-size:11px;font-weight:700;letter-spacing:0.04em;">🔐 PERMISSIONS</button>
-              <button class="btn-outline btn-sm" onclick="assignProjectToEditorModal('${e.id}')">＋ Assign Project</button>
-              <button class="btn-danger btn-sm" onclick="deleteEditor('${e.id}')">Delete</button>
+              <button class="btn-gold btn-sm" onclick="window.openStaffPermModal('${e.id}')" style="background:#B88200;font-size:11px;font-weight:700;letter-spacing:0.04em;">🔐 PERMISSIONS</button>
+              <button class="btn-outline btn-sm" onclick="window.assignProjectToEditorModal('${e.id}')">＋ Assign Project</button>
+              <button class="btn-danger btn-sm" onclick="window.deleteEditor('${e.id}')">Delete</button>
             </div>
           </td>
         </tr>`;
@@ -5450,106 +5450,8 @@ id="modalStaffPermissions">
     window.selectRptPeriod('daily');
   };
 
-</script>
 
-  <!-- BOTTOM NAVIGATION (Mobile) -->
-  <nav class="bottom-nav" id="adminBottomNav">
-    <div class="bottom-nav-item active" id="bnav-overview" onclick="showSection('overview');setActiveBottomNav('bnav-overview')"><span class="bnav-icon">📊</span>Overview</div>
-    <div class="bottom-nav-item" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')"><span class="bnav-icon">📁</span>Projects</div>
-    <div class="bottom-nav-item" id="bnav-clients" onclick="showSection('clients');setActiveBottomNav('bnav-clients')"><span class="bnav-icon">👤</span>Clients</div>
-    <div class="bottom-nav-item" id="bnav-revenue" onclick="showSection('revenue');setActiveBottomNav('bnav-revenue')"><span class="bnav-icon">💰</span>Finance</div>
-    <div class="bottom-nav-item" id="bnav-settings" onclick="showSection('settings');setActiveBottomNav('bnav-settings')"><span class="bnav-icon">⚙️</span>Settings</div>
-  </nav>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js')
-        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
-        .catch(function(err) { console.warn('[SW] Error:', err); });
-    }
-    let _deferredInstallPrompt = null;
-    window.addEventListener('beforeinstallprompt', function(e) {
-      e.preventDefault();
-      _deferredInstallPrompt = e;
-    });
-    window._triggerInstall = function() {
-      if (_deferredInstallPrompt) {
-        _deferredInstallPrompt.prompt();
-        _deferredInstallPrompt.userChoice.then(function(choice) {
-          if (choice.outcome === 'accepted') { console.log('[PWA] Installed'); }
-          _deferredInstallPrompt = null;
-        });
-      } else {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-          document.getElementById('ios-install-modal').style.display = 'flex';
-        } else {
-          alert('To install Editzaar, tap your browser menu (⋮) and choose "Add to Home screen" or "Install App".');
-        }
-      }
-    };
-  </script>
-
-  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
-    <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
-      <div style="font-size:2rem;margin-bottom:12px">📱</div>
-      <h3 style="color:#FFB800;font-family:'Outfit',sans-serif;margin-bottom:8px">Install Editzaar App</h3>
-      <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
-      <div style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
-        <div>1. Tap <strong style="color:#FFB800">Share</strong> 🌐 at bottom of Safari</div>
-        <div>2. Tap <strong style="color:#FFB800">Add to Home Screen</strong></div>
-      </div>
-      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-    import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
-    import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-
-    const _fcmApp = initializeApp({
-      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
-      authDomain: "editzaar-fa8d9.firebaseapp.com",
-      projectId: "editzaar-fa8d9",
-      storageBucket: "editzaar-fa8d9.firebasestorage.app",
-      messagingSenderId: "419930711716",
-      appId: "1:419930711716:web:b1504f651e397a14726831"
-    }, 'fcm-instance-admin');
-
-    const _messaging = getMessaging(_fcmApp);
-    const _auth = getAuth(_fcmApp);
-    const _db = getFirestore(_fcmApp);
-
-    async function saveFcmToken(userId) {
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') return;
-        const token = await getToken(_messaging, {
-          vapidKey: 'REPLACE_WITH_YOUR_VAPID_KEY',
-          serviceWorkerRegistration: await navigator.serviceWorker.ready
-        });
-        if (token) {
-          await setDoc(doc(_db, 'users', userId), { fcmToken: token, fcmUpdated: new Date().toISOString() }, { merge: true });
-        }
-      } catch (err) {}
-    }
-
-    onMessage(_messaging, function(payload) {
-      const title = (payload.notification && payload.notification.title) || 'Editzaar';
-      const body  = (payload.notification && payload.notification.body)  || '';
-      const div = document.createElement('div');
-      div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;background: var(--bg-card);border:1px solid #FFB800;color: var(--t1);padding:14px 20px;border-radius:12px;font-size:0.9rem;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.6)';
-      div.innerHTML = '<strong style="color:#FFB800">' + title + '</strong><br>' + body;
-      document.body.appendChild(div);
-      setTimeout(function(){ div.remove(); }, 5000);
-    });
-
-    onAuthStateChanged(_auth, function(user) {
-      if (user) saveFcmToken(user.uid);
-    });
-  
+    // ── MOVED TO MAIN APPLICATION SCOPE (Script 3) ──
     // ============================================================
     // REAL-TIME PASSWORD MANAGEMENT & CREDENTIALS ENGINE
     // ============================================================
@@ -5695,6 +5597,107 @@ id="modalStaffPermissions">
         if (btn) { btn.disabled = false; btn.textContent = 'Confirm & Assign Project 🚀'; }
       }
     };
+  
+</script>
+
+  <!-- BOTTOM NAVIGATION (Mobile) -->
+  <nav class="bottom-nav" id="adminBottomNav">
+    <div class="bottom-nav-item active" id="bnav-overview" onclick="showSection('overview');setActiveBottomNav('bnav-overview')"><span class="bnav-icon">📊</span>Overview</div>
+    <div class="bottom-nav-item" id="bnav-projects" onclick="showSection('projects');setActiveBottomNav('bnav-projects')"><span class="bnav-icon">📁</span>Projects</div>
+    <div class="bottom-nav-item" id="bnav-clients" onclick="showSection('clients');setActiveBottomNav('bnav-clients')"><span class="bnav-icon">👤</span>Clients</div>
+    <div class="bottom-nav-item" id="bnav-revenue" onclick="showSection('revenue');setActiveBottomNav('bnav-revenue')"><span class="bnav-icon">💰</span>Finance</div>
+    <div class="bottom-nav-item" id="bnav-settings" onclick="showSection('settings');setActiveBottomNav('bnav-settings')"><span class="bnav-icon">⚙️</span>Settings</div>
+  </nav>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js')
+        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+        .catch(function(err) { console.warn('[SW] Error:', err); });
+    }
+    let _deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      _deferredInstallPrompt = e;
+    });
+    window._triggerInstall = function() {
+      if (_deferredInstallPrompt) {
+        _deferredInstallPrompt.prompt();
+        _deferredInstallPrompt.userChoice.then(function(choice) {
+          if (choice.outcome === 'accepted') { console.log('[PWA] Installed'); }
+          _deferredInstallPrompt = null;
+        });
+      } else {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          document.getElementById('ios-install-modal').style.display = 'flex';
+        } else {
+          alert('To install Editzaar, tap your browser menu (⋮) and choose "Add to Home screen" or "Install App".');
+        }
+      }
+    };
+  </script>
+
+  <div id="ios-install-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;padding:16px">
+    <div style="background: var(--bg-card);border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:12px">📱</div>
+      <h3 style="color:#FFB800;font-family:'Outfit',sans-serif;margin-bottom:8px">Install Editzaar App</h3>
+      <p style="color: var(--t2);font-size:0.9rem;margin-bottom:20px">To install on iPhone or iPad:</p>
+      <div style="background:#151518;border-radius:12px;padding:16px;text-align:left;font-size:0.875rem;color: var(--t2);line-height:2">
+        <div>1. Tap <strong style="color:#FFB800">Share</strong> 🌐 at bottom of Safari</div>
+        <div>2. Tap <strong style="color:#FFB800">Add to Home Screen</strong></div>
+      </div>
+      <button onclick="document.getElementById('ios-install-modal').style.display='none'" style="margin-top:20px;background:#FFB800;color:#000;border:none;border-radius:10px;padding:12px 32px;font-weight:700;cursor:pointer;width:100%">Got it!</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js';
+    import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+    const _fcmApp = initializeApp({
+      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+      authDomain: "editzaar-fa8d9.firebaseapp.com",
+      projectId: "editzaar-fa8d9",
+      storageBucket: "editzaar-fa8d9.firebasestorage.app",
+      messagingSenderId: "419930711716",
+      appId: "1:419930711716:web:b1504f651e397a14726831"
+    }, 'fcm-instance-admin');
+
+    const _messaging = getMessaging(_fcmApp);
+    const _auth = getAuth(_fcmApp);
+    const _db = getFirestore(_fcmApp);
+
+    async function saveFcmToken(userId) {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+        const token = await getToken(_messaging, {
+          vapidKey: 'REPLACE_WITH_YOUR_VAPID_KEY',
+          serviceWorkerRegistration: await navigator.serviceWorker.ready
+        });
+        if (token) {
+          await setDoc(doc(_db, 'users', userId), { fcmToken: token, fcmUpdated: new Date().toISOString() }, { merge: true });
+        }
+      } catch (err) {}
+    }
+
+    onMessage(_messaging, function(payload) {
+      const title = (payload.notification && payload.notification.title) || 'Editzaar';
+      const body  = (payload.notification && payload.notification.body)  || '';
+      const div = document.createElement('div');
+      div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;background: var(--bg-card);border:1px solid #FFB800;color: var(--t1);padding:14px 20px;border-radius:12px;font-size:0.9rem;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.6)';
+      div.innerHTML = '<strong style="color:#FFB800">' + title + '</strong><br>' + body;
+      document.body.appendChild(div);
+      setTimeout(function(){ div.remove(); }, 5000);
+    });
+
+    onAuthStateChanged(_auth, function(user) {
+      if (user) saveFcmToken(user.uid);
+    });
+  
 
 </script>
   <!-- ══ MODAL: ADMIN EDITOR PAYROLL & BANK CLEARANCE ══ -->
