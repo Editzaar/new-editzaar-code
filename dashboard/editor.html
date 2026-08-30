@@ -779,18 +779,19 @@
     document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
     document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
 
-    const sections = ['projects', 'detail', 'chat', 'earnings', 'settings'];
+    const sections = ['projects', 'detail', 'chat', 'earnings', 'messages', 'settings'];
     function showSection(name) {
       sections.forEach(s => {
         const el = document.getElementById('sec-' + s);
         if (el) el.style.display = (s === name ? 'block' : 'none');
       });
       document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === name));
-      if (name === 'earnings' && typeof renderEditorEarnings === 'function') {
-        renderEditorEarnings();
+      if (name === 'earnings') {
+        var projs = window._activeEditorProjectsList || [];
+        if (typeof window.renderEditorEarnings === 'function') window.renderEditorEarnings(projs);
       }
-      if (name === 'settings' && typeof loadEditorProfileDetails === 'function') {
-        loadEditorProfileDetails();
+      if (name === 'settings') {
+        if (typeof window.loadEditorProfileDetails === 'function') window.loadEditorProfileDetails();
       }
     }
     window.showSection=showSection;
@@ -839,12 +840,6 @@
 
     // Show project detail tab in bottom nav when opened
     const _origOpenProject = window.openProject;
-    window.openProject = function(pid) {
-      document.getElementById('bnav-detail').style.display = 'flex';
-      setActiveBottomNav('bnav-detail');
-      return _origOpenProject(pid);
-    };
-
     // Chat badge + push notif for new messages
     function showNewMsgNotif(senderName) {
       const badge = document.getElementById('chatBadge');
@@ -960,7 +955,7 @@
       var monthVal = document.getElementById('selEditorMonthFilter')?.value || 'all';
       var statusVal = document.getElementById('selEditorStatusFilter')?.value || 'all';
       var tbody = document.getElementById('editorEarningsTbody');
-      if (!tbody) return;
+      if (!tbody) { console.warn('editorEarningsTbody not found'); return; }
 
       var filtered = _allEditorProjectsCache.filter(function(p) {
         var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
@@ -973,15 +968,12 @@
       });
 
       if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No projects match the selected filters.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No projects found. Projects assigned to you by admin will appear here automatically.</td></tr>';
         return;
       }
 
       tbody.innerHTML = filtered.map(function(p) {
-        var earn = p.editorPayout;
-        if (earn === undefined || earn === null || earn === 0) {
-          earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
-        }
+        var earn = (p.editorPayout !== undefined && p.editorPayout !== null && p.editorPayout > 0) ? p.editorPayout : (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
 
         var isPaid = p.editorPayoutStatus === 'paid';
         var isDone = p.status === 'done';
@@ -1037,10 +1029,7 @@
       var monthlyMap = {};
 
       myProjects.forEach(function(p) {
-        var earn = p.editorPayout;
-        if (earn === undefined || earn === null || earn === 0) {
-          earn = p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000;
-        }
+        var earn = (p.editorPayout !== undefined && p.editorPayout !== null && p.editorPayout > 0) ? p.editorPayout : (p.invoiceAmount ? Math.round(p.invoiceAmount * 0.5) : 1000);
 
         var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : new Date());
         var mKey = pDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
@@ -1103,7 +1092,7 @@
       if (monthTbody) {
         var monthEntries = Object.values(monthlyMap);
         if (!monthEntries.length) {
-          monthTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No monthly income recorded yet. Complete projects to see breakdown.</td></tr>';
+          monthTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No projects found for this editor account. Projects assigned by admin will appear here.</td></tr>';
         } else {
           monthTbody.innerHTML = monthEntries.map(function(m) {
             var statusBadge = '';
