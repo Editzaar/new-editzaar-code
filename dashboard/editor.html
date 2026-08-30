@@ -707,6 +707,37 @@
       loadUsers();
       loadProjects();
       window.loadAvailabilityStatus();
+
+      // Real-time listener for current user (permissions, role, availability updates from Admin)
+      onSnapshot(doc(db, 'users', user.uid), (userSnap) => {
+        if (!userSnap.exists()) {
+          alert('Your editor account has been removed by the administrator.');
+          signOut(auth).then(() => window.location.replace('index.html'));
+          return;
+        }
+        const updatedData = userSnap.data();
+        currentUser = { uid: user.uid, ...updatedData };
+
+        // Real-time live role change check
+        if (updatedData.role !== 'editor' && updatedData.role !== 'manager' && updatedData.role !== 'admin') {
+          alert('Your account role has been changed to ' + (updatedData.role || 'client') + '. Redirecting...');
+          window.location.replace('/dashboard/client.html');
+          return;
+        }
+
+        // Real-time live availability status update
+        if (updatedData.availabilityStatus) {
+          const dateObj = updatedData.availabilityUpdatedAt?.toDate ? updatedData.availabilityUpdatedAt.toDate() : new Date();
+          if (typeof window.updateAvailabilityUI === 'function') {
+            window.updateAvailabilityUI(updatedData.availabilityStatus, dateObj);
+          }
+        }
+
+        // Real-time permissions update in memory
+        if (window._activeEditorProjectsList && typeof renderProjects === 'function') {
+          renderProjects(window._activeEditorProjectsList);
+        }
+      }, (err) => console.warn('User snapshot listener notice:', err));
     });
 
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(()=>location.href='/dashboard/index.html'));
@@ -1091,6 +1122,11 @@
     });
 
     document.getElementById('btnUpdateEditorDeadline')?.addEventListener('click', async () => {
+      const perm = currentUser?.permissions || {};
+      if (currentUser?.role !== 'admin' && perm.editDeadline === false) {
+        showToast('Permission denied: Admin has restricted deadline changes for your account.', 'error');
+        return;
+      }
       const dVal = document.getElementById('editorDeadlineInput').value;
       if (!dVal || !currentProject) return;
       const newD = new Date(dVal);
@@ -1109,6 +1145,11 @@
 
     window.updateStatus = async (status) => {
       if (!currentProject) return;
+      const perm = currentUser?.permissions || {};
+      if (currentUser?.role !== 'admin' && perm.updateStatus === false) {
+        showToast('Permission denied: Admin has restricted status updates for your account.', 'error');
+        return;
+      }
       await updateDoc(doc(db,'projects',currentProject.id),{status});
       document.getElementById('detailStatus').innerHTML=badge(status);
       showToast('Status updated!','success');

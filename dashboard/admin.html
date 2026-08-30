@@ -2035,7 +2035,33 @@
   </div>
 
   <!-- MODAL: STAFF PERMISSIONS MANAGER -->
-  <div class="modal-overlay" id="modalStaffPermissions">
+  <div class="modal-overlay" 
+  <!-- MODAL: ASSIGN PROJECT TO EDITOR -->
+  <div class="modal-overlay" id="modalAssignProjectToEditor">
+    <div class="modal-box">
+      <button class="modal-close" data-close="modalAssignProjectToEditor">✕</button>
+      <div class="modal-title">Assign Project to Editor</div>
+      <p style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;">
+        Assigning to: <strong id="assignEditorName" style="color:var(--gold);">Editor</strong>
+      </p>
+      <input type="hidden" id="assignTargetEditorId" />
+      <div class="dash-form">
+        <div class="field">
+          <label>Select Project</label>
+          <select id="selAssignProject">
+            <option value="">Select an active project...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Agreed Editor Fee / Payout (₹)</label>
+          <input type="number" id="inpAssignEditorFee" placeholder="e.g. 1500" />
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnConfirmAssignProject" onclick="window.confirmAssignProjectToEditor()">Confirm &amp; Assign Project 🚀</button>
+      </div>
+    </div>
+  </div>
+
+id="modalStaffPermissions">
     <div class="modal-box" style="max-width: 620px; max-height: 88vh; overflow-y: auto;">
       <button class="modal-close" data-close="modalStaffPermissions">✕</button>
       <div class="modal-title" style="margin-bottom: 4px;">Staff Permissions &amp; Feature Access</div>
@@ -5576,7 +5602,101 @@
       });
     };
 
-  </script>
+  
+    // ── STAFF & EDITOR MANAGEMENT (DELETE, ROLE, PERMISSIONS, ASSIGN) ──
+    window.deleteEditor = async function(editorId) {
+      var ed = (typeof editors !== 'undefined' ? editors.find(function(x) { return x.id === editorId; }) : null) || 
+               (typeof allUsers !== 'undefined' && allUsers[editorId] ? allUsers[editorId] : { name: 'Editor' });
+      var edName = ed.name || ed.email || 'Editor';
+      if (confirm('Are you sure you want to delete editor "' + edName + '"? This will remove their credentials and unassign any active projects.')) {
+        try {
+          await deleteDoc(doc(db, 'users', editorId));
+          showToast('Editor "' + edName + '" deleted successfully! 🗑️', 'success');
+        } catch(err) {
+          showToast('Error deleting editor: ' + err.message, 'error');
+        }
+      }
+    };
+
+    window.openStaffPermModal = function(editorId) {
+      if (typeof window.openStaffPermissions === 'function') {
+        window.openStaffPermissions(editorId);
+      } else {
+        openModal('modalStaffPermissions');
+      }
+    };
+
+    window.updateStaffRole = async function(userId, newRole) {
+      try {
+        await updateDoc(doc(db, 'users', userId), {
+          role: newRole,
+          updatedAt: serverTimestamp()
+        });
+        showToast('Staff role updated to ' + newRole.toUpperCase() + '! ✅', 'success');
+      } catch(err) {
+        showToast('Error updating staff role: ' + err.message, 'error');
+      }
+    };
+
+    window.assignProjectToEditorModal = function(editorId) {
+      var ed = (typeof editors !== 'undefined' ? editors.find(function(e) { return e.id === editorId; }) : null) || 
+               (typeof allUsers !== 'undefined' && allUsers[editorId] ? allUsers[editorId] : { name: 'Editor' });
+      var elId = document.getElementById('assignTargetEditorId');
+      var elName = document.getElementById('assignEditorName');
+      if (elId) elId.value = editorId;
+      if (elName) elName.textContent = ed.name || ed.email || 'Editor';
+
+      var sel = document.getElementById('selAssignProject');
+      if (sel) {
+        var activeProjs = projects.filter(function(p) { return p.status !== 'done'; });
+        if (!activeProjs.length) {
+          sel.innerHTML = '<option value="">No active projects found</option>';
+        } else {
+          sel.innerHTML = '<option value="">Choose an active project to assign...</option>' + 
+            activeProjs.map(function(p) {
+              var isAssigned = p.editorId ? (' (Current: ' + (allUsers[p.editorId]?.name || 'Assigned') + ')') : ' [UNASSIGNED]';
+              return '<option value="' + p.id + '">' + (p.title || 'Untitled') + isAssigned + '</option>';
+            }).join('');
+        }
+      }
+
+      var feeInp = document.getElementById('inpAssignEditorFee');
+      if (feeInp) feeInp.value = '1000';
+
+      openModal('modalAssignProjectToEditor');
+    };
+
+    window.confirmAssignProjectToEditor = async function() {
+      var editorId = document.getElementById('assignTargetEditorId')?.value;
+      var pid = document.getElementById('selAssignProject')?.value;
+      var fee = parseInt(document.getElementById('inpAssignEditorFee')?.value, 10) || 1000;
+
+      if (!editorId || !pid) {
+        showToast('Please select a project to assign.', 'error');
+        return;
+      }
+
+      var btn = document.getElementById('btnConfirmAssignProject');
+      if (btn) { btn.disabled = true; btn.textContent = 'Assigning... ⏳'; }
+
+      try {
+        await updateDoc(doc(db, 'projects', pid), {
+          editorId: editorId,
+          editorPayout: fee,
+          editorPayoutStatus: 'pending',
+          updatedAt: serverTimestamp()
+        });
+
+        closeModal('modalAssignProjectToEditor');
+        showToast('Project assigned to editor successfully! 🚀✅', 'success');
+      } catch(err) {
+        showToast('Error assigning project: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Confirm & Assign Project 🚀'; }
+      }
+    };
+
+</script>
   <!-- ══ MODAL: ADMIN EDITOR PAYROLL & BANK CLEARANCE ══ -->
   <div class="modal-overlay" id="modalEditorPayrollPay">
     <div class="modal-box" style="max-width: 520px;">
