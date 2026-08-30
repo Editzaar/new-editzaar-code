@@ -872,7 +872,7 @@
 
     let currentUser = null, currentProject = null, chatUnsub = null, globalChatUnsub = null, globalChatPid = null;
     let allUsers = {};
-    let myProjects = [];
+    let myProjects = [], projects = [];
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('index.html'); return; }
@@ -915,7 +915,7 @@
     function listenRealtimeProjects() {
       const q = query(collection(db,'projects'), where('clientId','==',currentUser.uid));
       onSnapshot(q, (snap) => {
-        const projects = snap.docs.map(d=>({id:d.id,...d.data()}));
+        projects = snap.docs.map(d=>({id:d.id,...d.data()}));
         projects.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
         myProjects = projects;
         
@@ -2120,13 +2120,21 @@
       openModal('modalPayBalance');
     };
 
-    // Submit Balance Payment Proof (UTR) from Modal
+    // Submit Balance Payment Proof (UTR) from Modal or Detail Box
     window.submitBalanceUtrProof = async function() {
       if (!_activeBalancePid) {
-        showToast('No project selected for payment.', 'error');
-        return;
+        if (currentProject) {
+          _activeBalancePid = currentProject.id;
+          _activeBalanceAmount = window.getProjectBalanceDue(currentProject);
+        } else {
+          showToast('No project selected for payment.', 'error');
+          return;
+        }
       }
-      const utr = (document.getElementById('balModalUtrInp')?.value || '').trim();
+      const modalUtr = (document.getElementById('balModalUtrInp')?.value || '').trim();
+      const detailUtr = (document.getElementById('detailBalUtrInp')?.value || '').trim();
+      const utr = modalUtr || detailUtr;
+
       if (!utr) {
         showToast('Please enter the 12-digit UPI / Bank Transaction ID (UTR).', 'error');
         return;
@@ -2148,7 +2156,8 @@
         });
 
         // Optimistic local update
-        const p = projects.find(x => x.id === _activeBalancePid);
+        const projList = (typeof projects !== 'undefined' && projects && projects.length) ? projects : (typeof myProjects !== 'undefined' ? myProjects : []);
+        const p = projList.find(x => x.id === _activeBalancePid);
         if (p) {
           p.balanceTxnId = utr;
           p.balanceStatus = 'under_verification';
@@ -2158,18 +2167,23 @@
           currentProject.balanceTxnId = utr;
           currentProject.balanceStatus = 'under_verification';
           currentProject.balancePaidAmount = _activeBalanceAmount;
+
+          // Update inline locked UI immediately
+          const pendingBox = document.getElementById('detailBalPendingBox');
+          const reviewBox = document.getElementById('detailBalUnderReviewBox');
+          const reviewUtr = document.getElementById('txtDetailSubmittedUtr');
+          if (pendingBox) pendingBox.style.display = 'none';
+          if (reviewBox) reviewBox.style.display = 'block';
+          if (reviewUtr) reviewUtr.textContent = utr;
         }
 
-        closeModal('modalPayBalance');
-        showToast('Remaining balance payment submitted! Admin will verify and unlock deliverables immediately. 🚀✅', 'success');
+        window.closeModal('modalPayBalance');
+        showToast('Remaining balance proof submitted! Admin will verify and unlock deliverables immediately. 🚀✅', 'success');
 
         // Refresh UI
-        if (currentProject && currentProject.id === _activeBalancePid) {
-          window.openProject(_activeBalancePid);
-        }
-        renderProjects(projects);
-        renderFiles(projects);
-        renderPayments(projects);
+        if (typeof renderProjects === 'function') renderProjects(projList);
+        if (typeof renderFiles === 'function') renderFiles(projList);
+        if (typeof renderPayments === 'function') renderPayments(projList);
       } catch(err) {
         console.error('Error submitting balance:', err);
         showToast('Error submitting balance proof: ' + err.message, 'error');
@@ -2180,7 +2194,10 @@
 
     // Submit Balance Payment Proof (UTR) directly from detail box
     window.submitDetailBalUtr = async function() {
-      if (!currentProject) return;
+      if (!currentProject) {
+        showToast('No active project loaded. Please select a project first.', 'error');
+        return;
+      }
       const utr = (document.getElementById('detailBalUtrInp')?.value || '').trim();
       if (!utr) {
         showToast('Please enter the 12-digit UTR from your bank app.', 'error');
@@ -2189,8 +2206,10 @@
       const balDue = window.getProjectBalanceDue(currentProject);
       _activeBalancePid = currentProject.id;
       _activeBalanceAmount = balDue;
+      
       const modalUtr = document.getElementById('balModalUtrInp');
       if (modalUtr) modalUtr.value = utr;
+
       await window.submitBalanceUtrProof();
     };
 
