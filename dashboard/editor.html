@@ -788,7 +788,20 @@
       document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === name));
       if (name === 'earnings') {
         var projs = window._activeEditorProjectsList || [];
-        if (typeof window.renderEditorEarnings === 'function') window.renderEditorEarnings(projs);
+        if (projs.length > 0) {
+          if (typeof window.renderEditorEarnings === 'function') window.renderEditorEarnings(projs);
+        } else {
+          // Projects not loaded yet — fetch directly from Firestore
+          var tbody = document.getElementById('editorEarningsTbody');
+          var mTbody = document.getElementById('editorMonthlySummaryTbody');
+          if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">Loading your projects...</td></tr>';
+          if (mTbody) mTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">Loading...</td></tr>';
+          // Try again in 800ms (wait for onSnapshot)
+          setTimeout(function() {
+            var refreshed = window._activeEditorProjectsList || [];
+            if (typeof window.renderEditorEarnings === 'function') window.renderEditorEarnings(refreshed);
+          }, 800);
+        }
       }
       if (name === 'settings') {
         if (typeof window.loadEditorProfileDetails === 'function') window.loadEditorProfileDetails();
@@ -968,7 +981,7 @@
       });
 
       if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No projects found. Projects assigned to you by admin will appear here automatically.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px 16px;color:var(--t3);"><div style="font-size:1.8rem;margin-bottom:8px;">📂</div><div style="font-weight:600;color:var(--t2);margin-bottom:4px;">No Projects Yet</div><div>Projects assigned to you by admin will appear here automatically.</div></td></tr>';
         return;
       }
 
@@ -1092,7 +1105,7 @@
       if (monthTbody) {
         var monthEntries = Object.values(monthlyMap);
         if (!monthEntries.length) {
-          monthTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3);">No projects found for this editor account. Projects assigned by admin will appear here.</td></tr>';
+          monthTbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px 16px;color:var(--t3);"><div style="font-size:1.8rem;margin-bottom:8px;">📅</div><div style="font-weight:600;color:var(--t2);margin-bottom:4px;">No Monthly Data</div><div>Complete your first project to see monthly income breakdown.</div></td></tr>';
         } else {
           monthTbody.innerHTML = monthEntries.map(function(m) {
             var statusBadge = '';

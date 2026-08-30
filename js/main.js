@@ -1063,6 +1063,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+
+  // ── DASHBOARD GUARD: Do NOT inject client chatbot or booking modal on dashboard pages ──
+  var _isDashboardPage = window.location.pathname.includes('/dashboard/') || 
+                          document.body.classList.contains('dashboard-page') ||
+                          document.getElementById('sec-projects') !== null ||
+                          document.getElementById('sec-earnings') !== null ||
+                          document.getElementById('adminSidebar') !== null ||
+                          document.getElementById('clientSidebar') !== null;
+  if (_isDashboardPage) {
+    console.log('[main.js] Dashboard detected — skipping client chatbot & booking form injection.');
+    return;
+  }
+
   // Initialize Checkout Modal and AI Chatbot on DOM ready
   ensureCheckoutModal();
   ensureAiChatbot();
