@@ -2035,8 +2035,7 @@
   </div>
 
   <!-- MODAL: STAFF PERMISSIONS MANAGER -->
-  <div class="modal-overlay" 
-  <!-- MODAL: ASSIGN PROJECT TO EDITOR -->
+    <!-- MODAL: ASSIGN PROJECT TO EDITOR -->
   <div class="modal-overlay" id="modalAssignProjectToEditor">
     <div class="modal-box">
       <button class="modal-close" data-close="modalAssignProjectToEditor">✕</button>
@@ -2054,14 +2053,15 @@
         </div>
         <div class="field">
           <label>Agreed Editor Fee / Payout (₹)</label>
-          <input type="number" id="inpAssignEditorFee" placeholder="e.g. 1500" />
+          <input type="number" id="inpAssignEditorFee" placeholder="e.g. 1000" />
         </div>
         <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnConfirmAssignProject" onclick="window.confirmAssignProjectToEditor()">Confirm &amp; Assign Project 🚀</button>
       </div>
     </div>
   </div>
 
-id="modalStaffPermissions">
+  <!-- MODAL: STAFF PERMISSIONS MANAGER -->
+  <div class="modal-overlay" id="modalStaffPermissions">
     <div class="modal-box" style="max-width: 620px; max-height: 88vh; overflow-y: auto;">
       <button class="modal-close" data-close="modalStaffPermissions">✕</button>
       <div class="modal-title" style="margin-bottom: 4px;">Staff Permissions &amp; Feature Access</div>
@@ -3785,8 +3785,12 @@ id="modalStaffPermissions">
     };
 
     window.openStaffPermissions = (uid) => {
-      const u = users.find(x => x.id === uid);
-      if (!u) return;
+      const u = (typeof users !== 'undefined' ? users.find(x => x.id === uid) : null) || 
+                (typeof editors !== 'undefined' ? editors.find(x => x.id === uid) : null);
+      if (!u) {
+        showToast('Staff profile is loading... please click again in a second.', 'info');
+        return;
+      }
       document.getElementById('permUid').value = uid;
       document.getElementById('permStaffName').textContent = u.name || 'Staff Member';
       document.getElementById('permStaffEmail').textContent = u.email || '—';
@@ -5542,7 +5546,7 @@ id="modalStaffPermissions">
 
     window.assignProjectToEditorModal = function(editorId) {
       var ed = (typeof editors !== 'undefined' ? editors.find(function(e) { return e.id === editorId; }) : null) || 
-               (typeof allUsers !== 'undefined' && allUsers[editorId] ? allUsers[editorId] : { name: 'Editor' });
+               (typeof users !== 'undefined' ? users.find(function(u) { return u.id === editorId; }) : null) || { name: 'Editor' };
       var elId = document.getElementById('assignTargetEditorId');
       var elName = document.getElementById('assignEditorName');
       if (elId) elId.value = editorId;
@@ -5550,13 +5554,14 @@ id="modalStaffPermissions">
 
       var sel = document.getElementById('selAssignProject');
       if (sel) {
-        var activeProjs = projects.filter(function(p) { return p.status !== 'done'; });
+        var activeProjs = (typeof projects !== 'undefined' ? projects : []).filter(function(p) { return p.status !== 'done'; });
         if (!activeProjs.length) {
           sel.innerHTML = '<option value="">No active projects found</option>';
         } else {
           sel.innerHTML = '<option value="">Choose an active project to assign...</option>' + 
             activeProjs.map(function(p) {
-              var isAssigned = p.editorId ? (' (Current: ' + (allUsers[p.editorId]?.name || 'Assigned') + ')') : ' [UNASSIGNED]';
+              var assignedEditor = p.editorId ? (editors.find(function(e) { return e.id === p.editorId; }) || users.find(function(u) { return u.id === p.editorId; })) : null;
+              var isAssigned = p.editorId ? (' (Current: ' + (assignedEditor ? assignedEditor.name : 'Assigned') + ')') : ' [UNASSIGNED]';
               return '<option value="' + p.id + '">' + (p.title || 'Untitled') + isAssigned + '</option>';
             }).join('');
         }
