@@ -517,14 +517,45 @@
                 <!-- UNLOCKED DOWNLOAD -->
                 <a id="deliveryDownloadBtn" href="#" target="_blank" class="btn-gold" style="display:none;">🎬 Open Delivered Video / Drive →</a>
 
-                <!-- LOCKED WRAPPER -->
-                <div id="deliveryLockedWrap" style="display:none;background:rgba(255,95,87,0.08);border:1.5px solid rgba(255,95,87,0.35);border-radius:12px;padding:16px;margin-top:8px;">
-                  <div style="font-weight:700;color:#FF5F57;font-size:1rem;margin-bottom:6px;">🔒 Final 4K Download Locked</div>
-                  <p style="font-size:0.85rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">
-                    Your finished 4K video is ready for high-speed download! Please clear your remaining balance of <strong style="color:var(--gold);" id="txtDeliveryBalAmount">₹0</strong> to instantly unlock your files and official Tax Invoice.
+                <!-- LOCKED WRAPPER WITH DIRECT QR CODE -->
+                <div id="deliveryLockedWrap" style="display:none;background:rgba(255,95,87,0.08);border:1.5px solid rgba(255,95,87,0.35);border-radius:14px;padding:20px;margin-top:12px;">
+                  <div style="font-weight:700;color:#FF5F57;font-size:1.05rem;margin-bottom:6px;">🔒 Final 4K Download Locked</div>
+                  <p style="font-size:0.88rem;color:var(--t2);line-height:1.5;margin-bottom:16px;">
+                    Your finished 4K video is ready for high-speed download! Please clear your remaining balance of <strong style="color:var(--gold);font-size:1.15rem;" id="txtDeliveryBalAmount">₹0</strong> to instantly unlock your files across all sections and access your official Tax Invoice.
                   </p>
+
+                  <!-- Inline QR Box -->
+                  <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;background:rgba(0,0,0,0.35);padding:16px;border-radius:12px;border:1px solid rgba(255,184,0,0.25);margin-bottom:14px;">
+                    <div style="background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.3);">
+                      <img id="detailBalQrImg" src="" alt="UPI QR Code" style="width:140px;height:140px;display:block;" />
+                      <div style="color:#000;font-size:10px;font-weight:700;margin-top:4px;text-transform:uppercase;">Scan to Pay Balance</div>
+                    </div>
+
+                    <div style="flex:1;min-width:240px;">
+                      <div style="margin-bottom:8px;">
+                        <span style="font-size:0.75rem;color:var(--t3);text-transform:uppercase;font-weight:700;">UPI ID:</span>
+                        <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+                          <strong style="color:var(--gold);font-size:0.95rem;">nbikram704@okhdfcbank</strong>
+                          <button type="button" class="btn-outline btn-sm" style="height:24px;padding:0 8px;font-size:10px;" onclick="navigator.clipboard.writeText('nbikram704@okhdfcbank');showToast('UPI ID copied! 📋','success')">📋 Copy</button>
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">Account Holder: <strong>Bikram Nath</strong></div>
+                      </div>
+
+                      <div id="detailBalPendingBox" style="margin-top:10px;">
+                        <div style="font-size:0.78rem;color:var(--t2);margin-bottom:6px;">Have you paid? Enter the 12-digit UTR from your bank app:</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                          <input type="text" id="detailBalUtrInp" placeholder="e.g. 423589012345" style="text-transform:uppercase;max-width:220px;height:34px;padding:0 10px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-size:0.82rem;" />
+                          <button type="button" class="btn-gold btn-sm" onclick="window.submitDetailBalUtr()">Submit UTR 🚀</button>
+                        </div>
+                      </div>
+                      <div id="detailBalUnderReviewBox" style="display:none;background:rgba(255,184,0,0.12);border:1px solid var(--gold-border);border-radius:8px;padding:10px 12px;color:var(--gold);font-size:0.82rem;font-weight:600;margin-top:8px;">
+                        🔎 UTR submitted (<span id="txtDetailSubmittedUtr">—</span>). Awaiting Admin payment clearance to unlock deliverables.
+                      </div>
+                    </div>
+                  </div>
+
                   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                    <button type="button" class="btn-gold btn-sm" onclick="window.openBalancePayModal()">💳 Pay Remaining Balance via UPI</button>
+                    <button type="button" class="btn-gold btn-sm" onclick="window.openBalancePayModal()">💳 Open Fullscreen QR Modal</button>
                   </div>
                 </div>
               </div>
@@ -762,7 +793,41 @@
     </div>
   </div>
 
-  <!-- ── GEMINI AI CHATBOT ── -->
+
+
+  <!-- ══ MODAL: PAY REMAINING BALANCE ══ -->
+  <div class="modal-overlay" id="modalPayBalance" onclick="if(event.target===this)window.closeModal('modalPayBalance')">
+    <div class="modal-box" style="max-width: 480px;">
+      <button class="modal-close" onclick="window.closeModal('modalPayBalance')">✕</button>
+      <div class="modal-title">Pay Remaining <em>Project Balance</em></div>
+      <p style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;">Scan to pay the remaining balance for <strong id="txtBalModalProjTitle" style="color:var(--t1);">this project</strong> and unlock high-speed 4K downloads across all sections.</p>
+      
+      <!-- Dynamic QR Box -->
+      <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+        <img id="qrBalModalImg" src="" alt="UPI QR Code" style="width:180px;height:180px;display:block;margin:0 auto 10px;"/>
+        <div style="color:#000;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Scan with GPay, PhonePe, Paytm, BHIM</div>
+      </div>
+
+      <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="color:var(--t2);font-size:0.85rem;">Balance to Pay:</span>
+          <strong style="color:var(--gold);font-size:1.25rem;" id="txtBalModalAmount">₹0</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:6px;border-top:1px dashed rgba(255,184,0,0.2);">
+          <div style="font-size:0.8rem;color:var(--t2);">UPI: <strong style="color:var(--gold);">nbikram704@okhdfcbank</strong> (Bikram Nath)</div>
+          <button type="button" class="btn-outline btn-sm" style="height:22px;padding:0 6px;font-size:10px;" onclick="navigator.clipboard.writeText('nbikram704@okhdfcbank');showToast('UPI ID copied! 📋','success')">📋 Copy</button>
+        </div>
+      </div>
+
+      <div class="dash-form">
+        <div class="field">
+          <label>Enter 12-Digit UPI Reference (UTR) *</label>
+          <input type="text" id="balModalUtrInp" placeholder="e.g. 423589012345" style="text-transform:uppercase;"/>
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnSubmitBalanceUtr" onclick="window.submitBalanceUtrProof()">Submit Balance Proof &amp; Unlock Files →</button>
+      </div>
+    </div>
+  </div>  <!-- ── GEMINI AI CHATBOT ── -->
   <button class="chatbot-fab" id="chatbotFab" title="Ask AI Assistant">🤖</button>
 
   <div class="chatbot-panel" id="chatbotPanel">
@@ -976,7 +1041,17 @@
           </div>
           <div class="project-card-meta">Editor: ${allUsers[p.editorId]?.name||'Being assigned'} · Estimated Deadline: ${dateStr(p.deadline)}</div>
           <div style="font-size:0.88rem;color:var(--t2);margin-bottom:12px;">${(p.description||'').substring(0,140)}${p.description?.length>140?'…':''}</div>
-          ${p.deliveryUrl ? `<div style="margin-bottom:12px;"><a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">🎬 Open Delivered Video Link →</a></div>`:''}
+          ${p.deliveryUrl ? (
+            (p.invoicePaid || (p.advancePaid && p.balancePaid)) 
+              ? `<div style="margin-bottom:12px;"><a href="${window.formatExternalUrl(p.deliveryUrl)}" target="_blank" class="btn-gold btn-sm">🎬 Open Delivered Video Link →</a></div>`
+              : `<div style="margin-bottom:12px;padding:10px 14px;background:rgba(255,95,87,0.08);border:1px dashed rgba(255,95,87,0.4);border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                   <div>
+                     <span style="color:#FF5F57;font-size:0.82rem;font-weight:700;">🔒 Final 4K Deliverable Locked</span>
+                     <div style="font-size:0.75rem;color:var(--t2);">Balance Due: <strong style="color:var(--gold);">₹${window.getProjectBalanceDue(p).toLocaleString()}</strong></div>
+                   </div>
+                   <button class="btn-gold btn-sm" style="height:28px;font-size:11px;" onclick="window.openBalancePayModal('${p.id}')">💳 Pay to Unlock</button>
+                 </div>`
+          ) : ''}
           <div class="project-card-actions">
             <button class="btn-gold btn-sm" onclick="openProject('${p.id}')">View Details &amp; Chat →</button>
             <span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'} btn-sm">${p.invoicePaid?'✅ GST Invoice Issued':'⏳ Acknowledgment Receipt'}</span>
@@ -1078,12 +1153,35 @@
       if(!delivs.length) {
         document.getElementById('filesDeliverablesList').innerHTML = '<div style="color:var(--t2);">No deliverables yet.</div>';
       } else {
-        document.getElementById('filesDeliverablesList').innerHTML = delivs.map(p=>`
-          <div style="margin-bottom: 16px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r);">
-            <div style="font-weight:600; margin-bottom:8px;">${p.title}</div>
-            <a href="${p.deliveryUrl}" target="_blank" class="btn-gold btn-sm">Download Delivery ↗</a>
-          </div>
-        `).join('');
+        document.getElementById('filesDeliverablesList').innerHTML = delivs.map(p=> {
+          const isPaid = p.invoicePaid || (p.advancePaid && p.balancePaid);
+          const bal = window.getProjectBalanceDue(p);
+          if (isPaid) {
+            return `
+              <div style="margin-bottom: 16px; padding: 16px; border: 1px solid var(--gold-border); background: rgba(40,200,64,0.05); border-radius: 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <div style="font-weight:700; margin-bottom:4px; color:var(--t1);">${p.title}</div>
+                  <div style="font-size:0.8rem; color:var(--green);">✓ Payment Cleared — Full 4K Deliverable Unlocked</div>
+                </div>
+                <a href="${window.formatExternalUrl(p.deliveryUrl)}" target="_blank" class="btn-gold btn-sm">🎬 Download 4K Deliverable ↗</a>
+              </div>
+            `;
+          } else {
+            return `
+              <div style="margin-bottom: 16px; padding: 16px; border: 1.5px solid rgba(255,95,87,0.35); background: rgba(255,95,87,0.05); border-radius: 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <div style="font-weight:700; margin-bottom:4px; color:var(--t1);">${p.title}</div>
+                  <div style="font-size:0.82rem; color:#FF5F57; font-weight:600;">🔒 Deliverable Locked — Pending Balance: ₹${bal.toLocaleString()}</div>
+                  <div style="font-size:0.75rem; color:var(--t3); margin-top:2px;">Files unlock across all sections once remaining payment is cleared.</div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn-gold btn-sm" onclick="window.openBalancePayModal('${p.id}')">💳 Pay ₹${bal.toLocaleString()} &amp; Unlock</button>
+                  <button class="btn-outline btn-sm" onclick="openProject('${p.id}')">View Details →</button>
+                </div>
+              </div>
+            `;
+          }
+        }).join('');
       }
     }
     
@@ -1127,21 +1225,46 @@
     };
     
     function renderDrafts(projects) {
-      const drafts = projects.filter(p=> p.status === 'review');
+      const drafts = projects.filter(p=> p.status === 'review' || (p.status === 'done' && p.deliveryUrl));
       if(!drafts.length) {
         document.getElementById('draftsList').innerHTML = '<div style="color:var(--t2);">No drafts pending approval.</div>';
         return;
       }
-      document.getElementById('draftsList').innerHTML = drafts.map(p=>`
-        <div style="margin-bottom: 24px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r);">
-          <div style="font-weight:600; margin-bottom:12px;">${p.title}</div>
-          ${p.draftUrl ? `<a href="${p.draftUrl}" target="_blank" class="btn-gold btn-sm" style="display:inline-block; margin-bottom:12px;">Review Draft Video ↗</a>` : ''}
-          <div style="display:flex; gap:12px;">
-            <button class="btn-gold" onclick="approveDraft('${p.id}')">✅ Approve Final</button>
-            <button class="btn-outline" onclick="showSection('revisions')">🔄 Request Changes</button>
+      document.getElementById('draftsList').innerHTML = drafts.map(p=> {
+        const isPaid = p.invoicePaid || (p.advancePaid && p.balancePaid);
+        const bal = window.getProjectBalanceDue(p);
+
+        if (p.status === 'done' && p.deliveryUrl) {
+          if (isPaid) {
+            return `
+              <div style="margin-bottom: 20px; padding: 16px; border: 1px solid var(--gold-border); background: rgba(40,200,64,0.05); border-radius: var(--r);">
+                <div style="font-weight:600; margin-bottom:8px;">${p.title}</div>
+                <div style="font-size:0.82rem;color:var(--green);margin-bottom:10px;">✅ Approved &amp; Paid in Full!</div>
+                <a href="${window.formatExternalUrl(p.deliveryUrl)}" target="_blank" class="btn-gold btn-sm">🎬 Open Final 4K Delivery ↗</a>
+              </div>
+            `;
+          } else {
+            return `
+              <div style="margin-bottom: 20px; padding: 16px; border: 1.5px solid rgba(255,95,87,0.35); background: rgba(255,95,87,0.05); border-radius: var(--r);">
+                <div style="font-weight:600; margin-bottom:8px;">${p.title}</div>
+                <div style="font-size:0.82rem;color:#FF5F57;margin-bottom:10px;">🔒 Final 4K Download Locked — Remaining Balance: ₹${bal.toLocaleString()}</div>
+                <button class="btn-gold btn-sm" onclick="window.openBalancePayModal('${p.id}')">💳 Pay Remaining Balance via UPI</button>
+              </div>
+            `;
+          }
+        }
+
+        return `
+          <div style="margin-bottom: 24px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r);">
+            <div style="font-weight:600; margin-bottom:12px;">${p.title}</div>
+            ${p.draftUrl ? `<a href="${window.formatExternalUrl(p.draftUrl)}" target="_blank" class="btn-gold btn-sm" style="display:inline-block; margin-bottom:12px;">Review Draft Video ↗</a>` : ''}
+            <div style="display:flex; gap:12px;">
+              <button class="btn-gold" onclick="approveDraft('${p.id}')">✅ Approve Final</button>
+              <button class="btn-outline" onclick="showSection('revisions')">🔄 Request Changes</button>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
     
     window.approveDraft = async (pid) => {
@@ -1669,15 +1792,36 @@
         if (isFullyPaid) {
           if (downloadBtn) {
             downloadBtn.style.display = 'inline-flex';
-            downloadBtn.href = formatExternalUrl(currentProject.deliveryUrl);
+            downloadBtn.href = window.formatExternalUrl(currentProject.deliveryUrl);
           }
           if (lockedWrap) lockedWrap.style.display = 'none';
         } else {
           if (downloadBtn) downloadBtn.style.display = 'none';
           if (lockedWrap) {
             lockedWrap.style.display = 'block';
-            var balDue = currentProject.balanceRequired || Math.round((currentProject.totalAmount||(currentProject.invoiceAmount||0)*1.18) * 0.5);
-            document.getElementById('txtDeliveryBalAmount') && (document.getElementById('txtDeliveryBalAmount').textContent = '₹' + balDue.toLocaleString());
+            const balDue = window.getProjectBalanceDue(currentProject);
+            const balAmountEl = document.getElementById('txtDeliveryBalAmount');
+            if (balAmountEl) balAmountEl.textContent = '₹' + balDue.toLocaleString();
+
+            // Set up dynamic QR code image in the locked wrap
+            const qrImg = document.getElementById('detailBalQrImg');
+            if (qrImg) {
+              const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Editzaar&am=${balDue}&cu=INR&tn=${encodeURIComponent('Balance for ' + (currentProject.title||'Video Edit').substring(0,25))}`;
+              qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
+            }
+
+            // Check if UTR was already submitted and under verification
+            const pendingBox = document.getElementById('detailBalPendingBox');
+            const reviewBox = document.getElementById('detailBalUnderReviewBox');
+            const reviewUtr = document.getElementById('txtDetailSubmittedUtr');
+            if (currentProject.balanceStatus === 'under_verification' && currentProject.balanceTxnId) {
+              if (pendingBox) pendingBox.style.display = 'none';
+              if (reviewBox) reviewBox.style.display = 'block';
+              if (reviewUtr) reviewUtr.textContent = currentProject.balanceTxnId;
+            } else {
+              if (pendingBox) pendingBox.style.display = 'block';
+              if (reviewBox) reviewBox.style.display = 'none';
+            }
           }
         }
       } else {
@@ -1911,7 +2055,146 @@
     }
 
     const sections=['home','projects','tracking','chat','files','revisions','drafts','payments','invoices','notifications','calendar','actions','credits','history','settings','support','detail'];
-    function showSection(name){
+    
+        // ── MODAL HELPERS ──
+    window.openModal = function(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    };
+    window.closeModal = function(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    };
+
+    // ── UNIVERSAL FORMAT EXTERNAL URL ──
+    window.formatExternalUrl = function(url) {
+      if (!url) return '';
+      url = url.trim();
+      if (!/^https?:\/\//i.test(url)) {
+        return 'https://' + url;
+      }
+      return url;
+    };
+
+    // ── UNIVERSAL PROJECT BALANCE CALCULATOR ──
+    window.getProjectBalanceDue = function(p) {
+      if (!p) return 0;
+      if (p.invoicePaid || (p.advancePaid && p.balancePaid)) return 0;
+      if (p.balanceRequired !== undefined && p.balanceRequired > 0) return p.balanceRequired;
+      const total = p.totalAmount || Math.round((p.invoiceAmount || 0) * 1.18);
+      const adv = p.advanceRequired || Math.round(total * 0.5);
+      return Math.max(0, total - (p.advancePaid ? adv : 0));
+    };
+
+    // Active project ID for remaining balance payment
+    let _activeBalancePid = null;
+    let _activeBalanceAmount = 0;
+
+    // Open Remaining Balance Payment Modal with dynamic UPI QR code
+    window.openBalancePayModal = function(pid) {
+      const targetPid = pid || (currentProject ? currentProject.id : null);
+      if (!targetPid) return;
+      const proj = projects.find(p => p.id === targetPid) || currentProject;
+      if (!proj) return;
+
+      _activeBalancePid = targetPid;
+      const balDue = window.getProjectBalanceDue(proj);
+      _activeBalanceAmount = balDue;
+
+      const titleEl = document.getElementById('txtBalModalProjTitle');
+      if (titleEl) titleEl.textContent = proj.title || 'Project';
+
+      const amtEl = document.getElementById('txtBalModalAmount');
+      if (amtEl) amtEl.textContent = '₹' + balDue.toLocaleString();
+
+      // Generate dynamic UPI payment URL and QR code
+      const qrImg = document.getElementById('qrBalModalImg');
+      if (qrImg) {
+        const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Editzaar&am=${balDue}&cu=INR&tn=${encodeURIComponent('Balance for ' + (proj.title||'Video Edit').substring(0,25))}`;
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+      }
+
+      const utrInp = document.getElementById('balModalUtrInp');
+      if (utrInp) utrInp.value = '';
+
+      openModal('modalPayBalance');
+    };
+
+    // Submit Balance Payment Proof (UTR) from Modal
+    window.submitBalanceUtrProof = async function() {
+      if (!_activeBalancePid) {
+        showToast('No project selected for payment.', 'error');
+        return;
+      }
+      const utr = (document.getElementById('balModalUtrInp')?.value || '').trim();
+      if (!utr) {
+        showToast('Please enter the 12-digit UPI / Bank Transaction ID (UTR).', 'error');
+        return;
+      }
+      if (utr.length < 6) {
+        showToast('Please enter a valid Transaction Reference number.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitBalanceUtr');
+      if (btn) { btn.disabled = true; btn.textContent = 'Submitting Proof... ⏳'; }
+
+      try {
+        await updateDoc(doc(db, 'projects', _activeBalancePid), {
+          balancePaidAmount: _activeBalanceAmount,
+          balanceTxnId: utr,
+          balanceStatus: 'under_verification',
+          balanceSubmittedAt: serverTimestamp()
+        });
+
+        // Optimistic local update
+        const p = projects.find(x => x.id === _activeBalancePid);
+        if (p) {
+          p.balanceTxnId = utr;
+          p.balanceStatus = 'under_verification';
+          p.balancePaidAmount = _activeBalanceAmount;
+        }
+        if (currentProject && currentProject.id === _activeBalancePid) {
+          currentProject.balanceTxnId = utr;
+          currentProject.balanceStatus = 'under_verification';
+          currentProject.balancePaidAmount = _activeBalanceAmount;
+        }
+
+        closeModal('modalPayBalance');
+        showToast('Remaining balance payment submitted! Admin will verify and unlock deliverables immediately. 🚀✅', 'success');
+
+        // Refresh UI
+        if (currentProject && currentProject.id === _activeBalancePid) {
+          window.openProject(_activeBalancePid);
+        }
+        renderProjects(projects);
+        renderFiles(projects);
+        renderPayments(projects);
+      } catch(err) {
+        console.error('Error submitting balance:', err);
+        showToast('Error submitting balance proof: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Submit Balance Proof & Unlock Files →'; }
+      }
+    };
+
+    // Submit Balance Payment Proof (UTR) directly from detail box
+    window.submitDetailBalUtr = async function() {
+      if (!currentProject) return;
+      const utr = (document.getElementById('detailBalUtrInp')?.value || '').trim();
+      if (!utr) {
+        showToast('Please enter the 12-digit UTR from your bank app.', 'error');
+        return;
+      }
+      const balDue = window.getProjectBalanceDue(currentProject);
+      _activeBalancePid = currentProject.id;
+      _activeBalanceAmount = balDue;
+      const modalUtr = document.getElementById('balModalUtrInp');
+      if (modalUtr) modalUtr.value = utr;
+      await window.submitBalanceUtrProof();
+    };
+
+function showSection(name){
       sections.forEach(s=>{ 
         const el = document.getElementById('sec-'+s);
         if(el) el.style.display=s===name?'block':'none'; 
@@ -1927,7 +2210,7 @@
         'support': 'Support & Help', 'detail': 'Project Details'
       };
       const ttlEl = document.getElementById('topbarTitle');
-      if(ttlEl) ttlEl.innerHTML = name === 'home' || name === 'projects' ? 'Welcome, <em id="clientName">' + (currentUser ? currentUser.name : '…') + '</em> 👋' : titles[name] || 'Dashboard';
+      if(ttlEl) ttlEl.innerHTML = name === 'home' || name === 'projects' ? 'Welcome, <em id="clientNameDynamic">' + (currentUser ? currentUser.name : '…') + '</em> 👋' : titles[name] || 'Dashboard';
     }
     window.showSection=showSection;
     document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>{
@@ -2075,36 +2358,5 @@
       if (user) saveFcmToken(user.uid);
     });
   </script>
-  <!-- MODAL: PAY REMAINING BALANCE -->
-  <div class="modal-overlay" id="modalPayBalance">
-    <div class="modal-box" style="max-width: 480px;">
-      <button class="modal-close" data-close="modalPayBalance">✕</button>
-      <div class="modal-title">Pay Remaining <em>Project Balance</em></div>
-      <p style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;">Scan to pay the remaining 50% balance for <strong id="txtBalModalProjTitle" style="color:var(--t1);">this project</strong>.</p>
-      
-      <!-- Dynamic QR Box -->
-      <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
-        <img id="qrBalModalImg" src="" alt="UPI QR Code" style="width:180px;height:180px;display:block;margin:0 auto 10px;"/>
-        <div style="color:#000;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Scan with GPay, PhonePe, Paytm, BHIM</div>
-      </div>
-
-      <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="color:var(--t2);font-size:0.85rem;">Balance to Pay:</span>
-          <strong style="color:var(--gold);font-size:1.1rem;" id="txtBalModalAmount">₹0</strong>
-        </div>
-        <div style="font-size:0.75rem;color:var(--t3);">UPI ID: <strong>nbikram704@okhdfcbank</strong> (Bikram Nath)</div>
-      </div>
-
-      <div class="dash-form">
-        <div class="field">
-          <label>Enter 12-Digit UPI Reference (UTR) *</label>
-          <input type="text" id="balModalUtrInp" placeholder="e.g. 423589012345" style="text-transform:uppercase;"/>
-        </div>
-        <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnSubmitBalanceUtr" onclick="window.submitBalanceUtrProof()">Submit Balance Proof &amp; Unlock Files →</button>
-      </div>
-    </div>
-  </div>
-
-</body>
+  </body>
 </html>
