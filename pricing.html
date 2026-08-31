@@ -153,9 +153,13 @@
     .btn-gold-brand {
       background: var(--gold) !important; color: #000 !important;
       font-weight: 700 !important; border: none !important;
-      border-radius: 8px !important; padding: 14px 24px !important;
+      border-radius: 10px !important; padding: 14px 20px !important;
       cursor: pointer !important; transition: all 0.25s !important;
       box-shadow: 0 4px 20px rgba(255,184,0,0.3) !important;
+      text-align: center !important; font-size: 0.95rem !important;
+      line-height: 1.4 !important; white-space: normal !important;
+      word-break: normal !important; box-sizing: border-box !important;
+      display: flex !important; align-items: center !important; justify-content: center !important;
     }
     .btn-gold-brand:hover {
       background: var(--gold-light) !important; transform: translateY(-2px) !important;
@@ -557,7 +561,7 @@
         </div>
       </div>
 
-      <button class="btn-gold-brand" style="width:100%;margin-top:24px;justify-content:center;" id="btnConfirmCheckout">Confirm &amp; Submit Project Brief →</button>
+      <button class="btn-gold-brand" style="width:100%;margin-top:20px;justify-content:center;" id="btnConfirmCheckout">Submit Project Brief →</button>
     </div>
   </div>
     <!-- FINAL CTA -->
@@ -857,7 +861,7 @@
         if (paypalWrap) paypalWrap.style.display = 'block';
         if (btnConfirm) {
           btnConfirm.style.display = 'flex';
-          btnConfirm.innerHTML = `💬 Submit Project Brief via WhatsApp ($${currentDeposit} Deposit) →`;
+          btnConfirm.innerHTML = `Submit Project Brief →`;
         }
         const txtDisp = document.getElementById('txtPaypalAdvanceDisplay');
         if (txtDisp) txtDisp.textContent = '$' + currentDeposit;
@@ -868,7 +872,7 @@
         if (paypalWrap) paypalWrap.style.display = 'none';
         if (btnConfirm) {
           btnConfirm.style.display = 'flex';
-          btnConfirm.innerHTML = `Confirm &amp; Submit Project Brief (₹${currentDeposit.toLocaleString()}) →`;
+          btnConfirm.innerHTML = `Submit Project Brief →`;
         }
 
         const upiAdvText = document.getElementById('chkAdvancePayText');
