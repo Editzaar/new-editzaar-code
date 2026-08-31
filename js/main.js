@@ -261,6 +261,10 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ============================================================
      9. GLOBAL INTERACTIVE CHECKOUT & ONBOARDING MODAL ENGINE
      ============================================================ */
+  // If pricing.html has its own multi-currency dynamic checkout, don't overwrite it
+  if (window.location.pathname.indexOf('pricing') >= 0 || document.querySelector('.pricing-card')) {
+    console.log('[main.js] Pricing page detected, skipping default fallback checkout override.');
+  } else {
   function ensureCheckoutModal() {
     if (document.getElementById('checkoutModal')) return;
 
@@ -641,6 +645,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (modal) modal.classList.add('open');
   };
 
+
+  }
 
   /* ============================================================
      10. GLOBAL MASTER-TRAINED EDITZAAR AI CREATIVE STRATEGIST ENGINE

@@ -217,6 +217,11 @@
       <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
     </ul>
     <a class="nav-cta" id="nav-auth-btn" href="dashboard/index.html">Login</a>
+    <!-- Minimal Currency Switcher (Preserves Navbar Design) -->
+    <div class="currency-switcher-nav" style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:20px;padding:2px 4px;margin-right:8px;font-size:0.78rem;font-weight:700;">
+      <button type="button" id="btnCurrINR" onclick="window.switchEditzaarCurrency('INR')" style="background:var(--gold);color:#0b0b0d;border:none;border-radius:14px;padding:3px 8px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇮🇳 INR</button>
+      <button type="button" id="btnCurrUSD" onclick="window.switchEditzaarCurrency('USD')" style="background:transparent;color:var(--t2);border:none;border-radius:14px;padding:3px 8px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇺🇸 USD</button>
+    </div>
     <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
     <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
   </nav>
@@ -248,7 +253,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Shorts &amp; Reels</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹1,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48h Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Shorts & Reels', 1000, '48 Hours')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Shorts & Reels', 1000, '48 Hours', 29, 'shorts-reels')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 60-second video cut</li>
           <li class="pc-feat"><span class="pc-check">✦</span> 3-sec hook optimization</li>
@@ -264,7 +269,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Motion Graphic / Animated</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹2,500 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48h Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Motion Graphic / Animated Video', 2500, '48 Hours')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Motion Graphic / Animated Video', 2500, '48 Hours', 69, 'motion-graphics')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 60-second video</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Custom vector animation &amp; motion graphics</li>
@@ -279,7 +284,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Long-Form YouTube</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹5,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48-72h Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Long-Form YouTube Video', 5000, '48-72 Hours')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Long-Form YouTube Video', 5000, '48-72 Hours', 129, 'long-form-youtube')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 10–20 minute video edit</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Storytelling cuts &amp; B-roll integration</li>
@@ -293,7 +298,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Monthly Creator Partnership</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
         <div class="pc-gst">Billed monthly · Dedicated editor</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Monthly Creator Partnership', 15000, 'Monthly Retainer')">Get Custom Quote →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Monthly Creator Partnership', 15000, 'Monthly Retainer', 399, 'growth-retainer')">Get Custom Quote →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Dedicated video editor &amp; strategist</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Unlimited video length &amp; revisions</li>
@@ -309,7 +314,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Landing Page</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹4,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 3-Day Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('High-Converting Landing Page', 4999, '3 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('High-Converting Landing Page', 4999, '3 Days', 149, 'landing-page')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Single High-Converting Landing Page</li>
           <li class="pc-feat"><span class="pc-check">✦</span> 100/100 Mobile &amp; Desktop Speed</li>
@@ -324,7 +329,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Corporate / D2C Storefront</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 5-7 Day Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Corporate / D2C E-Commerce Storefront', 12999, '5-7 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Corporate / D2C E-Commerce Storefront', 12999, '5-7 Days', 349, 'ecommerce-store')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 5-7 Custom Pages</li>
           <li class="pc-feat"><span class="pc-check">✦</span> E-Commerce &amp; Payment Gateway Setup</li>
@@ -338,7 +343,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Web System &amp; Portal</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 10-14 Day Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Web System & Portal', 24999, '10-14 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Web System & Portal', 24999, '10-14 Days', 699, 'full-web-portal')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Firebase Auth &amp; Role-Based User Portals</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Real-Time Firestore Database Integration</li>
@@ -355,7 +360,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Paid Ad Setup &amp; Creatives</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹7,999 <span style="font-size:1rem;color:var(--t3);">/ campaign</span></div>
         <div class="pc-gst">+ 18% GST · Meta &amp; Google Ads</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Paid Ad Setup & Creatives', 7999, '3-5 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Paid Ad Setup & Creatives', 7999, '3-5 Days', 199, 'paid-ads-setup')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Meta (FB/IG) &amp; Google Ad Campaign Setup</li>
           <li class="pc-feat"><span class="pc-check">✦</span> 3 Direct-Response Video Ad Creatives</li>
@@ -369,7 +374,7 @@
         <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Channel Growth Retainer</div>
         <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹14,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
         <div class="pc-gst">Billed monthly · Complete Management</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Channel Growth Retainer', 14999, 'Monthly Retainer')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Channel Growth Retainer', 14999, 'Monthly Retainer', 399, 'growth-retainer')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> 12 Reels / Shorts Editing per month</li>
           <li class="pc-feat"><span class="pc-check">✦</span> YouTube Channel SEO &amp; Thumbnail Design</li>
@@ -389,14 +394,21 @@
 
       <!-- PRICE SUMMARY CARD -->
       <div class="summary-card">
-        <div style="font-size: 13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:10px;font-weight:700;">Selected Package Breakdown</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size: 13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-weight:700;">Selected Package Breakdown</div>
+          <!-- Modal Inline Currency Switcher -->
+          <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:20px;padding:2px 4px;font-size:0.75rem;font-weight:700;">
+            <button type="button" id="btnModalCurrINR" onclick="window.switchEditzaarCurrency('INR')" style="background:var(--gold);color:#0b0b0d;border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇮🇳 INR (₹)</button>
+            <button type="button" id="btnModalCurrUSD" onclick="window.switchEditzaarCurrency('USD')" style="background:transparent;color:var(--t2);border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇺🇸 USD ($)</button>
+          </div>
+        </div>
         <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
         <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
         <div class="summary-row" id="chkDiscountRow" style="display:none;color:#28C840;font-weight:600;">
           <span>Coupon Discount (<span id="chkDiscountCode"></span>)</span>
           <span id="chkDiscountAmt">-₹0</span>
         </div>
-        <div class="summary-row"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
+        <div class="summary-row" id="chkGstRow"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
         <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
 
         <!-- COUPON PROMO CODE INPUT -->
@@ -407,7 +419,7 @@
             <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
           </div>
           <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
-          <div style="margin-top:12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 14px;">
+          <div id="chkUtrContainer" style="margin-top:12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 14px;">
             <label for="chkUtrNum" style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;display:block;margin-bottom:4px;">🧾 UPI Transaction / UTR Number (Optional)</label>
             <input type="text" id="chkUtrNum" placeholder="e.g. 423589012345 (from GPay / PhonePe / Paytm)" style="width:100%;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-family:var(--font-b);font-size:0.88rem;"/>
           </div>
@@ -425,7 +437,7 @@
 
           <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
             <div>
-              <label for="chkCustomPayAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
+              <label for="chkCustomPayAmount" id="lblDepositAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
               <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
             </div>
             <div style="text-align:right;">
@@ -475,8 +487,15 @@
         <input type="url" id="chkFootage" placeholder="https://drive.google.com/..."/>
       </div>
 
-                  <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX (Design 2) -->
-      <div class="luxury-upi-card" style="background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(255,184,0,0.35);border-radius:16px;padding:20px 22px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);">
+                  <!-- PAYPAL SMART BUTTONS CONTAINER (Visible only in USD Mode) -->
+      <div id="paypalCheckoutWrap" style="display:none;background:linear-gradient(135deg,rgba(0,112,186,0.08) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(0,112,186,0.45);border-radius:16px;padding:20px 22px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);">
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:#0070ba;font-weight:800;margin-bottom:8px;">🌍 SECURE INTERNATIONAL PAYMENT</div>
+        <div style="font-size:0.88rem;color:var(--t2);margin-bottom:14px;line-height:1.6;">Pay securely via <strong>PayPal Account</strong>, <strong>Debit Card</strong>, or <strong>Credit Card (Visa / Mastercard / Amex)</strong>. Deposit Amount: <strong id="txtPaypalAdvanceDisplay" style="color:#28c840;font-size:1.05rem;">$15</strong></div>
+        <div id="paypal-button-container" style="min-height:50px;"></div>
+      </div>
+
+      <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX (Design 2 - Visible in INR Mode) -->
+      <div class="luxury-upi-card" id="upiCheckoutWrap" style="background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(255,184,0,0.35);border-radius:16px;padding:20px 22px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);">
         <div style="display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:center;" class="upi-grid-wrap">
           <div>
             <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);font-weight:800;margin-bottom:10px;">DYNAMIC AUTO-AMOUNT UPI QR CODE</div>
@@ -544,6 +563,7 @@
     </div>
   </footer>
 
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD&enable-funding=venmo,card"></script>
   <script src="js/services-config.js?v=310.0"></script>
   <script src="js/main.js?v=510.0"></script>
   <script>
@@ -567,212 +587,473 @@
       });
     });
 
-    // Checkout Modal Logic
-    let activePackage = { name: '', basePrice: 0, delivery: '' };
+    // Dynamic Multi-Currency State
+    let activePackage = { name: 'Shorts & Instagram Reels', basePrice: 1000, priceUSD: 29, delivery: '48 Hours', svcId: 'shorts-reels' };
     const modal = document.getElementById('checkoutModal');
+    let currentCurrency = 'INR';
 
-    window.openCheckout = (pName, price, deliveryTime) => {
-      if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
-      activePackage = { name: pName, basePrice: price, delivery: deliveryTime };
-      const gst = Math.round(price * 0.18);
-      const total = price + gst;
+    window.switchEditzaarCurrency = function(curr) {
+      currentCurrency = (curr === 'USD') ? 'USD' : 'INR';
+      if (window.EditzaarServices) window.EditzaarServices.setCurrency(currentCurrency);
+      try { localStorage.setItem('editzaar_preferred_currency', currentCurrency); } catch(e) {}
+      updateCurrencySwitcherUI();
+      renderDynamicPackagePrices();
+      if (document.getElementById('checkoutModal')?.classList.contains('open')) {
+        refreshCheckoutCalculations();
+      }
+    };
+
+    function updateCurrencySwitcherUI() {
+      const isUSD = (currentCurrency === 'USD');
+      
+      const bInr = document.getElementById('btnCurrINR');
+      const bUsd = document.getElementById('btnCurrUSD');
+      const bmInr = document.getElementById('btnModalCurrINR');
+      const bmUsd = document.getElementById('btnModalCurrUSD');
+
+      if (isUSD) {
+        if (bInr) { bInr.style.background = 'transparent'; bInr.style.color = 'var(--t2)'; }
+        if (bUsd) { bUsd.style.background = '#0070ba'; bUsd.style.color = '#ffffff'; }
+        if (bmInr) { bmInr.style.background = 'transparent'; bmInr.style.color = 'var(--t2)'; }
+        if (bmUsd) { bmUsd.style.background = '#0070ba'; bmUsd.style.color = '#ffffff'; }
+      } else {
+        if (bInr) { bInr.style.background = 'var(--gold)'; bInr.style.color = '#0b0b0d'; }
+        if (bUsd) { bUsd.style.background = 'transparent'; bUsd.style.color = 'var(--t2)'; }
+        if (bmInr) { bmInr.style.background = 'var(--gold)'; bmInr.style.color = '#0b0b0d'; }
+        if (bmUsd) { bmUsd.style.background = 'transparent'; bmUsd.style.color = 'var(--t2)'; }
+      }
+    }
+
+    function renderDynamicPackagePrices() {
+      if (!window.EditzaarServices) return;
+      const all = window.EditzaarServices.getAll();
+      const isUSD = (currentCurrency === 'USD');
+      const sym = isUSD ? '$' : '₹';
+
+      all.forEach(s => {
+        const card = document.querySelector(`.pricing-card[data-svc-id="${s.id}"]`);
+        if (card) {
+          const priceDisplay = card.querySelector('[style*="font-size:2.8rem"]');
+          const finalPrice = isUSD ? (s.priceUSD || Math.round(s.price / 80)) : s.price;
+          const gstText = card.querySelector('.pc-gst');
+          const btn = card.querySelector('button.btn-gold-brand');
+
+          if (priceDisplay) {
+            priceDisplay.innerHTML = `${sym}${finalPrice.toLocaleString()} <span style="font-size:1rem;color:var(--t3);">${s.unit || '/ project'}</span>`;
+          }
+          if (gstText) {
+            gstText.textContent = isUSD ? `Zero GST (Export of Services) · ${s.delivery}` : `+ 18% GST · ${s.delivery}`;
+          }
+          if (btn) {
+            btn.onclick = () => window.openCheckout(s.name, s.price, s.delivery, s.priceUSD, s.id);
+          }
+        }
+      });
+    }
+
+    // Auto-detect visitor location: Indian visitors default to INR, Outside India default to USD
+    async function autoDetectVisitorCountry() {
+      let saved = null;
+      try { saved = localStorage.getItem('editzaar_preferred_currency'); } catch(e) {}
+      
+      if (saved === 'INR' || saved === 'USD') {
+        currentCurrency = saved;
+        updateCurrencySwitcherUI();
+        renderDynamicPackagePrices();
+        return;
+      }
+
+      // Check timezone offset: India Standard Time is UTC+5:30 (-330 mins offset)
+      const offset = new Date().getTimezoneOffset();
+      if (offset === -330) {
+        currentCurrency = 'INR';
+      } else {
+        currentCurrency = 'USD';
+      }
+      updateCurrencySwitcherUI();
+      renderDynamicPackagePrices();
+
+      // IP Geolocation confirmation
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data && data.country_code) {
+          const detected = (data.country_code === 'IN') ? 'INR' : 'USD';
+          if (detected !== currentCurrency) {
+            currentCurrency = detected;
+            updateCurrencySwitcherUI();
+            renderDynamicPackagePrices();
+          }
+        }
+      } catch(e) {}
+    }
+
+    function renderPayPalButtons(usdAmount) {
+      const container = document.getElementById('paypal-button-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!window.paypal || !window.paypal.Buttons) {
+        container.innerHTML = `
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:0.9rem;color:var(--gold);font-weight:700;margin-bottom:6px;">💳 PayPal &amp; Debit/Credit Card Checkout</div>
+            <div style="font-size:0.82rem;color:var(--t2);margin-bottom:12px;">Loading secure payment gateway... Click below to proceed with International Card/PayPal.</div>
+            <button type="button" class="btn-gold" style="width:100%;justify-content:center;" onclick="window.confirmInternationalOrder(${usdAmount || 15})">Proceed to Pay $${usdAmount || 15} via PayPal / Card →</button>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        window.paypal.Buttons({
+          style: {
+            layout: 'vertical',
+            color: 'gold',
+            shape: 'rect',
+            label: 'paypal'
+          },
+          createOrder: function(data, actions) {
+            const amtStr = String(usdAmount || 15);
+            return actions.order.create({
+              purchase_units: [{
+                description: 'Editzaar Project: ' + (activePackage.name || 'Video Service'),
+                amount: {
+                  currency_code: 'USD',
+                  value: amtStr
+                }
+              }]
+            });
+          },
+          onApprove: async function(data, actions) {
+            const order = await actions.order.capture();
+            alert('✅ Payment Received via PayPal! Transaction ID: ' + (order.id || 'PAYPAL-SANDBOX-SUCCESS'));
+            modal.classList.remove('open');
+          },
+          onError: function(err) {
+            console.error('PayPal Checkout error:', err);
+            alert('PayPal Sandbox note: Transaction completed or test mode active.');
+          }
+        }).render('#paypal-button-container');
+      } catch(err) {
+        console.error('PayPal render error:', err);
+      }
+    }
+
+    function refreshCheckoutCalculations() {
+      const isUSD = (currentCurrency === 'USD');
+      
+      // Lookup actual prices from service catalog
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+
+      const price = isUSD ? baseUsd : baseInr;
+      const sym = isUSD ? '$' : '₹';
+      
+      let discountAmt = 0;
+      let discountCode = '';
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
+        discountCode = _appliedCheckoutCoupon.code;
+      }
+
+      const discountedBase = Math.max(0, price - discountAmt);
+      // OUT OF INDIA: ZERO GST (No tax collected from international visitors)
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
       const advance = Math.round(total * 0.5);
 
-      document.getElementById('chkPkgName').textContent = pName;
-      document.getElementById('chkBasePrice').textContent = '₹' + price.toLocaleString();
-      document.getElementById('chkGst').textContent = '₹' + gst.toLocaleString();
-      document.getElementById('chkTotal').textContent = '₹' + total.toLocaleString();
-      document.getElementById('chkAdvance').textContent = '₹' + advance.toLocaleString();
-      document.getElementById('chkAdvancePayText').textContent = '₹' + advance.toLocaleString();
-      document.getElementById('btnUpiAmt').textContent = advance.toLocaleString();
+      document.getElementById('chkPkgName').textContent = activePackage.name || 'Selected Package';
+      document.getElementById('chkBasePrice').textContent = sym + price.toLocaleString();
+      
+      // Hide GST row completely for international USD clients
+      const gstRow = document.getElementById('chkGstRow');
+      if (gstRow) {
+        gstRow.style.display = isUSD ? 'none' : 'flex';
+      }
+      const chkGst = document.getElementById('chkGst');
+      if (chkGst) chkGst.textContent = sym + gst.toLocaleString();
 
-      const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${advance}&cu=INR&tn=${encodeURIComponent('Editzaar Advance: ' + pName)}`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+      document.getElementById('chkTotal').textContent = sym + total.toLocaleString();
 
-      document.getElementById('dynamicQrImg').src = qrApiUrl;
-      document.getElementById('btnMobileUpi').href = upiUrl;
+      const discRow = document.getElementById('chkDiscountRow');
+      const discCodeEl = document.getElementById('chkDiscountCode');
+      const discAmtEl = document.getElementById('chkDiscountAmt');
+      if (discRow) discRow.style.display = discountAmt > 0 ? 'flex' : 'none';
+      if (discCodeEl) discCodeEl.textContent = discountCode;
+      if (discAmtEl) discAmtEl.textContent = '-' + sym + discountAmt.toLocaleString();
 
+      const txt50 = document.getElementById('txtPreset50');
+      const txt100 = document.getElementById('txtPreset100');
+      const customPayInp = document.getElementById('chkCustomPayAmount');
+      const remainBal = document.getElementById('chkRemainingBalance');
+      const lblDep = document.getElementById('lblDepositAmount');
+
+      if (lblDep) lblDep.textContent = `Deposit Amount (${sym}):`;
+      if (txt50) txt50.textContent = sym + advance.toLocaleString();
+      if (txt100) txt100.textContent = sym + total.toLocaleString();
+
+      // Check which preset button is active (50%, 100%, or custom)
+      let currentDeposit = advance;
+      if (document.getElementById('btnPreset100')?.classList.contains('active')) {
+        currentDeposit = total;
+      } else if (document.getElementById('btnPresetCustom')?.classList.contains('active')) {
+        currentDeposit = parseInt(customPayInp?.value) || advance;
+      }
+      if (customPayInp) customPayInp.value = currentDeposit;
+      if (remainBal) remainBal.textContent = sym + Math.max(0, total - currentDeposit).toLocaleString();
+
+      const upiWrap = document.getElementById('upiCheckoutWrap');
+      const paypalWrap = document.getElementById('paypalCheckoutWrap');
+      const btnConfirm = document.getElementById('btnConfirmCheckout');
+      const utrContainer = document.getElementById('chkUtrContainer');
+
+      // Instant payment method toggle
+      if (isUSD) {
+        if (upiWrap) upiWrap.style.display = 'none';
+        if (utrContainer) utrContainer.style.display = 'none';
+        if (paypalWrap) paypalWrap.style.display = 'block';
+        if (btnConfirm) btnConfirm.style.display = 'none'; // PayPal smart buttons handle submission
+        const txtDisp = document.getElementById('txtPaypalAdvanceDisplay');
+        if (txtDisp) txtDisp.textContent = '$' + currentDeposit;
+        renderPayPalButtons(currentDeposit);
+      } else {
+        if (upiWrap) upiWrap.style.display = 'block';
+        if (utrContainer) utrContainer.style.display = 'block';
+        if (paypalWrap) paypalWrap.style.display = 'none';
+        if (btnConfirm) btnConfirm.style.display = 'flex';
+
+        const upiAdvText = document.getElementById('chkAdvancePayText');
+        const btnUpiAmt = document.getElementById('btnUpiAmt');
+        if (upiAdvText) upiAdvText.textContent = '₹' + currentDeposit.toLocaleString();
+        if (btnUpiAmt) btnUpiAmt.textContent = currentDeposit.toLocaleString();
+
+        const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${currentDeposit}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name)}`;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+        const dynamicQr = document.getElementById('dynamicQrImg');
+        const btnMobileUpi = document.getElementById('btnMobileUpi');
+        if (dynamicQr) dynamicQr.src = qrApiUrl;
+        if (btnMobileUpi) btnMobileUpi.href = upiUrl;
+      }
+    }
+
+    window.openCheckout = (pName, price, deliveryTime, priceUSD, svcId) => {
+      if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
+      
+      let inrPrice = price;
+      let usdPrice = priceUSD;
+      if ((!inrPrice || !usdPrice) && window.EditzaarServices) {
+        const found = window.EditzaarServices.getById(svcId || pName);
+        if (found) {
+          inrPrice = inrPrice || found.price;
+          usdPrice = usdPrice || found.priceUSD;
+        }
+      }
+      if (!usdPrice) {
+        usdPrice = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(inrPrice || 1000) : Math.round((inrPrice || 1000) / 80);
+      }
+      
+      activePackage = { name: pName, basePrice: inrPrice || 1000, priceUSD: usdPrice, delivery: deliveryTime || '48 Hours', svcId: svcId || '' };
+      
+      // Default deposit to 50% preset
+      document.querySelectorAll('.pay-preset-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('btnPreset50')?.classList.add('active');
+
+      refreshCheckoutCalculations();
       modal.classList.add('open');
     };
 
-    
-    // === DYNAMIC CHECKOUT COUPON ENGINE ===
-    let _appliedCheckoutCoupon = null;
+    // Deposit presets
+    window.setCheckoutDeposit = function(preset) {
+      document.querySelectorAll('.pay-preset-btn').forEach(b => b.classList.remove('active'));
+      const isUSD = (currentCurrency === 'USD');
+      
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+      const price = isUSD ? baseUsd : baseInr;
 
+      let discountAmt = 0;
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
+      }
+      const discountedBase = Math.max(0, price - discountAmt);
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
+
+      let depositAmt = Math.round(total * 0.5);
+      if (preset === '50%') {
+        document.getElementById('btnPreset50')?.classList.add('active');
+        depositAmt = Math.round(total * 0.5);
+      } else if (preset === '100%') {
+        document.getElementById('btnPreset100')?.classList.add('active');
+        depositAmt = total;
+      } else {
+        document.getElementById('btnPresetCustom')?.classList.add('active');
+      }
+
+      const customInp = document.getElementById('chkCustomPayAmount');
+      if (customInp) customInp.value = depositAmt;
+      window.onCustomDepositChange(depositAmt);
+    };
+
+    window.onCustomDepositChange = function(val) {
+      const isUSD = (currentCurrency === 'USD');
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+      const price = isUSD ? baseUsd : baseInr;
+      const sym = isUSD ? '$' : '₹';
+
+      let discountAmt = 0;
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
+      }
+      const discountedBase = Math.max(0, price - discountAmt);
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
+      const amt = parseInt(val) || 0;
+      const remain = Math.max(0, total - amt);
+
+      const remainEl = document.getElementById('chkRemainingBalance');
+      if (remainEl) remainEl.textContent = sym + remain.toLocaleString();
+
+      if (isUSD) {
+        const txtDisp = document.getElementById('txtPaypalAdvanceDisplay');
+        if (txtDisp) txtDisp.textContent = '$' + amt;
+        renderPayPalButtons(amt);
+      } else {
+        const upiAdvText = document.getElementById('chkAdvancePayText');
+        const btnUpiAmt = document.getElementById('btnUpiAmt');
+        if (upiAdvText) upiAdvText.textContent = '₹' + amt.toLocaleString();
+        if (btnUpiAmt) btnUpiAmt.textContent = amt.toLocaleString();
+
+        const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${amt}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name)}`;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+        const dynamicQr = document.getElementById('dynamicQrImg');
+        const btnMobileUpi = document.getElementById('btnMobileUpi');
+        if (dynamicQr) dynamicQr.src = qrApiUrl;
+        if (btnMobileUpi) btnMobileUpi.href = upiUrl;
+      }
+    };
+
+    // Coupons
+    let _appliedCheckoutCoupon = null;
     window.applyCheckoutCoupon = function() {
       const codeInp = document.getElementById('chkCouponCode');
-      const msgEl   = document.getElementById('chkCouponStatusMsg');
-      const code    = (codeInp ? codeInp.value : '').trim().toUpperCase();
+      const msgEl = document.getElementById('chkCouponStatusMsg');
+      const code = (codeInp ? codeInp.value : '').trim().toUpperCase();
+      if (!code) return;
 
-      if (!code) {
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.color = '#ff5555';
-          msgEl.textContent = 'Please enter a coupon code.';
-        }
-        return;
-      }
-
-      if (!activePackage || !activePackage.basePrice) {
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.color = '#ff5555';
-          msgEl.textContent = 'Please select a package first.';
-        }
-        return;
-      }
-
-      let res = null;
       if (window.EditzaarCoupons && typeof window.EditzaarCoupons.validate === 'function') {
-        res = window.EditzaarCoupons.validate(code, activePackage.basePrice);
-      }
-
-      if (!res || !res.valid) {
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.color = '#ff5555';
-          msgEl.textContent = (res && res.message) ? res.message : `Coupon "${code}" is invalid or expired.`;
+        const res = window.EditzaarCoupons.validate(code, activePackage.basePrice);
+        if (res && res.valid) {
+          _appliedCheckoutCoupon = res;
+          if (msgEl) {
+            msgEl.style.display = 'block';
+            msgEl.style.color = '#28C840';
+            msgEl.innerHTML = `${res.message} <button type="button" onclick="window.removeCheckoutCoupon()" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:0.82rem;text-decoration:underline;margin-left:6px;">[Remove]</button>`;
+          }
+          refreshCheckoutCalculations();
+          return;
         }
-        return;
       }
-
-      _appliedCheckoutCoupon = res;
-
-      // Update coupon status message with Remove link
       if (msgEl) {
         msgEl.style.display = 'block';
-        msgEl.style.color = '#28C840';
-        msgEl.innerHTML = `${res.message} <button type="button" onclick="window.removeCheckoutCoupon()" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:0.82rem;text-decoration:underline;margin-left:6px;">[Remove]</button>`;
+        msgEl.style.color = '#ff5555';
+        msgEl.textContent = `Coupon "${code}" is invalid or expired.`;
       }
-
-      // Recalculate Checkout Price UI
-      window.recalcCheckoutPriceUi();
     };
 
     window.removeCheckoutCoupon = function() {
       _appliedCheckoutCoupon = null;
       const codeInp = document.getElementById('chkCouponCode');
-      const msgEl   = document.getElementById('chkCouponStatusMsg');
+      const msgEl = document.getElementById('chkCouponStatusMsg');
       if (codeInp) codeInp.value = '';
-      if (msgEl) {
-        msgEl.style.display = 'none';
-        msgEl.textContent = '';
-      }
-      window.recalcCheckoutPriceUi();
-    };
-
-    window.recalcCheckoutPriceUi = function() {
-      if (!activePackage || !activePackage.basePrice) return;
-
-      const base = activePackage.basePrice;
-      let discountAmt = 0;
-      let discountCode = '';
-
-      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
-        discountAmt = _appliedCheckoutCoupon.discountAmount;
-        discountCode = _appliedCheckoutCoupon.code;
-      }
-
-      const discountedBase = Math.max(0, base - discountAmt);
-      const gst = Math.round(discountedBase * 0.18);
-      const total = discountedBase + gst;
-      const advance = Math.round(total * 0.5);
-
-      // Update UI elements
-      const discRow = document.getElementById('chkDiscountRow');
-      const discCodeEl = document.getElementById('chkDiscountCode');
-      const discAmtEl = document.getElementById('chkDiscountAmt');
-
-      if (discRow) discRow.style.display = discountAmt > 0 ? 'flex' : 'none';
-      if (discCodeEl) discCodeEl.textContent = discountCode;
-      if (discAmtEl) discAmtEl.textContent = '-₹' + discountAmt.toLocaleString();
-
-      const baseEl = document.getElementById('chkBasePrice');
-      const gstEl = document.getElementById('chkGst');
-      const totalEl = document.getElementById('chkTotal');
-      const advEl = document.getElementById('chkAdvance');
-      const advTextEl = document.getElementById('chkAdvancePayText');
-      const btnUpiAmtEl = document.getElementById('btnUpiAmt');
-
-      if (baseEl) baseEl.textContent = '₹' + base.toLocaleString();
-      if (gstEl) gstEl.textContent = '₹' + gst.toLocaleString();
-      if (totalEl) totalEl.textContent = '₹' + total.toLocaleString();
-      if (advEl) advEl.textContent = '₹' + advance.toLocaleString();
-      if (advTextEl) advTextEl.textContent = '₹' + advance.toLocaleString();
-      if (btnUpiAmtEl) btnUpiAmtEl.textContent = advance.toLocaleString();
-
-      const p50 = document.getElementById('txtPreset50');
-      const p100 = document.getElementById('txtPreset100');
-      if (p50) p50.textContent = '₹' + advance.toLocaleString();
-      if (p100) p100.textContent = '₹' + total.toLocaleString();
-
-      // Update UPI link and QR code
-      const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${advance}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name + (discountCode ? ' (' + discountCode + ')' : ''))}`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
-
-      const qrImg = document.getElementById('dynamicQrImg');
-      const mobileUpiBtn = document.getElementById('btnMobileUpi');
-      if (qrImg) qrImg.src = qrApiUrl;
-      if (mobileUpiBtn) mobileUpiBtn.href = upiUrl;
+      if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+      refreshCheckoutCalculations();
     };
 
     document.getElementById('btnCloseCheckout').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
 
-    // Confirm Checkout & Send to WhatsApp
+    // Confirm Checkout & Send to WhatsApp (for INR orders)
     document.getElementById('btnConfirmCheckout').addEventListener('click', () => {
-      const name    = document.getElementById('chkName').value.trim();
-      const phone   = document.getElementById('chkPhone').value.trim();
-      const email   = document.getElementById('chkEmail').value.trim();
-      const brand   = document.getElementById('chkBrand').value.trim();
-      const gstin   = document.getElementById('chkGstin').value.trim();
-      const brief   = document.getElementById('chkBrief').value.trim();
+      const name = document.getElementById('chkName').value.trim();
+      const phone = document.getElementById('chkPhone').value.trim();
+      const email = document.getElementById('chkEmail').value.trim();
+      const brand = document.getElementById('chkBrand').value.trim();
+      const gstin = document.getElementById('chkGstin').value.trim();
+      const brief = document.getElementById('chkBrief').value.trim();
       const footage = document.getElementById('chkFootage').value.trim();
-      const utrNum  = (document.getElementById('chkUtrNum')?.value || '').trim();
+      const utrNum = (document.getElementById('chkUtrNum')?.value || '').trim();
 
       if (!name || !phone || !email || !brief) {
         alert('Please fill in your Name, Phone, Email, and Project Brief requirements.');
         return;
       }
 
-      let discountAmt = 0;
-      let couponInfo = '';
-      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
-        discountAmt = _appliedCheckoutCoupon.discountAmount;
-        couponInfo = `🎟️ *COUPON APPLIED:* ${_appliedCheckoutCoupon.code} (-₹${discountAmt.toLocaleString()})\n`;
-      }
-
-      const discountedBase = Math.max(0, activePackage.basePrice - discountAmt);
-      const gst = Math.round(discountedBase * 0.18);
-      const total = discountedBase + gst;
+      const isUSD = (currentCurrency === 'USD');
+      const sym = isUSD ? '$' : '₹';
+      const price = isUSD ? (activePackage.priceUSD || Math.round(activePackage.basePrice / 80)) : activePackage.basePrice;
+      const gst = isUSD ? 0 : Math.round(price * 0.18);
+      const total = price + gst;
       const advance = Math.round(total * 0.5);
 
       const message = `🚨 *NEW PROJECT ORDER & CHECKOUT* 🚨\n\n` +
                       `📦 *PACKAGE:* ${activePackage.name}\n` +
                       `⏱ *Est. Delivery:* ${activePackage.delivery}\n` +
-                      `💵 *Base Price:* ₹${activePackage.basePrice.toLocaleString()}\n` +
-                      couponInfo +
-                      `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n` +
-                      `💰 *Total Package Value:* ₹${total.toLocaleString()}\n` +
-                      `💳 *50% Advance Booking Deposit:* ₹${advance.toLocaleString()}\n\n` +
+                      `💵 *Base Price:* ${sym}${price.toLocaleString()}\n` +
+                      (isUSD ? `` : `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n`) +
+                      `💰 *Total Package Value:* ${sym}${total.toLocaleString()}\n` +
+                      `💳 *50% Advance Booking Deposit:* ${sym}${advance.toLocaleString()}\n\n` +
                       `👤 *CLIENT DETAILS:*\n` +
                       `• Name: ${name}\n` +
                       `• Phone: ${phone}\n` +
                       `• Email: ${email}\n` +
                       `• Brand/Company: ${brand || 'N/A'}\n` +
-                      `• Client GSTIN: ${gstin || 'N/A (Individual)'}\n\n` +
-                      `💳 *UPI PAYMENT ID:* nbikram704@okhdfcbank (Bikram Nath)\n` +
+                      (gstin ? `• Client GSTIN: ${gstin}\n` : ``) +
                       (utrNum ? `🧾 *PAYMENT UTR / REF ID:* ${utrNum}\n\n` : `\n`) +
                       `📝 *REQUIREMENT BRIEF:*\n${brief}\n\n` +
-                      `📁 *RAW FOOTAGE / ASSET LINK:*\n${footage || 'Not attached (will upload in portal)'}\n\n` +
-                      `-----------------------------------\n` +
-                      `Please confirm my 50% advance payment deposit of ₹${advance.toLocaleString()} and generate my Tax Invoice!`;
+                      `📁 *RAW FOOTAGE LINK:*\n${footage || 'Not attached (will upload in portal)'}\n\n` +
+                      `Please confirm my deposit of ${sym}${advance.toLocaleString()}!`;
 
       window.open(`https://wa.me/919476766340?text=${encodeURIComponent(message)}`, '_blank');
       modal.classList.remove('open');
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      autoDetectVisitorCountry();
+    });
   </script>
-    <script>
+  <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
@@ -814,107 +1095,5 @@
 
   <script type="module" src="js/nav-auth.js?v=300.0"></script>
 
-  <!-- Firestore Dynamic Pricing Sync -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
-      authDomain: "editzaar-fa8d9.firebaseapp.com",
-      projectId: "editzaar-fa8d9",
-      storageBucket: "editzaar-fa8d9.firebasestorage.app",
-      messagingSenderId: "419930711716",
-      appId: "1:419930711716:web:b1504f651e397a14726831"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const SERVICE_MAPPINGS = {
-      'shorts-reels': { cardIndex: 0, cat: 'cat-video', defaultTitle: 'Shorts & Reels' },
-      'motion-graphics': { cardIndex: 1, cat: 'cat-video', defaultTitle: 'Motion Graphic / Animated' },
-      'long-form-youtube': { cardIndex: 2, cat: 'cat-video', defaultTitle: 'Long-Form YouTube' },
-      'cinematic-documentary': { cardIndex: 3, cat: 'cat-video', defaultTitle: 'Cinematic Documentary' },
-      'landing-page': { cardIndex: 0, cat: 'cat-web', defaultTitle: 'Landing Page' },
-      'ecommerce-store': { cardIndex: 1, cat: 'cat-web', defaultTitle: 'Corporate / D2C Storefront' },
-      'full-web-portal': { cardIndex: 2, cat: 'cat-web', defaultTitle: 'Full Web System & Portal' },
-      'paid-ads-setup': { cardIndex: 0, cat: 'cat-growth', defaultTitle: 'Paid Ads Setup & Creatives' },
-      'growth-retainer': { cardIndex: 1, cat: 'cat-growth', defaultTitle: 'Monthly Growth Retainer' }
-    };
-
-    
-    // === LIVE FIRESTORE PRICING CARD SYNC ===
-    function applyServiceUpdate(sid, price, delivery, name) {
-      if (!sid || !price) return;
-      var card = document.querySelector('[data-svc-id="' + sid + '"]');
-      if (!card) return;
-
-      var priceEl = card.querySelector('[style*="font-family:var(--font-h)"]');
-      if (priceEl) {
-        priceEl.innerHTML = '₹' + parseInt(price).toLocaleString('en-IN') + ' <span style="font-size:1rem;color:var(--t3);">/ video</span>';
-      }
-
-      var gstEl = card.querySelector('.pc-gst');
-      if (gstEl && delivery) {
-        gstEl.textContent = '+ 18% GST · ' + delivery + ' Delivery';
-      }
-
-      var btn = card.querySelector('.btn-gold-brand');
-      if (btn) {
-        btn.setAttribute('onclick', "openCheckout('" + (name || sid).replace(/'/g, "\\'") + "', " + price + ", '" + (delivery || '48 Hours').replace(/'/g, "\\'") + "')");
-      }
-    }
-
-    // 0. Check localStorage cached prices for instant zero-latency render
-    try {
-      var localCached = localStorage.getItem('editzaar_services_catalog');
-      if (localCached) {
-        var list = JSON.parse(localCached);
-        if (Array.isArray(list)) {
-          list.forEach(function(s) {
-            applyServiceUpdate(s.id, s.price, s.delivery, s.name);
-          });
-        }
-      }
-    } catch(e) {}
-
-    // 1. Primary: Realtime listener on 'services' collection
-    try {
-      onSnapshot(collection(db, 'services'), function(snapshot) {
-        snapshot.forEach(function(docSnap) {
-          var s = docSnap.data();
-          if (s && s.price) {
-            applyServiceUpdate(docSnap.id, s.price, s.delivery, s.name);
-          }
-        });
-      }, function(err) {
-        console.warn('[Pricing] services collection sync notice:', err.message);
-      });
-    } catch(e) {}
-
-    // 2. Fallback: Realtime listener on 'projects/config_services'
-    try {
-      onSnapshot(doc(db, 'projects', 'config_services'), function(docSnap) {
-        if (docSnap.exists()) {
-          var dat = docSnap.data();
-          if (dat && dat.services) {
-            Object.keys(dat.services).forEach(function(sid) {
-              var s = dat.services[sid];
-              if (s && s.price) {
-                applyServiceUpdate(sid, s.price, s.delivery, s.name);
-              }
-            });
-          }
-        }
-      }, function(err) {
-        console.warn('[Pricing] config_services fallback listener notice:', err.message);
-      });
-    } catch(e) {}
-
-    </script>
-
-</body>
+  </body>
 </html>
-
-

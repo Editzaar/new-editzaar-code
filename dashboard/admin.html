@@ -1461,10 +1461,14 @@
                 <input id="svc-name" type="text" placeholder="e.g. 3D Product Animation / YouTube Shorts"/>
               </div>
             </div>
-            <div class="form-grid-2">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;" class="form-grid-3">
               <div class="field">
-                <label>Base Price (₹) *</label>
-                <input id="svc-price" type="number" placeholder="e.g. 2500" min="100"/>
+                <label>India Price (₹) *</label>
+                <input id="svc-price" type="number" placeholder="e.g. 2500" min="100" oninput="window.onAdminInrPriceInput(this.value)"/>
+              </div>
+              <div class="field">
+                <label>International Price ($) *</label>
+                <input id="svc-price-usd" type="number" placeholder="e.g. 69 (Auto-calculated / Editable)" min="1"/>
               </div>
               <div class="field">
                 <label>Turnaround Delivery Time *</label>
@@ -1487,7 +1491,8 @@
                 <tr>
                   <th>Category</th>
                   <th>Service Name</th>
-                  <th>Base Price (₹)</th>
+                  <th>India (₹)</th>
+                  <th>Intl ($)</th>
                   <th>Delivery</th>
                   <th>Description</th>
                   <th>Quick Actions</th>
@@ -2169,6 +2174,16 @@
 
       <!-- Category 3: Financials & Commercial -->
       <div class="perm-category-header">💰 Financials, Pricing &amp; Billing</div>
+
+      <div class="perm-item" data-perm="managePricing">
+        <div class="perm-box">
+          <svg class="perm-svg" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="perm-text">
+          <div class="perm-title">Manage Services, Country-Wise Pricing &amp; Multi-Currency</div>
+          <div class="perm-desc">Allow employee to edit package prices (₹ &amp; $), add services, and customize regional rates.</div>
+        </div>
+      </div>
 
       <div class="perm-item" data-perm="viewFin">
         <div class="perm-box">
@@ -3816,6 +3831,7 @@
         updateStatus: p.updateStatus !== undefined ? p.updateStatus : true,
         viewContact: p.viewContact !== undefined ? p.viewContact : (isAdmin || isManager),
         maskChat: p.maskChat !== undefined ? p.maskChat : (!isAdmin && !isManager),
+        managePricing: p.managePricing !== undefined ? p.managePricing : isAdmin,
         viewFin: p.viewFin !== undefined ? p.viewFin : isAdmin,
         manageCoupons: p.manageCoupons !== undefined ? p.manageCoupons : (isAdmin || isManager),
         accessWorkflow: p.accessWorkflow !== undefined ? p.accessWorkflow : (isAdmin || isManager),
@@ -4792,20 +4808,35 @@
     } catch(e) { console.log('Services seed note:', e.message); }
   }
 
+  window.onAdminInrPriceInput = function(val) {
+    var usdInp = document.getElementById('svc-price-usd');
+    if (!usdInp) return;
+    var num = parseInt(val) || 0;
+    if (num > 0 && window.EditzaarServices) {
+      usdInp.value = window.EditzaarServices.calculateAutoUSD(num);
+    }
+  };
+
   window.renderAdminServicesTable = function() {
     var tbody = document.getElementById('servicesTbody');
     if (!tbody) return;
     var html = '';
     allAdminServices.forEach(function(s) {
+      var inrVal = s.price || 0;
+      var usdVal = (s.priceUSD !== undefined) ? s.priceUSD : (window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(inrVal) : Math.round(inrVal / 80));
       html += '<tr>'
         + '<td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">' + (s.categoryIcon || '📌') + ' ' + (s.category || 'General') + '</span></td>'
         + '<td><strong>' + (s.name || '') + '</strong></td>'
-        + '<td><div style="display:flex;align-items:center;gap:6px;">'
+        + '<td><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:var(--gold);font-weight:700;">₹</span>'
-        + '<input type="number" id="inp-price-' + s.id + '" value="' + (s.price || 0) + '" style="width:105px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.95rem;" min="100"/>'
+        + '<input type="number" id="inp-price-' + s.id + '" value="' + inrVal + '" style="width:85px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.9rem;" min="100"/>'
         + '</div></td>'
-        + '<td><input type="text" id="inp-time-' + s.id + '" value="' + (s.delivery || '48 Hours') + '" style="width:125px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:0.9rem;"/></td>'
-        + '<td style="font-size:0.85rem;color:var(--t2);max-width:260px;">' + (s.description || '—') + '</td>'
+        + '<td><div style="display:flex;align-items:center;gap:4px;">'
+        + '<span style="color:#28c840;font-weight:700;">$</span>'
+        + '<input type="number" id="inp-price-usd-' + s.id + '" value="' + usdVal + '" style="width:75px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:#28c840;font-weight:700;font-size:0.9rem;" min="1"/>'
+        + '</div></td>'
+        + '<td><input type="text" id="inp-time-' + s.id + '" value="' + (s.delivery || '48 Hours') + '" style="width:115px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:0.85rem;"/></td>'
+        + '<td style="font-size:0.85rem;color:var(--t2);max-width:240px;">' + (s.description || '—') + '</td>'
         + '<td><div style="display:flex;gap:6px;">'
         + '<button class="btn-gold btn-sm" id="btn-save-svc-' + s.id + '" onclick="window.saveAdminServicePrice(\'' + s.id + '\')">💾 SAVE</button>'
         + '<button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminService(\'' + s.id + '\')">🗑️</button>'
@@ -4816,11 +4847,13 @@
 
   window.saveAdminServicePrice = async function(id) {
     var pInp = document.getElementById('inp-price-' + id);
+    var pUsdInp = document.getElementById('inp-price-usd-' + id);
     var tInp = document.getElementById('inp-time-' + id);
     var saveBtn = document.getElementById('btn-save-svc-' + id);
     if (!pInp || !tInp) { showToast('Input fields not found.', 'error'); return; }
 
     var newPrice = parseInt(pInp.value) || 0;
+    var newPriceUSD = pUsdInp ? (parseInt(pUsdInp.value) || Math.round(newPrice / 80)) : Math.round(newPrice / 80);
     var newDelivery = tInp.value.trim() || '48 Hours';
     if (newPrice < 100) { showToast('Price must be at least ₹100.', 'error'); return; }
 
@@ -4828,11 +4861,11 @@
 
     // 1. Immediately update local memory and localStorage
     var target = allAdminServices.find(function(s) { return s.id === id; });
-    if (target) { target.price = newPrice; target.delivery = newDelivery; }
+    if (target) { target.price = newPrice; target.priceUSD = newPriceUSD; target.delivery = newDelivery; }
     try {
       localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices));
       if (window.EditzaarServices && typeof window.EditzaarServices.updatePrice === 'function') {
-        window.EditzaarServices.updatePrice(id, newPrice, newDelivery);
+        window.EditzaarServices.updatePrice(id, newPrice, newPriceUSD, newDelivery);
       }
     } catch(e) {}
 
@@ -4898,12 +4931,14 @@
     var catEl = document.getElementById('svc-category');
     var nameEl = document.getElementById('svc-name');
     var priceEl = document.getElementById('svc-price');
+    var priceUsdEl = document.getElementById('svc-price-usd');
     var timeEl = document.getElementById('svc-time');
     var descEl = document.getElementById('svc-desc');
 
     var cat = catEl ? catEl.value : 'Video Post-Production';
     var name = nameEl ? nameEl.value.trim() : '';
     var price = parseInt(priceEl ? priceEl.value : 0) || 0;
+    var priceUSD = priceUsdEl ? (parseInt(priceUsdEl.value) || Math.round(price / 80)) : Math.round(price / 80);
     var delivery = timeEl ? (timeEl.value.trim() || '48 Hours') : '48 Hours';
     var desc = descEl ? descEl.value.trim() : '';
 
@@ -4918,6 +4953,7 @@
         categoryIcon: catIcon,
         name: name,
         price: price,
+        priceUSD: priceUSD,
         unit: '/ project',
         delivery: delivery,
         description: desc,
@@ -4925,6 +4961,7 @@
         active: true,
         createdAt: serverTimestamp()
       });
+      if (priceUsdEl) priceUsdEl.value = '';
       if (nameEl) nameEl.value = '';
       if (priceEl) priceEl.value = '';
       if (timeEl) timeEl.value = '';

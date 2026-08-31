@@ -15,6 +15,7 @@
       categoryIcon: "🎬",
       name: "Shorts & Instagram Reels",
       price: 1000,
+      priceUSD: 29,
       unit: "/ video",
       delivery: "48 Hours",
       description: "High-retention vertical editing with kinetic typography, SFX & 3-second hook structure.",
@@ -33,6 +34,7 @@
       categoryIcon: "🎬",
       name: "Motion Graphic & Animated Video",
       price: 2500,
+      priceUSD: 69,
       unit: "/ video",
       delivery: "48 Hours",
       description: "2D animations, title cards, animated infographics, lower thirds, and logo reveals.",
@@ -49,6 +51,7 @@
       categoryIcon: "🎬",
       name: "Long Form YouTube Video Edit",
       price: 5000,
+      priceUSD: 129,
       unit: "/ video",
       delivery: "48-72 Hours",
       description: "Full YouTube video editing: narrative pacing, seamless jump-cuts, zoom-ins, meme overlays & B-roll.",
@@ -65,6 +68,7 @@
       categoryIcon: "🎬",
       name: "Cinematic Documentary & Ad Film",
       price: 10000,
+      priceUSD: 249,
       unit: "/ video",
       delivery: "3-5 Days",
       description: "Cinematic grade brand films, high-end product showcases, and documentary storytelling.",
@@ -83,6 +87,7 @@
       categoryIcon: "💻",
       name: "High-Converting Landing Page",
       price: 4999,
+      priceUSD: 149,
       unit: "/ project",
       delivery: "3-5 Days",
       description: "Single-page responsive landing page engineered to capture leads and drive sales.",
@@ -101,6 +106,7 @@
       categoryIcon: "💻",
       name: "D2C Brand & E-Commerce Store",
       price: 12999,
+      priceUSD: 349,
       unit: "/ project",
       delivery: "7-10 Days",
       description: "Full-featured online store with payment gateway, product catalog, cart, and order system.",
@@ -117,6 +123,7 @@
       categoryIcon: "💻",
       name: "Full Web System & Portal",
       price: 24999,
+      priceUSD: 699,
       unit: "/ project",
       delivery: "10-14 Days",
       description: "Custom SaaS portal, multi-role client/staff dashboard with realtime database & live chat.",
@@ -135,6 +142,7 @@
       categoryIcon: "📈",
       name: "Paid Ad Setup & Creatives",
       price: 7999,
+      priceUSD: 199,
       unit: "/ campaign",
       delivery: "3-5 Days",
       description: "Data-driven Meta (FB/IG) & Google ad campaign setup with 3 direct-response video creatives.",
@@ -151,6 +159,7 @@
       categoryIcon: "📈",
       name: "Full Channel Growth Retainer",
       price: 14999,
+      priceUSD: 399,
       unit: "/ month",
       delivery: "Monthly Retainer",
       description: "All-in-one monthly growth partnership: 12 edited videos, SEO, thumbnails & ad management.",
@@ -166,8 +175,48 @@
   ];
 
   const STORAGE_KEY = 'editzaar_dynamic_services';
+  const CURRENCY_KEY = 'editzaar_preferred_currency';
+
+  // PayPal Configuration
+  window.EDITZAAR_PAYPAL = {
+    clientId: 'BAAOOLXUc3ZolrTYVFM-EqsNXKorDGA_jqwfsdy7gAllTNKYDFtl-L5XxridH0oDKsSm67AtHmLoKqpaew',
+    env: 'sandbox',
+    currency: 'USD'
+  };
 
   window.EditzaarServices = {
+    /**
+     * Calculate automatic suggested USD price from INR
+     */
+    calculateAutoUSD: function (inrPrice) {
+      const num = parseInt(inrPrice) || 0;
+      if (num <= 0) return 0;
+      return Math.max(1, Math.round(num / 80));
+    },
+
+    /**
+     * Get active currency (INR or USD)
+     */
+    getCurrency: function () {
+      try {
+        const saved = localStorage.getItem(CURRENCY_KEY);
+        if (saved === 'INR' || saved === 'USD') return saved;
+      } catch (e) {}
+      return 'INR';
+    },
+
+    /**
+     * Set active currency (INR or USD)
+     */
+    setCurrency: function (curr) {
+      const c = (curr === 'USD') ? 'USD' : 'INR';
+      try {
+        localStorage.setItem(CURRENCY_KEY, c);
+      } catch (e) {}
+      window.dispatchEvent(new CustomEvent('editzaar:currency_changed', { detail: { currency: c } }));
+      return c;
+    },
+
     /**
      * Get all active services (from cache/storage or defaults)
      */
@@ -176,7 +225,12 @@
         const local = localStorage.getItem(STORAGE_KEY);
         if (local) {
           const parsed = JSON.parse(local);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed.map(s => ({
+              ...s,
+              priceUSD: s.priceUSD !== undefined ? s.priceUSD : window.EditzaarServices.calculateAutoUSD(s.price)
+            }));
+          }
         }
       } catch (e) {
         console.warn('[EditzaarServices] Local storage read error:', e);
@@ -197,6 +251,9 @@
      */
     save: function (serviceObj) {
       const all = [...this.getAll()];
+      if (serviceObj.priceUSD === undefined && serviceObj.price !== undefined) {
+        serviceObj.priceUSD = this.calculateAutoUSD(serviceObj.price);
+      }
       const idx = all.findIndex(s => s.id === serviceObj.id);
       if (idx >= 0) {
         all[idx] = { ...all[idx], ...serviceObj };
@@ -212,13 +269,18 @@
     },
 
     /**
-     * Update only price & turnaround for a service
+     * Update price (INR), priceUSD (International), and turnaround for a service
      */
-    updatePrice: function (id, newPrice, newDelivery) {
+    updatePrice: function (id, newPriceINR, newPriceUSD, newDelivery) {
       const all = [...this.getAll()];
       const item = all.find(s => s.id === id);
       if (item) {
-        if (newPrice !== undefined) item.price = parseInt(newPrice) || 0;
+        if (newPriceINR !== undefined) item.price = parseInt(newPriceINR) || 0;
+        if (newPriceUSD !== undefined) {
+          item.priceUSD = parseInt(newPriceUSD) || this.calculateAutoUSD(item.price);
+        } else if (newPriceINR !== undefined && item.priceUSD === undefined) {
+          item.priceUSD = this.calculateAutoUSD(newPriceINR);
+        }
         if (newDelivery !== undefined) item.delivery = newDelivery;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
         this.notifySubscribers(all);
@@ -226,9 +288,6 @@
       return all;
     },
 
-    /**
-     * Delete a service
-     */
     delete: function (id) {
       let all = this.getAll().filter(s => s.id !== id);
       if (all.length === 0) all = DEFAULT_SERVICES;
