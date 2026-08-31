@@ -58,38 +58,65 @@
     .pc-cross { color: var(--t3); font-size: 13px; }
     .pc-gst { font-size: 13px; color: var(--t3); margin-top: -6px; margin-bottom: 16px; }
 
-    /* Interactive Checkout Modal */
+    /* Interactive Checkout Modal - Mobile First Clean Architecture */
     .checkout-modal {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.88); z-index: 9999;
       display: flex; align-items: center; justify-content: center;
-      padding: 20px; display: none; backdrop-filter: blur(12px);
+      padding: 12px; display: none; backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
     .checkout-modal.open { display: flex; }
     .checkout-box {
       background: var(--bg-card); border: 1px solid var(--gold-border);
-      border-radius: 20px; padding: 36px; width: 100%; max-width: 740px;
-      max-height: 92vh; overflow-y: auto; position: relative;
-      box-shadow: 0 32px 90px rgba(0,0,0,0.95);
+      border-radius: 18px; padding: 30px 24px; width: 100%; max-width: 680px;
+      max-height: 94vh; overflow-y: auto; position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.95);
+      box-sizing: border-box;
     }
     .checkout-close {
-      position: absolute; top: 20px; right: 20px;
-      background: none; border: none; color: var(--t2);
-      font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+      border-radius: 50%; width: 34px; height: 34px; color: var(--t1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; cursor: pointer; transition: all 0.2s; z-index: 10;
     }
-    .checkout-close:hover { color: var(--gold); }
+    .checkout-close:hover { color: var(--gold); border-color: var(--gold); }
 
     .summary-card {
-      background: rgba(255,184,0,0.06); border: 1px solid var(--gold-border);
-      border-radius: 12px; padding: 20px; margin-bottom: 24px;
+      background: rgba(255,184,0,0.05); border: 1px solid var(--gold-border);
+      border-radius: 12px; padding: 18px; margin-bottom: 20px;
+      box-sizing: border-box; width: 100%;
     }
     .summary-row {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 0.9rem; margin-bottom: 8px; color: var(--t2);
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px; font-size: 0.9rem; margin-bottom: 8px; color: var(--t2);
     }
+    .summary-row span:first-child { flex: 1; word-break: break-word; }
+    .summary-row strong, .summary-row span:last-child { text-align: right; word-break: break-word; }
     .summary-row.total {
       border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px;
-      font-weight: 700; color: inherit; font-size: 1.1rem;
+      font-weight: 700; color: inherit; font-size: 1.15rem;
+    }
+
+    .pay-preset-btn {
+      flex: 1 1 auto; min-width: 130px; text-align: center;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--t2); padding: 9px 12px; border-radius: 8px;
+      font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    }
+    .pay-preset-btn.active {
+      background: var(--gold); color: #000; font-weight: 700; border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(255,184,0,0.3);
+    }
+
+    @media (max-width: 600px) {
+      .checkout-box { padding: 22px 14px; border-radius: 14px; }
+      .summary-card { padding: 14px 12px; }
+      .form-grid-2 { grid-template-columns: 1fr !important; gap: 0 !important; }
+      .summary-row { font-size: 0.85rem; }
+      .summary-row.total { font-size: 1.05rem; }
+      .pay-preset-btn { min-width: 100%; font-size: 0.85rem; padding: 10px; }
     }
     .summary-row.advance {
       background: rgba(40,200,64,0.1); border: 1px solid rgba(40,200,64,0.3);
@@ -488,10 +515,16 @@
       </div>
 
                   <!-- PAYPAL SMART BUTTONS CONTAINER (Visible only in USD Mode) -->
-      <div id="paypalCheckoutWrap" style="display:none;background:linear-gradient(135deg,rgba(0,112,186,0.08) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(0,112,186,0.45);border-radius:16px;padding:20px 22px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);">
+      <div id="paypalCheckoutWrap" style="display:none;background:linear-gradient(135deg,rgba(0,112,186,0.08) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(0,112,186,0.45);border-radius:16px;padding:18px 16px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);box-sizing:border-box;">
         <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:#0070ba;font-weight:800;margin-bottom:8px;">🌍 SECURE INTERNATIONAL PAYMENT</div>
-        <div style="font-size:0.88rem;color:var(--t2);margin-bottom:14px;line-height:1.6;">Pay securely via <strong>PayPal Account</strong>, <strong>Debit Card</strong>, or <strong>Credit Card (Visa / Mastercard / Amex)</strong>. Deposit Amount: <strong id="txtPaypalAdvanceDisplay" style="color:#28c840;font-size:1.05rem;">$15</strong></div>
-        <div id="paypal-button-container" style="min-height:50px;"></div>
+        <div style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;line-height:1.6;">
+          Pay securely via <strong>PayPal</strong>, <strong>Debit Card</strong>, or <strong>Credit Card (Visa/Mastercard/Amex)</strong>.<br/>
+          Amount to Pay Now: <strong id="txtPaypalAdvanceDisplay" style="color:#28c840;font-size:1.1rem;">$15</strong>
+        </div>
+        <div id="paypal-button-container" style="min-height:45px;width:100%;margin-bottom:12px;"></div>
+        <div style="text-align:center;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.1);font-size:0.8rem;color:var(--t3);">
+          ⚡ Once paid, your project brief is automatically submitted to our production team!
+        </div>
       </div>
 
       <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX (Design 2 - Visible in INR Mode) -->
@@ -822,7 +855,10 @@
         if (upiWrap) upiWrap.style.display = 'none';
         if (utrContainer) utrContainer.style.display = 'none';
         if (paypalWrap) paypalWrap.style.display = 'block';
-        if (btnConfirm) btnConfirm.style.display = 'none'; // PayPal smart buttons handle submission
+        if (btnConfirm) {
+          btnConfirm.style.display = 'flex';
+          btnConfirm.innerHTML = `💬 Submit Project Brief via WhatsApp ($${currentDeposit} Deposit) →`;
+        }
         const txtDisp = document.getElementById('txtPaypalAdvanceDisplay');
         if (txtDisp) txtDisp.textContent = '$' + currentDeposit;
         renderPayPalButtons(currentDeposit);
@@ -830,7 +866,10 @@
         if (upiWrap) upiWrap.style.display = 'block';
         if (utrContainer) utrContainer.style.display = 'block';
         if (paypalWrap) paypalWrap.style.display = 'none';
-        if (btnConfirm) btnConfirm.style.display = 'flex';
+        if (btnConfirm) {
+          btnConfirm.style.display = 'flex';
+          btnConfirm.innerHTML = `Confirm &amp; Submit Project Brief (₹${currentDeposit.toLocaleString()}) →`;
+        }
 
         const upiAdvText = document.getElementById('chkAdvancePayText');
         const btnUpiAmt = document.getElementById('btnUpiAmt');
