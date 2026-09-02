@@ -1318,21 +1318,40 @@
     
     function renderGlobalChatList(projects) {
       const sb = document.getElementById('globalChatProjects');
-      sb.innerHTML = projects.map(p=> `<div class="chat-project-item" id="cp-${p.id}" onclick="openGlobalChat('${p.id}', '${p.title.replace(/'/g,"")}')">
-        <div style="font-weight:600; font-size:0.95rem; margin-bottom:4px;">${p.title}</div>
-        <div style="font-size:0.8rem; color:var(--t2);">${p.status}</div>
+      if (!sb) return;
+      if (!projects || projects.length === 0) {
+        sb.innerHTML = '<div style="color:var(--t3);padding:16px;text-align:center;font-size:0.85rem;">No active projects yet.</div>';
+        return;
+      }
+      sb.innerHTML = projects.map(p=> `<div class="chat-project-item ${p.id === globalChatPid ? 'active' : ''}" id="cp-${p.id}" onclick="openGlobalChat('${p.id}', '${(p.title||'Project').replace(/'/g,"\\'")}')">
+        <div style="font-weight:700; font-size:0.92rem; margin-bottom:4px; color:var(--t1);">${p.title || 'Untitled Project'}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--gold);">${(p.status||'in_progress').toUpperCase()}</span>
+          <span style="font-size:0.72rem; color:var(--t3);">${p.editorName || 'Assigned Editor'}</span>
+        </div>
       </div>`).join('');
     }
     
     window.openGlobalChat = (pid, ptitle) => {
+      globalChatPid = pid;
       document.querySelectorAll('.chat-project-item').forEach(el=>el.classList.remove('active'));
       const el = document.getElementById('cp-'+pid);
       if(el) el.classList.add('active');
       
-      document.getElementById('globalChatHeader').textContent = ptitle;
+      const header = document.getElementById('globalChatHeader');
+      if (header) {
+        header.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div style="font-weight:700;font-size:1rem;color:var(--t1);">${ptitle}</div>
+              <div style="font-size:0.78rem;color:var(--gold);margin-top:2px;">Chatting with Assigned Video Editor 🎬</div>
+            </div>
+            <button class="btn-outline btn-sm" onclick="viewProjectDetails('${pid}')" style="font-size:11px;padding:4px 10px;">View Project Details ↗</button>
+          </div>
+        `;
+      }
       document.getElementById('globalChatInput').disabled = false;
       document.getElementById('globalBtnSendMsg').disabled = false;
-      globalChatPid = pid;
       
       if(globalChatUnsub) globalChatUnsub();
       globalChatUnsub = onSnapshot(collection(db,'projects',pid,'chat'), snap => {
@@ -1340,15 +1359,19 @@
         container.innerHTML = '';
         const msgs = snap.docs.map(d=>d.data());
         msgs.sort((a,b)=>(a.timestamp?.toMillis?a.timestamp.toMillis():0)-(b.timestamp?.toMillis?b.timestamp.toMillis():0));
-        msgs.forEach(m=>{
-          const isMe=m.senderId===currentUser.uid;
-          const div=document.createElement('div');
-          div.className='chat-msg '+(isMe?'mine':'theirs');
-          let formattedText = m.text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
-          div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</div>
-            <div class="chat-msg-bubble">${formattedText}</div>`;
-          container.appendChild(div);
-        });
+        if (msgs.length === 0) {
+          container.innerHTML = '<div style="color:var(--t3);padding:30px;text-align:center;font-size:0.88rem;">No messages yet. Send a message to your editor to get started! 🎬</div>';
+        } else {
+          msgs.forEach(m=>{
+            const isMe=m.senderId===currentUser.uid;
+            const div=document.createElement('div');
+            div.className='chat-msg '+(isMe?'mine':'theirs');
+            let formattedText = (m.text||'').replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline;">$1</a>');
+            div.innerHTML=`<div class="chat-msg-meta">${m.senderName} · ${m.timestamp?.toDate ? m.timestamp.toDate().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : ''}</div>
+              <div class="chat-msg-bubble">${formattedText}</div>`;
+            container.appendChild(div);
+          });
+        }
         container.scrollTop=container.scrollHeight;
       });
     };
@@ -3001,8 +3024,13 @@
         if (bellBtn) {
           const rect = bellBtn.getBoundingClientRect();
           popover.style.top = Math.max(10, rect.bottom + 8) + 'px';
-          popover.style.right = Math.max(10, window.innerWidth - rect.right) + 'px';
-          popover.style.left = 'auto';
+          if (rect.left < 340) {
+            popover.style.left = Math.max(12, rect.left) + 'px';
+            popover.style.right = 'auto';
+          } else {
+            popover.style.right = Math.max(12, window.innerWidth - rect.right) + 'px';
+            popover.style.left = 'auto';
+          }
         }
       } else {
         popover.style.display = 'none';
@@ -3028,6 +3056,24 @@
         window.markClientSectionSeen(name);
       }
       
+      // Only display welcome banner on home page to maximize vertical workspace
+      const banner = document.getElementById('clientWelcomeBanner');
+      if (banner) {
+        banner.style.display = (name === 'home') ? 'flex' : 'none';
+      }
+
+      // Auto-open first project in chat if none is active
+      if (name === 'chat') {
+        if (projects && projects.length > 0 && !globalChatPid) {
+          window.openGlobalChat(projects[0].id, projects[0].title);
+        }
+      }
+
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar')?.classList.remove('open');
+        document.getElementById('sidebarOverlay')?.classList.remove('active');
+      }
+
       const titles = {
         'home': 'Dashboard Home', 'projects': 'My Projects', 'tracking': 'Project Tracking',
         'chat': 'Project Chat', 'files': 'File Management', 'revisions': 'Revisions',
