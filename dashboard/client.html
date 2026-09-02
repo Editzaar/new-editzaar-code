@@ -211,10 +211,6 @@
 <body>
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
-  <button class="notif-bell-btn mobile-header-bell" id="mobileClientNotifBellBtn" title="Real-time Alerts &amp; Notifications" onclick="window.toggleClientNotifPanel(event)">
-    🔔
-    <span class="notif-bell-badge" id="mobileClientBellBadge" style="display:none;">0</span>
-  </button>
   <div class="toast" id="toast"></div>
 
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
@@ -3025,7 +3021,7 @@
       if (!popover) return;
       if (popover.style.display === 'none' || !popover.style.display) {
         popover.style.display = 'flex';
-        const bellBtn = e?.currentTarget || document.getElementById('clientTopbarBellBtn') || document.getElementById('clientSidebarBellBtn') || document.getElementById('mobileClientNotifBellBtn');
+        const bellBtn = e?.currentTarget || document.getElementById('clientTopbarBellBtn') || document.getElementById('clientSidebarBellBtn');
         if (bellBtn) {
           const rect = bellBtn.getBoundingClientRect();
           popover.style.top = Math.max(10, rect.bottom + 8) + 'px';
