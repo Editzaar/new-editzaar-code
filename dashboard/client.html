@@ -473,6 +473,39 @@
           <div class="dash-card-header"><div class="dash-card-title">My Tickets</div></div>
           <div id="supportTicketsList"></div>
         </div>
+
+        <!-- Client Feedback & Review Card -->
+        <div class="dash-card" style="margin-top: 24px; border-left: 4px solid var(--gold);">
+          <div class="dash-card-header">
+            <div class="dash-card-title">⭐ Rate Your Experience / Leave Feedback</div>
+          </div>
+          <p style="font-size:0.88rem; color:var(--t2); margin-bottom:16px;">
+            Your feedback directly shapes our video production quality and helps us reward our editors. Leave a quick rating or review below!
+          </p>
+          <div class="dash-form">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+              <div class="field">
+                <label>Overall Star Rating</label>
+                <select id="clientReviewRating">
+                  <option value="5">⭐⭐⭐⭐⭐ (5 Stars - Exceptional)</option>
+                  <option value="4">⭐⭐⭐⭐ (4 Stars - Very Good)</option>
+                  <option value="3">⭐⭐⭐ (3 Stars - Average)</option>
+                  <option value="2">⭐⭐ (2 Stars)</option>
+                  <option value="1">⭐ (1 Star)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Brand or Project Name (Optional)</label>
+                <input type="text" id="clientReviewProject" placeholder="e.g. Finance Reels / YouTube Project" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Your Feedback / Testimonial</label>
+              <textarea id="clientReviewText" rows="3" placeholder="How was your experience working with the Editzaar editing team? Any feedback or praise?"></textarea>
+            </div>
+            <button class="btn-gold" id="btnSubmitClientReview" style="padding:10px 24px;">Submit Feedback ⭐</button>
+          </div>
+        </div>
         <div class="dash-card" style="margin-top: 24px;">
           <div class="dash-card-header"><div class="dash-card-title">FAQ</div></div>
           <div style="margin-bottom: 12px;"><strong>How do revisions work?</strong><p style="color:var(--t2);font-size:0.88rem;">Standard plans include 1-4 revisions. Request changes via the Revisions tab.</p></div>
@@ -730,6 +763,38 @@
     </div>
   </div>
 
+  <!-- ══ MODAL: CLIENT TICKET CONVERSATION & REPLY ══ -->
+  <div class="modal-overlay" id="modalClientTicketDetail">
+    <div class="modal-box" style="max-width:640px;background:#111;max-height:88vh;overflow-y:auto;">
+      <button class="modal-close" onclick="document.getElementById('modalClientTicketDetail').classList.remove('open')">✕</button>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;">
+        <div>
+          <span class="badge" id="mctCategory" style="font-size:10px;background:rgba(255,184,0,0.12);color:var(--gold);padding:2px 7px;border-radius:4px;text-transform:uppercase;">Category</span>
+          <div style="font-size:1.15rem;font-weight:700;color:#fff;margin-top:4px;" id="mctSubject">Ticket Subject</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px;" id="mctDate">Date</div>
+        </div>
+        <div id="mctStatusBadge"></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;color:var(--gold);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:6px;">Your Inquiry</label>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;line-height:1.5;color:#fff;white-space:pre-wrap;" id="mctOriginalMessage"></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;color:var(--t2);text-transform:uppercase;font-weight:700;letter-spacing:0.05em;display:block;margin-bottom:6px;">Conversation Thread &amp; Support Replies</label>
+        <div id="mctRepliesThread" style="display:flex;flex-direction:column;gap:10px;max-height:220px;overflow-y:auto;"></div>
+      </div>
+
+      <!-- Reply Box -->
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:12px;">
+        <label style="font-size:11.5px;font-weight:700;color:#fff;display:block;margin-bottom:6px;">Send Follow-up Message to Support Team</label>
+        <textarea id="mctReplyText" rows="2" placeholder="Type your follow-up message here..." style="width:100%;background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:6px;padding:8px;color:#fff;font-family:inherit;font-size:13px;resize:vertical;margin-bottom:8px;"></textarea>
+        <button class="btn-gold btn-sm" id="btnClientReplyTicket" onclick="window.sendClientTicketFollowup()" style="padding:7px 18px;">Send Message 🚀</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ MODAL: PRINTABLE GST TAX INVOICE VIEWER ══ -->
   <div class="modal-overlay" id="modalInvoiceView">
     <div class="modal-box" style="max-width:760px;background:#111;">
@@ -874,7 +939,7 @@
     import { getAuth, onAuthStateChanged, signOut, updatePassword }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc,
-             query, where, onSnapshot, serverTimestamp }
+             query, where, onSnapshot, serverTimestamp, arrayUnion }
                                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -993,28 +1058,164 @@
       await updateDoc(doc(db,'notifications',id), { read: true });
     };
     
+    let clientTicketsCache = [];
+    let _activeClientTicketId = null;
+
     function listenSupportTickets() {
       const q = query(collection(db,'supportTickets'), where('userId','==',currentUser.uid));
       onSnapshot(q, (snap) => {
-        const tickets = snap.docs.map(d=>({id:d.id,...d.data()}));
-        tickets.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
+        clientTicketsCache = snap.docs.map(d=>({id:d.id,...d.data()}));
+        clientTicketsCache.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
         
         const listDiv = document.getElementById('supportTicketsList');
-        if(!tickets.length) {
-          listDiv.innerHTML = '<div style="color:var(--t2);">No support tickets.</div>';
+        if(!listDiv) return;
+
+        if(!clientTicketsCache.length) {
+          listDiv.innerHTML = '<div style="color:var(--t2);padding:14px;text-align:center;">No support tickets yet. Need help? Submit a ticket above anytime!</div>';
         } else {
-          listDiv.innerHTML = tickets.map(t=> `
-            <div style="padding: 12px; border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 12px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <strong>${t.subject}</strong>
-                <span class="status-badge status-${t.status||'open'}">${t.status||'Open'}</span>
+          listDiv.innerHTML = clientTicketsCache.map(t=> {
+            const replies = Array.isArray(t.replies) ? t.replies : [];
+            const hasReplies = replies.length > 0;
+            const lastReply = hasReplies ? replies[replies.length - 1] : null;
+
+            let stBadge = '';
+            if (t.status === 'open') stBadge = '<span class="status-badge" style="background:rgba(255,77,77,0.15);color:#FF4D4D;border:1px solid rgba(255,77,77,0.3);font-weight:700;">🟡 Open</span>';
+            else if (t.status === 'in_progress') stBadge = '<span class="status-badge" style="background:rgba(0,176,255,0.15);color:#00B0FF;border:1px solid rgba(0,176,255,0.3);font-weight:700;">🔵 In Progress</span>';
+            else if (t.status === 'resolved') stBadge = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-weight:700;">🟢 Resolved</span>';
+            else stBadge = '<span class="status-badge" style="background:rgba(255,255,255,0.08);color:#888;">⚪ Closed</span>';
+
+            const createdDate = t.createdAt?.toMillis ? new Date(t.createdAt.toMillis()).toLocaleDateString('en-IN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : 'Recently';
+
+            return `
+              <div style="padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 12px; background:rgba(255,255,255,0.02);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+                  <div>
+                    <strong style="font-size:15px;color:#fff;">${escapeClientHtml(t.subject || 'Support Request')}</strong>
+                    <div style="display:flex;gap:8px;align-items:center;margin-top:2px;">
+                      <span class="badge" style="background:rgba(255,184,0,0.12);color:var(--gold);font-size:10px;padding:2px 6px;border-radius:4px;text-transform:uppercase;">${escapeClientHtml(t.category || 'General')}</span>
+                      <span style="font-size:11px;color:var(--t3);">${createdDate}</span>
+                    </div>
+                  </div>
+                  <div>${stBadge}</div>
+                </div>
+
+                <div style="font-size:0.88rem; color:var(--t2); margin-top:8px; line-height:1.4; white-space:pre-wrap;">${escapeClientHtml(t.message || '')}</div>
+
+                ${lastReply ? `
+                  <div style="margin-top:12px; padding:10px 12px; border-radius:8px; background:rgba(255,184,0,0.08); border:1px solid var(--gold-border);">
+                    <div style="font-size:11px; color:var(--gold); font-weight:700; margin-bottom:2px;">
+                      💬 Latest Response (${lastReply.sender === 'admin' ? 'Editzaar Support' : 'You'}):
+                    </div>
+                    <div style="font-size:12.5px; color:#fff; line-height:1.4;">${escapeClientHtml(lastReply.text || '')}</div>
+                  </div>
+                ` : ''}
+
+                <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+                  <button class="btn-outline btn-sm" style="font-size:11.5px; padding:5px 12px;" onclick="window.openClientTicketConversation('${t.id}')">
+                    💬 View Conversation &amp; Reply →
+                  </button>
+                </div>
               </div>
-              <div style="font-size:0.88rem; color:var(--t2);">${t.category}</div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
+        }
+
+        if (_activeClientTicketId) {
+          const active = clientTicketsCache.find(x => x.id === _activeClientTicketId);
+          if (active) renderClientTicketModalContent(active);
         }
       });
     }
+
+    function escapeClientHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    window.openClientTicketConversation = function(ticketId) {
+      const t = clientTicketsCache.find(x => x.id === ticketId);
+      if (!t) return;
+      _activeClientTicketId = ticketId;
+      renderClientTicketModalContent(t);
+      document.getElementById('modalClientTicketDetail').classList.add('open');
+    };
+
+    function renderClientTicketModalContent(t) {
+      document.getElementById('mctSubject').textContent = t.subject || 'Support Ticket';
+      document.getElementById('mctCategory').textContent = (t.category || 'General').toUpperCase();
+      document.getElementById('mctDate').textContent = t.createdAt?.toMillis ? new Date(t.createdAt.toMillis()).toLocaleString('en-IN') : 'Recently';
+      document.getElementById('mctOriginalMessage').textContent = t.message || '';
+
+      let stBadge = '';
+      if (t.status === 'open') stBadge = '<span class="status-badge" style="background:rgba(255,77,77,0.15);color:#FF4D4D;border:1px solid rgba(255,77,77,0.3);font-weight:700;">🟡 Open</span>';
+      else if (t.status === 'in_progress') stBadge = '<span class="status-badge" style="background:rgba(0,176,255,0.15);color:#00B0FF;border:1px solid rgba(0,176,255,0.3);font-weight:700;">🔵 In Progress</span>';
+      else if (t.status === 'resolved') stBadge = '<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-weight:700;">🟢 Resolved</span>';
+      else stBadge = '<span class="status-badge" style="background:rgba(255,255,255,0.08);color:#888;">⚪ Closed</span>';
+      document.getElementById('mctStatusBadge').innerHTML = stBadge;
+
+      const threadEl = document.getElementById('mctRepliesThread');
+      const replies = Array.isArray(t.replies) ? t.replies : [];
+      if (!replies.length) {
+        threadEl.innerHTML = '<div style="font-size:12px;color:var(--t3);text-align:center;padding:12px;">No replies yet from the support team. Your ticket is currently under review.</div>';
+      } else {
+        threadEl.innerHTML = replies.map(r => {
+          const isAdmin = r.sender === 'admin' || r.sender === 'staff';
+          return `
+            <div style="display:flex;flex-direction:column;align-items:${isAdmin ? 'flex-start' : 'flex-end'};">
+              <div style="font-size:10.5px;color:var(--t3);margin-bottom:3px;">
+                ${isAdmin ? '👑 <strong>Editzaar Team</strong>' : '👤 <strong>You</strong>'} · ${r.createdAt ? new Date(r.createdAt).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) : ''}
+              </div>
+              <div style="max-width:85%;padding:9px 13px;border-radius:10px;font-size:12.5px;line-height:1.45;white-space:pre-wrap;
+                ${isAdmin ? 'background:rgba(255,184,0,0.12);border:1px solid var(--gold-border);color:#fff;' : 'background:rgba(255,255,255,0.06);border:1px solid var(--border);color:#fff;'}">
+                ${escapeClientHtml(r.text || '')}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    window.sendClientTicketFollowup = async function() {
+      if (!_activeClientTicketId) return;
+      const text = document.getElementById('mctReplyText').value.trim();
+      if (!text) return showToast('Please type a message first.', 'error');
+
+      const btn = document.getElementById('btnClientReplyTicket');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      try {
+        const replyObj = {
+          id: 'rep_' + Date.now(),
+          sender: 'client',
+          senderName: currentUser.name || 'Client',
+          text: text,
+          createdAt: new Date().toISOString()
+        };
+
+        const ticketRef = doc(db, 'supportTickets', _activeClientTicketId);
+        await updateDoc(ticketRef, {
+          replies: arrayUnion(replyObj),
+          status: 'open',
+          updatedAt: serverTimestamp(),
+          lastReplyBy: 'client'
+        });
+
+        if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendToAdmin === 'function') {
+          const t = clientTicketsCache.find(x => x.id === _activeClientTicketId);
+          const alertMsg = `💬 <b>CLIENT REPLIED TO SUPPORT TICKET</b> 💬\n\n👤 <b>Client:</b> ${currentUser.name || 'Client'} (${currentUser.email || ''})\n📌 <b>Subject:</b> ${t ? t.subject : 'Support Ticket'}\n📝 <b>Reply:</b>\n${text}\n\n👉 <i>Admin: Reply via Admin Dashboard → Support Tickets.</i>`;
+          window.EditzaarTelegram.sendToAdmin(alertMsg);
+        }
+
+        document.getElementById('mctReplyText').value = '';
+        showToast('Reply sent to support team! 🚀', 'success');
+      } catch (err) {
+        showToast('Error sending reply: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Message 🚀';
+      }
+    };
     
     function renderHomeStats(projects) {
       const active = projects.filter(p=> p.status !== 'done').length;
@@ -2201,17 +2402,102 @@
       }
     });
     
-    document.getElementById('btnSubmitSupport').addEventListener('click', async () => {
+    document.getElementById('btnSubmitSupport')?.addEventListener('click', async () => {
       const s = document.getElementById('sup-subject').value.trim();
       const c = document.getElementById('sup-category').value;
       const m = document.getElementById('sup-message').value.trim();
       if(!s || !m) return showToast('Please enter subject and message', 'error');
-      await addDoc(collection(db,'supportTickets'), {
-        userId: currentUser.uid, subject: s, category: c, message: m, status: 'open', createdAt: serverTimestamp()
-      });
-      showToast('Support ticket created!', 'success');
-      document.getElementById('sup-subject').value = '';
-      document.getElementById('sup-message').value = '';
+
+      const btn = document.getElementById('btnSubmitSupport');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      try {
+        const cName = currentUser.name || currentUser.displayName || 'Client';
+        const cEmail = currentUser.email || '';
+        const cPhone = currentUser.mobile || '';
+
+        const newDoc = await addDoc(collection(db,'supportTickets'), {
+          userId: currentUser.uid,
+          clientName: cName,
+          clientEmail: cEmail,
+          clientPhone: cPhone,
+          subject: s,
+          category: c,
+          message: m,
+          status: 'open',
+          replies: [],
+          createdAt: serverTimestamp()
+        });
+
+        if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendSupportAlert === 'function') {
+          window.EditzaarTelegram.sendSupportAlert({
+            ticketId: newDoc.id,
+            name: cName,
+            email: cEmail,
+            subject: s,
+            category: c,
+            message: m
+          });
+        }
+
+        showToast('Support ticket submitted! Support desk notified. 🚀', 'success');
+        document.getElementById('sup-subject').value = '';
+        document.getElementById('sup-message').value = '';
+      } catch (err) {
+        showToast('Failed to submit ticket: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Ticket';
+      }
+    });
+
+    // ── CLIENT REVIEW & FEEDBACK SUBMISSION ──
+    document.getElementById('btnSubmitClientReview')?.addEventListener('click', async () => {
+      const rating = parseInt(document.getElementById('clientReviewRating')?.value) || 5;
+      const proj = document.getElementById('clientReviewProject')?.value.trim();
+      const text = document.getElementById('clientReviewText')?.value.trim();
+
+      if (!text) return showToast('Please write a brief feedback or review before submitting.', 'error');
+
+      const btn = document.getElementById('btnSubmitClientReview');
+      btn.disabled = true;
+      btn.textContent = 'Submitting Review…';
+
+      try {
+        const cName = currentUser.name || currentUser.displayName || 'Client';
+        const cEmail = currentUser.email || '';
+
+        await addDoc(collection(db, 'reviews'), {
+          userId: currentUser.uid,
+          clientName: cName,
+          clientEmail: cEmail,
+          rating: rating,
+          projectTitle: proj || 'Video Project',
+          comment: text,
+          published: true, // Default live or pending moderation
+          status: 'approved',
+          source: 'client_portal',
+          createdAt: serverTimestamp()
+        });
+
+        if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendReviewAlert === 'function') {
+          window.EditzaarTelegram.sendReviewAlert({
+            name: cName,
+            rating: rating,
+            comment: text
+          });
+        }
+
+        showToast('Thank you so much for your feedback! ⭐', 'success');
+        document.getElementById('clientReviewText').value = '';
+        if (document.getElementById('clientReviewProject')) document.getElementById('clientReviewProject').value = '';
+      } catch (err) {
+        showToast('Failed to submit review: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Feedback ⭐';
+      }
     });
 
     /* ── INTELLIGENT AI CHATBOT ENGINE ── */

@@ -338,7 +338,52 @@ ${link}
     },
 
     /**
-     * 8. TEST PING BOT CONNECTION
+     * 8. SUPPORT TICKET ALERT (Admin Only)
+     */
+    sendSupportAlert: function (ticket) {
+      const clientName = escapeHtml(ticket.name || ticket.clientName || 'Client');
+      const clientEmail = escapeHtml(ticket.email || ticket.clientEmail || 'N/A');
+      const subject = escapeHtml(ticket.subject || 'Support Request');
+      const category = escapeHtml(ticket.category || 'General');
+      const message = escapeHtml(ticket.message || 'N/A');
+
+      const text =
+`🆘 <b>NEW SUPPORT TICKET RAISED!</b> 🆘
+
+👤 <b>Client:</b> ${clientName} (${clientEmail})
+📂 <b>Category:</b> ${category}
+📌 <b>Subject:</b> <b>${subject}</b>
+📝 <b>Message:</b>
+${message}
+
+👉 <i>Admin: Reply via Admin Dashboard → Support Tickets.</i>`;
+
+      return this.sendToAdmin(text);
+    },
+
+    /**
+     * 9. CLIENT REVIEW / FEEDBACK ALERT (Admin Only)
+     */
+    sendReviewAlert: function (rev) {
+      const clientName = escapeHtml(rev.name || rev.clientName || 'Client');
+      const rating = rev.rating ? ('⭐'.repeat(rev.rating)) : '⭐⭐⭐⭐⭐';
+      const comment = escapeHtml(rev.comment || rev.message || 'N/A');
+
+      const text =
+`⭐ <b>NEW CLIENT FEEDBACK / REVIEW!</b> ⭐
+
+👤 <b>Client:</b> ${clientName}
+🌟 <b>Rating:</b> ${rating}
+💬 <b>Feedback:</b>
+"${comment}"
+
+👉 <i>Admin: Review and approve for website in Admin Dashboard → Reviews & Feedback.</i>`;
+
+      return this.sendToAdmin(text);
+    },
+
+    /**
+     * 10. TEST PING BOT CONNECTION
      */
     testConnection: async function (targetChatId) {
       const text = 

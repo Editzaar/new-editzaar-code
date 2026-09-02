@@ -1818,14 +1818,154 @@
 
       <!-- REVIEWS -->
       <section id="sec-reviews" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Reviews <em>&amp; Feedback</em></div></div>
-        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Client</th><th>Rating</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead><tbody id="reviewsTbody"></tbody></table></div></div>
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-page-title">Client Reviews <em>&amp; Feedback</em></div>
+            <div style="font-size:13px;color:var(--t2);margin-top:4px;">Monitor client satisfaction ratings, project feedback, and manage testimonials published on editzaar.in.</div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn-outline btn-sm" onclick="window.renderReviews()">🔄 Refresh</button>
+            <button class="btn-gold btn-sm" onclick="window.openAddReviewModal()">+ Add Review / Testimonial</button>
+          </div>
+        </div>
+
+        <!-- Quick Review KPI Cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:16px;margin-bottom:20px;">
+          <div class="dash-card" style="padding:16px;border-left:4px solid var(--gold);">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">Average Rating</div>
+            <div style="font-size:24px;font-weight:800;color:var(--gold);margin-top:4px;" id="statAvgRating">5.0 ★</div>
+          </div>
+          <div class="dash-card" style="padding:16px;border-left:4px solid #28C840;">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">Published Live</div>
+            <div style="font-size:24px;font-weight:800;color:#28C840;margin-top:4px;" id="statPublishedReviews">0</div>
+          </div>
+          <div class="dash-card" style="padding:16px;border-left:4px solid #FFB800;">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">Pending Moderation</div>
+            <div style="font-size:24px;font-weight:800;color:#FFB800;margin-top:4px;" id="statPendingReviews">0</div>
+          </div>
+          <div class="dash-card" style="padding:16px;border-left:4px solid #00B0FF;">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">Total Feedback</div>
+            <div style="font-size:24px;font-weight:800;color:#00B0FF;margin-top:4px;" id="statTotalReviews">0</div>
+          </div>
+        </div>
+
+        <!-- Reviews Search & Filter -->
+        <div class="dash-card" style="padding:14px 20px;margin-bottom:16px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+            <div style="display:flex;gap:10px;flex:1;min-width:260px;">
+              <input type="text" id="reviewSearchInput" placeholder="🔍 Search feedback by client name, project, or comment..." oninput="window.filterReviews()" style="width:100%;padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;"/>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <select id="reviewStatusFilter" onchange="window.filterReviews()" style="padding:8px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;">
+                <option value="">All Statuses</option>
+                <option value="published">✅ Published Live</option>
+                <option value="pending">⏳ Pending Review</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews Table -->
+        <div class="dash-card">
+          <div class="table-scroll-wrap">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th style="width:110px;">Date</th>
+                  <th style="min-width:180px;">Client</th>
+                  <th style="width:120px;">Rating</th>
+                  <th style="min-width:260px;">Feedback / Testimonial</th>
+                  <th style="width:130px;">Website Status</th>
+                  <th style="width:160px;text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reviewsTbody">
+                <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--t2);">Loading reviews &amp; feedback...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- TICKETS -->
       <section id="sec-tickets" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Support <em>Tickets</em></div></div>
-        <div class="dash-card"><div class="table-scroll-wrap"><table class="dash-table"><thead><tr><th>Subject</th><th>Client</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ticketsTbody"></tbody></table></div></div>
+        <div class="dash-topbar">
+          <div>
+            <div class="dash-page-title">Support <em>Tickets &amp; Client Inquiries</em></div>
+            <div style="font-size:13px;color:var(--t2);margin-top:4px;">Manage, troubleshoot, and reply directly to client help requests in real-time.</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <button class="btn-outline btn-sm" onclick="window.renderTickets()">🔄 Refresh</button>
+            <button class="btn-danger btn-sm" id="btnClearTickets" style="font-size:11px;">🗑️ Clear Resolved</button>
+          </div>
+        </div>
+
+        <!-- Quick Ticket KPI Cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:16px;margin-bottom:20px;">
+          <div class="dash-card" style="padding:16px;border-left:4px solid #FF4D4D;">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">Open / Pending</div>
+            <div style="font-size:24px;font-weight:800;color:#FF4D4D;margin-top:4px;" id="statOpenTickets">0</div>
+          </div>
+          <div class="dash-card" style="padding:16px;border-left:4px solid #00B0FF;">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">In Progress</div>
+            <div style="font-size:24px;font-weight:800;color:#00B0FF;margin-top:4px;" id="statInProgressTickets">0</div>
+          </div>
+          <div class="dash-card" style="padding:16px;border-left:4px solid #28C840;">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">Resolved</div>
+            <div style="font-size:24px;font-weight:800;color:#28C840;margin-top:4px;" id="statResolvedTickets">0</div>
+          </div>
+          <div class="dash-card" style="padding:16px;border-left:4px solid var(--gold);">
+            <div style="font-size:12px;color:var(--t2);text-transform:uppercase;font-weight:700;">Total Tickets</div>
+            <div style="font-size:24px;font-weight:800;color:var(--gold);margin-top:4px;" id="statTotalTickets">0</div>
+          </div>
+        </div>
+
+        <!-- Tickets Filter & Search Bar -->
+        <div class="dash-card" style="padding:14px 20px;margin-bottom:16px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+            <div style="display:flex;gap:10px;flex:1;min-width:260px;">
+              <input type="text" id="ticketSearchInput" placeholder="🔍 Search tickets by subject, message, client name, or email..." oninput="window.filterTickets()" style="width:100%;padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;"/>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <select id="ticketStatusFilter" onchange="window.filterTickets()" style="padding:8px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;">
+                <option value="">All Statuses</option>
+                <option value="open">🟡 Open / Pending</option>
+                <option value="in_progress">🔵 In Progress</option>
+                <option value="resolved">🟢 Resolved</option>
+                <option value="closed">⚪ Closed</option>
+              </select>
+              <select id="ticketCategoryFilter" onchange="window.filterTickets()" style="padding:8px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:13px;">
+                <option value="">All Categories</option>
+                <option value="Technical Issue">Technical Issue</option>
+                <option value="technical">Technical</option>
+                <option value="Billing">Billing &amp; Payments</option>
+                <option value="Revisions">Revisions &amp; Quality</option>
+                <option value="General Inquiry">General Inquiry</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tickets Table -->
+        <div class="dash-card">
+          <div class="table-scroll-wrap">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th style="width:100px;">Date</th>
+                  <th style="min-width:200px;">Subject &amp; Category</th>
+                  <th style="min-width:180px;">Client Information</th>
+                  <th style="min-width:240px;">Client Message</th>
+                  <th style="width:120px;">Status</th>
+                  <th style="width:150px;text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ticketsTbody">
+                <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--t2);">Loading support tickets...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- CMS -->
@@ -2504,6 +2644,115 @@
     </div>
   </div>
 
+  <!-- MODAL: SUPPORT TICKET DETAILS & REPLY DESK -->
+  <div class="modal-overlay" id="modalTicketDetails">
+    <div class="modal-box" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close" onclick="closeModal('modalTicketDetails')">✕</button>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+        <div>
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700;" id="tdCategoryBadge">TECHNICAL ISSUE</div>
+          <div class="modal-title" style="margin: 4px 0 0 0;" id="tdSubject">Ticket Subject</div>
+          <div style="font-size:12px; color:var(--t2); margin-top:2px;" id="tdTimestamp">Created: —</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="status-badge" id="tdStatusBadge" style="font-size:12px; padding:4px 10px;">Open</span>
+        </div>
+      </div>
+
+      <!-- Client Info Snippet -->
+      <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div style="font-weight:700; color:#fff;" id="tdClientName">Client Name</div>
+          <div style="font-size:12px; color:var(--t2);" id="tdClientEmail">client@email.com</div>
+        </div>
+        <div style="font-size:12px; color:var(--t2); text-align:right;" id="tdClientExtra">
+          <!-- phone or user ID -->
+        </div>
+      </div>
+
+      <!-- Original Client Query -->
+      <div style="margin-bottom: 18px;">
+        <label style="font-size:12px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Client Support Message</label>
+        <div style="background:rgba(255,184,0,0.04); border:1px solid var(--gold-border); border-radius:10px; padding:14px; font-size:13.5px; color:#fff; line-height:1.5; white-space:pre-wrap;" id="tdOriginalMessage">
+          Loading query...
+        </div>
+      </div>
+
+      <!-- Conversation / Replies Thread -->
+      <div style="margin-bottom: 18px;">
+        <label style="font-size:12px; font-weight:700; color:var(--t2); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:8px;">Conversation History &amp; Admin Replies</label>
+        <div id="tdRepliesList" style="display:flex; flex-direction:column; gap:10px; max-height: 240px; overflow-y:auto; padding-right:4px;">
+          <!-- dynamic replies -->
+        </div>
+      </div>
+
+      <!-- Admin Reply Composer -->
+      <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:10px; padding:14px;">
+        <label style="font-size:12px; font-weight:700; color:#fff; display:block; margin-bottom:6px;">Write Staff / Admin Response</label>
+        <textarea id="tdReplyText" rows="3" placeholder="Type your response to the client here... (This will appear in their client portal immediately)" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:rgba(0,0,0,0.4); color:#fff; font-family:inherit; font-size:13px; resize:vertical; margin-bottom:12px;"></textarea>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label style="font-size:12px; color:var(--t2); margin:0;">Set Status:</label>
+            <select id="tdChangeStatus" style="padding:6px 10px; font-size:12px; border-radius:6px; background:rgba(255,255,255,0.06); border:1px solid var(--border); color:#fff;">
+              <option value="in_progress">🔵 In Progress</option>
+              <option value="resolved">🟢 Resolved / Solved</option>
+              <option value="open">🟡 Keep Open</option>
+              <option value="closed">⚪ Closed</option>
+            </select>
+          </div>
+          <button class="btn-gold btn-sm" id="btnSendTicketReply" onclick="window.submitTicketReply()" style="padding:8px 18px;">
+            Send Reply to Client 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT CLIENT TESTIMONIAL REVIEW -->
+  <div class="modal-overlay" id="modalAddReview">
+    <div class="modal-box" style="max-width: 520px;">
+      <button class="modal-close" onclick="closeModal('modalAddReview')">✕</button>
+      <div class="modal-title">Add Client Review / Testimonial</div>
+      <div class="dash-form">
+        <div class="field">
+          <label>Client Name *</label>
+          <input type="text" id="revClientName" placeholder="e.g. Rahul Sharma" />
+        </div>
+        <div class="field">
+          <label>Client Brand / Company</label>
+          <input type="text" id="revClientBrand" placeholder="e.g. FinTech Growth Hub" />
+        </div>
+        <div class="field">
+          <label>Star Rating (1 - 5) *</label>
+          <select id="revRating">
+            <option value="5">⭐⭐⭐⭐⭐ (5 Stars - Exceptional)</option>
+            <option value="4">⭐⭐⭐⭐ (4 Stars - Very Good)</option>
+            <option value="3">⭐⭐⭐ (3 Stars - Average)</option>
+            <option value="2">⭐⭐ (2 Stars)</option>
+            <option value="1">⭐ (1 Star)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Project / Service Package</label>
+          <input type="text" id="revProjectTitle" placeholder="e.g. Shorts &amp; Instagram Reels" />
+        </div>
+        <div class="field">
+          <label>Review Quote / Testimonial Text *</label>
+          <textarea id="revComment" rows="3" placeholder="e.g. Editzaar completely transformed our video output speed and retention..."></textarea>
+        </div>
+        <div class="field">
+          <label>Website Publication Status</label>
+          <select id="revPublished">
+            <option value="true">✅ Publish on Website (Live)</option>
+            <option value="false">⏳ Pending / Private</option>
+          </select>
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" onclick="window.saveAdminReview()">Save &amp; Publish Review ⭐</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: STAFF PERMISSIONS MANAGER -->
   <div class="modal-overlay" id="modalStaffPermissions">
     <div class="modal-box" style="max-width: 620px; max-height: 88vh; overflow-y: auto;">
@@ -2712,7 +2961,7 @@
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, setDoc,
-             query, where, onSnapshot, serverTimestamp }
+             query, where, onSnapshot, serverTimestamp, arrayUnion }
                                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -2813,6 +3062,9 @@
         renderRevenue(); renderPayments(); renderEditorPayouts(); renderRevisions(); renderStorage();
         renderCalendar(); renderAnalytics(); renderBookings();
       }, (err) => console.error('Projects listener error:', err));
+
+      listenSupportTickets();
+      listenReviews();
     }
 
     function renderStats() {
@@ -4345,14 +4597,467 @@
       showToast('All announcements cleared! 🧹', 'success');
     });
 
-    document.getElementById('btnClearTickets').addEventListener('click', async () => {
-      if (!confirm('Delete all support tickets?')) return;
-      const snap = await getDocs(collection(db, 'supportTickets'));
-      for (const d of snap.docs) {
-        await deleteDoc(doc(db, 'supportTickets', d.id));
+    // Helper: Safe string escaping
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    // ============================================================
+    // SUPPORT TICKETS & CLIENT INQUIRIES ENGINE
+    // ============================================================
+    var supportTickets = [];
+    var _activeTicketId = null;
+
+    function listenSupportTickets() {
+      onSnapshot(collection(db, 'supportTickets'), (snap) => {
+        supportTickets = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        supportTickets.sort((a, b) => {
+          const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+          const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+          return tB - tA;
+        });
+        filterTickets();
+      }, (err) => console.error('[Tickets Listener Error]', err));
+    }
+
+    window.filterTickets = function() {
+      renderTickets();
+    };
+
+    window.renderTickets = function() {
+      const tbody = document.getElementById('ticketsTbody');
+      if (!tbody) return;
+
+      const searchTerm = (document.getElementById('ticketSearchInput')?.value || '').toLowerCase().trim();
+      const statusFilter = (document.getElementById('ticketStatusFilter')?.value || '').trim();
+      const categoryFilter = (document.getElementById('ticketCategoryFilter')?.value || '').trim();
+
+      // Filter tickets
+      let list = supportTickets.filter(t => {
+        if (statusFilter && (t.status || 'open') !== statusFilter) return false;
+        if (categoryFilter && (t.category || '').toLowerCase() !== categoryFilter.toLowerCase()) return false;
+        if (searchTerm) {
+          const client = (users || []).find(u => u.id === t.userId);
+          const cName = (t.clientName || client?.name || '').toLowerCase();
+          const cEmail = (t.clientEmail || client?.email || '').toLowerCase();
+          const sub = (t.subject || '').toLowerCase();
+          const msg = (t.message || '').toLowerCase();
+          if (!cName.includes(searchTerm) && !cEmail.includes(searchTerm) && !sub.includes(searchTerm) && !msg.includes(searchTerm)) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      // KPI Counts
+      const openCount = supportTickets.filter(t => !t.status || t.status === 'open').length;
+      const inProgCount = supportTickets.filter(t => t.status === 'in_progress').length;
+      const resCount = supportTickets.filter(t => t.status === 'resolved' || t.status === 'closed').length;
+
+      if (document.getElementById('statOpenTickets')) document.getElementById('statOpenTickets').textContent = openCount;
+      if (document.getElementById('statInProgressTickets')) document.getElementById('statInProgressTickets').textContent = inProgCount;
+      if (document.getElementById('statResolvedTickets')) document.getElementById('statResolvedTickets').textContent = resCount;
+      if (document.getElementById('statTotalTickets')) document.getElementById('statTotalTickets').textContent = supportTickets.length;
+
+      // Sidebar Badge
+      const badgeEl = document.getElementById('sidebarTicketsBadge');
+      if (badgeEl) {
+        if (openCount > 0) {
+          badgeEl.textContent = openCount;
+          badgeEl.style.display = 'inline-block';
+        } else {
+          badgeEl.style.display = 'none';
+        }
       }
-      showToast('All support tickets cleared! 🧹', 'success');
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--t2);">
+          ${supportTickets.length === 0 ? 'No support tickets yet. When clients submit an inquiry from their portal, it will appear here instantly! ✨' : 'No tickets match the selected filters.'}
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(t => {
+        const client = (users || []).find(u => u.id === t.userId);
+        const cName = t.clientName || client?.name || client?.displayName || 'Client';
+        const cEmail = t.clientEmail || client?.email || 'N/A';
+        const cPhone = t.clientPhone || client?.mobile || '';
+
+        let statusBadgeHtml = '';
+        const st = t.status || 'open';
+        if (st === 'open') {
+          statusBadgeHtml = `<span class="status-badge" style="background:rgba(255,77,77,0.15);color:#FF4D4D;border:1px solid rgba(255,77,77,0.3);font-weight:700;">🟡 Open</span>`;
+        } else if (st === 'in_progress') {
+          statusBadgeHtml = `<span class="status-badge" style="background:rgba(0,176,255,0.15);color:#00B0FF;border:1px solid rgba(0,176,255,0.3);font-weight:700;">🔵 In Progress</span>`;
+        } else if (st === 'resolved') {
+          statusBadgeHtml = `<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-weight:700;">🟢 Resolved</span>`;
+        } else {
+          statusBadgeHtml = `<span class="status-badge" style="background:rgba(255,255,255,0.08);color:#888;">⚪ Closed</span>`;
+        }
+
+        const dateFormatted = dateStr(t.createdAt);
+        const repliesCount = Array.isArray(t.replies) ? t.replies.length : 0;
+
+        return `<tr>
+          <td style="font-size:12px;color:var(--t3);white-space:nowrap;">${dateFormatted}</td>
+          <td>
+            <div style="font-weight:700;color:#fff;font-size:14px;">${escapeHtml(t.subject || 'Help Request')}</div>
+            <div style="display:flex;gap:6px;align-items:center;margin-top:4px;">
+              <span class="badge" style="background:rgba(255,184,0,0.12);color:var(--gold);font-size:10px;padding:2px 7px;border-radius:4px;text-transform:uppercase;font-weight:600;">${escapeHtml(t.category || 'General')}</span>
+              ${repliesCount > 0 ? `<span style="font-size:11px;color:#00B0FF;">💬 ${repliesCount} ${repliesCount === 1 ? 'reply' : 'replies'}</span>` : ''}
+            </div>
+          </td>
+          <td>
+            <div style="font-weight:600;color:#fff;font-size:13px;">${escapeHtml(cName)}</div>
+            <div style="font-size:11.5px;color:var(--t2);">${escapeHtml(cEmail)}</div>
+            ${cPhone ? `<div style="font-size:11px;color:var(--t3);">${escapeHtml(cPhone)}</div>` : ''}
+          </td>
+          <td>
+            <div style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t2);font-size:12.5px;" title="${escapeHtml(t.message || '')}">
+              ${escapeHtml(t.message || '—')}
+            </div>
+          </td>
+          <td>${statusBadgeHtml}</td>
+          <td style="text-align:right;white-space:nowrap;">
+            <button class="btn-gold btn-sm" style="padding:6px 12px;font-size:11px;" onclick="window.openTicketDetailsModal('${t.id}')">💬 View &amp; Reply</button>
+            <button class="btn-outline btn-sm" style="padding:6px 8px;font-size:11px;margin-left:4px;" onclick="window.quickChangeTicketStatus('${t.id}')" title="Cycle Status">⚡</button>
+            <button class="btn-danger btn-sm" style="padding:6px 8px;font-size:11px;margin-left:4px;" onclick="window.deleteTicket('${t.id}')" title="Delete Ticket">🗑️</button>
+          </td>
+        </tr>`;
+      }).join('');
+    };
+
+    window.openTicketDetailsModal = function(ticketId) {
+      const t = supportTickets.find(x => x.id === ticketId);
+      if (!t) { showToast('Ticket not found.', 'error'); return; }
+
+      _activeTicketId = ticketId;
+      const client = (users || []).find(u => u.id === t.userId);
+      const cName = t.clientName || client?.name || client?.displayName || 'Client';
+      const cEmail = t.clientEmail || client?.email || 'N/A';
+      const cPhone = t.clientPhone || client?.mobile || '';
+
+      document.getElementById('tdSubject').textContent = t.subject || 'Support Ticket';
+      document.getElementById('tdCategoryBadge').textContent = (t.category || 'General').toUpperCase();
+      document.getElementById('tdTimestamp').textContent = 'Created: ' + dateStr(t.createdAt);
+
+      const st = t.status || 'open';
+      const badgeEl = document.getElementById('tdStatusBadge');
+      if (st === 'open') {
+        badgeEl.className = 'status-badge';
+        badgeEl.style = 'background:rgba(255,77,77,0.15);color:#FF4D4D;border:1px solid rgba(255,77,77,0.3);font-weight:700;';
+        badgeEl.textContent = '🟡 Open';
+      } else if (st === 'in_progress') {
+        badgeEl.className = 'status-badge';
+        badgeEl.style = 'background:rgba(0,176,255,0.15);color:#00B0FF;border:1px solid rgba(0,176,255,0.3);font-weight:700;';
+        badgeEl.textContent = '🔵 In Progress';
+      } else if (st === 'resolved') {
+        badgeEl.className = 'status-badge';
+        badgeEl.style = 'background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-weight:700;';
+        badgeEl.textContent = '🟢 Resolved';
+      } else {
+        badgeEl.className = 'status-badge';
+        badgeEl.style = 'background:rgba(255,255,255,0.08);color:#888;';
+        badgeEl.textContent = '⚪ Closed';
+      }
+
+      document.getElementById('tdClientName').textContent = cName;
+      document.getElementById('tdClientEmail').textContent = cEmail;
+      document.getElementById('tdClientExtra').textContent = cPhone ? ('Phone: ' + cPhone) : ('User ID: ' + (t.userId ? t.userId.substring(0,8) + '…' : '—'));
+      document.getElementById('tdOriginalMessage').textContent = t.message || 'No message text provided.';
+
+      document.getElementById('tdChangeStatus').value = st === 'open' ? 'in_progress' : st;
+      document.getElementById('tdReplyText').value = '';
+
+      renderTicketRepliesThread(t);
+      openModal('modalTicketDetails');
+    };
+
+    function renderTicketRepliesThread(ticket) {
+      const threadEl = document.getElementById('tdRepliesList');
+      if (!threadEl) return;
+
+      const replies = Array.isArray(ticket.replies) ? ticket.replies : [];
+      if (!replies.length) {
+        threadEl.innerHTML = `<div style="font-size:12px;color:var(--t3);text-align:center;padding:12px;border:1px dashed var(--border);border-radius:8px;">No staff replies yet. Type a response below to send a reply to the client dashboard.</div>`;
+        return;
+      }
+
+      threadEl.innerHTML = replies.map(r => {
+        const isAdmin = r.sender === 'admin' || r.sender === 'staff';
+        return `<div style="display:flex;flex-direction:column;align-items:${isAdmin ? 'flex-end' : 'flex-start'};">
+          <div style="font-size:11px;color:var(--t3);margin-bottom:3px;">
+            ${isAdmin ? '👑 <strong>Editzaar Team</strong>' : '👤 <strong>Client</strong>'} · ${r.createdAt ? new Date(r.createdAt).toLocaleString('en-IN') : ''}
+          </div>
+          <div style="max-width:85%;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.45;white-space:pre-wrap;
+            ${isAdmin ? 'background:linear-gradient(135deg,rgba(255,184,0,0.18),rgba(255,184,0,0.08));border:1px solid var(--gold-border);color:#fff;' : 'background:rgba(255,255,255,0.06);border:1px solid var(--border);color:#fff;'}">
+            ${escapeHtml(r.text || '')}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    window.submitTicketReply = async function() {
+      if (!_activeTicketId) return;
+      const text = document.getElementById('tdReplyText').value.trim();
+      const newStatus = document.getElementById('tdChangeStatus').value;
+      if (!text) return showToast('Please enter a response message.', 'error');
+
+      const btn = document.getElementById('btnSendTicketReply');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      try {
+        const t = supportTickets.find(x => x.id === _activeTicketId);
+        const replyObj = {
+          id: 'rep_' + Date.now(),
+          sender: 'admin',
+          senderName: 'Editzaar Support Team',
+          text: text,
+          createdAt: new Date().toISOString()
+        };
+
+        const ticketRef = doc(db, 'supportTickets', _activeTicketId);
+        await updateDoc(ticketRef, {
+          replies: arrayUnion(replyObj),
+          status: newStatus,
+          updatedAt: serverTimestamp(),
+          lastReplyBy: 'admin'
+        });
+
+        // Also push in-app notification to client
+        if (t && t.userId) {
+          try {
+            await addDoc(collection(db, 'notifications'), {
+              userId: t.userId,
+              title: 'Support Ticket Update 💬',
+              message: `Editzaar Support replied to: "${t.subject || 'Your inquiry'}". Click to view details.`,
+              type: 'support',
+              read: false,
+              createdAt: serverTimestamp()
+            });
+          } catch (nErr) {}
+        }
+
+        showToast('Reply dispatched live to client dashboard! 🚀', 'success');
+        document.getElementById('tdReplyText').value = '';
+
+        // Local update
+        if (t) {
+          if (!Array.isArray(t.replies)) t.replies = [];
+          t.replies.push(replyObj);
+          t.status = newStatus;
+          renderTicketRepliesThread(t);
+        }
+
+        renderTickets();
+      } catch (err) {
+        console.error('[Reply Ticket Error]', err);
+        showToast('Failed to send reply: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Reply to Client 🚀';
+      }
+    };
+
+    window.quickChangeTicketStatus = async function(ticketId) {
+      const t = supportTickets.find(x => x.id === ticketId);
+      if (!t) return;
+      const states = ['open', 'in_progress', 'resolved', 'closed'];
+      const curIdx = states.indexOf(t.status || 'open');
+      const nextStatus = states[(curIdx + 1) % states.length];
+
+      await updateDoc(doc(db, 'supportTickets', ticketId), {
+        status: nextStatus,
+        updatedAt: serverTimestamp()
+      });
+      t.status = nextStatus;
+      showToast('Status updated to: ' + nextStatus.toUpperCase(), 'success');
+      renderTickets();
+    };
+
+    window.deleteTicket = async function(ticketId) {
+      if (!confirm('Are you sure you want to permanently delete this support ticket?')) return;
+      try {
+        await deleteDoc(doc(db, 'supportTickets', ticketId));
+        supportTickets = supportTickets.filter(t => t.id !== ticketId);
+        showToast('Ticket deleted.', 'success');
+        renderTickets();
+      } catch (err) {
+        showToast('Delete error: ' + err.message, 'error');
+      }
+    };
+
+    // Clear resolved tickets button
+    document.getElementById('btnClearTickets')?.addEventListener('click', async () => {
+      const resolvedList = supportTickets.filter(t => t.status === 'resolved' || t.status === 'closed');
+      if (!resolvedList.length) return showToast('No resolved or closed tickets to clear.', 'info');
+      if (!confirm(`Permanently delete all ${resolvedList.length} resolved/closed tickets?`)) return;
+
+      for (const t of resolvedList) {
+        await deleteDoc(doc(db, 'supportTickets', t.id));
+      }
+      showToast(`${resolvedList.length} resolved tickets cleared! 🧹`, 'success');
     });
+
+    // ============================================================
+    // CLIENT REVIEWS & TESTIMONIALS ENGINE
+    // ============================================================
+    var clientReviews = [];
+
+    function listenReviews() {
+      onSnapshot(collection(db, 'reviews'), (snap) => {
+        clientReviews = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        clientReviews.sort((a, b) => {
+          const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+          const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+          return tB - tA;
+        });
+        filterReviews();
+      }, (err) => console.error('[Reviews Listener Error]', err));
+    }
+
+    window.filterReviews = function() {
+      renderReviews();
+    };
+
+    window.renderReviews = function() {
+      const tbody = document.getElementById('reviewsTbody');
+      if (!tbody) return;
+
+      const searchTerm = (document.getElementById('reviewSearchInput')?.value || '').toLowerCase().trim();
+      const statusFilter = (document.getElementById('reviewStatusFilter')?.value || '').trim();
+
+      let list = clientReviews.filter(r => {
+        if (statusFilter === 'published' && !r.published && r.status !== 'approved') return false;
+        if (statusFilter === 'pending' && (r.published || r.status === 'approved')) return false;
+        if (searchTerm) {
+          const cName = (r.clientName || r.name || '').toLowerCase();
+          const brand = (r.clientBrand || r.businessName || '').toLowerCase();
+          const comment = (r.comment || r.message || '').toLowerCase();
+          const proj = (r.projectTitle || r.service || '').toLowerCase();
+          if (!cName.includes(searchTerm) && !brand.includes(searchTerm) && !comment.includes(searchTerm) && !proj.includes(searchTerm)) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      // KPI Calculations
+      const totalRatings = clientReviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0);
+      const avg = clientReviews.length ? (totalRatings / clientReviews.length).toFixed(1) : '5.0';
+      const publishedCount = clientReviews.filter(r => r.published || r.status === 'approved').length;
+      const pendingCount = clientReviews.length - publishedCount;
+
+      if (document.getElementById('statAvgRating')) document.getElementById('statAvgRating').textContent = avg + ' ★';
+      if (document.getElementById('statPublishedReviews')) document.getElementById('statPublishedReviews').textContent = publishedCount;
+      if (document.getElementById('statPendingReviews')) document.getElementById('statPendingReviews').textContent = pendingCount;
+      if (document.getElementById('statTotalReviews')) document.getElementById('statTotalReviews').textContent = clientReviews.length;
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--t2);">
+          ${clientReviews.length === 0 ? 'No reviews or feedback submitted yet. Clients can leave feedback from their dashboard, or you can add testimonials manually! ⭐' : 'No reviews match the selected filter.'}
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(r => {
+        const cName = r.clientName || r.name || 'Client';
+        const cBrand = r.clientBrand || r.businessName || '';
+        const rating = Number(r.rating) || 5;
+        const stars = '⭐'.repeat(Math.min(5, Math.max(1, rating)));
+        const isPub = r.published || r.status === 'approved';
+
+        return `<tr>
+          <td style="font-size:12px;color:var(--t3);white-space:nowrap;">${dateStr(r.createdAt)}</td>
+          <td>
+            <div style="font-weight:700;color:#fff;">${escapeHtml(cName)}</div>
+            ${cBrand ? `<div style="font-size:12px;color:var(--gold);">${escapeHtml(cBrand)}</div>` : ''}
+            ${r.projectTitle ? `<div style="font-size:11px;color:var(--t3);margin-top:2px;">📌 ${escapeHtml(r.projectTitle)}</div>` : ''}
+          </td>
+          <td>
+            <span style="font-size:13px;letter-spacing:1px;" title="${rating} Stars">${stars}</span>
+          </td>
+          <td>
+            <div style="font-size:13px;color:#ddd;line-height:1.45;white-space:pre-wrap;max-width:320px;">
+              "${escapeHtml(r.comment || r.message || '—')}"
+            </div>
+          </td>
+          <td>
+            ${isPub 
+              ? `<span class="status-badge" style="background:rgba(40,200,64,0.15);color:#28C840;border:1px solid rgba(40,200,64,0.3);">✅ Live</span>`
+              : `<span class="status-badge" style="background:rgba(255,184,0,0.15);color:#FFB800;border:1px solid rgba(255,184,0,0.3);">⏳ Pending</span>`
+            }
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <button class="btn-outline btn-sm" style="padding:6px 10px;font-size:11px;" onclick="window.toggleReviewPublish('${r.id}')">
+              ${isPub ? 'Hide' : 'Publish ✅'}
+            </button>
+            <button class="btn-danger btn-sm" style="padding:6px 8px;font-size:11px;margin-left:4px;" onclick="window.deleteReview('${r.id}')" title="Delete">🗑️</button>
+          </td>
+        </tr>`;
+      }).join('');
+    };
+
+    window.toggleReviewPublish = async function(reviewId) {
+      const r = clientReviews.find(x => x.id === reviewId);
+      if (!r) return;
+      const newStatus = !(r.published || r.status === 'approved');
+      await updateDoc(doc(db, 'reviews', reviewId), {
+        published: newStatus,
+        status: newStatus ? 'approved' : 'pending',
+        updatedAt: serverTimestamp()
+      });
+      r.published = newStatus;
+      r.status = newStatus ? 'approved' : 'pending';
+      showToast(newStatus ? 'Review published live to website! ⭐✅' : 'Review set to pending.', 'success');
+      renderReviews();
+    };
+
+    window.deleteReview = async function(reviewId) {
+      if (!confirm('Delete this client review permanently?')) return;
+      await deleteDoc(doc(db, 'reviews', reviewId));
+      clientReviews = clientReviews.filter(x => x.id !== reviewId);
+      showToast('Review deleted.', 'success');
+      renderReviews();
+    };
+
+    window.openAddReviewModal = function() {
+      document.getElementById('revClientName').value = '';
+      document.getElementById('revClientBrand').value = '';
+      document.getElementById('revRating').value = '5';
+      document.getElementById('revProjectTitle').value = '';
+      document.getElementById('revComment').value = '';
+      document.getElementById('revPublished').value = 'true';
+      openModal('modalAddReview');
+    };
+
+    window.saveAdminReview = async function() {
+      const name = document.getElementById('revClientName').value.trim();
+      const brand = document.getElementById('revClientBrand').value.trim();
+      const rating = parseInt(document.getElementById('revRating').value) || 5;
+      const proj = document.getElementById('revProjectTitle').value.trim();
+      const comment = document.getElementById('revComment').value.trim();
+      const isPub = document.getElementById('revPublished').value === 'true';
+
+      if (!name || !comment) return showToast('Please enter client name and review text.', 'error');
+
+      await addDoc(collection(db, 'reviews'), {
+        clientName: name,
+        clientBrand: brand,
+        rating: rating,
+        projectTitle: proj,
+        comment: comment,
+        published: isPub,
+        status: isPub ? 'approved' : 'pending',
+        source: 'admin',
+        createdAt: serverTimestamp()
+      });
+
+      showToast('Review added successfully! ⭐', 'success');
+      closeModal('modalAddReview');
+    };
 
     document.getElementById('btnSaveSettings').addEventListener('click', async () => {
       const agencyName = document.getElementById('set-name').value.trim();
@@ -5095,6 +5800,12 @@
         if (document.getElementById('tg-bot-token')) document.getElementById('tg-bot-token').value = cfg.botToken || '';
         if (document.getElementById('tg-admin-chat-id')) document.getElementById('tg-admin-chat-id').value = cfg.adminChatId || cfg.chatId || '';
         window.renderEditorTelegramTable();
+      }
+      if (name === 'tickets' && typeof window.renderTickets === 'function') {
+        window.renderTickets();
+      }
+      if (name === 'reviews' && typeof window.renderReviews === 'function') {
+        window.renderReviews();
       }
     }
     window.showSection = showSection;
