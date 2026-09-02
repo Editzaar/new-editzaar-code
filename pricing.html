@@ -1156,8 +1156,11 @@
 
         // 3. Save Project Record in Firestore 'projects' collection
         const projTitle = activePackage.name + (brand ? ` (${brand})` : '');
-        const autoInvNo = 'EDZ-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        const todayStr = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+        const curDate = new Date();
+        const mm = String(curDate.getMonth() + 1).padStart(2, '0');
+        const defaultMonthlyHsn = '01' + mm;
+        const autoInvNo = 'EDZ-' + defaultMonthlyHsn + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+        const todayStr = curDate.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
 
         const initialInvoiceData = {
           headerTitle: 'TAX INVOICE',
@@ -1171,7 +1174,7 @@
           clientGstin: gstin || 'N/A (Individual)',
           clientAddress: isUSD ? 'International' : 'India',
           itemDesc: projTitle,
-          itemHsn: '998313',
+          itemHsn: defaultMonthlyHsn,
           itemQty: 1,
           itemRate: discountedBase,
           discount: discountAmt || 0,

@@ -854,10 +854,14 @@
       }
     }
     @media print {
+      body { background: #fff !important; color: #000 !important; }
       body * { visibility: hidden !important; }
+      #modalEditInvoice { display: block !important; position: static !important; inset: auto !important; background: transparent !important; }
+      #modalEditInvoice .modal-box { position: static !important; max-height: none !important; overflow: visible !important; width: 100% !important; max-width: 100% !important; border: none !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; }
+      #modalEditInvoice .modal-header, #modalEditInvoice .modal-footer, #modalEditInvoice > .modal-box > div > div:first-child { display: none !important; }
       #printableInvoiceWrapper, #printableInvoiceWrapper * { visibility: visible !important; }
-      #printableInvoiceWrapper { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
-      .tax-invoice-paper { box-shadow: none !important; border-radius: 0 !important; border: none !important; padding: 24px !important; }
+      #printableInvoiceWrapper { position: static !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      .tax-invoice-paper { box-shadow: none !important; border-radius: 0 !important; border: none !important; padding: 10px !important; width: 100% !important; max-width: 100% !important; background: #fff !important; color: #111 !important; }
     }
 </style>
   <!-- PWA Manifest & Theme -->
@@ -1214,8 +1218,9 @@
               <input type="text" id="mstAgencyGstin" value="36EDITZAAR1234Z9" placeholder="e.g. 36EDITZAAR1234Z9"/>
             </div>
             <div class="field">
-              <label>Default HSN / SAC Code *</label>
-              <input type="text" id="mstHsnSac" value="998313" placeholder="998313"/>
+              <label>Default HSN / SAC Code or Series *</label>
+              <input type="text" id="mstHsnSac" value="auto" placeholder="auto (e.g. 0109, 0209... next month 0110)"/>
+              <small style="font-size:11px;color:var(--t3);margin-top:3px;display:block;">Enter <code>auto</code> for monthly series (0109, 0209... next month 0110, 0210) or specific code like 998313</small>
             </div>
             <div class="field">
               <label>Default GST Tax Rate</label>
@@ -2332,8 +2337,11 @@
                 </select>
               </div>
               <div class="field">
-                <label>Invoice Number</label>
-                <input type="text" id="editInvNumber" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. EDZ-HVUMX4"/>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                  <label style="margin:0;">Invoice Number</label>
+                  <button type="button" class="btn-outline btn-sm" style="font-size:10px;padding:1px 6px;height:20px;" onclick="window.applyMonthlySerialToInv()" title="Set monthly serial like EDZ-0109, EDZ-0209...">⚡ Auto Serial</button>
+                </div>
+                <input type="text" id="editInvNumber" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. EDZ-0109 or 0109"/>
               </div>
               <div class="field">
                 <label>Invoice Date</label>
@@ -2382,8 +2390,11 @@
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
               <div class="field">
-                <label>HSN / SAC Code</label>
-                <input type="text" id="editInvItemHsn" oninput="window.updateLiveInvoicePreview()" placeholder="998313"/>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                  <label style="margin:0;">HSN / SAC Code</label>
+                  <button type="button" class="btn-outline btn-sm" style="font-size:10px;padding:1px 6px;height:20px;" onclick="window.applyMonthlySerialToHsn()" title="Set monthly serial like 0109, 0209...">⚡ Monthly Serial</button>
+                </div>
+                <input type="text" id="editInvItemHsn" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. 0109"/>
               </div>
               <div class="field">
                 <label>Quantity</label>
@@ -3304,7 +3315,7 @@
       agencySub: 'Post-Production & Web Growth Agency',
       agencyAddress: 'Hyderabad, Telangana, India',
       agencyGstin: '36EDITZAAR1234Z9',
-      hsnSac: '998313',
+      hsnSac: 'auto',
       taxRate: '18',
       upiId: 'nbikram704@okhdfcbank',
       accountName: 'Bikram Nath',
@@ -3350,7 +3361,7 @@
       if (elSub) elSub.value = masterInvoiceDefaults.agencySub || 'Post-Production & Web Growth Agency';
       if (elAddr) elAddr.value = masterInvoiceDefaults.agencyAddress || 'Hyderabad, Telangana, India';
       if (elGst) elGst.value = masterInvoiceDefaults.agencyGstin || '36EDITZAAR1234Z9';
-      if (elHsn) elHsn.value = masterInvoiceDefaults.hsnSac || '998313';
+      if (elHsn) elHsn.value = masterInvoiceDefaults.hsnSac || 'auto';
       if (elTax) elTax.value = masterInvoiceDefaults.taxRate || '18';
       if (elUpi) elUpi.value = masterInvoiceDefaults.upiId || 'nbikram704@okhdfcbank';
       if (elAcc) elAcc.value = masterInvoiceDefaults.accountName || 'Bikram Nath';
@@ -3550,6 +3561,68 @@
       showToast(newStatus ? 'Project invoice marked as Paid in Full! ✅' : 'Project invoice marked as Unpaid.', 'success');
     };
 
+    // Monthly Serial Generator: formats serial as serialNo/MM (e.g. 0109, 0209, 0309, next month 0110, 0210)
+    window.getMonthlySerial = function(projOrId, targetDate) {
+      var d = targetDate ? (targetDate.toDate ? targetDate.toDate() : new Date(targetDate)) : new Date();
+      if (isNaN(d.getTime())) d = new Date();
+
+      var mm = String(d.getMonth() + 1).padStart(2, '0'); // e.g. '09', '10'
+      var yyyy = d.getFullYear();
+
+      // Find all projects belonging to the same month and year
+      var currentMonthProjects = (projects || []).filter(function(p) {
+        var pDate = p.createdAt?.toDate ? p.createdAt.toDate() : (p.createdAt ? new Date(p.createdAt) : null);
+        if (!pDate || isNaN(pDate.getTime())) return false;
+        return pDate.getFullYear() === yyyy && (pDate.getMonth() + 1) === (d.getMonth() + 1);
+      });
+
+      // Sort chronologically (oldest first)
+      currentMonthProjects.sort(function(a, b) {
+        var tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+        var tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+        return tA - tB;
+      });
+
+      var seq = 1;
+      var targetPid = (typeof projOrId === 'string') ? projOrId : (projOrId && projOrId.id ? projOrId.id : null);
+      if (targetPid) {
+        var idx = currentMonthProjects.findIndex(function(p) { return p.id === targetPid; });
+        seq = (idx >= 0) ? (idx + 1) : (currentMonthProjects.length + 1);
+      } else if (typeof projOrId === 'number') {
+        seq = projOrId;
+      } else {
+        seq = currentMonthProjects.length + 1;
+      }
+
+      var seqStr = String(seq).padStart(2, '0');
+      return seqStr + mm; // e.g. '0109', '0209', '0309', next month '0110', '0210'
+    };
+
+    window.applyMonthlySerialToHsn = function() {
+      if (!_activeInvoiceProjectId) return;
+      var p = projects.find(function(x) { return x.id === _activeInvoiceProjectId; });
+      var serial = window.getMonthlySerial(p, p ? p.createdAt : new Date());
+      var input = document.getElementById('editInvItemHsn');
+      if (input) {
+        input.value = serial;
+        window.updateLiveInvoicePreview();
+        showToast('HSN/SAC set to monthly serial: ' + serial + ' ⚡', 'success');
+      }
+    };
+
+    window.applyMonthlySerialToInv = function() {
+      if (!_activeInvoiceProjectId) return;
+      var p = projects.find(function(x) { return x.id === _activeInvoiceProjectId; });
+      var serial = window.getMonthlySerial(p, p ? p.createdAt : new Date());
+      var pfx = masterInvoiceDefaults.invoicePrefix || 'EDZ-';
+      var input = document.getElementById('editInvNumber');
+      if (input) {
+        input.value = pfx + serial;
+        window.updateLiveInvoicePreview();
+        showToast('Invoice # set to monthly serial: ' + pfx + serial + ' ⚡', 'success');
+      }
+    };
+
     // Open Custom Invoice Editor
     window.openCustomInvoiceEditor = function(pid) {
       var p = projects.find(function(x) { return x.id === pid; });
@@ -3564,8 +3637,11 @@
 
       var invData = p.invoiceData || null;
 
-      // Fill in fields: use custom invoiceData if exists, or auto-generate draft using master defaults
-      var invNo = invData ? invData.invoiceNo : (p.invoiceNo || (masterInvoiceDefaults.invoicePrefix + (p.id.length >= 6 ? p.id.substring(0,6).toUpperCase() : 'INV' + Date.now().toString().slice(-4))));
+      // Auto-compute monthly serial (e.g. 0109, 0209, 0309, next month 0110, 0210)
+      var monthlySerial = window.getMonthlySerial(p, p.createdAt);
+
+      // Fill in fields: use custom invoiceData if exists, or auto-generate draft using master defaults & monthly sequence
+      var invNo = invData ? invData.invoiceNo : (p.invoiceNo || (masterInvoiceDefaults.invoicePrefix + monthlySerial));
       var invDate = invData ? invData.date : (p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }));
       var dueDate = invData ? (invData.dueDate || '48 Hours') : '48 Hours';
       var headerTitle = invData ? (invData.headerTitle || 'TAX INVOICE') : (p.invoicePaid ? 'TAX INVOICE' : 'TAX INVOICE');
@@ -3577,7 +3653,8 @@
       var clientAddress = invData ? (invData.clientAddress || '') : (p.clientAddress || 'India');
 
       var itemDesc = invData ? invData.itemDesc : (p.title || p.serviceName || 'Video Post-Production Service');
-      var itemHsn = invData ? invData.itemHsn : (masterInvoiceDefaults.hsnSac || '998313');
+      // User requirement: HSN/SAC number series comes like serialNo./MM (0109, 0209, 0309...)
+      var itemHsn = invData ? invData.itemHsn : (p.itemHsn || monthlySerial);
       var itemQty = invData ? (invData.itemQty || 1) : 1;
       var itemRate = invData ? invData.itemRate : (p.invoiceAmount || 1000);
       var discount = invData ? (invData.discount || 0) : 0;
@@ -3876,17 +3953,73 @@
       }
     };
 
+    // Isolated Print Engine (Prevents blank pages in Chrome/Edge, renders crisp A4)
+    window.printInvoiceHtml = function(invoiceInnerHtml, title) {
+      var iframe = document.getElementById('editzaarPrintIframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'editzaarPrintIframe';
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        document.body.appendChild(iframe);
+      }
+
+      var doc = iframe.contentWindow.document;
+      doc.open();
+      doc.write('<!DOCTYPE html>'
+        + '<html>'
+        + '<head>'
+        + '<meta charset="utf-8">'
+        + '<title>' + (title || 'Tax Invoice - Editzaar') + '</title>'
+        + '<style>'
+        + '  @page { size: A4 portrait; margin: 12mm 15mm; }'
+        + '  * { box-sizing: border-box; margin: 0; padding: 0; }'
+        + '  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #111; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; }'
+        + '  .tax-invoice-paper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff !important; color: #111 !important; padding: 10px 0; }'
+        + '  .inv-header { display: flex; justify-content: space-between; border-bottom: 2.5px solid #FFB800; padding-bottom: 14px; margin-bottom: 18px; }'
+        + '  .inv-company-title { font-size: 24px; font-weight: 900; color: #000; letter-spacing: -0.5px; }'
+        + '  .inv-company-sub { font-size: 12px; color: #555; margin-top: 3px; line-height: 1.4; }'
+        + '  .inv-meta-table { width: 100%; font-size: 12px; margin-bottom: 20px; border-collapse: collapse; }'
+        + '  .inv-meta-table td { padding: 4px 0; vertical-align: top; }'
+        + '  .inv-items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }'
+        + '  .inv-items-table th { background: #f8f9fa !important; text-align: left; padding: 10px 12px; border-bottom: 2px solid #ddd; font-weight: 700; color: #000 !important; font-size: 12px; text-transform: uppercase; }'
+        + '  .inv-items-table td { padding: 12px; border-bottom: 1px solid #eee; color: #222; vertical-align: middle; }'
+        + '  .inv-summary-box { width: 290px; margin-left: auto; font-size: 13px; }'
+        + '  .inv-sum-row { display: flex; justify-content: space-between; padding: 5px 0; color: #444; }'
+        + '  .inv-sum-row.grand { border-top: 2px solid #000; font-weight: 900; font-size: 16px; padding-top: 8px; color: #000; margin-top: 4px; }'
+        + '  .inv-footer-note { font-size: 11px; color: #777; border-top: 1px solid #eee; padding-top: 14px; margin-top: 28px; text-align: center; }'
+        + '</style>'
+        + '</head>'
+        + '<body>'
+        + '<div class="tax-invoice-paper">' + invoiceInnerHtml + '</div>'
+        + '</body>'
+        + '</html>');
+      doc.close();
+
+      setTimeout(function() {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      }, 300);
+    };
+
     // Print invoice from modal
     window.printInvoiceFromModal = function() {
-      window.print();
+      var paper = document.getElementById('previewInvoicePaper');
+      if (!paper) return;
+      var invNo = document.getElementById('editInvNumber')?.value || 'Invoice';
+      window.printInvoiceHtml(paper.innerHTML, invNo + ' - Tax Invoice');
     };
 
     // Open Admin Print Direct
     window.openAdminInvoicePrint = function(pid) {
       window.openCustomInvoiceEditor(pid);
       setTimeout(function() {
-        window.print();
-      }, 400);
+        window.printInvoiceFromModal();
+      }, 350);
     };
 
     function populateSelects() {
