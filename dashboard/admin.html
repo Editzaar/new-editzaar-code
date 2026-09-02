@@ -933,7 +933,7 @@
         <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat <span class="nav-counter-badge" id="badgeNavChat" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Broadcast</div>
         <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">📩</span> App Notifications</div>
-        <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🔔</span> Telegram Alerts &amp; Routing</div>
+        <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🤖</span> Telegram Control Management</div>
 
         <div class="sidebar-nav-section">Business</div>
         <div class="sidebar-nav-item" data-section="revisions"><span class="nav-icon">📅</span> Revisions Queue</div>
@@ -942,7 +942,7 @@
         <div class="sidebar-nav-item" data-section="analytics"><span class="nav-icon">📊</span> Analytics</div>
         <div class="sidebar-nav-item" data-section="reports"><span class="nav-icon">📄</span> Reports</div>
 
-        <div class="sidebar-nav-section">Store</div>
+        <div class="sidebar-nav-section">Store &amp; Packages</div>
         <div class="sidebar-nav-item" data-section="bookings"><span class="nav-icon">📜</span> Booking Requests <span class="nav-counter-badge" id="badgeNavBookings" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="services"><span class="nav-icon">🚥</span> Services &amp; Pricing</div>
         <div class="sidebar-nav-item" data-section="coupons"><span class="nav-icon">🎫</span> Coupons</div>
@@ -951,10 +951,11 @@
         <div class="sidebar-nav-item" data-section="reviews"><span class="nav-icon">⭐</span> Reviews &amp; Feedback <span class="nav-counter-badge" id="badgeNavReviews" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="tickets"><span class="nav-icon">🆘</span> Support Tickets <span class="nav-counter-badge" id="badgeNavTickets" style="display:none;">0</span></div>
 
-        <div class="sidebar-nav-section">Settings</div>
-        <div class="sidebar-nav-item" data-section="cms"><span class="nav-icon">🌐</span> Website CMS</div>
+        <div class="sidebar-nav-section">Controls &amp; Content Changing</div>
+        <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🤖</span> Telegram Control Hub</div>
+        <div class="sidebar-nav-item" data-section="cms"><span class="nav-icon">🌐</span> Website CMS (Change Content)</div>
         <div class="sidebar-nav-item" data-section="roles"><span class="nav-icon">🔐</span> Roles &amp; Permissions</div>
-        <div class="sidebar-nav-item" data-section="settings"><span class="nav-icon">⚙️</span> Agency Settings</div>
+        <div class="sidebar-nav-item" data-section="settings"><span class="nav-icon">⚙️</span> Agency Information &amp; Defaults</div>
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="adminEmail">Loading…</div>
@@ -992,16 +993,88 @@
           <div class="stat-card"><div class="stat-card-label">Clients</div><div class="stat-card-value" id="statClients">0</div></div>
         </div>
 
-        <!-- Real-time Telegram Status Bar -->
-        <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:1.4rem;">🔔</span>
-            <div>
-              <div style="font-weight:700;font-size:0.92rem;color:var(--gold);">Telegram Real-Time Alert Engine: Active ✓</div>
-              <div style="font-size:0.8rem;color:var(--t2);">Master Admin Chat ID: <code>6432944929</code> &bull; Bot: <code>@editzaar_agency_bot</code></div>
-            </div>
+        <!-- MASTER AGENCY CONTROL & CONTENT CHANGING HUB -->
+        <div style="margin-bottom: 24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="font-weight:700;font-size:1.1rem;color:var(--t1);">🛠️ Agency Control &amp; <em>Content Changing Hub</em></div>
+            <span style="font-size:0.8rem;color:var(--t2);">1-Click access to change Telegram bots, website videos, pricing &amp; agency details</span>
           </div>
-          <button class="btn-gold btn-sm" onclick="showSection('automations')" style="font-size:11px;">🔔 Manage Telegram Alerts &amp; Editor Routing →</button>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:14px;">
+            
+            <!-- 1. Telegram Control Management Card -->
+            <div class="dash-card" style="margin-bottom:0;border:1.5px solid var(--gold-border);background:rgba(255,184,0,0.04);display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="font-weight:700;color:var(--gold);font-size:0.98rem;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:1.2rem;">🤖</span> Telegram Control Hub
+                  </div>
+                  <span class="live-badge" style="background:rgba(40,200,64,0.12);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:10px;">Bot Online ✓</span>
+                </div>
+                <div style="font-size:0.82rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">
+                  Change Bot Token (<code>@editzaar_agency_bot</code>), Master Admin Chat ID (<code>6432944929</code>), and private editor alert routing.
+                </div>
+              </div>
+              <button class="btn-gold btn-sm" onclick="showSection('automations')" style="width:100%;justify-content:center;padding:9px;">
+                🤖 Open Telegram Control Management →
+              </button>
+            </div>
+
+            <!-- 2. Website CMS & Portfolio Content Card -->
+            <div class="dash-card" style="margin-bottom:0;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="font-weight:700;color:var(--t1);font-size:0.98rem;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:1.2rem;">🌐</span> Website CMS &amp; Content
+                  </div>
+                  <span class="live-badge" style="font-size:10px;">Live Website</span>
+                </div>
+                <div style="font-size:0.82rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">
+                  Add or change live portfolio videos, reels, YouTube long-forms, and showcase content on editzaar.in/work.
+                </div>
+              </div>
+              <button class="btn-outline btn-sm" onclick="showSection('cms')" style="width:100%;justify-content:center;padding:9px;">
+                🌐 Change Website CMS &amp; Work →
+              </button>
+            </div>
+
+            <!-- 3. Master Invoice & Agency Info Card -->
+            <div class="dash-card" style="margin-bottom:0;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="font-weight:700;color:var(--t1);font-size:0.98rem;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:1.2rem;">🧾</span> Invoice &amp; Company Info
+                  </div>
+                  <span class="live-badge" style="font-size:10px;">GST Engine</span>
+                </div>
+                <div style="font-size:0.82rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">
+                  Change Agency Name, GSTIN, UPI ID, default invoice draft information, and bank account for client billing.
+                </div>
+              </div>
+              <button class="btn-outline btn-sm" onclick="showSection('settings')" style="width:100%;justify-content:center;padding:9px;">
+                🧾 Change Invoices &amp; Agency Info →
+              </button>
+            </div>
+
+            <!-- 4. Services & Pricing Card -->
+            <div class="dash-card" style="margin-bottom:0;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="font-weight:700;color:var(--t1);font-size:0.98rem;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:1.2rem;">🚥</span> Services, Pricing &amp; Coupons
+                  </div>
+                  <span class="live-badge" style="font-size:10px;">Store Pricing</span>
+                </div>
+                <div style="font-size:0.82rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">
+                  Change video editing package pricing, deliverables, turnaround times, and discount promo coupons.
+                </div>
+              </div>
+              <button class="btn-outline btn-sm" onclick="showSection('services')" style="width:100%;justify-content:center;padding:9px;">
+                🚥 Change Services &amp; Pricing →
+              </button>
+            </div>
+
+          </div>
         </div>
 
         <div class="dash-card">
@@ -2302,6 +2375,16 @@
       <!-- SETTINGS -->
       <section id="sec-settings" style="display:none;">
         <div class="dash-topbar"><div class="dash-page-title">Agency <em>Settings &amp; Data Control</em></div></div>
+
+        <!-- MASTER CONTROL SWITCHER TABS -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+          <button class="btn-gold btn-sm" onclick="showSection('settings')">🏢 Agency Profile &amp; Invoice Info</button>
+          <button class="btn-outline btn-sm" onclick="showSection('automations')">🤖 Telegram Control Management</button>
+          <button class="btn-outline btn-sm" onclick="showSection('cms')">🌐 Website CMS (Change Content)</button>
+          <button class="btn-outline btn-sm" onclick="showSection('services')">🚥 Services &amp; Pricing</button>
+          <button class="btn-outline btn-sm" onclick="showSection('coupons')">🎫 Coupons</button>
+          <button class="btn-outline btn-sm" onclick="showSection('roles')">🔐 Staff Roles &amp; Permissions</button>
+        </div>
         <div class="dash-card" style="margin-bottom:20px;">
           <div class="dash-card-header"><div class="dash-card-title">Agency <em>Information</em></div></div>
           <div class="dash-form">
@@ -6097,6 +6180,10 @@
         if(el) el.style.display = s===name?'block':'none'; 
       });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.section===name));
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar')?.classList.remove('open');
+        document.getElementById('sidebarOverlay')?.classList.remove('active');
+      }
       if (typeof window.markSectionBadgesRead === 'function') {
         window.markSectionBadgesRead(name);
       }
