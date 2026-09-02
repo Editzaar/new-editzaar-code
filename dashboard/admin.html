@@ -887,6 +887,10 @@
 <body>
 
   <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  <button class="notif-bell-btn mobile-header-bell" id="mobileAdminNotifBellBtn" title="Real-time Alerts &amp; Notifications" onclick="window.toggleAdminNotifPanel(event)">
+    🔔
+    <span class="notif-bell-badge" id="mobileAdminBellBadge" style="display:none;">0</span>
+  </button>
   <div class="toast" id="toast"></div>
 
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
@@ -5112,20 +5116,20 @@
       } catch (e) {}
     }
 
-    window.updateAdminBadges = function() {
+    function updateAdminBadges() {
       // 1. Clients CRM: new clients registered
       let seenClients = getSeenSet(ADMIN_BADGE_KEYS.CLIENTS);
       if (seenClients === null) {
         const cutOff = Date.now() - 24 * 3600 * 1000;
-        seenClients = new Set(clients.filter(c => extractTs(c.createdAt) < cutOff).map(c => c.id));
+        seenClients = new Set((clients || []).filter(c => extractTs(c.createdAt) < cutOff).map(c => c.id));
         saveSeenSet(ADMIN_BADGE_KEYS.CLIENTS, seenClients);
       }
-      const unreadClients = clients.filter(c => !seenClients.has(c.id));
+      const unreadClients = (clients || []).filter(c => !seenClients.has(c.id));
       setBadge('badgeNavClients', unreadClients.length);
 
       // 2. Booking Requests (pending projects)
       let seenBookings = getSeenSet(ADMIN_BADGE_KEYS.BOOKINGS);
-      const pendingProjects = projects.filter(p => p.status === 'pending');
+      const pendingProjects = (projects || []).filter(p => p.status === 'pending');
       if (seenBookings === null) {
         const cutOff = Date.now() - 24 * 3600 * 1000;
         seenBookings = new Set(pendingProjects.filter(p => extractTs(p.createdAt) < cutOff).map(p => p.id));
@@ -5138,28 +5142,28 @@
       let seenProjects = getSeenSet(ADMIN_BADGE_KEYS.PROJECTS);
       if (seenProjects === null) {
         const cutOff = Date.now() - 24 * 3600 * 1000;
-        seenProjects = new Set(projects.filter(p => extractTs(p.createdAt) < cutOff).map(p => p.id));
+        seenProjects = new Set((projects || []).filter(p => extractTs(p.createdAt) < cutOff).map(p => p.id));
         saveSeenSet(ADMIN_BADGE_KEYS.PROJECTS, seenProjects);
       }
-      const unreadProjects = projects.filter(p => p.status === 'pending' && !seenProjects.has(p.id));
+      const unreadProjects = (projects || []).filter(p => p.status === 'pending' && !seenProjects.has(p.id));
       setBadge('badgeNavProjects', unreadProjects.length);
 
       // 4. Support Tickets (tracks ticket ID + reply count so new client replies flag unread)
       let seenTickets = getSeenSet(ADMIN_BADGE_KEYS.TICKETS);
       if (seenTickets === null) {
-        seenTickets = new Set(supportTickets.map(t => t.id + '_' + (t.replies?.length || 0)));
+        seenTickets = new Set((supportTickets || []).map(t => t.id + '_' + (t.replies?.length || 0)));
         saveSeenSet(ADMIN_BADGE_KEYS.TICKETS, seenTickets);
       }
-      const unreadTickets = supportTickets.filter(t => (t.status === 'open' || t.status === 'in_progress') && !seenTickets.has(t.id + '_' + (t.replies?.length || 0)));
+      const unreadTickets = (supportTickets || []).filter(t => (t.status === 'open' || t.status === 'in_progress') && !seenTickets.has(t.id + '_' + (t.replies?.length || 0)));
       setBadge('badgeNavTickets', unreadTickets.length);
 
       // 5. Reviews & Feedback (pending approval)
       let seenReviews = getSeenSet(ADMIN_BADGE_KEYS.REVIEWS);
       if (seenReviews === null) {
-        seenReviews = new Set(clientReviews.map(r => r.id));
+        seenReviews = new Set((clientReviews || []).map(r => r.id));
         saveSeenSet(ADMIN_BADGE_KEYS.REVIEWS, seenReviews);
       }
-      const unreadReviews = clientReviews.filter(r => (!r.published && r.status !== 'approved') && !seenReviews.has(r.id));
+      const unreadReviews = (clientReviews || []).filter(r => (!r.published && r.status !== 'approved') && !seenReviews.has(r.id));
       setBadge('badgeNavReviews', unreadReviews.length);
 
       // Total count across all alerts
@@ -5168,6 +5172,7 @@
       // Update Topbar Bell Badges
       setBellBadge('adminBellBadge', totalUnread);
       setBellBadge('overviewBellBadge', totalUnread);
+      setBellBadge('mobileAdminBellBadge', totalUnread);
 
       // Render Popover Items
       renderAdminNotifList({
@@ -5176,7 +5181,8 @@
         unreadTickets,
         unreadReviews
       }, totalUnread);
-    };
+    }
+    window.updateAdminBadges = updateAdminBadges;
 
     function setBadge(elemId, count) {
       const el = document.getElementById(elemId);
@@ -8111,6 +8117,8 @@
         <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnConfirmPayrollClearance" onclick="window.confirmEditorPayrollClearance()">Confirm Payout &amp; Clear Balance ✅</button>
       </div>
     </div>
+  </div>
+
   <!-- FLOATING NOTIFICATION CENTER POPOVER -->
   <div class="notif-popover-panel" id="adminNotifPopover" style="display:none;">
     <div class="notif-popover-header">

@@ -766,7 +766,6 @@
             </div>
           </div>
         </div>
-        </div>
 
         <button class="btn-gold" style="width:100%;justify-content:center;margin-top:8px;" id="btnSubmitClientProject">Confirm Booking &amp; Submit Request →</button>
       </div>
@@ -2815,7 +2814,7 @@
       } catch (e) {}
     }
 
-    window.updateClientBadges = function() {
+    function updateClientBadges() {
       if (!currentUser) return;
 
       // 1. Support Tickets with replies
@@ -2864,7 +2863,8 @@
         unreadDrafts,
         unreadInvoices
       }, totalUnread);
-    };
+    }
+    window.updateClientBadges = updateClientBadges;
 
     function setClientBadge(elemId, count) {
       const el = document.getElementById(elemId);

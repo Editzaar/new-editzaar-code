@@ -1408,7 +1408,7 @@
       } catch (e) {}
     }
 
-    window.updateEditorBadges = function(projectsList) {
+    function updateEditorBadges(projectsList) {
       if (!currentUser) return;
       const list = projectsList || window._activeEditorProjectsList || [];
       
@@ -1445,7 +1445,8 @@
 
       // Render popover items
       renderEditorNotifList(unreadProjs);
-    };
+    }
+    window.updateEditorBadges = updateEditorBadges;
 
     function renderEditorNotifList(unreadProjs) {
       const listEl = document.getElementById('editorNotifList');
