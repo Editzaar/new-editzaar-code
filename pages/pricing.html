@@ -798,6 +798,44 @@
         } catch(uErr) {}
 
         const projTitle = activePackage.name + (brand ? ` (${brand})` : '');
+        const autoInvNo = 'EDZ-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        const todayStr = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+        const initialInvoiceData = {
+          headerTitle: 'TAX INVOICE',
+          invoiceNo: autoInvNo,
+          date: todayStr,
+          dueDate: activePackage.delivery || '48 Hours',
+          clientName: name,
+          clientEmail: email,
+          clientPhone: phone,
+          clientBrand: brand || '',
+          clientGstin: gstin || 'N/A (Individual)',
+          clientAddress: 'India',
+          itemDesc: projTitle,
+          itemHsn: '998313',
+          itemQty: 1,
+          itemRate: discountedBase,
+          discount: discountAmt || 0,
+          taxType: 'cgst_sgst',
+          subtotal: discountedBase,
+          cgst: Math.round(gst / 2),
+          sgst: gst - Math.round(gst / 2),
+          igst: 0,
+          total: total,
+          paidAmount: advance,
+          balanceAmount: Math.max(0, total - advance),
+          payStatus: advance >= total ? 'Paid in Full' : '50% Advance Received',
+          upiId: 'nbikram704@okhdfcbank',
+          accountName: 'Bikram Nath',
+          utrNum: utrNum || '',
+          footerNote: 'This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340',
+          agencyName: 'EDITZAAR',
+          agencySub: 'Post-Production & Web Growth Agency',
+          agencyAddress: 'Hyderabad, Telangana, India',
+          agencyGstin: '36EDITZAAR1234Z9'
+        };
+
         const projectRef = await addDoc(collection(firestoreDb, 'projects'), {
           title: projTitle,
           serviceName: activePackage.name,
@@ -812,6 +850,8 @@
           editorId: '',
           rawFootageUrl: footage || '',
           deliveryUrl: '',
+          invoiceNo: autoInvNo,
+          invoiceData: initialInvoiceData,
           invoiceAmount: discountedBase,
           totalAmount: total,
           advanceRequired: advance,

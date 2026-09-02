@@ -742,22 +742,35 @@
       <div class="tax-invoice-paper" id="printablePaper">
         <div class="inv-header">
           <div>
-            <div class="inv-company-title">EDITZAAR</div>
-            <div class="inv-company-sub">Post-Production &amp; Web Growth Agency</div>
-            <div class="inv-company-sub">Hyderabad, Telangana, India</div>
+            <div class="inv-company-title" id="invCompanyTitle">EDITZAAR</div>
+            <div class="inv-company-sub" id="invCompanySub">Post-Production &amp; Web Growth Agency</div>
+            <div class="inv-company-sub" id="invCompanyAddress">Hyderabad, Telangana, India</div>
             <div class="inv-company-sub">GSTIN: <strong id="invCompanyGstin">36EDITZAAR1234Z9</strong> (Official)</div>
           </div>
           <div style="text-align:right;">
             <div style="font-size:18px;font-weight:800;color:#000;" id="invPaperHeaderTitle">TAX INVOICE</div>
             <div style="font-size:12px;color:#555;margin-top:4px;">Invoice #: <span id="invPaperNo">EDZ-1001</span></div>
             <div style="font-size:12px;color:#555;">Date: <span id="invPaperDate">07 Aug 2026</span></div>
+            <div style="font-size:12px;color:#777;" id="invPaperDueDateRow"></div>
           </div>
         </div>
 
         <table class="inv-meta-table">
           <tr>
-            <td style="width:50%;"><strong>BILLED TO:</strong><br/><span id="invPaperClientName">Client Name</span><br/><span id="invPaperClientEmail">client@email.com</span><br/>GSTIN: <span id="invPaperClientGst">N/A (Individual)</span></td>
-            <td style="width:50%;text-align:right;"><strong>PAYMENT DETAILS:</strong><br/>UPI ID: nbikram704@okhdfcbank<br/>Account Name: Bikram Nath<br/>Status: <strong id="invPaperPayStatus" style="color:#28C840;">50% Advance Received</strong></td>
+            <td style="width:50%;">
+              <strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#000;">BILLED TO:</strong><br/>
+              <span id="invPaperClientName" style="font-weight:700;font-size:14px;color:#111;">Client Name</span><br/>
+              <span id="invPaperClientEmail" style="color:#555;">client@email.com</span><br/>
+              <span id="invPaperClientAddress" style="color:#666;display:none;"></span>
+              <span style="color:#444;">GSTIN: <strong id="invPaperClientGst">N/A (Individual)</strong></span>
+            </td>
+            <td style="width:50%;text-align:right;">
+              <strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#000;">PAYMENT DETAILS:</strong><br/>
+              <span style="color:#444;">UPI ID: <strong id="invPaperUpiId">nbikram704@okhdfcbank</strong></span><br/>
+              <span style="color:#555;">Account Name: <span id="invPaperAccName">Bikram Nath</span></span><br/>
+              <span style="color:#666;font-size:11px;" id="invPaperUtrRow"></span>
+              <span>Status: <strong id="invPaperPayStatus" style="color:#28C840;">50% Advance Received</strong></span>
+            </td>
           </tr>
         </table>
 
@@ -766,31 +779,34 @@
             <tr>
               <th>Description / Service</th>
               <th>HSN/SAC</th>
-              <th>Qty</th>
-              <th>Rate (₹)</th>
-              <th>Amount (₹)</th>
+              <th style="text-align:center;">Qty</th>
+              <th style="text-align:right;">Rate (₹)</th>
+              <th style="text-align:right;">Amount (₹)</th>
             </tr>
           </thead>
           <tbody id="invPaperItemsTbody">
             <tr>
               <td id="invItemName">Video Post-Production Service</td>
-              <td>998313</td>
-              <td>1</td>
-              <td id="invItemRate">₹1,000</td>
-              <td id="invItemAmt">₹1,000</td>
+              <td id="invItemHsn">998313</td>
+              <td id="invItemQty" style="text-align:center;">1</td>
+              <td id="invItemRate" style="text-align:right;">₹1,000</td>
+              <td id="invItemAmt" style="text-align:right;font-weight:700;">₹1,000</td>
             </tr>
           </tbody>
         </table>
 
         <div class="inv-summary-box">
           <div class="inv-sum-row"><span>Subtotal:</span><span id="invSumSubtotal">₹1,000</span></div>
-          <div class="inv-sum-row"><span>CGST (9%):</span><span id="invSumCgst">₹90</span></div>
-          <div class="inv-sum-row"><span>SGST (9%):</span><span id="invSumSgst">₹90</span></div>
+          <div class="inv-sum-row" id="invDiscountRow" style="display:none;color:#FF4D4D;"><span>Discount Applied:</span><span id="invSumDiscount">-₹0</span></div>
+          <div class="inv-sum-row" id="invCgstRow"><span>CGST (9%):</span><span id="invSumCgst">₹90</span></div>
+          <div class="inv-sum-row" id="invSgstRow"><span>SGST (9%):</span><span id="invSumSgst">₹90</span></div>
+          <div class="inv-sum-row" id="invIgstRow" style="display:none;"><span>IGST (18%):</span><span id="invSumIgst">₹0</span></div>
           <div class="inv-sum-row grand"><span>Total Amount:</span><span id="invSumTotal">₹1,180</span></div>
-          <div class="inv-sum-row" style="color:#28C840;margin-top:6px;font-weight:700;"><span>50% Paid Advance:</span><span id="invSumPaid">₹590</span></div>
+          <div class="inv-sum-row" id="invPaidRow" style="color:#28C840;margin-top:6px;font-weight:700;"><span>Amount Paid:</span><span id="invSumPaid">₹590</span></div>
+          <div class="inv-sum-row" id="invBalanceRow" style="color:#FFB800;font-weight:700;display:none;"><span>Remaining Balance:</span><span id="invSumBalance">₹0</span></div>
         </div>
 
-        <div class="inv-footer-note">
+        <div class="inv-footer-note" id="invFooterNote">
           This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340
         </div>
       </div>
@@ -1466,32 +1482,142 @@
       const snap = await getDoc(doc(db,'projects',pid));
       if (!snap.exists()) return;
       const p = snap.data();
-      const base = p.invoiceAmount || 0;
-      const gst = Math.round(base * 0.18);
-      const cgst = Math.round(gst / 2);
-      const sgst = gst - cgst;
-      const total = base + gst;
-      const advance = Math.round(total * 0.5);
-      const isOfficial = p.invoicePaid || false;
 
-      document.getElementById('invModalTypeBadge').textContent = isOfficial ? '✅ Official GST Tax Invoice' : '⏳ Acknowledgment Receipt';
-      document.getElementById('invPaperHeaderTitle').textContent = isOfficial ? 'TAX INVOICE' : 'ACKNOWLEDGMENT RECEIPT';
-      document.getElementById('invPaperNo').textContent = 'EDZ-' + pid.substring(0,6).toUpperCase();
-      document.getElementById('invPaperDate').textContent = dateStr(p.createdAt);
-      document.getElementById('invPaperClientName').textContent = currentUser.name || 'Client';
-      document.getElementById('invPaperClientEmail').textContent = currentUser.email;
-      document.getElementById('invPaperClientGst').textContent = p.clientGstin || 'N/A (Individual)';
-      document.getElementById('invPaperPayStatus').textContent = isOfficial ? '✅ Paid in Full' : '50% Booking Deposit Pending';
+      // Check for Agency Master Defaults from Firestore if available
+      let agencyDefaults = {
+        agencyName: 'EDITZAAR',
+        agencySub: 'Post-Production & Web Growth Agency',
+        agencyAddress: 'Hyderabad, Telangana, India',
+        agencyGstin: '36EDITZAAR1234Z9',
+        hsnSac: '998313',
+        upiId: 'nbikram704@okhdfcbank',
+        accountName: 'Bikram Nath',
+        supportPhone: '+91 9476766340',
+        invoicePrefix: 'EDZ-',
+        footerNote: 'This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340'
+      };
 
-      document.getElementById('invItemName').textContent = p.title || 'Video Post-Production';
-      document.getElementById('invItemRate').textContent = '₹' + base.toLocaleString();
-      document.getElementById('invItemAmt').textContent = '₹' + base.toLocaleString();
+      try {
+        const defSnap = await getDoc(doc(db, 'agencySettings', 'invoiceDefaults'));
+        if (defSnap.exists()) {
+          agencyDefaults = Object.assign({}, agencyDefaults, defSnap.data());
+        }
+      } catch(e) {}
 
-      document.getElementById('invSumSubtotal').textContent = '₹' + base.toLocaleString();
+      // If custom invoiceData was saved by Admin, use that exact customization!
+      const inv = p.invoiceData || null;
+
+      const headerTitle = inv ? (inv.headerTitle || 'TAX INVOICE') : (p.invoicePaid ? 'TAX INVOICE' : 'TAX INVOICE');
+      const invNo = inv ? inv.invoiceNo : (p.invoiceNo || (agencyDefaults.invoicePrefix + pid.substring(0,6).toUpperCase()));
+      const invDate = inv ? inv.date : dateStr(p.createdAt);
+      const dueDate = inv ? inv.dueDate : '';
+
+      const companyName = inv ? (inv.agencyName || agencyDefaults.agencyName) : agencyDefaults.agencyName;
+      const companySub = inv ? (inv.agencySub || agencyDefaults.agencySub) : agencyDefaults.agencySub;
+      const companyAddr = inv ? (inv.agencyAddress || agencyDefaults.agencyAddress) : agencyDefaults.agencyAddress;
+      const companyGst = inv ? (inv.agencyGstin || agencyDefaults.agencyGstin) : agencyDefaults.agencyGstin;
+
+      const clientName = inv ? inv.clientName : (p.clientName || currentUser.name || 'Client');
+      const clientEmail = inv ? inv.clientEmail : (p.clientEmail || currentUser.email || '');
+      const clientBrand = inv ? (inv.clientBrand || '') : (p.clientBrand || '');
+      const clientGst = inv ? inv.clientGstin : (p.clientGstin || 'N/A (Individual)');
+      const clientAddr = inv ? (inv.clientAddress || '') : (p.clientAddress || '');
+
+      const itemName = inv ? inv.itemDesc : (p.title || p.serviceName || 'Video Post-Production Service');
+      const itemHsn = inv ? inv.itemHsn : (agencyDefaults.hsnSac || '998313');
+      const itemQty = inv ? (inv.itemQty || 1) : 1;
+      const itemRate = inv ? inv.itemRate : (p.invoiceAmount || 1000);
+      const discount = inv ? (inv.discount || 0) : 0;
+
+      const base = inv ? inv.subtotal : (p.invoiceAmount || 1000);
+      const cgst = inv ? (inv.cgst !== undefined ? inv.cgst : 0) : Math.round(base * 0.09);
+      const sgst = inv ? (inv.sgst !== undefined ? inv.sgst : 0) : Math.round(base * 0.09);
+      const igst = inv ? (inv.igst !== undefined ? inv.igst : 0) : 0;
+      const total = inv ? inv.total : (p.totalAmount || (base + cgst + sgst));
+      const paid = inv ? inv.paidAmount : (p.depositPaidAmount || (p.advancePaid ? Math.round(total * 0.5) : 0));
+      const balance = Math.max(0, total - paid);
+
+      const payStatus = inv ? inv.payStatus : (p.invoicePaid || paid >= total ? '✅ Paid in Full' : (paid > 0 ? '💳 50% Advance Received' : '⏳ Booking Deposit Pending'));
+      const upiId = inv ? (inv.upiId || agencyDefaults.upiId) : agencyDefaults.upiId;
+      const accName = inv ? (inv.accountName || agencyDefaults.accountName) : agencyDefaults.accountName;
+      const utrNum = inv ? (inv.utrNum || '') : (p.advanceTxnId || '');
+      const footerNote = inv ? (inv.footerNote || agencyDefaults.footerNote) : agencyDefaults.footerNote;
+
+      // Populate UI
+      document.getElementById('invModalTypeBadge').textContent = (payStatus.includes('Paid') ? '✅ Official GST Tax Invoice' : '⏳ Acknowledgment Receipt');
+      document.getElementById('invPaperHeaderTitle').textContent = headerTitle;
+      document.getElementById('invPaperNo').textContent = invNo;
+      document.getElementById('invPaperDate').textContent = invDate;
+
+      const dueEl = document.getElementById('invPaperDueDateRow');
+      if (dueEl) dueEl.textContent = dueDate ? ('Due / Est: ' + dueDate) : '';
+
+      document.getElementById('invCompanyTitle').textContent = companyName;
+      document.getElementById('invCompanySub').textContent = companySub;
+      document.getElementById('invCompanyAddress').textContent = companyAddr;
+      document.getElementById('invCompanyGstin').textContent = companyGst;
+
+      document.getElementById('invPaperClientName').textContent = clientName + (clientBrand ? ' (' + clientBrand + ')' : '');
+      document.getElementById('invPaperClientEmail').textContent = clientEmail;
+      document.getElementById('invPaperClientGst').textContent = clientGst;
+
+      const addrEl = document.getElementById('invPaperClientAddress');
+      if (addrEl) {
+        if (clientAddr) { addrEl.textContent = clientAddr; addrEl.style.display = 'block'; }
+        else { addrEl.style.display = 'none'; }
+      }
+
+      document.getElementById('invPaperUpiId').textContent = upiId;
+      document.getElementById('invPaperAccName').textContent = accName;
+      document.getElementById('invPaperPayStatus').textContent = payStatus;
+
+      const utrEl = document.getElementById('invPaperUtrRow');
+      if (utrEl) utrEl.textContent = utrNum ? ('Ref / UTR: ' + utrNum) : '';
+
+      document.getElementById('invItemName').textContent = itemName;
+      document.getElementById('invItemHsn').textContent = itemHsn;
+      document.getElementById('invItemQty').textContent = itemQty;
+      document.getElementById('invItemRate').textContent = '₹' + itemRate.toLocaleString();
+      document.getElementById('invItemAmt').textContent = '₹' + (itemRate * itemQty).toLocaleString();
+
+      document.getElementById('invSumSubtotal').textContent = '₹' + (itemRate * itemQty).toLocaleString();
+
+      const discRow = document.getElementById('invDiscountRow');
+      if (discRow) {
+        if (discount > 0) {
+          discRow.style.display = 'flex';
+          document.getElementById('invSumDiscount').textContent = '-₹' + discount.toLocaleString();
+        } else {
+          discRow.style.display = 'none';
+        }
+      }
+
+      const cgstRow = document.getElementById('invCgstRow');
+      const sgstRow = document.getElementById('invSgstRow');
+      const igstRow = document.getElementById('invIgstRow');
+
+      if (cgstRow) cgstRow.style.display = cgst > 0 ? 'flex' : 'none';
+      if (sgstRow) sgstRow.style.display = sgst > 0 ? 'flex' : 'none';
+      if (igstRow) igstRow.style.display = igst > 0 ? 'flex' : 'none';
+
       document.getElementById('invSumCgst').textContent = '₹' + cgst.toLocaleString();
       document.getElementById('invSumSgst').textContent = '₹' + sgst.toLocaleString();
+      document.getElementById('invSumIgst').textContent = '₹' + igst.toLocaleString();
+
       document.getElementById('invSumTotal').textContent = '₹' + total.toLocaleString();
-      document.getElementById('invSumPaid').textContent = '₹' + advance.toLocaleString();
+      document.getElementById('invSumPaid').textContent = '₹' + paid.toLocaleString();
+
+      const balRow = document.getElementById('invBalanceRow');
+      if (balRow) {
+        if (balance > 0) {
+          balRow.style.display = 'flex';
+          document.getElementById('invSumBalance').textContent = '₹' + balance.toLocaleString();
+        } else {
+          balRow.style.display = 'none';
+        }
+      }
+
+      document.getElementById('invFooterNote').textContent = footerNote;
 
       document.getElementById('modalInvoiceView').classList.add('open');
     };

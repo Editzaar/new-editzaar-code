@@ -818,6 +818,47 @@
       font-size: 1.25rem !important;
       font-weight: 800 !important;
     }
+    /* ── ADVANCED INVOICE SUITE & PRINT STYLES ── */
+    .tax-invoice-paper {
+      background: #ffffff !important; color: #111111 !important;
+      border-radius: 12px; padding: 36px;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      box-sizing: border-box;
+      width: 100%;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+    .inv-header { display: flex; justify-content: space-between; border-bottom: 2px solid #FFB800; padding-bottom: 16px; margin-bottom: 20px; }
+    .inv-company-title { font-size: 24px; font-weight: 900; color: #000; letter-spacing: -0.5px; }
+    .inv-company-sub { font-size: 12px; color: #555; margin-top: 3px; line-height: 1.4; }
+    .inv-meta-table { width: 100%; font-size: 12px; margin-bottom: 24px; border-collapse: collapse; }
+    .inv-meta-table td { padding: 4px 0; vertical-align: top; color: #222; }
+    .inv-items-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
+    .inv-items-table th { background: #f8f9fa; text-align: left; padding: 10px 12px; border-bottom: 2px solid #e9ecef; font-weight: 700; color: #111; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .inv-items-table td { padding: 12px; border-bottom: 1px solid #f0f0f0; color: #222; vertical-align: middle; }
+    .inv-summary-box { width: 290px; margin-left: auto; font-size: 13px; }
+    .inv-sum-row { display: flex; justify-content: space-between; padding: 5px 0; color: #444; }
+    .inv-sum-row.grand { border-top: 2px solid #111; font-weight: 900; font-size: 16px; padding-top: 10px; color: #000; margin-top: 4px; }
+    .inv-footer-note { font-size: 11px; color: #777; border-top: 1px solid #eee; padding-top: 14px; margin-top: 28px; text-align: center; }
+
+    /* Modal Layout */
+    .invoice-editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1080px) {
+      .invoice-editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media print {
+      body * { visibility: hidden !important; }
+      #printableInvoiceWrapper, #printableInvoiceWrapper * { visibility: visible !important; }
+      #printableInvoiceWrapper { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      .tax-invoice-paper { box-shadow: none !important; border-radius: 0 !important; border: none !important; padding: 24px !important; }
+    }
 </style>
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="../manifest.json">
@@ -1124,19 +1165,128 @@
 
       <!-- INVOICES & TAX CONFIRMATIONS -->
       <section id="sec-invoices" style="display:none;">
-        <div class="dash-topbar">
-          <div class="dash-page-title">Invoices &amp; <em>Tax Confirmations</em></div>
+        <div class="dash-topbar" style="flex-wrap:wrap; gap:12px;">
+          <div>
+            <div class="dash-page-title">Invoices &amp; <em>Tax Confirmations</em></div>
+            <div style="font-size:0.85rem;color:var(--t2);margin-top:4px;">Customize client invoices, configure agency master draft defaults, and manage GST receipts.</div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn-outline btn-sm" onclick="window.toggleMasterInvoiceSettings()" id="btnToggleMstSettings">
+              ⚙️ Master Draft Defaults
+            </button>
+          </div>
         </div>
+
         <div class="stats-row" style="margin-bottom:24px;">
           <div class="stat-card"><div class="stat-card-label">Total Invoiced</div><div class="stat-card-value" id="invTotal">₹0</div></div>
           <div class="stat-card"><div class="stat-card-label">Collected</div><div class="stat-card-value" id="invPaid" style="color:var(--green);">₹0</div></div>
           <div class="stat-card"><div class="stat-card-label">Outstanding</div><div class="stat-card-value" id="invUnpaid" style="color:var(--red);">₹0</div></div>
+          <div class="stat-card"><div class="stat-card-label">GST Collected (18%)</div><div class="stat-card-value" id="invGstTotal" style="color:var(--gold);">₹0</div></div>
         </div>
+
+        <!-- ══ AGENCY MASTER INVOICE DRAFT & GLOBAL DEFAULTS ══ -->
+        <div class="dash-card" id="cardMasterInvoiceSettings" style="display:none; border:1px solid var(--gold-border); background:rgba(255,184,0,0.03); margin-bottom:24px;">
+          <div class="dash-card-header" style="border-bottom:1px dashed rgba(255,184,0,0.2); padding-bottom:12px; margin-bottom:18px;">
+            <div>
+              <div class="dash-card-title" style="color:var(--gold);">⚙️ Agency Master Invoice Draft &amp; Auto-Generation Defaults</div>
+              <p style="font-size:0.82rem; color:var(--t2); margin-top:4px;">
+                Changes made here automatically apply to all newly booked projects and future auto-generated client invoices.
+              </p>
+            </div>
+            <button class="btn-outline btn-sm" onclick="window.toggleMasterInvoiceSettings()">✕ Close</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+            <div class="field">
+              <label>Agency Legal Name *</label>
+              <input type="text" id="mstAgencyName" value="EDITZAAR" placeholder="e.g. EDITZAAR"/>
+            </div>
+            <div class="field">
+              <label>Agency Subtitle / Tagline</label>
+              <input type="text" id="mstAgencySub" value="Post-Production &amp; Web Growth Agency" placeholder="Agency subtitle"/>
+            </div>
+            <div class="field">
+              <label>Office Address / Location</label>
+              <input type="text" id="mstAgencyAddress" value="Hyderabad, Telangana, India" placeholder="Office location"/>
+            </div>
+            <div class="field">
+              <label>Agency Official GSTIN *</label>
+              <input type="text" id="mstAgencyGstin" value="36EDITZAAR1234Z9" placeholder="e.g. 36EDITZAAR1234Z9"/>
+            </div>
+            <div class="field">
+              <label>Default HSN / SAC Code *</label>
+              <input type="text" id="mstHsnSac" value="998313" placeholder="998313"/>
+            </div>
+            <div class="field">
+              <label>Default GST Tax Rate</label>
+              <select id="mstTaxRate">
+                <option value="18">18% (9% CGST + 9% SGST)</option>
+                <option value="18_igst">18% IGST (Inter-State)</option>
+                <option value="12">12% GST</option>
+                <option value="5">5% GST</option>
+                <option value="0">0% (Export / International)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Agency Payment UPI ID *</label>
+              <input type="text" id="mstUpiId" value="nbikram704@okhdfcbank" placeholder="UPI ID"/>
+            </div>
+            <div class="field">
+              <label>Bank Account / UPI Holder Name *</label>
+              <input type="text" id="mstAccountName" value="Bikram Nath" placeholder="Account Name"/>
+            </div>
+            <div class="field">
+              <label>Support Phone / WhatsApp *</label>
+              <input type="text" id="mstSupportPhone" value="+91 9476766340" placeholder="+91 9476766340"/>
+            </div>
+            <div class="field">
+              <label>Support Email Address</label>
+              <input type="email" id="mstSupportEmail" value="editzaarbooking@gmail.com" placeholder="Email"/>
+            </div>
+            <div class="field">
+              <label>Invoice Number Prefix *</label>
+              <input type="text" id="mstInvoicePrefix" value="EDZ-" placeholder="e.g. EDZ-"/>
+            </div>
+            <div class="field">
+              <label>Default Invoice Terms &amp; Footer</label>
+              <input type="text" id="mstFooterNote" value="This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340" placeholder="Footer terms"/>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+            <button class="btn-gold" id="btnSaveMasterInvoiceDefaults" onclick="window.saveMasterInvoiceDefaults()">
+              💾 Save Master Draft Defaults (Applies to all future invoices) ✅
+            </button>
+          </div>
+        </div>
+
         <div class="dash-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+            <div class="dash-card-title">All Project Invoices &amp; Tax Confirmations</div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <input type="text" id="invSearchInput" oninput="window.filterInvoicesTable()" placeholder="🔍 Search invoice #, client, project..." style="padding:6px 12px; font-size:0.85rem; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:inherit; min-width:220px;"/>
+              <select id="invFilterStatus" onchange="window.filterInvoicesTable()" class="filter-select">
+                <option value="">All Invoices</option>
+                <option value="paid">✅ Paid in Full</option>
+                <option value="advance">💳 50% Advance</option>
+                <option value="unpaid">⏳ Unpaid / Pending</option>
+              </select>
+            </div>
+          </div>
+
           <div class="table-scroll-wrap" style="overflow-x:auto;">
             <table class="dash-table">
-              <thead><tr><th>Project</th><th>Client &amp; GSTIN</th><th>Amount (+18% GST)</th><th>Tax Status</th><th>Actions</th></tr></thead>
-              <tbody id="invoicesTbody"><tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
+              <thead>
+                <tr>
+                  <th>Invoice # &amp; Date</th>
+                  <th>Project &amp; Service</th>
+                  <th>Client Details &amp; GSTIN</th>
+                  <th>Financials (Base + Tax = Total)</th>
+                  <th>Payment Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoicesTbody"><tr><td colspan="6" style="color:var(--t3);text-align:center;padding:24px;">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -2148,6 +2298,175 @@
     </div>
   </div>
 
+  <!-- ══ MODAL: CUSTOM INVOICE BUILDER & LIVE PREVIEW ══ -->
+  <div class="modal-overlay" id="modalEditInvoice">
+    <div class="modal-box" style="max-width: 1200px; width: 95vw; max-height: 92vh; overflow-y: auto; background: var(--bg-card);">
+      <button class="modal-close" onclick="closeModal('modalEditInvoice')">✕</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:14px;">
+        <div>
+          <div class="modal-title" style="margin-bottom:2px;">Custom Invoice <em>Builder &amp; Live Preview</em></div>
+          <div style="font-size:0.85rem;color:var(--t2);">Editing invoice for project: <strong id="invModalProjectTitle" style="color:var(--gold);">Project</strong></div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input type="hidden" id="editInvProjectId"/>
+          <button type="button" class="btn-outline btn-sm" onclick="window.resetInvoiceToDraftDefaults()">🔄 Reset to Draft</button>
+          <button type="button" class="btn-outline btn-sm" onclick="window.printInvoiceFromModal()">🖨️ Print / Download PDF</button>
+          <button type="button" class="btn-gold btn-sm" id="btnSaveInvoiceData" onclick="window.saveCustomInvoiceData()">💾 Save &amp; Publish to Client ✅</button>
+        </div>
+      </div>
+
+      <div class="invoice-editor-grid">
+        <!-- LEFT: EDITABLE CONTROLS -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <!-- 1. HEADER & META -->
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:16px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:12px;">1. Document Type &amp; Dates</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="field">
+                <label>Header Title</label>
+                <select id="editInvHeaderTitle" onchange="window.updateLiveInvoicePreview()">
+                  <option value="TAX INVOICE">TAX INVOICE (Official GST)</option>
+                  <option value="ACKNOWLEDGMENT RECEIPT">ACKNOWLEDGMENT RECEIPT</option>
+                  <option value="PROFORMA INVOICE">PROFORMA INVOICE</option>
+                  <option value="ESTIMATE / QUOTE">ESTIMATE / QUOTE</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Invoice Number</label>
+                <input type="text" id="editInvNumber" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. EDZ-HVUMX4"/>
+              </div>
+              <div class="field">
+                <label>Invoice Date</label>
+                <input type="text" id="editInvDate" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. 02 Sept 2026"/>
+              </div>
+              <div class="field">
+                <label>Due Date / Delivery</label>
+                <input type="text" id="editInvDueDate" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. 48 Hours"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. BILLED TO CLIENT -->
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:16px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:12px;">2. Billed To (Client Information)</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="field">
+                <label>Client Contact Name *</label>
+                <input type="text" id="editInvClientName" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+              <div class="field">
+                <label>Client Email *</label>
+                <input type="email" id="editInvClientEmail" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+              <div class="field">
+                <label>Client Brand / Company</label>
+                <input type="text" id="editInvClientBrand" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+              <div class="field">
+                <label>Client GSTIN (Tax ID)</label>
+                <input type="text" id="editInvClientGstin" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. 36AAAAA0000A1Z5 or N/A (Individual)"/>
+              </div>
+              <div class="field" style="grid-column: span 2;">
+                <label>Client Billing Address / Location</label>
+                <input type="text" id="editInvClientAddress" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. Hyderabad, Telangana, India"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. SERVICES & FINANCIALS -->
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:16px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:12px;">3. Service Description &amp; Rates</div>
+            <div class="field" style="margin-bottom:10px;">
+              <label>Service Description / Title</label>
+              <input type="text" id="editInvItemDesc" oninput="window.updateLiveInvoicePreview()"/>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+              <div class="field">
+                <label>HSN / SAC Code</label>
+                <input type="text" id="editInvItemHsn" oninput="window.updateLiveInvoicePreview()" placeholder="998313"/>
+              </div>
+              <div class="field">
+                <label>Quantity</label>
+                <input type="number" id="editInvItemQty" value="1" min="1" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+              <div class="field">
+                <label>Base Rate (₹)</label>
+                <input type="number" id="editInvItemRate" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+            </div>
+
+            <!-- Tax Configuration -->
+            <div style="margin-top:14px; padding-top:12px; border-top:1px dashed var(--border); display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="field">
+                <label>Tax Structure</label>
+                <select id="editInvTaxType" onchange="window.updateLiveInvoicePreview()">
+                  <option value="cgst_sgst">Intra-State GST 18% (9% CGST + 9% SGST)</option>
+                  <option value="igst">Inter-State IGST 18%</option>
+                  <option value="zero">International / Export (0% GST)</option>
+                  <option value="none">No Tax (Exempt)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Discount Amount (₹)</label>
+                <input type="number" id="editInvDiscount" value="0" min="0" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. SETTLEMENT & PAYMENT DETAILS -->
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:16px;">
+            <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); font-weight:700; margin-bottom:12px;">4. Payment Status &amp; Settlement Details</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="field">
+                <label>Payment Status Badge</label>
+                <select id="editInvPayStatus" onchange="window.updateLiveInvoicePreview()">
+                  <option value="Paid in Full">✅ Paid in Full</option>
+                  <option value="50% Advance Received">💳 50% Advance Received</option>
+                  <option value="Balance Due / Pending">⏳ Balance Due / Pending</option>
+                  <option value="Payment Under Review">⚠️ Payment Under Review</option>
+                  <option value="Unpaid">❌ Unpaid</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Deposit / Paid Amount (₹)</label>
+                <input type="number" id="editInvPaidAmount" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+              <div class="field">
+                <label>Payment UPI ID on Invoice</label>
+                <input type="text" id="editInvUpiId" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+              <div class="field">
+                <label>Account Holder Name</label>
+                <input type="text" id="editInvAccountName" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+              <div class="field" style="grid-column: span 2;">
+                <label>Payment UTR / Transaction Reference</label>
+                <input type="text" id="editInvUtrNum" oninput="window.updateLiveInvoicePreview()" placeholder="e.g. 423589012345 (GPay / PhonePe)"/>
+              </div>
+              <div class="field" style="grid-column: span 2;">
+                <label>Footer Legal Note / Terms</label>
+                <input type="text" id="editInvFooterNote" oninput="window.updateLiveInvoicePreview()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: LIVE RENDERED PAPER PREVIEW -->
+        <div style="position:sticky; top:0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="font-size:11px; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">Live Printable Preview</div>
+            <button type="button" class="btn-outline btn-sm" onclick="window.printInvoiceFromModal()" style="font-size:11px;">🖨️ Print Preview</button>
+          </div>
+          <div id="printableInvoiceWrapper">
+            <div class="tax-invoice-paper" id="previewInvoicePaper">
+              <!-- Dynamically rendered via updateLiveInvoicePreview() -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: STAFF PERMISSIONS MANAGER -->
     <!-- MODAL: ASSIGN PROJECT TO EDITOR -->
   <div class="modal-overlay" id="modalAssignProjectToEditor">
@@ -2455,6 +2774,7 @@
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('index.html')));
 
     function initRealtimeListeners() {
+      loadMasterInvoiceDefaults();
       // Robust Users listener: Categorizes Staff (Editors & Managers), Admins, and Clients
       onSnapshot(collection(db, 'users'), (snap) => {
         users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -2976,28 +3296,598 @@
       }
     }, 500);
 
+    // ============================================================
+    // ADVANCED INVOICE SUITE & MASTER DRAFT SYSTEM
+    // ============================================================
+    var masterInvoiceDefaults = {
+      agencyName: 'EDITZAAR',
+      agencySub: 'Post-Production & Web Growth Agency',
+      agencyAddress: 'Hyderabad, Telangana, India',
+      agencyGstin: '36EDITZAAR1234Z9',
+      hsnSac: '998313',
+      taxRate: '18',
+      upiId: 'nbikram704@okhdfcbank',
+      accountName: 'Bikram Nath',
+      supportPhone: '+91 9476766340',
+      supportEmail: 'editzaarbooking@gmail.com',
+      invoicePrefix: 'EDZ-',
+      footerNote: 'This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340'
+    };
+
+    var _activeInvoiceProjectId = null;
+    var _invSearchTerm = '';
+    var _invFilterStatusVal = '';
+
+    // Load Master Draft Defaults from Firestore
+    async function loadMasterInvoiceDefaults() {
+      try {
+        var snap = await getDoc(doc(db, 'agencySettings', 'invoiceDefaults'));
+        if (snap.exists()) {
+          var data = snap.data();
+          masterInvoiceDefaults = Object.assign({}, masterInvoiceDefaults, data);
+        }
+      } catch (err) {
+        console.warn('[InvoiceDefaults] Error loading defaults:', err);
+      }
+      populateMasterDefaultsUi();
+    }
+
+    function populateMasterDefaultsUi() {
+      var elName = document.getElementById('mstAgencyName');
+      var elSub = document.getElementById('mstAgencySub');
+      var elAddr = document.getElementById('mstAgencyAddress');
+      var elGst = document.getElementById('mstAgencyGstin');
+      var elHsn = document.getElementById('mstHsnSac');
+      var elTax = document.getElementById('mstTaxRate');
+      var elUpi = document.getElementById('mstUpiId');
+      var elAcc = document.getElementById('mstAccountName');
+      var elPhone = document.getElementById('mstSupportPhone');
+      var elEmail = document.getElementById('mstSupportEmail');
+      var elPfx = document.getElementById('mstInvoicePrefix');
+      var elFoot = document.getElementById('mstFooterNote');
+
+      if (elName) elName.value = masterInvoiceDefaults.agencyName || 'EDITZAAR';
+      if (elSub) elSub.value = masterInvoiceDefaults.agencySub || 'Post-Production & Web Growth Agency';
+      if (elAddr) elAddr.value = masterInvoiceDefaults.agencyAddress || 'Hyderabad, Telangana, India';
+      if (elGst) elGst.value = masterInvoiceDefaults.agencyGstin || '36EDITZAAR1234Z9';
+      if (elHsn) elHsn.value = masterInvoiceDefaults.hsnSac || '998313';
+      if (elTax) elTax.value = masterInvoiceDefaults.taxRate || '18';
+      if (elUpi) elUpi.value = masterInvoiceDefaults.upiId || 'nbikram704@okhdfcbank';
+      if (elAcc) elAcc.value = masterInvoiceDefaults.accountName || 'Bikram Nath';
+      if (elPhone) elPhone.value = masterInvoiceDefaults.supportPhone || '+91 9476766340';
+      if (elEmail) elEmail.value = masterInvoiceDefaults.supportEmail || 'editzaarbooking@gmail.com';
+      if (elPfx) elPfx.value = masterInvoiceDefaults.invoicePrefix || 'EDZ-';
+      if (elFoot) elFoot.value = masterInvoiceDefaults.footerNote || 'This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340';
+    }
+
+    window.toggleMasterInvoiceSettings = function() {
+      var card = document.getElementById('cardMasterInvoiceSettings');
+      if (!card) return;
+      var isOpen = card.style.display !== 'none';
+      card.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) {
+        populateMasterDefaultsUi();
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    window.saveMasterInvoiceDefaults = async function() {
+      var btn = document.getElementById('btnSaveMasterInvoiceDefaults');
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving Master Defaults... ⏳'; }
+
+      try {
+        masterInvoiceDefaults = {
+          agencyName: (document.getElementById('mstAgencyName')?.value || 'EDITZAAR').trim(),
+          agencySub: (document.getElementById('mstAgencySub')?.value || 'Post-Production & Web Growth Agency').trim(),
+          agencyAddress: (document.getElementById('mstAgencyAddress')?.value || 'Hyderabad, Telangana, India').trim(),
+          agencyGstin: (document.getElementById('mstAgencyGstin')?.value || '36EDITZAAR1234Z9').trim(),
+          hsnSac: (document.getElementById('mstHsnSac')?.value || '998313').trim(),
+          taxRate: (document.getElementById('mstTaxRate')?.value || '18').trim(),
+          upiId: (document.getElementById('mstUpiId')?.value || 'nbikram704@okhdfcbank').trim(),
+          accountName: (document.getElementById('mstAccountName')?.value || 'Bikram Nath').trim(),
+          supportPhone: (document.getElementById('mstSupportPhone')?.value || '+91 9476766340').trim(),
+          supportEmail: (document.getElementById('mstSupportEmail')?.value || 'editzaarbooking@gmail.com').trim(),
+          invoicePrefix: (document.getElementById('mstInvoicePrefix')?.value || 'EDZ-').trim(),
+          footerNote: (document.getElementById('mstFooterNote')?.value || 'This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340').trim(),
+          updatedAt: serverTimestamp()
+        };
+
+        await setDoc(doc(db, 'agencySettings', 'invoiceDefaults'), masterInvoiceDefaults, { merge: true });
+        showToast('Agency master draft defaults saved! All future invoices will inherit these settings. ✅', 'success');
+        renderInvoices();
+      } catch (err) {
+        console.error('[SaveMasterDefaults Error]', err);
+        showToast('Error saving settings: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '💾 Save Master Draft Defaults (Applies to all future invoices) ✅'; }
+      }
+    };
+
+    window.filterInvoicesTable = function() {
+      _invSearchTerm = (document.getElementById('invSearchInput')?.value || '').toLowerCase().trim();
+      _invFilterStatusVal = (document.getElementById('invFilterStatus')?.value || '').trim();
+      renderInvoices();
+    };
+
     function renderInvoices() {
-      const tbody = document.getElementById('invoicesTbody');
-      const withInv = projects.filter(p=>p.invoiceAmount>0);
-      const total = withInv.reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
-      const paid  = withInv.filter(p=>p.invoicePaid).reduce((s,p)=>s+Math.round((p.invoiceAmount||0)*1.18),0);
-      const unpaid = total - paid;
-      document.getElementById('invTotal').textContent  = '₹'+total.toLocaleString();
-      document.getElementById('invPaid').textContent   = '₹'+paid.toLocaleString();
-      document.getElementById('invUnpaid').textContent = '₹'+unpaid.toLocaleString();
-      if (!withInv.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:24px;">No invoices yet.</td></tr>'; return; }
-      tbody.innerHTML = withInv.map(p=>{
-        const tot = Math.round((p.invoiceAmount||0)*1.18);
-        return `
-        <tr>
-          <td><strong>${p.title||'Untitled'}</strong></td>
-          <td>${nameOf(p.clientId)}<br/><small style="color:var(--gold);">GSTIN: ${p.clientGstin||'N/A (Individual)'}</small></td>
-          <td>₹${tot.toLocaleString()} <small style="color:var(--t3);">(Base ₹${(p.invoiceAmount||0).toLocaleString()})</small></td>
-          <td><span class="status-badge ${p.invoicePaid?'invoice-paid':'invoice-unpaid'}">${p.invoicePaid?'✅ Official GST Invoice':'⏳ Receipt Only'}</span></td>
-          <td><button class="btn-gold btn-sm" onclick="openEditStatus('${p.id}','${p.status}',${p.invoiceAmount||0},${p.invoicePaid||false},'${p.editorId||''}')">Confirm &amp; Issue GST Invoice</button></td>
-        </tr>`;
+      var tbody = document.getElementById('invoicesTbody');
+      if (!tbody) return;
+
+      var invList = projects.filter(function(p) { return (p.totalAmount > 0) || (p.invoiceAmount > 0) || p.invoiceData; });
+
+      var totalSum = 0;
+      var paidSum = 0;
+      var gstSum = 0;
+
+      invList.forEach(function(p) {
+        var base = p.invoiceAmount || 0;
+        var total = p.totalAmount || Math.round(base * 1.18);
+        var gst = Math.max(0, total - base);
+        var paid = p.invoicePaid ? total : (p.depositPaidAmount || (p.advancePaid ? Math.round(total * 0.5) : 0));
+
+        totalSum += total;
+        paidSum += paid;
+        gstSum += gst;
+      });
+
+      var unpaidSum = Math.max(0, totalSum - paidSum);
+
+      var elTot = document.getElementById('invTotal');
+      var elPaid = document.getElementById('invPaid');
+      var elUnpaid = document.getElementById('invUnpaid');
+      var elGst = document.getElementById('invGstTotal');
+
+      if (elTot) elTot.textContent = '₹' + totalSum.toLocaleString();
+      if (elPaid) elPaid.textContent = '₹' + paidSum.toLocaleString();
+      if (elUnpaid) elUnpaid.textContent = '₹' + unpaidSum.toLocaleString();
+      if (elGst) elGst.textContent = '₹' + gstSum.toLocaleString();
+
+      // Apply Search & Status Filter
+      var filtered = invList.filter(function(p) {
+        var cName = (p.clientName || nameOf(p.clientId) || '').toLowerCase();
+        var cEmail = (p.clientEmail || (clients.find(function(c){ return c.id === p.clientId; })?.email) || '').toLowerCase();
+        var pTitle = (p.title || p.serviceName || '').toLowerCase();
+        var invNo = (p.invoiceNo || (p.invoiceData && p.invoiceData.invoiceNo) || ('EDZ-' + p.id.substring(0,6).toUpperCase())).toLowerCase();
+
+        var matchesSearch = !_invSearchTerm || cName.includes(_invSearchTerm) || cEmail.includes(_invSearchTerm) || pTitle.includes(_invSearchTerm) || invNo.includes(_invSearchTerm);
+        if (!matchesSearch) return false;
+
+        if (_invFilterStatusVal === 'paid') {
+          return p.invoicePaid || (p.depositPaidAmount && p.depositPaidAmount >= p.totalAmount);
+        } else if (_invFilterStatusVal === 'advance') {
+          return !p.invoicePaid && (p.advancePaid || (p.depositPaidAmount > 0));
+        } else if (_invFilterStatusVal === 'unpaid') {
+          return !p.invoicePaid && !p.advancePaid && (!p.depositPaidAmount || p.depositPaidAmount <= 0);
+        }
+        return true;
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="color:var(--t3);text-align:center;padding:28px;">'
+          + (_invSearchTerm || _invFilterStatusVal ? 'No invoices match your search/filter criteria.' : 'No invoices registered yet. New project bookings will appear here automatically!')
+          + '</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(function(p) {
+        var invData = p.invoiceData || {};
+        var invNo = invData.invoiceNo || p.invoiceNo || (masterInvoiceDefaults.invoicePrefix + (p.id.length >= 6 ? p.id.substring(0,6).toUpperCase() : 'INV' + p.id));
+        var invDate = invData.date || (p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }));
+
+        var clientName = invData.clientName || p.clientName || nameOf(p.clientId) || 'Client';
+        var clientEmail = invData.clientEmail || p.clientEmail || (clients.find(function(c){ return c.id === p.clientId; })?.email) || '';
+        var clientGstin = invData.clientGstin || p.clientGstin || (clients.find(function(c){ return c.id === p.clientId; })?.gstin) || 'N/A (Individual)';
+
+        var base = invData.subtotal !== undefined ? invData.subtotal : (p.invoiceAmount || 1000);
+        var total = invData.total !== undefined ? invData.total : (p.totalAmount || Math.round(base * 1.18));
+        var paid = invData.paidAmount !== undefined ? invData.paidAmount : (p.depositPaidAmount || (p.advancePaid ? Math.round(total * 0.5) : 0));
+        var balance = Math.max(0, total - paid);
+
+        var isFullyPaid = p.invoicePaid || paid >= total || invData.payStatus === 'Paid in Full';
+        var isAdvancePaid = !isFullyPaid && (paid > 0 || p.advancePaid);
+
+        var statusBadge = '';
+        if (isFullyPaid) {
+          statusBadge = '<span class="status-badge invoice-paid">✅ Paid in Full (₹' + total.toLocaleString() + ')</span>';
+        } else if (isAdvancePaid) {
+          statusBadge = '<span class="status-badge" style="background:rgba(255,184,0,0.12);color:var(--gold);border:1px solid var(--gold-border);">💳 Advance ₹' + paid.toLocaleString() + ' Paid (Due: ₹' + balance.toLocaleString() + ')</span>';
+        } else {
+          statusBadge = '<span class="status-badge invoice-unpaid">⏳ Unpaid / Pending</span>';
+        }
+
+        var isCustomized = !!p.invoiceData;
+
+        return '<tr>'
+          + '<td>'
+          + '  <strong style="color:var(--gold);font-family:monospace;font-size:0.92rem;">' + invNo + '</strong><br/>'
+          + '  <small style="color:var(--t3);">' + invDate + '</small>'
+          + (isCustomized ? '<br/><span style="font-size:10px;color:var(--green);font-weight:700;">★ Customized</span>' : '')
+          + '</td>'
+          + '<td>'
+          + '  <strong>' + (invData.itemDesc || p.title || p.serviceName || 'Custom Project') + '</strong><br/>'
+          + '  <small style="color:var(--t3);">PID: ' + p.id.substring(0,8) + '…</small>'
+          + '</td>'
+          + '<td>'
+          + '  <strong>' + clientName + '</strong><br/>'
+          + '  <small style="color:var(--t2);">' + clientEmail + '</small><br/>'
+          + '  <small style="color:var(--gold);">GSTIN: ' + clientGstin + '</small>'
+          + '</td>'
+          + '<td>'
+          + '  <div style="font-size:0.95rem;font-weight:700;">₹' + total.toLocaleString() + '</div>'
+          + '  <small style="color:var(--t3);">Base: ₹' + base.toLocaleString() + ' · GST: ₹' + (total - base).toLocaleString() + '</small>'
+          + '</td>'
+          + '<td>' + statusBadge + '</td>'
+          + '<td>'
+          + '  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">'
+          + '    <button class="btn-gold btn-sm" onclick="window.openCustomInvoiceEditor(\'' + p.id + '\')" title="Edit all client and tax information on this invoice">'
+          + '      ✏️ Customize Invoice'
+          + '    </button>'
+          + '    <button class="btn-outline btn-sm" onclick="window.openAdminInvoicePrint(\'' + p.id + '\')" title="Print or save as PDF">'
+          + '      🖨️ View / Print'
+          + '    </button>'
+          + '    <button class="btn-outline btn-sm" style="font-size:10px;padding:2px 6px;" onclick="window.toggleProjectInvoicePaid(\'' + p.id + '\')" title="Toggle Paid Status">'
+          + (isFullyPaid ? 'Mark Unpaid' : 'Mark Paid ✓')
+          + '    </button>'
+          + '  </div>'
+          + '</td>'
+          + '</tr>';
       }).join('');
     }
+
+    // Toggle Paid status directly
+    window.toggleProjectInvoicePaid = async function(pid) {
+      var p = projects.find(function(x) { return x.id === pid; });
+      if (!p) return;
+      var newStatus = !p.invoicePaid;
+      var tot = p.totalAmount || Math.round((p.invoiceAmount || 1000) * 1.18);
+      await updateDoc(doc(db, 'projects', pid), {
+        invoicePaid: newStatus,
+        depositPaidAmount: newStatus ? tot : 0,
+        advancePaid: newStatus,
+        balancePaid: newStatus,
+        updatedAt: serverTimestamp()
+      });
+      showToast(newStatus ? 'Project invoice marked as Paid in Full! ✅' : 'Project invoice marked as Unpaid.', 'success');
+    };
+
+    // Open Custom Invoice Editor
+    window.openCustomInvoiceEditor = function(pid) {
+      var p = projects.find(function(x) { return x.id === pid; });
+      if (!p) { showToast('Project not found.', 'error'); return; }
+
+      _activeInvoiceProjectId = pid;
+      var titleEl = document.getElementById('invModalProjectTitle');
+      if (titleEl) titleEl.textContent = p.title || p.serviceName || 'Project';
+
+      var hiddenPid = document.getElementById('editInvProjectId');
+      if (hiddenPid) hiddenPid.value = pid;
+
+      var invData = p.invoiceData || null;
+
+      // Fill in fields: use custom invoiceData if exists, or auto-generate draft using master defaults
+      var invNo = invData ? invData.invoiceNo : (p.invoiceNo || (masterInvoiceDefaults.invoicePrefix + (p.id.length >= 6 ? p.id.substring(0,6).toUpperCase() : 'INV' + Date.now().toString().slice(-4))));
+      var invDate = invData ? invData.date : (p.createdAt?.toDate ? p.createdAt.toDate().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }));
+      var dueDate = invData ? (invData.dueDate || '48 Hours') : '48 Hours';
+      var headerTitle = invData ? (invData.headerTitle || 'TAX INVOICE') : (p.invoicePaid ? 'TAX INVOICE' : 'TAX INVOICE');
+
+      var clientName = invData ? invData.clientName : (p.clientName || nameOf(p.clientId) || 'Client');
+      var clientEmail = invData ? invData.clientEmail : (p.clientEmail || (clients.find(function(c){ return c.id === p.clientId; })?.email) || '');
+      var clientBrand = invData ? (invData.clientBrand || '') : (p.clientBrand || (clients.find(function(c){ return c.id === p.clientId; })?.businessName) || '');
+      var clientGstin = invData ? invData.clientGstin : (p.clientGstin || (clients.find(function(c){ return c.id === p.clientId; })?.gstin) || 'N/A (Individual)');
+      var clientAddress = invData ? (invData.clientAddress || '') : (p.clientAddress || 'India');
+
+      var itemDesc = invData ? invData.itemDesc : (p.title || p.serviceName || 'Video Post-Production Service');
+      var itemHsn = invData ? invData.itemHsn : (masterInvoiceDefaults.hsnSac || '998313');
+      var itemQty = invData ? (invData.itemQty || 1) : 1;
+      var itemRate = invData ? invData.itemRate : (p.invoiceAmount || 1000);
+      var discount = invData ? (invData.discount || 0) : 0;
+      var taxType = invData ? (invData.taxType || 'cgst_sgst') : 'cgst_sgst';
+
+      var total = invData ? invData.total : (p.totalAmount || Math.round(itemRate * 1.18));
+      var paidAmt = invData ? invData.paidAmount : (p.depositPaidAmount || (p.advancePaid ? Math.round(total * 0.5) : 0));
+      var payStatus = invData ? invData.payStatus : (p.invoicePaid || paidAmt >= total ? 'Paid in Full' : (paidAmt > 0 ? '50% Advance Received' : 'Balance Due / Pending'));
+
+      var upiId = invData ? invData.upiId : (masterInvoiceDefaults.upiId || 'nbikram704@okhdfcbank');
+      var accountName = invData ? invData.accountName : (masterInvoiceDefaults.accountName || 'Bikram Nath');
+      var utrNum = invData ? (invData.utrNum || '') : (p.advanceTxnId || '');
+      var footerNote = invData ? (invData.footerNote || masterInvoiceDefaults.footerNote) : (masterInvoiceDefaults.footerNote || 'This is a computer-generated tax invoice issued by Editzaar Agency · Support: +91 9476766340');
+
+      // Populate Form
+      document.getElementById('editInvHeaderTitle').value = headerTitle;
+      document.getElementById('editInvNumber').value = invNo;
+      document.getElementById('editInvDate').value = invDate;
+      document.getElementById('editInvDueDate').value = dueDate;
+
+      document.getElementById('editInvClientName').value = clientName;
+      document.getElementById('editInvClientEmail').value = clientEmail;
+      document.getElementById('editInvClientBrand').value = clientBrand;
+      document.getElementById('editInvClientGstin').value = clientGstin;
+      document.getElementById('editInvClientAddress').value = clientAddress;
+
+      document.getElementById('editInvItemDesc').value = itemDesc;
+      document.getElementById('editInvItemHsn').value = itemHsn;
+      document.getElementById('editInvItemQty').value = itemQty;
+      document.getElementById('editInvItemRate').value = itemRate;
+      document.getElementById('editInvTaxType').value = taxType;
+      document.getElementById('editInvDiscount').value = discount;
+
+      document.getElementById('editInvPayStatus').value = payStatus;
+      document.getElementById('editInvPaidAmount').value = paidAmt;
+      document.getElementById('editInvUpiId').value = upiId;
+      document.getElementById('editInvAccountName').value = accountName;
+      document.getElementById('editInvUtrNum').value = utrNum;
+      document.getElementById('editInvFooterNote').value = footerNote;
+
+      window.updateLiveInvoicePreview();
+      openModal('modalEditInvoice');
+    };
+
+    // Live Paper Preview Render
+    window.updateLiveInvoicePreview = function() {
+      var headerTitle = document.getElementById('editInvHeaderTitle')?.value || 'TAX INVOICE';
+      var invNo = document.getElementById('editInvNumber')?.value || 'EDZ-1001';
+      var invDate = document.getElementById('editInvDate')?.value || new Date().toLocaleDateString('en-GB');
+      var dueDate = document.getElementById('editInvDueDate')?.value || '';
+
+      var clientName = document.getElementById('editInvClientName')?.value || 'Client Name';
+      var clientEmail = document.getElementById('editInvClientEmail')?.value || 'client@email.com';
+      var clientBrand = document.getElementById('editInvClientBrand')?.value || '';
+      var clientGstin = document.getElementById('editInvClientGstin')?.value || 'N/A (Individual)';
+      var clientAddress = document.getElementById('editInvClientAddress')?.value || '';
+
+      var itemDesc = document.getElementById('editInvItemDesc')?.value || 'Video Post-Production Service';
+      var itemHsn = document.getElementById('editInvItemHsn')?.value || '998313';
+      var itemQty = Math.max(1, parseInt(document.getElementById('editInvItemQty')?.value) || 1);
+      var itemRate = Math.max(0, parseFloat(document.getElementById('editInvItemRate')?.value) || 0);
+      var discount = Math.max(0, parseFloat(document.getElementById('editInvDiscount')?.value) || 0);
+      var taxType = document.getElementById('editInvTaxType')?.value || 'cgst_sgst';
+
+      var subtotal = Math.max(0, (itemRate * itemQty) - discount);
+      var cgst = 0, sgst = 0, igst = 0;
+
+      if (taxType === 'cgst_sgst') {
+        cgst = Math.round(subtotal * 0.09);
+        sgst = Math.round(subtotal * 0.09);
+      } else if (taxType === 'igst') {
+        igst = Math.round(subtotal * 0.18);
+      }
+
+      var total = subtotal + cgst + sgst + igst;
+      var paidAmt = Math.max(0, parseFloat(document.getElementById('editInvPaidAmount')?.value) || 0);
+      var balance = Math.max(0, total - paidAmt);
+      var payStatus = document.getElementById('editInvPayStatus')?.value || 'Paid in Full';
+
+      var upiId = document.getElementById('editInvUpiId')?.value || masterInvoiceDefaults.upiId || 'nbikram704@okhdfcbank';
+      var accountName = document.getElementById('editInvAccountName')?.value || masterInvoiceDefaults.accountName || 'Bikram Nath';
+      var utrNum = document.getElementById('editInvUtrNum')?.value || '';
+      var footerNote = document.getElementById('editInvFooterNote')?.value || masterInvoiceDefaults.footerNote;
+
+      var paper = document.getElementById('previewInvoicePaper');
+      if (!paper) return;
+
+      var statusColor = '#28C840';
+      if (payStatus.includes('Pending') || payStatus.includes('Due') || payStatus.includes('Review')) statusColor = '#FFB800';
+      if (payStatus.includes('Unpaid')) statusColor = '#FF4D4D';
+
+      var html = '<div class="inv-header">'
+        + '<div>'
+        + '  <div class="inv-company-title">' + (masterInvoiceDefaults.agencyName || 'EDITZAAR') + '</div>'
+        + '  <div class="inv-company-sub">' + (masterInvoiceDefaults.agencySub || 'Post-Production & Web Growth Agency') + '</div>'
+        + '  <div class="inv-company-sub">' + (masterInvoiceDefaults.agencyAddress || 'Hyderabad, Telangana, India') + '</div>'
+        + '  <div class="inv-company-sub">GSTIN: <strong>' + (masterInvoiceDefaults.agencyGstin || '36EDITZAAR1234Z9') + '</strong> (Official)</div>'
+        + '</div>'
+        + '<div style="text-align:right;">'
+        + '  <div style="font-size:20px;font-weight:900;color:#000;letter-spacing:-0.5px;">' + headerTitle + '</div>'
+        + '  <div style="font-size:12px;color:#555;margin-top:4px;">Invoice #: <strong>' + invNo + '</strong></div>'
+        + '  <div style="font-size:12px;color:#555;">Date: ' + invDate + '</div>'
+        + (dueDate ? '<div style="font-size:12px;color:#777;">Due / Est: ' + dueDate + '</div>' : '')
+        + '</div>'
+        + '</div>'
+
+        + '<table class="inv-meta-table">'
+        + '<tr>'
+        + '  <td style="width:55%;">'
+        + '    <strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#000;">BILLED TO:</strong><br/>'
+        + '    <span style="font-size:14px;font-weight:700;color:#111;">' + clientName + (clientBrand ? ' (' + clientBrand + ')' : '') + '</span><br/>'
+        + '    <span style="color:#555;">' + clientEmail + '</span><br/>'
+        + (clientAddress ? '<span style="color:#666;">' + clientAddress + '</span><br/>' : '')
+        + '    <span style="color:#444;">GSTIN: <strong style="color:#111;">' + clientGstin + '</strong></span>'
+        + '  </td>'
+        + '  <td style="width:45%;text-align:right;">'
+        + '    <strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#000;">PAYMENT DETAILS:</strong><br/>'
+        + '    <span style="color:#444;">UPI ID: <strong style="color:#111;">' + upiId + '</strong></span><br/>'
+        + '    <span style="color:#555;">Account Name: ' + accountName + '</span><br/>'
+        + (utrNum ? '<span style="color:#666;font-size:11px;">Ref/UTR: ' + utrNum + '</span><br/>' : '')
+        + '    <span>Status: <strong style="color:' + statusColor + ';">' + payStatus + '</strong></span>'
+        + '  </td>'
+        + '</tr>'
+        + '</table>'
+
+        + '<table class="inv-items-table">'
+        + '<thead>'
+        + '  <tr>'
+        + '    <th>Description / Service</th>'
+        + '    <th>HSN/SAC</th>'
+        + '    <th style="text-align:center;">Qty</th>'
+        + '    <th style="text-align:right;">Rate (₹)</th>'
+        + '    <th style="text-align:right;">Amount (₹)</th>'
+        + '  </tr>'
+        + '</thead>'
+        + '<tbody>'
+        + '  <tr>'
+        + '    <td><strong>' + itemDesc + '</strong></td>'
+        + '    <td>' + itemHsn + '</td>'
+        + '    <td style="text-align:center;">' + itemQty + '</td>'
+        + '    <td style="text-align:right;">₹' + itemRate.toLocaleString() + '</td>'
+        + '    <td style="text-align:right;font-weight:700;">₹' + (itemRate * itemQty).toLocaleString() + '</td>'
+        + '  </tr>'
+        + '</tbody>'
+        + '</table>'
+
+        + '<div class="inv-summary-box">'
+        + '  <div class="inv-sum-row"><span>Subtotal:</span><span>₹' + (itemRate * itemQty).toLocaleString() + '</span></div>'
+        + (discount > 0 ? '<div class="inv-sum-row" style="color:#FF4D4D;"><span>Discount Applied:</span><span>-₹' + discount.toLocaleString() + '</span></div>' : '')
+        + (cgst > 0 ? '<div class="inv-sum-row"><span>CGST (9%):</span><span>₹' + cgst.toLocaleString() + '</span></div>' : '')
+        + (sgst > 0 ? '<div class="inv-sum-row"><span>SGST (9%):</span><span>₹' + sgst.toLocaleString() + '</span></div>' : '')
+        + (igst > 0 ? '<div class="inv-sum-row"><span>IGST (18%):</span><span>₹' + igst.toLocaleString() + '</span></div>' : '')
+        + '  <div class="inv-sum-row grand"><span>Total Amount:</span><span>₹' + total.toLocaleString() + '</span></div>'
+        + (paidAmt > 0 ? '<div class="inv-sum-row" style="color:#28C840;margin-top:6px;font-weight:700;"><span>Paid Amount:</span><span>₹' + paidAmt.toLocaleString() + '</span></div>' : '')
+        + (balance > 0 ? '<div class="inv-sum-row" style="color:#FFB800;font-weight:700;"><span>Remaining Balance:</span><span>₹' + balance.toLocaleString() + '</span></div>' : '')
+        + '</div>'
+
+        + '<div class="inv-footer-note">' + footerNote + '</div>';
+
+      paper.innerHTML = html;
+    };
+
+    // Save Customized Invoice Data into Project Document
+    window.saveCustomInvoiceData = async function() {
+      if (!_activeInvoiceProjectId) return;
+      var btn = document.getElementById('btnSaveInvoiceData');
+      if (btn) { btn.disabled = true; btn.textContent = 'Publishing to Client... ⏳'; }
+
+      try {
+        var headerTitle = document.getElementById('editInvHeaderTitle').value;
+        var invNo = document.getElementById('editInvNumber').value.trim();
+        var invDate = document.getElementById('editInvDate').value.trim();
+        var dueDate = document.getElementById('editInvDueDate').value.trim();
+
+        var clientName = document.getElementById('editInvClientName').value.trim();
+        var clientEmail = document.getElementById('editInvClientEmail').value.trim();
+        var clientBrand = document.getElementById('editInvClientBrand').value.trim();
+        var clientGstin = document.getElementById('editInvClientGstin').value.trim();
+        var clientAddress = document.getElementById('editInvClientAddress').value.trim();
+
+        var itemDesc = document.getElementById('editInvItemDesc').value.trim();
+        var itemHsn = document.getElementById('editInvItemHsn').value.trim();
+        var itemQty = Math.max(1, parseInt(document.getElementById('editInvItemQty').value) || 1);
+        var itemRate = Math.max(0, parseFloat(document.getElementById('editInvItemRate').value) || 0);
+        var discount = Math.max(0, parseFloat(document.getElementById('editInvDiscount').value) || 0);
+        var taxType = document.getElementById('editInvTaxType').value;
+
+        var subtotal = Math.max(0, (itemRate * itemQty) - discount);
+        var cgst = 0, sgst = 0, igst = 0;
+        if (taxType === 'cgst_sgst') {
+          cgst = Math.round(subtotal * 0.09);
+          sgst = Math.round(subtotal * 0.09);
+        } else if (taxType === 'igst') {
+          igst = Math.round(subtotal * 0.18);
+        }
+
+        var total = subtotal + cgst + sgst + igst;
+        var paidAmt = Math.max(0, parseFloat(document.getElementById('editInvPaidAmount').value) || 0);
+        var balance = Math.max(0, total - paidAmt);
+        var payStatus = document.getElementById('editInvPayStatus').value;
+
+        var upiId = document.getElementById('editInvUpiId').value.trim();
+        var accountName = document.getElementById('editInvAccountName').value.trim();
+        var utrNum = document.getElementById('editInvUtrNum').value.trim();
+        var footerNote = document.getElementById('editInvFooterNote').value.trim();
+
+        var isFullyPaid = (payStatus === 'Paid in Full') || (paidAmt >= total);
+
+        var customInvoiceData = {
+          headerTitle: headerTitle,
+          invoiceNo: invNo,
+          date: invDate,
+          dueDate: dueDate,
+          clientName: clientName,
+          clientEmail: clientEmail,
+          clientBrand: clientBrand,
+          clientGstin: clientGstin,
+          clientAddress: clientAddress,
+          itemDesc: itemDesc,
+          itemHsn: itemHsn,
+          itemQty: itemQty,
+          itemRate: itemRate,
+          discount: discount,
+          taxType: taxType,
+          subtotal: subtotal,
+          cgst: cgst,
+          sgst: sgst,
+          igst: igst,
+          total: total,
+          paidAmount: paidAmt,
+          balanceAmount: balance,
+          payStatus: payStatus,
+          upiId: upiId,
+          accountName: accountName,
+          utrNum: utrNum,
+          footerNote: footerNote,
+          agencyName: masterInvoiceDefaults.agencyName,
+          agencySub: masterInvoiceDefaults.agencySub,
+          agencyAddress: masterInvoiceDefaults.agencyAddress,
+          agencyGstin: masterInvoiceDefaults.agencyGstin,
+          updatedAt: serverTimestamp()
+        };
+
+        // Update Firestore Project
+        await updateDoc(doc(db, 'projects', _activeInvoiceProjectId), {
+          invoiceData: customInvoiceData,
+          invoiceNo: invNo,
+          invoiceAmount: subtotal,
+          totalAmount: total,
+          depositPaidAmount: paidAmt,
+          balanceRequired: balance,
+          invoicePaid: isFullyPaid,
+          advancePaid: paidAmt > 0,
+          clientName: clientName,
+          clientEmail: clientEmail,
+          clientGstin: clientGstin,
+          clientBrand: clientBrand,
+          updatedAt: serverTimestamp()
+        });
+
+        // Update local project in memory
+        var pIdx = projects.findIndex(function(x) { return x.id === _activeInvoiceProjectId; });
+        if (pIdx >= 0) {
+          projects[pIdx].invoiceData = customInvoiceData;
+          projects[pIdx].invoiceNo = invNo;
+          projects[pIdx].invoiceAmount = subtotal;
+          projects[pIdx].totalAmount = total;
+          projects[pIdx].depositPaidAmount = paidAmt;
+          projects[pIdx].invoicePaid = isFullyPaid;
+          projects[pIdx].clientName = clientName;
+          projects[pIdx].clientEmail = clientEmail;
+          projects[pIdx].clientGstin = clientGstin;
+        }
+
+        showToast('Invoice customized & published live to client portal! 📄✅', 'success');
+        closeModal('modalEditInvoice');
+        renderInvoices();
+      } catch (err) {
+        console.error('[SaveCustomInvoice Error]', err);
+        showToast('Error publishing invoice: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '💾 Save & Publish to Client ✅'; }
+      }
+    };
+
+    // Reset Invoice Form to Fresh Master Draft Defaults
+    window.resetInvoiceToDraftDefaults = function() {
+      if (!_activeInvoiceProjectId) return;
+      if (confirm('Reset this invoice back to system auto-generated draft defaults? Any custom edits will be replaced with standard agency defaults.')) {
+        var p = projects.find(function(x) { return x.id === _activeInvoiceProjectId; });
+        if (p) {
+          p.invoiceData = null; // clear custom draft
+          window.openCustomInvoiceEditor(_activeInvoiceProjectId);
+          showToast('Reset to draft defaults!', 'success');
+        }
+      }
+    };
+
+    // Print invoice from modal
+    window.printInvoiceFromModal = function() {
+      window.print();
+    };
+
+    // Open Admin Print Direct
+    window.openAdminInvoicePrint = function(pid) {
+      window.openCustomInvoiceEditor(pid);
+      setTimeout(function() {
+        window.print();
+      }, 400);
+    };
 
     function populateSelects() {
       const clientOpts  = clients.map(c=>`<option value="${c.id}">${c.name || c.email} (${c.email})</option>`).join('');
