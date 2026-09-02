@@ -1615,9 +1615,22 @@
           <div class="dash-card-header">
             <div class="dash-card-title">🎬 Custom Editor <em>Telegram Routing (Privacy Masked)</em></div>
           </div>
-          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;line-height:1.6;">
+          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;line-height:1.6;">
             Assigning a project to an editor automatically routes all creative briefs, footage links, and client chat messages directly to that editor's private Telegram chat ID without exposing other editors or clients.
           </p>
+
+          <!-- Telegram User ID Instruction Card -->
+          <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:14px 18px;margin-bottom:18px;">
+            <div style="font-weight:700;font-size:0.92rem;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+              <span>⚠️</span> How to Connect an Editor to Telegram:
+            </div>
+            <div style="font-size:0.84rem;color:var(--t2);line-height:1.7;">
+              <div>• <strong>Numeric ID Required:</strong> Telegram requires the editor's <strong>numeric User ID</strong> (e.g. <code>6432944929</code>), <strong>NOT</strong> <code>@username</code>. (Telegram Bot API blocks sending to private usernames for spam protection).</div>
+              <div>• <strong>Step 1 (Mandatory):</strong> Ask the editor to open <a href="https://t.me/editzaar_agency_bot" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">@editzaar_agency_bot ↗</a> on Telegram and click <strong>START</strong> (or send any message).</div>
+              <div>• <strong>Step 2 (Get ID):</strong> The editor can open <a href="https://t.me/userinfobot" target="_blank" style="color:var(--gold);font-weight:700;text-decoration:underline;">@userinfobot ↗</a> to copy their 10-digit ID, OR you can click <strong>"🔍 Detect ID"</strong> below!</div>
+            </div>
+          </div>
+
           <div class="table-scroll-wrap">
             <table class="dash-table">
               <thead>
@@ -6233,7 +6246,10 @@
           <td><strong>${ed.name || 'Editor'}</strong></td>
           <td><span style="color:var(--t2);">${ed.email}</span></td>
           <td>
-            <input type="text" id="tg_chat_${ed.id}" value="${tgId}" placeholder="e.g. 123456789 or @username" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--gold);font-family:monospace;font-size:0.85rem;width:220px;max-width:100%;outline:none;"/>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="text" id="tg_chat_${ed.id}" value="${tgId}" placeholder="e.g. 6432944929 (numeric User ID)" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--gold);font-family:monospace;font-size:0.85rem;width:220px;max-width:100%;outline:none;"/>
+              <button class="btn-outline btn-sm" style="font-size:11px;padding:6px 8px;white-space:nowrap;" onclick="window.autoDetectEditorTelegram('${ed.id}')" title="Auto-detect from recent bot messages">🔍 Detect ID</button>
+            </div>
           </td>
           <td>
             <div style="display:flex;gap:6px;">
@@ -6244,6 +6260,43 @@
         </tr>`;
       });
       tbody.innerHTML = html;
+    };
+
+    window.autoDetectEditorTelegram = async function(editorId) {
+      const cfg = window.EditzaarTelegram ? window.EditzaarTelegram.getConfig() : {};
+      const botToken = cfg.botToken || '8981464059:AAGGj-_U6FGdN9ahEOgvezgFRvz98TGmpYQ';
+      showToast('Scanning recent messages to @editzaar_agency_bot... ⏳', 'info');
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?offset=-20`);
+        const data = await res.json();
+        if (data.ok && data.result && data.result.length > 0) {
+          const input = document.getElementById('tg_chat_' + editorId);
+          const currentVal = (input ? input.value : '').trim().replace(/^@/, '').toLowerCase();
+          
+          let matched = null;
+          for (let i = data.result.length - 1; i >= 0; i--) {
+            const msg = data.result[i].message || data.result[i].edited_message;
+            if (msg && msg.from && !msg.from.is_bot) {
+              const uName = (msg.from.username || '').toLowerCase();
+              if (currentVal && uName === currentVal) {
+                matched = msg.from;
+                break;
+              }
+              if (!matched) matched = msg.from;
+            }
+          }
+
+          if (matched) {
+            input.value = matched.id;
+            const displayName = matched.username ? '@' + matched.username : (matched.first_name || 'User');
+            showToast(`Found numeric ID ${matched.id} for ${displayName}! Click 💾 Save. ✅`, 'success');
+            return;
+          }
+        }
+        alert('⚠️ No recent messages found in @editzaar_agency_bot.\n\nPlease ask the editor to:\n1. Open https://t.me/editzaar_agency_bot on Telegram\n2. Click START (or send "hi")\n3. Then click "🔍 Detect ID" again, or copy their numeric ID from @userinfobot.');
+      } catch (e) {
+        showToast('Error checking Telegram updates: ' + e.message, 'error');
+      }
     };
 
     window.saveMasterTelegramConfig = function() {
@@ -6272,26 +6325,76 @@
 
     window.saveEditorTelegramId = async function(editorId) {
       const input = document.getElementById('tg_chat_' + editorId);
-      const tgId = (input ? input.value : '').trim();
+      let tgId = (input ? input.value : '').trim();
+      if (tgId.startsWith('@')) {
+        const cfg = window.EditzaarTelegram ? window.EditzaarTelegram.getConfig() : {};
+        const botToken = cfg.botToken || '8981464059:AAGGj-_U6FGdN9ahEOgvezgFRvz98TGmpYQ';
+        try {
+          const updRes = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?offset=-20`);
+          const updData = await updRes.json();
+          if (updData.ok && updData.result) {
+            const cleanU = tgId.replace(/^@/, '').toLowerCase();
+            const found = updData.result.find(u => (u.message?.from?.username || '').toLowerCase() === cleanU);
+            if (found) {
+              tgId = String(found.message.from.id);
+              input.value = tgId;
+              showToast(`Auto-converted @${cleanU} to numeric ID: ${tgId}!`, 'info');
+            }
+          }
+        } catch(e) {}
+      }
+
       await updateDoc(doc(db, 'users', editorId), { telegramChatId: tgId });
       showToast('Editor Telegram Chat ID saved! 🎬✅', 'success');
     };
 
     window.testEditorTelegramPing = async function(editorId) {
       const input = document.getElementById('tg_chat_' + editorId);
-      const tgId = (input ? input.value : '').trim();
+      let tgId = (input ? input.value : '').trim();
       if (!tgId) {
         showToast('Please enter this editor\'s Telegram Chat ID first.', 'error');
         return;
       }
       const ed = editors.find(e => e.id === editorId) || {};
+
+      // If user typed @username, try to resolve from getUpdates
+      if (tgId.startsWith('@')) {
+        const cfg = window.EditzaarTelegram ? window.EditzaarTelegram.getConfig() : {};
+        const botToken = cfg.botToken || '8981464059:AAGGj-_U6FGdN9ahEOgvezgFRvz98TGmpYQ';
+        try {
+          const updRes = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?offset=-20`);
+          const updData = await updRes.json();
+          if (updData.ok && updData.result) {
+            const cleanU = tgId.replace(/^@/, '').toLowerCase();
+            const found = updData.result.find(u => (u.message?.from?.username || '').toLowerCase() === cleanU);
+            if (found) {
+              tgId = String(found.message.from.id);
+              input.value = tgId;
+              await updateDoc(doc(db, 'users', editorId), { telegramChatId: tgId });
+              showToast(`Auto-converted @${cleanU} to numeric ID ${tgId}! ✅`, 'info');
+            }
+          }
+        } catch(e) {}
+      }
+
+      // If STILL starts with @, explain clearly that numeric ID is required by Telegram
+      if (tgId.startsWith('@')) {
+        alert(`⚠️ Telegram requires a numeric User ID (e.g. 6432944929), NOT a username (${tgId}).\n\nTelegram bot API blocks messaging users by @username to prevent spam.\n\nQuick Fix:\n1. Ask ${ed.name || 'the editor'} to open https://t.me/editzaar_agency_bot and tap START.\n2. Ask them to get their numeric ID from https://t.me/userinfobot (or click "🔍 Detect ID").\n3. Paste the numeric ID here and click Test Ping.`);
+        return;
+      }
+
       showToast(`Sending test ping to ${ed.name || 'Editor'}... ⏳`, 'info');
       const text = `🎬 <b>EDITZAAR EDITOR ALERT TEST</b>\n\nHi <b>${ed.name || 'Editor'}</b>, your personal Telegram alert connection is active &amp; verified! ✅\nYou will receive your assigned project briefs and client messages here.`;
       const res = await window.EditzaarTelegram.sendToChat(tgId, text);
       if (res.success) {
         showToast(`Test ping sent to ${ed.name || 'Editor'}! ⚡✅`, 'success');
       } else {
-        showToast('Message logged. Ensure bot is started by the user.', 'info');
+        const err = res.error || '';
+        if (err.includes('chat not found') || err.includes('400')) {
+          alert(`⚠️ Telegram Error: Chat Not Found.\n\nThe editor has NOT clicked START on the bot yet!\n\nPlease ask ${ed.name || 'the editor'} to:\n1. Open https://t.me/editzaar_agency_bot on Telegram\n2. Click START (or send "hi")\n3. Then click Test Ping again!`);
+        } else {
+          showToast(`Notice: Ensure ${ed.name || 'editor'} clicked START on @editzaar_agency_bot`, 'info');
+        }
       }
     };
     document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
