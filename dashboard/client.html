@@ -218,23 +218,29 @@
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <a href="../" class="sidebar-logo" title="Back to Home Page">EDIT<em>ZAAR</em> ↗</a>
-      <div class="sidebar-role-badge">👤 Client Portal</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="sidebar-role-badge" style="margin-bottom:0;">👤 Client Portal</div>
+        <button class="notif-bell-btn" id="clientSidebarBellBtn" title="Real-time Alerts &amp; Notifications" onclick="window.toggleClientNotifPanel(event)">
+          🔔
+          <span class="notif-bell-badge" id="clientSidebarBellBadge" style="display:none;">0</span>
+        </button>
+      </div>
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">Navigation</div>
         <div class="sidebar-nav-item" data-section="home"><span class="nav-icon">📊</span> Dashboard Home</div>
-        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects</div>
+        <div class="sidebar-nav-item active" data-section="projects"><span class="nav-icon">📁</span> My Projects <span class="nav-counter-badge" id="clientBadgeProjects" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="tracking"><span class="nav-icon">📈</span> Project Tracking</div>
         <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Project Chat</div>
         
         <div class="sidebar-nav-section">Account</div>
         <div class="sidebar-nav-item" data-section="files"><span class="nav-icon">📤</span> File Management</div>
         <div class="sidebar-nav-item" data-section="revisions"><span class="nav-icon">🔄</span> Revisions</div>
-        <div class="sidebar-nav-item" data-section="drafts"><span class="nav-icon">✅</span> Draft &amp; Approval</div>
+        <div class="sidebar-nav-item" data-section="drafts"><span class="nav-icon">✅</span> Draft &amp; Approval <span class="nav-counter-badge" id="clientBadgeDrafts" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="payments"><span class="nav-icon">💳</span> Payments</div>
-        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; GST</div>
+        <div class="sidebar-nav-item" data-section="invoices"><span class="nav-icon">💰</span> Invoices &amp; GST <span class="nav-counter-badge" id="clientBadgeInvoices" style="display:none;">0</span></div>
         
         <div class="sidebar-nav-section">Notifications</div>
-        <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">🔔</span> Notifications</div>
+        <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">🔔</span> Notifications <span class="nav-counter-badge" id="clientBadgeNotifs" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="calendar"><span class="nav-icon">📅</span> Calendar</div>
         <div class="sidebar-nav-item" data-section="actions"><span class="nav-icon">⚡</span> Action Required</div>
         
@@ -242,7 +248,7 @@
         <div class="sidebar-nav-item" data-section="credits"><span class="nav-icon">🎁</span> Package Credits</div>
         <div class="sidebar-nav-item" data-section="history"><span class="nav-icon">📚</span> Booking History</div>
         <div class="sidebar-nav-item" data-section="settings"><span class="nav-icon">⚙️</span> Profile &amp; Settings</div>
-        <div class="sidebar-nav-item" data-section="support"><span class="nav-icon">🆘</span> Support &amp; Help</div>
+        <div class="sidebar-nav-item" data-section="support"><span class="nav-icon">🆘</span> Support &amp; Help <span class="nav-counter-badge" id="clientBadgeSupport" style="display:none;">0</span></div>
 
         <div class="sidebar-nav-section">Main Site</div>
         <a href="../" class="sidebar-nav-item"><span class="nav-icon">🏠</span> Home Page</a>
@@ -268,7 +274,11 @@
 
       <div class="dash-topbar" style="margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
         <div class="dash-page-title" id="topbarTitle">Welcome, <em id="clientName">…</em> 👋</div>
-        <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="notif-bell-btn" id="clientTopbarBellBtn" title="Real-time Alerts &amp; Notifications" onclick="window.toggleClientNotifPanel(event)">
+            🔔
+            <span class="notif-bell-badge" id="clientBellBadge" style="display:none;">0</span>
+          </button>
           <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
           <button class="btn-gold" id="btnOpenNewProjectModal">＋ Start New Project</button>
         </div>
@@ -1017,6 +1027,7 @@
         renderActions(projects);
         renderCredits(projects);
         renderHistory(projects);
+        if (typeof window.updateClientBadges === 'function') window.updateClientBadges();
       });
     }
     
@@ -1124,6 +1135,7 @@
           const active = clientTicketsCache.find(x => x.id === _activeClientTicketId);
           if (active) renderClientTicketModalContent(active);
         }
+        if (typeof window.updateClientBadges === 'function') window.updateClientBadges();
       });
     }
 
@@ -2765,12 +2777,256 @@
       await window.submitBalanceUtrProof();
     };
 
-function showSection(name){
+    // ============================================================
+    // REAL-TIME LOCAL NOTIFICATION BADGES FOR CLIENT
+    // ============================================================
+    const CLIENT_KEYS = {
+      PROJECTS: () => 'editzaar_client_seen_proj_' + (currentUser ? currentUser.uid : 'anon'),
+      TICKETS: () => 'editzaar_client_seen_tickets_' + (currentUser ? currentUser.uid : 'anon'),
+      DRAFTS: () => 'editzaar_client_seen_drafts_' + (currentUser ? currentUser.uid : 'anon'),
+      INVOICES: () => 'editzaar_client_seen_invoices_' + (currentUser ? currentUser.uid : 'anon')
+    };
+
+    function extractClientTs(val) {
+      if (!val) return 0;
+      if (typeof val.toMillis === 'function') return val.toMillis();
+      if (typeof val.toDate === 'function') return val.toDate().getTime();
+      if (typeof val === 'number') return val > 1e11 ? val : val * 1000;
+      if (typeof val === 'string') {
+        const t = new Date(val).getTime();
+        return isNaN(t) ? 0 : t;
+      }
+      return 0;
+    }
+
+    function getSeenClientSet(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? new Set(JSON.parse(raw)) : null;
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function saveSeenClientSet(key, set) {
+      try {
+        const arr = Array.from(set).slice(-300);
+        localStorage.setItem(key, JSON.stringify(arr));
+      } catch (e) {}
+    }
+
+    window.updateClientBadges = function() {
+      if (!currentUser) return;
+
+      // 1. Support Tickets with replies
+      let seenTickets = getSeenClientSet(CLIENT_KEYS.TICKETS());
+      if (seenTickets === null) {
+        seenTickets = new Set((clientTicketsCache || []).map(t => t.id + '_' + (t.replies?.length || 0)));
+        saveSeenClientSet(CLIENT_KEYS.TICKETS(), seenTickets);
+      }
+      const unreadTickets = (clientTicketsCache || []).filter(t => {
+        const key = t.id + '_' + (t.replies?.length || 0);
+        return !seenTickets.has(key);
+      });
+      setClientBadge('clientBadgeSupport', unreadTickets.length);
+
+      // 2. Drafts ready for review (status === 'review' or has draftUrl)
+      const reviewProjects = (projects || []).filter(p => p.status === 'review' || p.draftVideoUrl || p.firstDraftUrl);
+      let seenDrafts = getSeenClientSet(CLIENT_KEYS.DRAFTS());
+      if (seenDrafts === null) {
+        const cutOff = Date.now() - 24 * 3600 * 1000;
+        seenDrafts = new Set(reviewProjects.filter(p => extractClientTs(p.updatedAt || p.createdAt) < cutOff).map(p => p.id));
+        saveSeenClientSet(CLIENT_KEYS.DRAFTS(), seenDrafts);
+      }
+      const unreadDrafts = reviewProjects.filter(p => !seenDrafts.has(p.id));
+      setClientBadge('clientBadgeDrafts', unreadDrafts.length);
+
+      // 3. Pending Invoices
+      const pendingInvoices = (projects || []).filter(p => p.invoiceAmount > 0 && !p.invoicePaid);
+      let seenInvoices = getSeenClientSet(CLIENT_KEYS.INVOICES());
+      if (seenInvoices === null) {
+        seenInvoices = new Set();
+        saveSeenClientSet(CLIENT_KEYS.INVOICES(), seenInvoices);
+      }
+      const unreadInvoices = pendingInvoices.filter(p => !seenInvoices.has(p.id));
+      setClientBadge('clientBadgeInvoices', unreadInvoices.length);
+
+      // Total count across all alerts
+      const totalUnread = unreadTickets.length + unreadDrafts.length + unreadInvoices.length;
+
+      // Update bell badges
+      setClientBellBadge('clientBellBadge', totalUnread);
+      setClientBellBadge('clientSidebarBellBadge', totalUnread);
+
+      // Render Popover
+      renderClientNotifList({
+        unreadTickets,
+        unreadDrafts,
+        unreadInvoices
+      }, totalUnread);
+    };
+
+    function setClientBadge(elemId, count) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      if (count > 0) {
+        el.textContent = count > 99 ? '99+' : count;
+        el.style.display = 'inline-flex';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+
+    function setClientBellBadge(elemId, count) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      if (count > 0) {
+        el.textContent = count > 99 ? '99+' : count;
+        el.style.display = 'flex';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+
+    function renderClientNotifList(items, totalCount) {
+      const listEl = document.getElementById('clientNotifList');
+      const pillEl = document.getElementById('clientNotifPill');
+      if (!listEl) return;
+
+      if (pillEl) {
+        if (totalCount > 0) {
+          pillEl.textContent = `${totalCount} New`;
+          pillEl.style.display = 'inline-block';
+        } else {
+          pillEl.style.display = 'none';
+        }
+      }
+
+      if (totalCount === 0) {
+        listEl.innerHTML = '<div class="notif-empty-state">No unread project updates. Everything is up to date! ✨</div>';
+        return;
+      }
+
+      let html = '';
+
+      items.unreadTickets.forEach(t => {
+        html += `
+          <div class="notif-popover-item" onclick="window.onClientNotifClick('support', '${t.id}')">
+            <div class="notif-item-icon" style="color:#FF4D4D;background:rgba(255,77,77,0.12);">🆘</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">Staff Replied to Ticket</div>
+              <div class="notif-item-sub">${escapeClientHtml(t.subject || 'Support Ticket')}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      items.unreadDrafts.forEach(p => {
+        html += `
+          <div class="notif-popover-item" onclick="window.onClientNotifClick('drafts', '${p.id}')">
+            <div class="notif-item-icon" style="color:var(--gold);background:rgba(255,184,0,0.12);">🎬</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">Draft Video Ready for Review</div>
+              <div class="notif-item-sub">${escapeClientHtml(p.title || 'Project')} &bull; Click to review and approve</div>
+            </div>
+          </div>
+        `;
+      });
+
+      items.unreadInvoices.forEach(p => {
+        html += `
+          <div class="notif-popover-item" onclick="window.onClientNotifClick('invoices', '${p.id}')">
+            <div class="notif-item-icon" style="color:#28C840;background:rgba(40,200,64,0.12);">💰</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">Pending Invoice Generated</div>
+              <div class="notif-item-sub">${escapeClientHtml(p.title || 'Project')} &bull; ₹${(p.invoiceAmount||0).toLocaleString()}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+    }
+
+    window.markClientSectionSeen = function(sectionName) {
+      if (!currentUser) return;
+      if (sectionName === 'support') {
+        const seen = getSeenClientSet(CLIENT_KEYS.TICKETS()) || new Set();
+        (clientTicketsCache || []).forEach(t => seen.add(t.id + '_' + (t.replies?.length || 0)));
+        saveSeenClientSet(CLIENT_KEYS.TICKETS(), seen);
+      } else if (sectionName === 'drafts') {
+        const seen = getSeenClientSet(CLIENT_KEYS.DRAFTS()) || new Set();
+        (projects || []).forEach(p => seen.add(p.id));
+        saveSeenClientSet(CLIENT_KEYS.DRAFTS(), seen);
+      } else if (sectionName === 'invoices') {
+        const seen = getSeenClientSet(CLIENT_KEYS.INVOICES()) || new Set();
+        (projects || []).forEach(p => seen.add(p.id));
+        saveSeenClientSet(CLIENT_KEYS.INVOICES(), seen);
+      }
+      window.updateClientBadges();
+    };
+
+    window.markAllClientBadgesRead = function() {
+      if (!currentUser) return;
+      const sT = new Set((clientTicketsCache || []).map(t => t.id + '_' + (t.replies?.length || 0)));
+      saveSeenClientSet(CLIENT_KEYS.TICKETS(), sT);
+
+      const sD = new Set((projects || []).map(p => p.id));
+      saveSeenClientSet(CLIENT_KEYS.DRAFTS(), sD);
+      saveSeenClientSet(CLIENT_KEYS.INVOICES(), sD);
+
+      window.updateClientBadges();
+      showToast('All notifications marked as read! ✓', 'success');
+      const popover = document.getElementById('clientNotifPopover');
+      if (popover) popover.style.display = 'none';
+    };
+
+    window.onClientNotifClick = function(targetSection, targetId) {
+      window.markClientSectionSeen(targetSection);
+      window.showSection(targetSection);
+      const popover = document.getElementById('clientNotifPopover');
+      if (popover) popover.style.display = 'none';
+      if (targetSection === 'support' && targetId && typeof window.openClientTicketConversation === 'function') {
+        window.openClientTicketConversation(targetId);
+      }
+    };
+
+    window.toggleClientNotifPanel = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('clientNotifPopover');
+      if (!popover) return;
+      if (popover.style.display === 'none' || !popover.style.display) {
+        popover.style.display = 'flex';
+        const bellBtn = e?.currentTarget || document.getElementById('clientTopbarBellBtn') || document.getElementById('clientSidebarBellBtn');
+        if (bellBtn) {
+          const rect = bellBtn.getBoundingClientRect();
+          popover.style.top = Math.max(10, rect.bottom + 8) + 'px';
+          popover.style.right = Math.max(10, window.innerWidth - rect.right) + 'px';
+          popover.style.left = 'auto';
+        }
+      } else {
+        popover.style.display = 'none';
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('clientNotifPopover');
+      if (popover && popover.style.display !== 'none') {
+        if (!popover.contains(e.target) && !e.target.closest('.notif-bell-btn')) {
+          popover.style.display = 'none';
+        }
+      }
+    });
+
+    function showSection(name){
       sections.forEach(s=>{ 
         const el = document.getElementById('sec-'+s);
         if(el) el.style.display=s===name?'block':'none'; 
       });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.section===name));
+      if (typeof window.markClientSectionSeen === 'function') {
+        window.markClientSectionSeen(name);
+      }
       
       const titles = {
         'home': 'Dashboard Home', 'projects': 'My Projects', 'tracking': 'Project Tracking',
@@ -2932,5 +3188,21 @@ function showSection(name){
       if (user) saveFcmToken(user.uid);
     });
   </script>
+
+  <!-- FLOATING NOTIFICATION CENTER POPOVER -->
+  <div class="notif-popover-panel" id="clientNotifPopover" style="display:none;">
+    <div class="notif-popover-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">🔔</span>
+        <strong style="font-size:14px;color:var(--t1);">Project Updates &amp; Alerts</strong>
+        <span class="notif-unread-pill" id="clientNotifPill" style="display:none;">0 New</span>
+      </div>
+      <button class="notif-mark-read-btn" onclick="window.markAllClientBadgesRead()">✓ Mark all as read</button>
+    </div>
+    <div class="notif-popover-list" id="clientNotifList">
+      <div class="notif-empty-state">No unread project updates. Everything is up to date! ✨</div>
+    </div>
+  </div>
+
   </body>
 </html>

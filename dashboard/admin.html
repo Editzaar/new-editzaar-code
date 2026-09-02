@@ -897,19 +897,25 @@
         <a href="../" class="sidebar-logo" style="margin-bottom:0;" title="Back to Main Website">EDIT<em>ZAAR</em> ↗</a>
         <button id="sidebarCloseBtn" class="sidebar-close-btn" style="background:none;border:none;color:var(--t2);font-size:1.4rem;cursor:pointer;padding:4px 8px;display:none;">✕</button>
       </div>
-      <div class="sidebar-role-badge">👑 Admin</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="sidebar-role-badge" style="margin-bottom:0;">👑 Admin</div>
+        <button class="notif-bell-btn" id="adminNotifBellBtn" title="Real-time Alerts &amp; Notifications" onclick="window.toggleAdminNotifPanel(event)">
+          🔔
+          <span class="notif-bell-badge" id="adminBellBadge" style="display:none;">0</span>
+        </button>
+      </div>
       <nav class="sidebar-nav">
         <div class="sidebar-nav-section">Overview</div>
         <div class="sidebar-nav-item active" data-section="overview"><span class="nav-icon">📊</span> Dashboard</div>
         <div class="sidebar-nav-item" data-section="attention"><span class="nav-icon">⚡</span> Action Required</div>
         
         <div class="sidebar-nav-section">Projects</div>
-        <div class="sidebar-nav-item" data-section="projects"><span class="nav-icon">📁</span> All Projects</div>
+        <div class="sidebar-nav-item" data-section="projects"><span class="nav-icon">📁</span> All Projects <span class="nav-counter-badge" id="badgeNavProjects" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="workflow"><span class="nav-icon">📊</span> Workflow Tracker</div>
         <div class="sidebar-nav-item" data-section="workload"><span class="nav-icon">👥</span> Assign &amp; Workload</div>
 
         <div class="sidebar-nav-section">People</div>
-        <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients CRM</div>
+        <div class="sidebar-nav-item" data-section="clients"><span class="nav-icon">👤</span> Clients CRM <span class="nav-counter-badge" id="badgeNavClients" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="editors"><span class="nav-icon">🎬</span> Editors &amp; Staff</div>
         <div class="sidebar-nav-item" data-section="performance"><span class="nav-icon">📊</span> Team Performance</div>
 
@@ -920,7 +926,7 @@
         <div class="sidebar-nav-item" data-section="payouts"><span class="nav-icon">✂️</span> Editor Payroll &amp; Margins</div>
 
         <div class="sidebar-nav-section">Communication</div>
-        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat</div>
+        <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat <span class="nav-counter-badge" id="badgeNavChat" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Broadcast</div>
         <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">📩</span> App Notifications</div>
         <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🔔</span> Telegram Alerts &amp; Routing</div>
@@ -933,13 +939,13 @@
         <div class="sidebar-nav-item" data-section="reports"><span class="nav-icon">📄</span> Reports</div>
 
         <div class="sidebar-nav-section">Store</div>
-        <div class="sidebar-nav-item" data-section="bookings"><span class="nav-icon">📜</span> Booking Requests</div>
+        <div class="sidebar-nav-item" data-section="bookings"><span class="nav-icon">📜</span> Booking Requests <span class="nav-counter-badge" id="badgeNavBookings" style="display:none;">0</span></div>
         <div class="sidebar-nav-item" data-section="services"><span class="nav-icon">🚥</span> Services &amp; Pricing</div>
         <div class="sidebar-nav-item" data-section="coupons"><span class="nav-icon">🎫</span> Coupons</div>
 
         <div class="sidebar-nav-section">Feedback</div>
-        <div class="sidebar-nav-item" data-section="reviews"><span class="nav-icon">⭐</span> Reviews &amp; Feedback</div>
-        <div class="sidebar-nav-item" data-section="tickets"><span class="nav-icon">🆘</span> Support Tickets</div>
+        <div class="sidebar-nav-item" data-section="reviews"><span class="nav-icon">⭐</span> Reviews &amp; Feedback <span class="nav-counter-badge" id="badgeNavReviews" style="display:none;">0</span></div>
+        <div class="sidebar-nav-item" data-section="tickets"><span class="nav-icon">🆘</span> Support Tickets <span class="nav-counter-badge" id="badgeNavTickets" style="display:none;">0</span></div>
 
         <div class="sidebar-nav-section">Settings</div>
         <div class="sidebar-nav-item" data-section="cms"><span class="nav-icon">🌐</span> Website CMS</div>
@@ -964,7 +970,11 @@
             <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
             <div class="live-badge"><div class="live-dot"></div> Live Sync</div>
           </div>
-          <div style="display:flex;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="notif-bell-btn" id="overviewNotifBellBtn" title="Real-time Alerts &amp; Notifications" onclick="window.toggleAdminNotifPanel(event)">
+              🔔
+              <span class="notif-bell-badge" id="overviewBellBadge" style="display:none;">0</span>
+            </button>
             <button class="btn-gold" id="btnNewProject">＋ New Project</button>
           </div>
         </div>
@@ -3047,6 +3057,7 @@
         });
         renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
         renderWorkload(); renderPerformance(); renderRoles(); renderAnalytics();
+        if (typeof window.updateAdminBadges === 'function') window.updateAdminBadges();
       }, (err) => console.error('Users listener error:', err));
 
       // Robust Projects listener: Client-side sorting eliminates missing composite index crashes
@@ -3061,6 +3072,7 @@
         renderAttention(); renderWorkflow(); renderWorkload(); renderPerformance();
         renderRevenue(); renderPayments(); renderEditorPayouts(); renderRevisions(); renderStorage();
         renderCalendar(); renderAnalytics(); renderBookings();
+        if (typeof window.updateAdminBadges === 'function') window.updateAdminBadges();
       }, (err) => console.error('Projects listener error:', err));
 
       listenSupportTickets();
@@ -4618,6 +4630,7 @@
           return tB - tA;
         });
         filterTickets();
+        if (typeof window.updateAdminBadges === 'function') window.updateAdminBadges();
       }, (err) => console.error('[Tickets Listener Error]', err));
     }
 
@@ -4915,6 +4928,7 @@
           return tB - tA;
         });
         filterReviews();
+        if (typeof window.updateAdminBadges === 'function') window.updateAdminBadges();
       }, (err) => console.error('[Reviews Listener Error]', err));
     }
 
@@ -5058,6 +5072,300 @@
       showToast('Review added successfully! ⭐', 'success');
       closeModal('modalAddReview');
     };
+
+    // ============================================================
+    // REAL-TIME LOCAL NOTIFICATION BADGES & POPUP ENGINE
+    // ============================================================
+    const ADMIN_BADGE_KEYS = {
+      CLIENTS: 'editzaar_seen_clients_ids',
+      BOOKINGS: 'editzaar_seen_bookings_ids',
+      PROJECTS: 'editzaar_seen_projects_ids',
+      TICKETS: 'editzaar_seen_tickets_ids',
+      REVIEWS: 'editzaar_seen_reviews_ids'
+    };
+
+    function extractTs(val) {
+      if (!val) return 0;
+      if (typeof val.toMillis === 'function') return val.toMillis();
+      if (typeof val.toDate === 'function') return val.toDate().getTime();
+      if (typeof val === 'number') return val > 1e11 ? val : val * 1000;
+      if (typeof val === 'string') {
+        const t = new Date(val).getTime();
+        return isNaN(t) ? 0 : t;
+      }
+      return 0;
+    }
+
+    function getSeenSet(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? new Set(JSON.parse(raw)) : null;
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function saveSeenSet(key, set) {
+      try {
+        const arr = Array.from(set).slice(-500); // keep up to 500 recent IDs
+        localStorage.setItem(key, JSON.stringify(arr));
+      } catch (e) {}
+    }
+
+    window.updateAdminBadges = function() {
+      // 1. Clients CRM: new clients registered
+      let seenClients = getSeenSet(ADMIN_BADGE_KEYS.CLIENTS);
+      if (seenClients === null) {
+        const cutOff = Date.now() - 24 * 3600 * 1000;
+        seenClients = new Set(clients.filter(c => extractTs(c.createdAt) < cutOff).map(c => c.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.CLIENTS, seenClients);
+      }
+      const unreadClients = clients.filter(c => !seenClients.has(c.id));
+      setBadge('badgeNavClients', unreadClients.length);
+
+      // 2. Booking Requests (pending projects)
+      let seenBookings = getSeenSet(ADMIN_BADGE_KEYS.BOOKINGS);
+      const pendingProjects = projects.filter(p => p.status === 'pending');
+      if (seenBookings === null) {
+        const cutOff = Date.now() - 24 * 3600 * 1000;
+        seenBookings = new Set(pendingProjects.filter(p => extractTs(p.createdAt) < cutOff).map(p => p.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.BOOKINGS, seenBookings);
+      }
+      const unreadBookings = pendingProjects.filter(p => !seenBookings.has(p.id));
+      setBadge('badgeNavBookings', unreadBookings.length);
+
+      // 3. Projects (all active projects)
+      let seenProjects = getSeenSet(ADMIN_BADGE_KEYS.PROJECTS);
+      if (seenProjects === null) {
+        const cutOff = Date.now() - 24 * 3600 * 1000;
+        seenProjects = new Set(projects.filter(p => extractTs(p.createdAt) < cutOff).map(p => p.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.PROJECTS, seenProjects);
+      }
+      const unreadProjects = projects.filter(p => p.status === 'pending' && !seenProjects.has(p.id));
+      setBadge('badgeNavProjects', unreadProjects.length);
+
+      // 4. Support Tickets (tracks ticket ID + reply count so new client replies flag unread)
+      let seenTickets = getSeenSet(ADMIN_BADGE_KEYS.TICKETS);
+      if (seenTickets === null) {
+        seenTickets = new Set(supportTickets.map(t => t.id + '_' + (t.replies?.length || 0)));
+        saveSeenSet(ADMIN_BADGE_KEYS.TICKETS, seenTickets);
+      }
+      const unreadTickets = supportTickets.filter(t => (t.status === 'open' || t.status === 'in_progress') && !seenTickets.has(t.id + '_' + (t.replies?.length || 0)));
+      setBadge('badgeNavTickets', unreadTickets.length);
+
+      // 5. Reviews & Feedback (pending approval)
+      let seenReviews = getSeenSet(ADMIN_BADGE_KEYS.REVIEWS);
+      if (seenReviews === null) {
+        seenReviews = new Set(clientReviews.map(r => r.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.REVIEWS, seenReviews);
+      }
+      const unreadReviews = clientReviews.filter(r => (!r.published && r.status !== 'approved') && !seenReviews.has(r.id));
+      setBadge('badgeNavReviews', unreadReviews.length);
+
+      // Total count across all alerts
+      const totalUnread = unreadClients.length + unreadBookings.length + unreadTickets.length + unreadReviews.length;
+
+      // Update Topbar Bell Badges
+      setBellBadge('adminBellBadge', totalUnread);
+      setBellBadge('overviewBellBadge', totalUnread);
+
+      // Render Popover Items
+      renderAdminNotifList({
+        unreadClients,
+        unreadBookings,
+        unreadTickets,
+        unreadReviews
+      }, totalUnread);
+    };
+
+    function setBadge(elemId, count) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      if (count > 0) {
+        el.textContent = count > 99 ? '99+' : count;
+        el.style.display = 'inline-flex';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+
+    function setBellBadge(elemId, count) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      if (count > 0) {
+        el.textContent = count > 99 ? '99+' : count;
+        el.style.display = 'flex';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+
+    function renderAdminNotifList(items, totalCount) {
+      const listEl = document.getElementById('adminNotifList');
+      const pillEl = document.getElementById('notifPopoverPill');
+      if (!listEl) return;
+
+      if (pillEl) {
+        if (totalCount > 0) {
+          pillEl.textContent = `${totalCount} New`;
+          pillEl.style.display = 'inline-block';
+        } else {
+          pillEl.style.display = 'none';
+        }
+      }
+
+      if (totalCount === 0) {
+        listEl.innerHTML = '<div class="notif-empty-state">No unread notifications right now. Everything is caught up! ✨</div>';
+        return;
+      }
+
+      let html = '';
+
+      // Unread Support Tickets
+      items.unreadTickets.forEach(t => {
+        html += `
+          <div class="notif-popover-item" onclick="window.onNotifClick('tickets', '${t.id}')">
+            <div class="notif-item-icon" style="color:#FF4D4D;background:rgba(255,77,77,0.12);">🆘</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">New Support Ticket</div>
+              <div class="notif-item-sub">${escapeHtml(t.subject || 'Support Ticket')} &bull; ${escapeHtml(t.clientName || 'Client')}</div>
+              <div class="notif-item-time">${dateStr(t.createdAt)}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      // Unread Booking Requests
+      items.unreadBookings.forEach(b => {
+        html += `
+          <div class="notif-popover-item" onclick="window.onNotifClick('bookings', '${b.id}')">
+            <div class="notif-item-icon" style="color:var(--gold);background:rgba(255,184,0,0.12);">📜</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">New Booking Request</div>
+              <div class="notif-item-sub">${escapeHtml(b.title || 'Video Project')} &bull; ₹${(b.invoiceAmount||0).toLocaleString()}</div>
+              <div class="notif-item-time">${dateStr(b.createdAt)}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      // Unread Client Signups
+      items.unreadClients.forEach(c => {
+        html += `
+          <div class="notif-popover-item" onclick="window.onNotifClick('clients', '${c.id}')">
+            <div class="notif-item-icon" style="color:#00B0FF;background:rgba(0,176,255,0.12);">👤</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">New Client Registered</div>
+              <div class="notif-item-sub">${escapeHtml(c.name || 'Client')} (${escapeHtml(c.email || '')})</div>
+              <div class="notif-item-time">${dateStr(c.createdAt)}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      // Unread Reviews
+      items.unreadReviews.forEach(r => {
+        html += `
+          <div class="notif-popover-item" onclick="window.onNotifClick('reviews', '${r.id}')">
+            <div class="notif-item-icon" style="color:#28C840;background:rgba(40,200,64,0.12);">⭐</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">New Client Feedback (${r.rating || 5}★)</div>
+              <div class="notif-item-sub">"${escapeHtml(r.comment || r.message || '')}"</div>
+              <div class="notif-item-time">${dateStr(r.createdAt)}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+    }
+
+    window.markSectionBadgesRead = function(sectionName) {
+      if (sectionName === 'clients') {
+        const seen = getSeenSet(ADMIN_BADGE_KEYS.CLIENTS) || new Set();
+        clients.forEach(c => seen.add(c.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.CLIENTS, seen);
+      } else if (sectionName === 'bookings') {
+        const seen = getSeenSet(ADMIN_BADGE_KEYS.BOOKINGS) || new Set();
+        projects.filter(p => p.status === 'pending').forEach(b => seen.add(b.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.BOOKINGS, seen);
+      } else if (sectionName === 'projects') {
+        const seen = getSeenSet(ADMIN_BADGE_KEYS.PROJECTS) || new Set();
+        projects.forEach(p => seen.add(p.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.PROJECTS, seen);
+      } else if (sectionName === 'tickets') {
+        const seen = getSeenSet(ADMIN_BADGE_KEYS.TICKETS) || new Set();
+        supportTickets.forEach(t => seen.add(t.id + '_' + (t.replies?.length || 0)));
+        saveSeenSet(ADMIN_BADGE_KEYS.TICKETS, seen);
+      } else if (sectionName === 'reviews') {
+        const seen = getSeenSet(ADMIN_BADGE_KEYS.REVIEWS) || new Set();
+        clientReviews.forEach(r => seen.add(r.id));
+        saveSeenSet(ADMIN_BADGE_KEYS.REVIEWS, seen);
+      }
+      window.updateAdminBadges();
+    };
+
+    window.markAllAdminBadgesRead = function() {
+      const sC = new Set(clients.map(c => c.id));
+      saveSeenSet(ADMIN_BADGE_KEYS.CLIENTS, sC);
+
+      const sB = new Set(projects.filter(p => p.status === 'pending').map(b => b.id));
+      saveSeenSet(ADMIN_BADGE_KEYS.BOOKINGS, sB);
+
+      const sP = new Set(projects.map(p => p.id));
+      saveSeenSet(ADMIN_BADGE_KEYS.PROJECTS, sP);
+
+      const sT = new Set(supportTickets.map(t => t.id + '_' + (t.replies?.length || 0)));
+      saveSeenSet(ADMIN_BADGE_KEYS.TICKETS, sT);
+
+      const sR = new Set(clientReviews.map(r => r.id));
+      saveSeenSet(ADMIN_BADGE_KEYS.REVIEWS, sR);
+
+      window.updateAdminBadges();
+      showToast('All notifications marked as read! ✓', 'success');
+      const popover = document.getElementById('adminNotifPopover');
+      if (popover) popover.style.display = 'none';
+    };
+
+    window.onNotifClick = function(targetSection, targetId) {
+      window.markSectionBadgesRead(targetSection);
+      window.showSection(targetSection);
+      const popover = document.getElementById('adminNotifPopover');
+      if (popover) popover.style.display = 'none';
+      if (targetSection === 'tickets' && targetId && typeof window.openTicketDetailsModal === 'function') {
+        window.openTicketDetailsModal(targetId);
+      }
+    };
+
+    window.toggleAdminNotifPanel = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('adminNotifPopover');
+      if (!popover) return;
+      if (popover.style.display === 'none' || !popover.style.display) {
+        popover.style.display = 'flex';
+        const bellBtn = e?.currentTarget || document.getElementById('adminNotifBellBtn');
+        if (bellBtn) {
+          const rect = bellBtn.getBoundingClientRect();
+          popover.style.top = Math.max(10, rect.bottom + 8) + 'px';
+          if (window.innerWidth > 600) {
+            popover.style.left = Math.max(10, rect.left) + 'px';
+            popover.style.right = 'auto';
+          }
+        }
+      } else {
+        popover.style.display = 'none';
+      }
+    };
+
+    // Close popover when clicking anywhere outside
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('adminNotifPopover');
+      if (popover && popover.style.display !== 'none') {
+        if (!popover.contains(e.target) && !e.target.closest('.notif-bell-btn')) {
+          popover.style.display = 'none';
+        }
+      }
+    });
 
     document.getElementById('btnSaveSettings').addEventListener('click', async () => {
       const agencyName = document.getElementById('set-name').value.trim();
@@ -5783,6 +6091,9 @@
         if(el) el.style.display = s===name?'block':'none'; 
       });
       document.querySelectorAll('.sidebar-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.section===name));
+      if (typeof window.markSectionBadgesRead === 'function') {
+        window.markSectionBadgesRead(name);
+      }
       if (name === 'services' && typeof window.renderAdminServicesTable === 'function') {
         window.renderAdminServicesTable();
       }
@@ -7799,6 +8110,19 @@
         </div>
         <button class="btn-gold" style="width:100%;justify-content:center;height:42px;" id="btnConfirmPayrollClearance" onclick="window.confirmEditorPayrollClearance()">Confirm Payout &amp; Clear Balance ✅</button>
       </div>
+    </div>
+  <!-- FLOATING NOTIFICATION CENTER POPOVER -->
+  <div class="notif-popover-panel" id="adminNotifPopover" style="display:none;">
+    <div class="notif-popover-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">🔔</span>
+        <strong style="font-size:14px;color:var(--t1);">Notifications &amp; Activity</strong>
+        <span class="notif-unread-pill" id="notifPopoverPill" style="display:none;">0 New</span>
+      </div>
+      <button class="notif-mark-read-btn" onclick="window.markAllAdminBadgesRead()">✓ Mark all as read</button>
+    </div>
+    <div class="notif-popover-list" id="adminNotifList">
+      <div class="notif-empty-state">No unread notifications right now. Everything is caught up! ✨</div>
     </div>
   </div>
 

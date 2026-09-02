@@ -202,9 +202,9 @@
       
       <div class="v2-nav-label">Menu</div>
       <div class="v2-nav-item active" data-section="dashboard" onclick="window.showSection('dashboard')">🏠 Dashboard</div>
-      <div class="v2-nav-item" data-section="projects" onclick="window.showSection('projects')">📁 My Projects</div>
+      <div class="v2-nav-item" data-section="projects" onclick="window.showSection('projects')">📁 My Projects <span class="nav-counter-badge" id="editorBadgeProjects" style="display:none;">0</span></div>
       <div class="v2-nav-item" data-section="earnings" onclick="window.showSection('earnings')">💰 My Earnings</div>
-      <div class="v2-nav-item" data-section="messages" onclick="window.showSection('messages')">💬 Project Messages</div>
+      <div class="v2-nav-item" data-section="messages" onclick="window.showSection('messages')">💬 Project Messages <span class="nav-counter-badge" id="editorBadgeMessages" style="display:none;">0</span></div>
       <div class="v2-nav-item" data-section="settings" onclick="window.showSection('settings')">⚙️ Profile &amp; Settings</div>
       
       <div class="v2-nav-divider"></div>
@@ -226,7 +226,13 @@
       <section id="sec-dashboard">
         <div class="dash-topbar">
           <div class="dash-page-title">Welcome back, <em id="dashWelcomeName">Editor</em>!</div>
-          <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.2rem;">🌙/☀️</button>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button class="notif-bell-btn" id="editorNotifBellBtn" title="Real-time Task Alerts" onclick="window.toggleEditorNotifPanel(event)">
+              🔔
+              <span class="notif-bell-badge" id="editorBellBadge" style="display:none;">0</span>
+            </button>
+            <button class="dash-theme-toggle" data-theme-toggle aria-label="Toggle theme" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.2rem;">🌙/☀️</button>
+          </div>
         </div>
 
         <!-- 4 STAT CARDS -->
@@ -670,6 +676,9 @@
         document.getElementById('sidebar').classList.remove('open');
         document.getElementById('sidebarOverlay').classList.remove('active');
       }
+      if (name === 'projects' && typeof window.markEditorProjectsSeen === 'function') {
+        window.markEditorProjectsSeen();
+      }
       if (name === 'dashboard') {
         if (typeof window.renderDashboardTab === 'function') window.renderDashboardTab();
         if (typeof window.renderDashboardSidePanel === 'function') window.renderDashboardSidePanel(window._activeEditorProjectsList || []);
@@ -778,7 +787,7 @@
         renderProjects(editorProjects); 
         window.renderEditorEarnings(editorProjects); 
         window.renderDashboardTab();
-        
+        if (typeof window.updateEditorBadges === 'function') window.updateEditorBadges(editorProjects);
       }, (err) => console.error('Projects listener error:', err));
     }
 
@@ -1366,6 +1375,162 @@
       } catch(e) {}
     };
 
+    // ============================================================
+    // REAL-TIME LOCAL NOTIFICATION BADGES FOR EDITOR
+    // ============================================================
+    const EDITOR_BADGE_KEY_PROJ = () => 'editzaar_editor_seen_proj_' + (currentUser ? currentUser.uid : 'anon');
+
+    function extractTs(val) {
+      if (!val) return 0;
+      if (typeof val.toMillis === 'function') return val.toMillis();
+      if (typeof val.toDate === 'function') return val.toDate().getTime();
+      if (typeof val === 'number') return val > 1e11 ? val : val * 1000;
+      if (typeof val === 'string') {
+        const t = new Date(val).getTime();
+        return isNaN(t) ? 0 : t;
+      }
+      return 0;
+    }
+
+    function getSeenEditorProjSet() {
+      try {
+        const raw = localStorage.getItem(EDITOR_BADGE_KEY_PROJ());
+        return raw ? new Set(JSON.parse(raw)) : null;
+      } catch (e) {
+        return new Set();
+      }
+    }
+
+    function saveSeenEditorProjSet(set) {
+      try {
+        const arr = Array.from(set).slice(-300);
+        localStorage.setItem(EDITOR_BADGE_KEY_PROJ(), JSON.stringify(arr));
+      } catch (e) {}
+    }
+
+    window.updateEditorBadges = function(projectsList) {
+      if (!currentUser) return;
+      const list = projectsList || window._activeEditorProjectsList || [];
+      
+      let seen = getSeenEditorProjSet();
+      if (seen === null) {
+        const cutOff = Date.now() - 24 * 3600 * 1000;
+        seen = new Set(list.filter(p => extractTs(p.createdAt) < cutOff).map(p => p.id));
+        saveSeenEditorProjSet(seen);
+      }
+
+      const unreadProjs = list.filter(p => p.status !== 'done' && !seen.has(p.id));
+      const unreadCount = unreadProjs.length;
+
+      // Update badges
+      const badgeNav = document.getElementById('editorBadgeProjects');
+      if (badgeNav) {
+        if (unreadCount > 0) {
+          badgeNav.textContent = unreadCount;
+          badgeNav.style.display = 'inline-flex';
+        } else {
+          badgeNav.style.display = 'none';
+        }
+      }
+
+      const bellBadge = document.getElementById('editorBellBadge');
+      if (bellBadge) {
+        if (unreadCount > 0) {
+          bellBadge.textContent = unreadCount;
+          bellBadge.style.display = 'flex';
+        } else {
+          bellBadge.style.display = 'none';
+        }
+      }
+
+      // Render popover items
+      renderEditorNotifList(unreadProjs);
+    };
+
+    function renderEditorNotifList(unreadProjs) {
+      const listEl = document.getElementById('editorNotifList');
+      const pillEl = document.getElementById('editorNotifPill');
+      if (!listEl) return;
+
+      if (pillEl) {
+        if (unreadProjs.length > 0) {
+          pillEl.textContent = `${unreadProjs.length} New`;
+          pillEl.style.display = 'inline-block';
+        } else {
+          pillEl.style.display = 'none';
+        }
+      }
+
+      if (!unreadProjs.length) {
+        listEl.innerHTML = '<div class="notif-empty-state">No unread task alerts right now. Everything is caught up! 🚀</div>';
+        return;
+      }
+
+      listEl.innerHTML = unreadProjs.map(p => {
+        return `
+          <div class="notif-popover-item" onclick="window.onEditorNotifClick('${p.id}')">
+            <div class="notif-item-icon" style="color:var(--gold);background:rgba(255,184,0,0.12);">📁</div>
+            <div style="flex:1;min-width:0;">
+              <div class="notif-item-title">${p.title || 'Assigned Video Project'}</div>
+              <div class="notif-item-sub">Status: ${(p.status||'in_progress').toUpperCase()} &bull; Payout: ₹${(p.editorPayout||0).toLocaleString()}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.markEditorProjectsSeen = function() {
+      if (!currentUser) return;
+      const seen = getSeenEditorProjSet() || new Set();
+      (window._activeEditorProjectsList || []).forEach(p => seen.add(p.id));
+      saveSeenEditorProjSet(seen);
+      window.updateEditorBadges();
+    };
+
+    window.markAllEditorBadgesRead = function() {
+      window.markEditorProjectsSeen();
+      showToast('All task alerts marked as read! ✓', 'success');
+      const popover = document.getElementById('editorNotifPopover');
+      if (popover) popover.style.display = 'none';
+    };
+
+    window.onEditorNotifClick = function(projId) {
+      window.markEditorProjectsSeen();
+      window.showSection('projects');
+      const popover = document.getElementById('editorNotifPopover');
+      if (popover) popover.style.display = 'none';
+      if (projId && typeof window.viewDetail === 'function') {
+        window.viewDetail(projId);
+      }
+    };
+
+    window.toggleEditorNotifPanel = function(e) {
+      if (e) e.stopPropagation();
+      const popover = document.getElementById('editorNotifPopover');
+      if (!popover) return;
+      if (popover.style.display === 'none' || !popover.style.display) {
+        popover.style.display = 'flex';
+        const bellBtn = e?.currentTarget || document.getElementById('editorNotifBellBtn');
+        if (bellBtn) {
+          const rect = bellBtn.getBoundingClientRect();
+          popover.style.top = Math.max(10, rect.bottom + 8) + 'px';
+          popover.style.right = Math.max(10, window.innerWidth - rect.right) + 'px';
+          popover.style.left = 'auto';
+        }
+      } else {
+        popover.style.display = 'none';
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('editorNotifPopover');
+      if (popover && popover.style.display !== 'none') {
+        if (!popover.contains(e.target) && !e.target.closest('.notif-bell-btn')) {
+          popover.style.display = 'none';
+        }
+      }
+    });
+
     // UI Helpers
     function showToast(msg,type='success'){
       const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type+' show';
@@ -1389,5 +1554,21 @@
     window.setActiveBottomNav = setActiveBottomNav;
 
   </script>
+
+  <!-- FLOATING NOTIFICATION CENTER POPOVER -->
+  <div class="notif-popover-panel" id="editorNotifPopover" style="display:none;">
+    <div class="notif-popover-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">🔔</span>
+        <strong style="font-size:14px;color:var(--t1);">Task Notifications</strong>
+        <span class="notif-unread-pill" id="editorNotifPill" style="display:none;">0 New</span>
+      </div>
+      <button class="notif-mark-read-btn" onclick="window.markAllEditorBadgesRead()">✓ Mark all as read</button>
+    </div>
+    <div class="notif-popover-list" id="editorNotifList">
+      <div class="notif-empty-state">No unread task alerts right now. Everything is caught up! 🚀</div>
+    </div>
+  </div>
+
 </body>
 </html>
