@@ -261,12 +261,9 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ============================================================
      9. GLOBAL INTERACTIVE CHECKOUT & ONBOARDING MODAL ENGINE
      ============================================================ */
-  // If pricing.html has its own multi-currency dynamic checkout, don't overwrite it
-  if (window.location.pathname.indexOf('pricing') >= 0 || document.querySelector('.pricing-card')) {
-    console.log('[main.js] Pricing page detected, skipping default fallback checkout override.');
-  } else {
   function ensureCheckoutModal() {
-    if (document.getElementById('checkoutModal')) return;
+    // If on pricing page or checkoutModal already defined by the page, do not inject or attach listeners
+    if (document.getElementById('checkoutModal') || window.location.pathname.indexOf('pricing') >= 0) return;
 
     var modalHtml = `
     <div class="checkout-modal" id="checkoutModal">
@@ -402,14 +399,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var confirmBtn = document.getElementById('btnConfirmCheckout');
     if (confirmBtn) {
-      confirmBtn.addEventListener('click', function () {
-        var name    = (document.getElementById('chkName').value   || '').trim();
-        var phone   = (document.getElementById('chkPhone').value  || '').trim();
-        var email   = (document.getElementById('chkEmail').value  || '').trim();
-        var brand   = (document.getElementById('chkBrand').value  || '').trim();
-        var gstin   = (document.getElementById('chkGstin').value  || '').trim();
-        var brief   = (document.getElementById('chkBrief').value  || '').trim();
-        var footage = (document.getElementById('chkFootage').value|| '').trim();
+      confirmBtn.addEventListener('click', async function () {
+        var name    = (document.getElementById('chkName')?.value   || '').trim();
+        var phone   = (document.getElementById('chkPhone')?.value  || '').trim();
+        var email   = (document.getElementById('chkEmail')?.value  || '').trim();
+        var brand   = (document.getElementById('chkBrand')?.value  || '').trim();
+        var gstin   = (document.getElementById('chkGstin')?.value  || '').trim();
+        var brief   = (document.getElementById('chkBrief')?.value  || '').trim();
+        var footage = (document.getElementById('chkFootage')?.value|| '').trim();
+        var utrNum  = (document.getElementById('chkUtrNum')?.value || '').trim();
 
         if (!name || !phone || !email || !brief) {
           alert('Please fill in your Full Name, Phone, Email, and Project Brief requirements.');
@@ -422,31 +420,149 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var gst = Math.round(basePrice * 0.18);
         var total = basePrice + gst;
-        var enteredPaid = parseInt(document.getElementById('chkCustomPayAmount').value) || Math.round(total * 0.5);
+        var enteredPaid = parseInt(document.getElementById('chkCustomPayAmount')?.value) || Math.round(total * 0.5);
         var remaining = Math.max(0, total - enteredPaid);
 
-        var message = `🚨 *NEW PROJECT ORDER & CHECKOUT* 🚨\n\n` +
-                      `📦 *PACKAGE:* ${pkgName}\n` +
-                      `⏱ *Est. Delivery:* ${delivery}\n` +
-                      `💵 *Base Price:* ₹${basePrice.toLocaleString()}\n` +
-                      `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n` +
-                      `💰 *Total Package Value:* ₹${total.toLocaleString()}\n` +
-                      `💳 *Amount Paying Now:* ₹${enteredPaid.toLocaleString()}\n` +
-                      `⏳ *Remaining Balance:* ₹${remaining.toLocaleString()}\n\n` +
-                      `👤 *CLIENT DETAILS:*\n` +
-                      `• Name: ${name}\n` +
-                      `• Phone: ${phone}\n` +
-                      `• Email: ${email}\n` +
-                      `• Brand/Company: ${brand || 'N/A'}\n` +
-                      `• Client GSTIN: ${gstin || 'N/A (Individual)'}\n\n` +
-                      `💳 *UPI PAYMENT ID:* nbikram704@okhdfcbank (Bikram Nath)\n\n` +
-                      `📝 *REQUIREMENT BRIEF:*\n${brief}\n\n` +
-                      `📁 *RAW FOOTAGE / ASSET LINK:*\n${footage || 'Not attached (will upload in portal)'}\n\n` +
-                      `-----------------------------------\n` +
-                      `Please confirm my payment deposit of ₹${enteredPaid.toLocaleString()} and generate my Tax Invoice!`;
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = `<span>Booking Project &amp; Securing Queue... ⏳</span>`;
 
-        window.open(`https://wa.me/919476766340?text=${encodeURIComponent(message)}`, '_blank');
-        modal.classList.remove('open');
+        try {
+          let firestoreDb = null;
+          if (window._editzaarDb) {
+            firestoreDb = window._editzaarDb;
+          } else {
+            const { initializeApp, getApps, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+            const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+            const firebaseConfig = {
+              apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+              authDomain: "editzaar-fa8d9.firebaseapp.com",
+              projectId: "editzaar-fa8d9",
+              storageBucket: "editzaar-fa8d9.firebasestorage.app",
+              messagingSenderId: "419930711716",
+              appId: "1:419930711716:web:b1504f651e397a14726831"
+            };
+            const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+            firestoreDb = getFirestore(app);
+            window._editzaarDb = firestoreDb;
+          }
+
+          const { collection, addDoc, doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+          const auth = getAuth();
+
+          const clientUid = auth.currentUser ? auth.currentUser.uid : ('client_' + btoa(email.toLowerCase()).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20));
+
+          try {
+            await setDoc(doc(firestoreDb, 'users', clientUid), {
+              name: name,
+              email: email,
+              mobile: phone,
+              role: 'client',
+              businessName: brand || '',
+              gstin: gstin || '',
+              updatedAt: serverTimestamp()
+            }, { merge: true });
+          } catch(uErr) {}
+
+          const deadline = new Date();
+          deadline.setDate(deadline.getDate() + (pkgName.toLowerCase().includes('web') ? 10 : 3));
+
+          const projTitle = pkgName + (brand ? ` (${brand})` : '');
+          const projectRef = await addDoc(collection(firestoreDb, 'projects'), {
+            title: projTitle,
+            serviceName: pkgName,
+            description: brief,
+            brief: brief,
+            clientId: clientUid,
+            clientName: name,
+            clientEmail: email,
+            clientPhone: phone,
+            clientBrand: brand || '',
+            clientGstin: gstin || '',
+            editorId: '',
+            rawFootageUrl: footage || '',
+            deliveryUrl: '',
+            invoiceAmount: basePrice,
+            totalAmount: total,
+            advanceRequired: Math.round(total * 0.5),
+            balanceRequired: remaining,
+            depositPaidAmount: enteredPaid,
+            advancePaid: enteredPaid >= total,
+            advanceTxnId: utrNum || '',
+            advanceStatus: utrNum ? 'submitted' : (enteredPaid > 0 ? 'submitted' : 'unpaid'),
+            balancePaid: enteredPaid >= total,
+            balanceStatus: enteredPaid >= total ? 'verified' : 'unpaid',
+            deliveryLocked: enteredPaid < total,
+            invoicePaid: enteredPaid >= total,
+            currency: 'INR',
+            status: 'pending',
+            createdAt: serverTimestamp(),
+            deadline: deadline
+          });
+
+          const createdProjectId = projectRef.id;
+
+          // Push Notification to Agency Telegram Group
+          if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendOrderAlert === 'function') {
+            window.EditzaarTelegram.sendOrderAlert({
+              orderId: createdProjectId,
+              name: name,
+              phone: phone,
+              email: email,
+              brand: brand,
+              gstin: gstin,
+              packageName: pkgName,
+              basePrice: basePrice,
+              paidAmount: enteredPaid,
+              remainingAmount: remaining,
+              delivery: delivery,
+              brief: brief,
+              footageLink: footage
+            });
+          }
+
+          var modalBox = modal.querySelector('.checkout-box');
+          if (modalBox) {
+            modalBox.innerHTML = `
+              <div style="text-align:center;padding:24px 12px;">
+                <div style="font-size:3.5rem;margin-bottom:12px;">🎉</div>
+                <div style="font-family:var(--font-h, 'Cormorant Garamond', serif);font-size:2.2rem;color:var(--gold, #FFB800);margin-bottom:8px;">Booking Confirmed!</div>
+                <div style="font-size:1.05rem;color:var(--t1, #ffffff);font-weight:600;margin-bottom:14px;">Your project is now created &amp; queued in our production backend.</div>
+                
+                <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border, rgba(255,184,0,0.3));border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;font-size:0.9rem;line-height:1.8;">
+                  <div style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--border, rgba(255,255,255,0.1));padding-bottom:8px;margin-bottom:8px;">
+                    <span style="color:var(--t2, #a0a0a8);">Tracking Reference:</span>
+                    <strong style="color:var(--gold, #FFB800);font-family:monospace;font-size:1rem;">${createdProjectId}</strong>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;">
+                    <span style="color:var(--t2, #a0a0a8);">Selected Service:</span>
+                    <strong>${pkgName}</strong>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;">
+                    <span style="color:var(--t2, #a0a0a8);">Deposit Submitted:</span>
+                    <strong style="color:#28C840;">₹${enteredPaid.toLocaleString()} (${utrNum ? 'UTR: ' + utrNum : 'Submitted'})</strong>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;">
+                    <span style="color:var(--t2, #a0a0a8);">Estimated Delivery:</span>
+                    <strong>${delivery}</strong>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <a href="/dashboard/index.html" class="btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:1rem;text-decoration:none;display:flex;background:var(--gold,#FFB800);color:#000;font-weight:700;border-radius:10px;">
+                    📁 Open Client Portal to Track &amp; Chat →
+                  </a>
+                </div>
+              </div>
+            `;
+          }
+
+        } catch(err) {
+          console.error('[Booking Error]', err);
+          alert('Error submitting project: ' + (err.message || 'Please try again.'));
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = `Confirm &amp; Submit Project Brief →`;
+        }
       });
     }
   }
@@ -469,7 +585,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (elRem) elRem.textContent = '₹' + remaining.toLocaleString();
     if (elQrBadge) elQrBadge.textContent = `PRE-FILLED ₹${amt.toLocaleString()} QR`;
 
-    var upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${amt}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + pkgName)}`;
+    var upiUrl = (window.EditzaarServices && typeof window.EditzaarServices.getMerchantUpiUrl === 'function')
+      ? window.EditzaarServices.getMerchantUpiUrl(amt, 'Editzaar: ' + pkgName)
+      : `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${amt}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + pkgName)}&mc=7392`;
     var qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
 
     if (elQr) elQr.src = qrApiUrl;
@@ -641,12 +759,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.setCheckoutDeposit('50%');
 
-    var modal = document.getElementById('checkoutModal');
     if (modal) modal.classList.add('open');
   };
-
-
-  }
 
   /* ============================================================
      10. GLOBAL MASTER-TRAINED EDITZAAR AI CREATIVE STRATEGIST ENGINE

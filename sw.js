@@ -56,30 +56,18 @@ self.addEventListener('notificationclick', function (event) {
   );
 });
 
-// ── Offline Cache (PWA) ──────────────────────────────────────────────────────
-const CACHE_NAME = 'editzaar-v1';
-const PRECACHE = [
-  '/dashboard/index.html',
-  '/dashboard/css/dashboard.css',
-  '/css/style.css',
-  '/media/fav-logo.png'
-];
+// ── Offline Cache (PWA) — Network First Strategy ─────────────────────────────
+const CACHE_NAME = 'editzaar-v' + Date.now();
 
 self.addEventListener('install', function (event) {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll(PRECACHE);
-    })
-  );
 });
 
 self.addEventListener('activate', function (event) {
   event.waitUntil(
     caches.keys().then(function (keys) {
       return Promise.all(
-        keys.filter(function (k) { return k !== CACHE_NAME; })
-            .map(function (k) { return caches.delete(k); })
+        keys.map(function (k) { return caches.delete(k); })
       );
     })
   );
@@ -87,11 +75,16 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  // Only cache GET requests on same origin
   if (event.request.method !== 'GET') return;
+
+  // Network-first strategy: always fetch fresh from server, fallback to cache only if offline
   event.respondWith(
-    caches.match(event.request).then(function (cached) {
-      return cached || fetch(event.request);
-    })
+    fetch(event.request)
+      .then(function (response) {
+        return response;
+      })
+      .catch(function () {
+        return caches.match(event.request);
+      })
   );
 });

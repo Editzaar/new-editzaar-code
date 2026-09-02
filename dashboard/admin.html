@@ -8,8 +8,10 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=270.0" rel="stylesheet"/>
   <link rel="stylesheet" href="css/dashboard.css?v=300.0"/>
+  <script src="../js/services-config.js?v=310.0"></script>
+  <script src="../js/telegram-service.js?v=310.0"></script>
+  <script src="../js/drive-service.js?v=310.0"></script>
 
   <style>
     .modal-overlay {
@@ -875,8 +877,8 @@
         <div class="sidebar-nav-section">Communication</div>
         <div class="sidebar-nav-item" data-section="chat"><span class="nav-icon">💬</span> Live Chat</div>
         <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Broadcast</div>
-        <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">🔔</span> Notifications</div>
-        <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🤖</span> Automations</div>
+        <div class="sidebar-nav-item" data-section="notifications"><span class="nav-icon">📩</span> App Notifications</div>
+        <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🔔</span> Telegram Alerts &amp; Routing</div>
 
         <div class="sidebar-nav-section">Business</div>
         <div class="sidebar-nav-item" data-section="revisions"><span class="nav-icon">📅</span> Revisions Queue</div>
@@ -929,6 +931,18 @@
           <div class="stat-card"><div class="stat-card-label">Revenue (Paid)</div><div class="stat-card-value" id="statRevenue">₹0</div></div>
           <div class="stat-card"><div class="stat-card-label">Editors</div><div class="stat-card-value" id="statEditors">0</div></div>
           <div class="stat-card"><div class="stat-card-label">Clients</div><div class="stat-card-value" id="statClients">0</div></div>
+        </div>
+
+        <!-- Real-time Telegram Status Bar -->
+        <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.4rem;">🔔</span>
+            <div>
+              <div style="font-weight:700;font-size:0.92rem;color:var(--gold);">Telegram Real-Time Alert Engine: Active ✓</div>
+              <div style="font-size:0.8rem;color:var(--t2);">Master Admin Chat ID: <code>6432944929</code> &bull; Bot: <code>@editzaar_agency_bot</code></div>
+            </div>
+          </div>
+          <button class="btn-gold btn-sm" onclick="showSection('automations')" style="font-size:11px;">🔔 Manage Telegram Alerts &amp; Editor Routing →</button>
         </div>
 
         <div class="dash-card">
@@ -1297,8 +1311,20 @@
 
       <!-- NOTIFICATIONS -->
       <section id="sec-notifications" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Central <em>Notifications</em></div></div>
-        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Send Notification</div></div>
+        <div class="dash-topbar"><div class="dash-page-title">Agency <em>Notifications &amp; Alerts</em></div></div>
+
+        <!-- TELEGRAM DIRECT SHORTCUT BANNER -->
+        <div class="dash-card" style="margin-bottom:20px;background:rgba(255,184,0,0.06);border:1.5px solid var(--gold-border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div>
+              <div style="font-weight:700;font-size:1.05rem;color:var(--gold);margin-bottom:4px;">🔔 Telegram Master Alerts &amp; Editor Routing Hub</div>
+              <div style="font-size:0.85rem;color:var(--t2);">Manage Telegram Bot credentials (@editzaar_agency_bot), Admin Chat ID (6432944929), and individual editor private Telegram push channels.</div>
+            </div>
+            <button class="btn-gold" onclick="showSection('automations')" style="padding:10px 18px;font-size:12px;">Open Telegram Settings Hub →</button>
+          </div>
+        </div>
+
+        <div class="dash-card"><div class="dash-card-header"><div class="dash-card-title">Send In-App Notification</div></div>
           <div class="dash-form">
             <div class="field"><label>Target Client</label><select id="notif-target"><option value="all">All Clients</option></select></div>
             <div class="field"><label>Title</label><input id="notif-title" type="text" placeholder="Title"/></div>
@@ -1311,15 +1337,82 @@
         </div>
       </section>
 
-      <!-- AUTOMATIONS -->
+      <!-- AUTOMATIONS & TELEGRAM MASTER ROUTING HUB -->
       <section id="sec-automations" style="display:none;">
-        <div class="dash-topbar"><div class="dash-page-title">Automation <em>Triggers</em></div></div>
-        <div class="dash-card">
+        <div class="dash-topbar">
+          <div class="dash-page-title">Telegram Alerts &amp; <em>Automation Routing Hub</em></div>
+          <span class="live-badge"><span class="live-dot"></span> Live Bot Routing</span>
+        </div>
+
+        <!-- Master Telegram Bot Configuration -->
+        <div class="dash-card" style="margin-bottom:24px;border:1px solid var(--gold-border);">
+          <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div class="dash-card-title">👑 Master Agency <em>Telegram Bot Settings</em></div>
+            <span style="font-size:0.8rem;color:var(--t2);">Receives 100% of all agency orders, messages &amp; payments</span>
+          </div>
           <div class="dash-form">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-notify client when project status changes</span> <input type="checkbox" id="auto-status" onchange="saveAutomations()"/></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-reminder 24h before deadline</span> <input type="checkbox" id="auto-remind" onchange="saveAutomations()"/></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-welcome email on client signup</span> <input type="checkbox" id="auto-welcome" onchange="saveAutomations()"/></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Auto-notify editor when assigned</span> <input type="checkbox" id="auto-assign" onchange="saveAutomations()"/></div>
+            <div class="form-grid-2">
+              <div class="field">
+                <label>Telegram Bot Token (from @BotFather) *</label>
+                <input type="text" id="tg-bot-token" placeholder="e.g. 7123456789:AAHk8..." style="font-family:monospace;font-size:0.85rem;"/>
+              </div>
+              <div class="field">
+                <label>Admin Master Group / Channel Chat ID *</label>
+                <input type="text" id="tg-admin-chat-id" placeholder="e.g. -1002345678901" style="font-family:monospace;font-size:0.85rem;"/>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+              <button class="btn-gold" id="btnSaveMasterTelegram" onclick="window.saveMasterTelegramConfig()">💾 Save Telegram Settings</button>
+              <button class="btn-outline" id="btnTestAdminPing" onclick="window.testAdminTelegramPing()">⚡ Send Live Test Ping to Admin</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Editor Telegram Notification Routing -->
+        <div class="dash-card" style="margin-bottom:24px;">
+          <div class="dash-card-header">
+            <div class="dash-card-title">🎬 Custom Editor <em>Telegram Routing (Privacy Masked)</em></div>
+          </div>
+          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;line-height:1.6;">
+            Assigning a project to an editor automatically routes all creative briefs, footage links, and client chat messages directly to that editor's private Telegram chat ID without exposing other editors or clients.
+          </p>
+          <div class="table-scroll-wrap">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Editor Name</th>
+                  <th>Email</th>
+                  <th>Personal / Group Telegram Chat ID</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="editorTelegramTbody">
+                <tr><td colspan="4" style="text-align:center;color:var(--t3);padding:20px;">Loading editor profiles...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Automation Triggers Toggles -->
+        <div class="dash-card">
+          <div class="dash-card-header"><div class="dash-card-title">⚡ Instant Event <em>Triggers</em></div></div>
+          <div class="dash-form">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+              <span>🔔 Send Telegram alert on new Client Project Order / Brief</span>
+              <input type="checkbox" id="auto-tg-order" checked onchange="saveAutomations()"/>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+              <span>✂️ Auto-notify Editor on Telegram when assigned to a project</span>
+              <input type="checkbox" id="auto-tg-assign" checked onchange="saveAutomations()"/>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+              <span>💬 Forward Client Project Chat messages to Assigned Editor Telegram</span>
+              <input type="checkbox" id="auto-tg-chat" checked onchange="saveAutomations()"/>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0;">
+              <span>💳 Alert Admin Telegram immediately when payment UTR is submitted</span>
+              <input type="checkbox" id="auto-tg-payment" checked onchange="saveAutomations()"/>
+            </div>
           </div>
         </div>
       </section>
@@ -1938,6 +2031,18 @@
           </div>
         </div>
 
+        <!-- TELEGRAM BOT & AUTOMATION SHORTCUT CARD -->
+        <div class="dash-card" style="margin-bottom:20px;border:1px solid var(--gold-border);">
+          <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div class="dash-card-title">🤖 Telegram Bot <em>&amp; Real-time Alerts Hub</em></div>
+            <span class="live-badge">Live System</span>
+          </div>
+          <p style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;line-height:1.6;">
+            Manage agency-wide Telegram bot tokens, Admin Master Chat ID, and private editor notification routing for instant order, chat, and assignment alerts.
+          </p>
+          <button class="btn-gold btn-sm" onclick="showSection('automations')">🔔 Manage Telegram Bot &amp; Editor Routing →</button>
+        </div>
+
         <div class="dash-card" style="border-color:rgba(255,95,87,0.3);background:rgba(255,95,87,0.03);">
           <div class="dash-card-header"><div class="dash-card-title" style="color:var(--red);">🧹 Fresh Start <em>Data Cleaner</em></div></div>
           <p style="font-size:0.88rem;color:var(--t2);margin-bottom:16px;">Use these tools to wipe old test records and start fresh with real clients and real editors.</p>
@@ -1985,6 +2090,10 @@
             <option value="manager">🛡️ Operations Manager (Can Assign &amp; Supervise All Tasks)</option>
             <option value="admin">👑 Administrator (Full Master Control)</option>
           </select>
+        </div>
+        <div class="field">
+          <label>Telegram Chat ID / Username (Optional 🔔)</label>
+          <input id="ne-telegram" type="text" placeholder="e.g. 123456789 or @handle" style="font-family:monospace;font-size:0.85rem;color:var(--gold);"/>
         </div>
         <button class="btn-gold" style="width:100%;justify-content:center;" id="btnCreateEditor">Add Team Member</button>
       </div>
@@ -2105,6 +2214,20 @@
       </div>
 
       <input type="hidden" id="permUid"/>
+
+      <!-- Telegram Direct Alert Routing -->
+      <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-weight:700;font-size:0.9rem;color:var(--gold);">🔔 Personal Telegram Alerts (Direct Push)</div>
+        </div>
+        <div style="font-size:0.8rem;color:var(--t2);margin-bottom:10px;line-height:1.4;">
+          When you assign a project or when a client sends a chat message, alerts route directly to this editor's Telegram ID.
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="permTelegramChatId" placeholder="e.g. 123456789 or @username" style="flex:1;min-width:200px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--gold);font-family:monospace;font-size:0.88rem;"/>
+          <button type="button" class="btn-outline btn-sm" onclick="window.testModalEditorTelegramPing()" style="font-size:11px;">⚡ Test Ping</button>
+        </div>
+      </div>
 
       <!-- Category 1: Project & Workflow -->
       <div class="perm-category-header">📁 Project &amp; Workflow Permissions</div>
@@ -2502,7 +2625,22 @@
         editorPayoutStatus: proj.editorPayoutStatus === 'paid' ? 'paid' : 'pending'
       });
 
-      showToast('Editor assigned with ₹' + fee.toLocaleString() + ' payout fee! ✅', 'success');
+      // Dispatch customized Telegram alert to Assigned Editor + Admin Log
+      if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendAssignmentAlert === 'function') {
+        const ed = editors.find(e => e.id === editorId) || {};
+        window.EditzaarTelegram.sendAssignmentAlert({
+          editorName: ed.name || ed.email || 'Editor',
+          editorTelegramChatId: ed.telegramChatId || '',
+          clientName: nameOf(proj.clientId) || 'Client',
+          projectTitle: proj.title || 'Project',
+          brief: proj.description || proj.brief || '',
+          driveLink: proj.rawFootageUrl || '',
+          deadline: proj.deadline,
+          editorPayout: fee
+        });
+      }
+
+      showToast('Editor assigned with ₹' + fee.toLocaleString() + ' payout fee! Telegram alert dispatched 🎬✅', 'success');
     };
 
     window.editEditorFeePrompt = async function(pid, currentFee) {
@@ -2956,7 +3094,24 @@
         upData.deadline = new Date(deadVal);
       }
       await updateDoc(doc(db,'projects',pid), upData);
-      showToast('Project, deadline & tax status updated! ✅','success');
+
+      // Dispatch Telegram alert if editor was assigned
+      if (editorId && window.EditzaarTelegram && typeof window.EditzaarTelegram.sendAssignmentAlert === 'function') {
+        const ed = editors.find(e => e.id === editorId) || {};
+        const pObj = projects.find(p => p.id === pid) || {};
+        window.EditzaarTelegram.sendAssignmentAlert({
+          editorName: ed.name || ed.email || 'Editor',
+          editorTelegramChatId: ed.telegramChatId || '',
+          clientName: nameOf(pObj.clientId) || 'Client',
+          projectTitle: pObj.title || 'Project',
+          brief: descVal || pObj.description || '',
+          driveLink: pObj.rawFootageUrl || '',
+          deadline: deadVal ? new Date(deadVal) : pObj.deadline,
+          editorPayout: editorPayoutVal
+        });
+      }
+
+      showToast('Project, deadline & editor assignment updated! ✅','success');
       closeModal('modalEditStatus');
     });
 
@@ -3007,11 +3162,14 @@
         }
       }
 
+      const tgId  = (document.getElementById('ne-telegram')?.value || '').trim();
+
       const userData = {
         name: name,
         email: email,
         role: role,
         tempPass: pass,
+        telegramChatId: tgId,
         createdAt: serverTimestamp()
       };
 
@@ -3842,20 +4000,46 @@
 
       initPermToggles();
       renderPermTogglesState();
+      if (document.getElementById('permTelegramChatId')) {
+        document.getElementById('permTelegramChatId').value = u.telegramChatId || '';
+      }
       openModal('modalStaffPermissions');
+    };
+
+    window.testModalEditorTelegramPing = async () => {
+      const uid = document.getElementById('permUid')?.value;
+      const tgId = (document.getElementById('permTelegramChatId')?.value || '').trim();
+      if (!tgId) {
+        showToast('Please enter a Telegram Chat ID or @username first.', 'error');
+        return;
+      }
+      const u = (typeof users !== 'undefined' ? users.find(x => x.id === uid) : null) || 
+                (typeof editors !== 'undefined' ? editors.find(x => x.id === uid) : null);
+      const name = u ? (u.name || 'Editor') : 'Editor';
+      showToast(`Sending test ping to ${name} on Telegram... ⏳`, 'info');
+      const text = `🎬 <b>EDITZAAR EDITOR ALERT TEST</b>\n\nHi <b>${name}</b>, your personal Telegram connection is verified! ✅\nYou will receive your assigned project briefs and client messages here.`;
+      const res = await window.EditzaarTelegram.sendToChat(tgId, text);
+      if (res.success) {
+        showToast(`Test ping sent to ${name} on Telegram! ⚡✅`, 'success');
+      } else {
+        showToast('Alert logged. Make sure the user clicked Start on @editzaar_agency_bot.', 'info');
+      }
     };
 
     document.getElementById('btnSavePermissions').addEventListener('click', async () => {
       const uid = document.getElementById('permUid').value;
       if (!uid) return;
 
+      const tgChatId = (document.getElementById('permTelegramChatId')?.value || '').trim();
+
       await updateDoc(doc(db, 'users', uid), {
+        telegramChatId: tgChatId,
         permissions: {
           ...currentEditingStaffPerms,
           updatedAt: serverTimestamp()
         }
       });
-      showToast('Staff feature permissions saved successfully! 🔐✅', 'success');
+      showToast('Staff permissions & Telegram routing saved! 🔐✅', 'success');
       closeModal('modalStaffPermissions');
     });
 
@@ -3883,8 +4067,95 @@
       if (name === 'reports' && typeof window.loadReport === 'function') {
         window.loadReport();
       }
+      if (name === 'automations' && typeof window.renderEditorTelegramTable === 'function') {
+        const cfg = window.EditzaarTelegram ? window.EditzaarTelegram.getConfig() : {};
+        if (document.getElementById('tg-bot-token')) document.getElementById('tg-bot-token').value = cfg.botToken || '';
+        if (document.getElementById('tg-admin-chat-id')) document.getElementById('tg-admin-chat-id').value = cfg.adminChatId || cfg.chatId || '';
+        window.renderEditorTelegramTable();
+      }
     }
     window.showSection = showSection;
+
+    // ============================================================
+    // TELEGRAM BOT MASTER ROUTING & EDITOR SETTINGS ENGINE
+    // ============================================================
+    window.renderEditorTelegramTable = function() {
+      const tbody = document.getElementById('editorTelegramTbody');
+      if (!tbody) return;
+
+      if (!editors.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--t3);padding:24px;">No editors registered yet. Click "Add Editor" to create one.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      editors.forEach(ed => {
+        const tgId = ed.telegramChatId || '';
+        html += `<tr>
+          <td><strong>${ed.name || 'Editor'}</strong></td>
+          <td><span style="color:var(--t2);">${ed.email}</span></td>
+          <td>
+            <input type="text" id="tg_chat_${ed.id}" value="${tgId}" placeholder="e.g. 123456789 or @username" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--gold);font-family:monospace;font-size:0.85rem;width:220px;max-width:100%;outline:none;"/>
+          </td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-gold btn-sm" onclick="window.saveEditorTelegramId('${ed.id}')">💾 Save</button>
+              <button class="btn-outline btn-sm" onclick="window.testEditorTelegramPing('${ed.id}')">⚡ Test Ping</button>
+            </div>
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    };
+
+    window.saveMasterTelegramConfig = function() {
+      const botToken = (document.getElementById('tg-bot-token')?.value || '').trim();
+      const adminChatId = (document.getElementById('tg-admin-chat-id')?.value || '').trim();
+      if (window.EditzaarTelegram) {
+        window.EditzaarTelegram.saveConfig({ botToken, adminChatId, chatId: adminChatId });
+        showToast('Master Telegram Bot settings saved locally! 👑✅', 'success');
+      }
+    };
+
+    window.testAdminTelegramPing = async function() {
+      const adminChatId = (document.getElementById('tg-admin-chat-id')?.value || '').trim();
+      if (!adminChatId) {
+        showToast('Please enter your Admin Master Chat ID first.', 'error');
+        return;
+      }
+      showToast('Dispatching test ping to Admin Telegram... ⏳', 'info');
+      const res = await window.EditzaarTelegram.testConnection(adminChatId);
+      if (res.success) {
+        showToast('Test ping received on Admin Telegram! ⚡✅', 'success');
+      } else {
+        showToast('Notice: Message logged. Check Bot Token or local server proxy.', 'info');
+      }
+    };
+
+    window.saveEditorTelegramId = async function(editorId) {
+      const input = document.getElementById('tg_chat_' + editorId);
+      const tgId = (input ? input.value : '').trim();
+      await updateDoc(doc(db, 'users', editorId), { telegramChatId: tgId });
+      showToast('Editor Telegram Chat ID saved! 🎬✅', 'success');
+    };
+
+    window.testEditorTelegramPing = async function(editorId) {
+      const input = document.getElementById('tg_chat_' + editorId);
+      const tgId = (input ? input.value : '').trim();
+      if (!tgId) {
+        showToast('Please enter this editor\'s Telegram Chat ID first.', 'error');
+        return;
+      }
+      const ed = editors.find(e => e.id === editorId) || {};
+      showToast(`Sending test ping to ${ed.name || 'Editor'}... ⏳`, 'info');
+      const text = `🎬 <b>EDITZAAR EDITOR ALERT TEST</b>\n\nHi <b>${ed.name || 'Editor'}</b>, your personal Telegram alert connection is active &amp; verified! ✅\nYou will receive your assigned project briefs and client messages here.`;
+      const res = await window.EditzaarTelegram.sendToChat(tgId, text);
+      if (res.success) {
+        showToast(`Test ping sent to ${ed.name || 'Editor'}! ⚡✅`, 'success');
+      } else {
+        showToast('Message logged. Ensure bot is started by the user.', 'info');
+      }
+    };
     document.querySelectorAll('.sidebar-nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>showSection(el.dataset.section)));
 
     function openModal(id)  { document.getElementById(id).classList.add('open'); }
@@ -5653,8 +5924,11 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js')
-        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+      navigator.serviceWorker.register('../sw.js?v=' + Date.now())
+        .then(function(reg) {
+          reg.update();
+          console.log('[SW] Registered & updated:', reg.scope);
+        })
         .catch(function(err) { console.warn('[SW] Error:', err); });
     }
     let _deferredInstallPrompt = null;

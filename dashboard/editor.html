@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="css/dashboard.css?v=300.0"/>
   
   <script src="../js/services-config.js?v=310.0"></script>
+  <script src="../js/telegram-service.js?v=310.0"></script>
+  <script src="../js/drive-service.js?v=310.0"></script>
   <script src="../js/theme.js?v=310.0"></script>
 
   <style>
@@ -586,10 +588,15 @@
                 <input type="text" id="editorProfilePhoneInp" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
               </div>
               <div>
+                <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">Telegram Chat ID / Username 🔔</div>
+                <input type="text" id="editorTelegramChatIdInp" placeholder="e.g. 123456789 or @yourhandle" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--gold);font-family:monospace;padding:10px;border-radius:6px;"/>
+                <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">Get instant project assignment &amp; client chat alerts on Telegram.</div>
+              </div>
+              <div>
                 <div style="font-size:0.8rem;color:var(--t3);margin-bottom:4px;">New Password (min 6 chars)</div>
                 <input type="password" id="editorNewPassInp" placeholder="Enter new password" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t1);padding:10px;border-radius:6px;"/>
               </div>
-              <button class="v2-btn-sm" style="padding:12px;margin-top:10px;font-size:0.9rem;font-weight:600;" id="btnChangeEditorPass" onclick="window.changeEditorPassword()">Update Profile &amp; Password</button>
+              <button class="v2-btn-sm" style="padding:12px;margin-top:10px;font-size:0.9rem;font-weight:600;" id="btnChangeEditorPass" onclick="window.changeEditorPassword()">Update Profile &amp; Settings</button>
             </div>
           </div>
         </div>
@@ -1069,18 +1076,27 @@
     };
 
     window.sendEditorMessage = async function() {
-      var inp = document.getElementById('chatInputEditor');
+      var inp = document.getElementById('chatInputEditor') || document.getElementById('chatInput');
       var text = (inp?.value || '').trim();
       if (!text || !currentProject || !currentUser) return;
       inp.value = '';
-      await addDoc(collection(db,'messages'), {
-        projectId: currentProject.id,
+      await addDoc(collection(db,'projects',currentProject.id,'chat'), {
         senderId: currentUser.uid,
         senderName: currentUser.name || 'Editor',
         senderRole: 'editor',
         text: text,
+        timestamp: serverTimestamp(),
         createdAt: serverTimestamp()
       });
+
+      if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendChatAlert === 'function') {
+        window.EditzaarTelegram.sendChatAlert({
+          senderName: (currentUser.name || 'Editor') + ' (Editor)',
+          projectTitle: currentProject.title || 'Project',
+          message: text,
+          isClient: false
+        });
+      }
     };
 
     // Chat in project detail
@@ -1119,6 +1135,15 @@
         senderName: currentUser.name||'Editor',
         text, timestamp:serverTimestamp()
       });
+
+      if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendChatAlert === 'function') {
+        window.EditzaarTelegram.sendChatAlert({
+          senderName: (currentUser.name || 'Editor') + ' (Editor)',
+          projectTitle: currentProject.title || 'Project',
+          message: text,
+          isClient: false
+        });
+      }
     });
 
     document.getElementById('btnUpdateEditorDeadline')?.addEventListener('click', async () => {
@@ -1295,6 +1320,7 @@
       var newPass = (document.getElementById('editorNewPassInp')?.value || '').trim();
       var newName = (document.getElementById('editorProfileNameInp')?.value || '').trim();
       var newPhone = (document.getElementById('editorProfilePhoneInp')?.value || '').trim();
+      var newTgId = (document.getElementById('editorTelegramChatIdInp')?.value || '').trim();
 
       try {
         var userUid = currentUser?.uid;
@@ -1303,6 +1329,7 @@
         var upObj = { updatedAt: serverTimestamp() };
         if (newName) upObj.name = newName;
         if (newPhone) upObj.mobile = newPhone;
+        upObj.telegramChatId = newTgId;
 
         if (newPass) {
           if (newPass.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
@@ -1311,8 +1338,8 @@
         }
 
         await setDoc(doc(db, 'users', userUid), upObj, { merge: true });
-        showToast('Profile & password updated! ✅', 'success');
-        document.getElementById('editorNewPassInp').value = '';
+        showToast('Profile, Telegram & password settings saved! 🔔✅', 'success');
+        if (document.getElementById('editorNewPassInp')) document.getElementById('editorNewPassInp').value = '';
       } catch(err) {
         showToast('Error: ' + err.message, 'error');
       }
@@ -1332,6 +1359,9 @@
           if (dat.editorAccountHolder || dat.name) document.getElementById('editorAccountHolderInp').value = dat.editorAccountHolder || dat.name;
           if (dat.name) document.getElementById('editorProfileNameInp').value = dat.name;
           if (dat.mobile || dat.phone) document.getElementById('editorProfilePhoneInp').value = dat.mobile || dat.phone;
+          if (dat.telegramChatId && document.getElementById('editorTelegramChatIdInp')) {
+            document.getElementById('editorTelegramChatIdInp').value = dat.telegramChatId;
+          }
         }
       } catch(e) {}
     };

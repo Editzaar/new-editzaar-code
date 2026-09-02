@@ -141,6 +141,7 @@
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
   <script src="../js/services-config.js?v=310.0"></script>
+  <script src="../js/telegram-service.js?v=310.0"></script>
   <script src="../js/theme.js?v=310.0"></script>
 </head>
 <body>
@@ -448,6 +449,14 @@
       try {
         const cred = await signInWithEmailAndPassword(auth, targetEmail, pass);
         showSuccess('Sign in successful! Opening your portal…');
+
+        if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendClientLoginAlert === 'function') {
+          window.EditzaarTelegram.sendClientLoginAlert({
+            name: cred.user.displayName || targetEmail,
+            email: targetEmail
+          });
+        }
+
         await redirectByRole(cred.user);
       } catch (e) {
         showError(authErr(e.code, e.message));
@@ -555,6 +564,11 @@
         });
       } catch(e) { console.warn('Welcome announcement write failed:', e); }
 
+      // Dispatch Telegram alert for new client signup
+      if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendClientSignupAlert === 'function') {
+        window.EditzaarTelegram.sendClientSignupAlert({ name, email, mobile });
+      }
+
       showSuccess(`Welcome, ${name}! Your account is ready. Opening your portal…`);
       await redirectByRole(newCred.user);
     });
@@ -565,8 +579,11 @@
   </script>
     <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js')
-        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+      navigator.serviceWorker.register('../sw.js?v=' + Date.now())
+        .then(function(reg) {
+          reg.update();
+          console.log('[SW] Registered & updated:', reg.scope);
+        })
         .catch(function(err) { console.warn('[SW] Error:', err); });
     }
     let _deferredInstallPrompt = null;

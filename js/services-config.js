@@ -177,6 +177,29 @@
   const STORAGE_KEY = 'editzaar_dynamic_services';
   const CURRENCY_KEY = 'editzaar_preferred_currency';
 
+  // Central System Configuration (Local & Production Ready)
+  window.EDITZAAR_CONFIG = {
+    upi: {
+      vpa: 'nbikram704@okhdfcbank', // Change to editzaar@ybl / PhonePe Business VPA when ready
+      name: 'Bikram Nath',          // Merchant / Account Holder Name
+      mc: '7392'                   // Digital Services Merchant Category Code (Zero warning)
+    },
+    telegram: {
+      botToken: '8981464059:AAGGj-_U6FGdN9ahEOgvezgFRvz98TGmpYQ', // Free Bot token from @BotFather
+      adminChatId: '6432944929',                                   // Admin Telegram Chat ID (Bikram Nath)
+      enabled: true
+    },
+    googleDrive: {
+      rootFolderId: '',             // 5TB Google Drive Parent Folder ID
+      serviceAccountEmail: '',      // Google Cloud Service Account
+      folderPattern: 'Agency Projects/{client_name}/Project_{project_id}'
+    },
+    tax: {
+      gstDomesticRate: 0.18,        // 18% GST for Indian Domestic Clients
+      gstExportLutRate: 0.00        // 0% GST (Zero-Rated Supply) for Export under LUT RFD-11
+    }
+  };
+
   // PayPal Configuration
   window.EDITZAAR_PAYPAL = {
     clientId: 'BAAOOLXUc3ZolrTYVFM-EqsNXKorDGA_jqwfsdy7gAllTNKYDFtl-L5XxridH0oDKsSm67AtHmLoKqpaew',
@@ -185,6 +208,47 @@
   };
 
   window.EditzaarServices = {
+    /**
+     * Generate official Merchant UPI intent URL (with zero-warning &mc=7392 code)
+     */
+    getMerchantUpiUrl: function (amount, note) {
+      const upi = window.EDITZAAR_CONFIG.upi;
+      const amt = parseInt(amount) || 1;
+      const cleanNote = encodeURIComponent(note || 'Editzaar Project');
+      const cleanName = encodeURIComponent(upi.name);
+      return `upi://pay?pa=${upi.vpa}&pn=${cleanName}&am=${amt}&cu=INR&tn=${cleanNote}&mc=${upi.mc || '7392'}`;
+    },
+
+    /**
+     * Compute Dynamic Tax & GST/LUT based on currency / country
+     */
+    calculateTax: function (basePrice, currency) {
+      const curr = currency || this.getCurrency();
+      const base = parseInt(basePrice) || 0;
+      if (curr === 'USD' || curr === 'EUR') {
+        // International Client: 0% GST under LUT (Export of Services)
+        return {
+          currency: curr,
+          basePrice: base,
+          gstRate: 0,
+          gstAmount: 0,
+          totalPrice: base,
+          isExport: true,
+          lutNote: '0% GST (Export of Services under LUT - Form GST RFD-11)'
+        };
+      }
+      // Indian Domestic: 18% GST
+      const gst = Math.round(base * 0.18);
+      return {
+        currency: 'INR',
+        basePrice: base,
+        gstRate: 0.18,
+        gstAmount: gst,
+        totalPrice: base + gst,
+        isExport: false,
+        lutNote: '18% GST Applicable (Standard CGST+SGST/IGST)'
+      };
+    },
     /**
      * Calculate automatic suggested USD price from INR
      */

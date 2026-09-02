@@ -601,8 +601,10 @@
   </footer>
 
   <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD&enable-funding=venmo,card"></script>
-  <script src="js/services-config.js?v=310.0"></script>
-  <script src="js/main.js?v=510.0"></script>
+  <script src="js/services-config.js?v=800.0"></script>
+  <script src="js/telegram-service.js?v=800.0"></script>
+  <script src="js/drive-service.js?v=800.0"></script>
+  <script src="js/main.js?v=800.0"></script>
   <script>
     // Tab switching
     const tabs = document.querySelectorAll('.catalog-tab');
@@ -880,7 +882,9 @@
         if (upiAdvText) upiAdvText.textContent = '₹' + currentDeposit.toLocaleString();
         if (btnUpiAmt) btnUpiAmt.textContent = currentDeposit.toLocaleString();
 
-        const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${currentDeposit}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name)}`;
+        const upiUrl = (window.EditzaarServices && typeof window.EditzaarServices.getMerchantUpiUrl === 'function')
+          ? window.EditzaarServices.getMerchantUpiUrl(currentDeposit, 'Editzaar: ' + activePackage.name)
+          : `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${currentDeposit}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name)}&mc=7392`;
         const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
         const dynamicQr = document.getElementById('dynamicQrImg');
         const btnMobileUpi = document.getElementById('btnMobileUpi');
@@ -1047,8 +1051,14 @@
     document.getElementById('btnCloseCheckout').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
 
-    // Confirm Checkout & Send to WhatsApp (for INR orders)
-    document.getElementById('btnConfirmCheckout').addEventListener('click', () => {
+    // Confirm Checkout & Book in Backend (Firestore) + Telegram Alert + Confirmation Screen
+    document.getElementById('btnConfirmCheckout').addEventListener('click', async (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }
+      const btn = document.getElementById('btnConfirmCheckout');
       const name = document.getElementById('chkName').value.trim();
       const phone = document.getElementById('chkPhone').value.trim();
       const email = document.getElementById('chkEmail').value.trim();
@@ -1057,39 +1067,210 @@
       const brief = document.getElementById('chkBrief').value.trim();
       const footage = document.getElementById('chkFootage').value.trim();
       const utrNum = (document.getElementById('chkUtrNum')?.value || '').trim();
+      const customPayInput = document.getElementById('chkCustomPayAmount');
 
       if (!name || !phone || !email || !brief) {
-        alert('Please fill in your Name, Phone, Email, and Project Brief requirements.');
+        alert('Please fill in your Name, WhatsApp/Phone, Email, and Project Requirements Brief.');
         return;
       }
 
       const isUSD = (currentCurrency === 'USD');
       const sym = isUSD ? '$' : '₹';
-      const price = isUSD ? (activePackage.priceUSD || Math.round(activePackage.basePrice / 80)) : activePackage.basePrice;
-      const gst = isUSD ? 0 : Math.round(price * 0.18);
-      const total = price + gst;
-      const advance = Math.round(total * 0.5);
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+      const price = isUSD ? baseUsd : baseInr;
 
-      const message = `🚨 *NEW PROJECT ORDER & CHECKOUT* 🚨\n\n` +
+      let discountAmt = 0;
+      let couponCode = '';
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
+        couponCode = _appliedCheckoutCoupon.code;
+      }
+
+      const discountedBase = Math.max(0, price - discountAmt);
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
+      const adv50 = Math.round(total * 0.5);
+
+      let depositAmt = parseInt(customPayInput?.value) || adv50;
+      if (depositAmt <= 0) depositAmt = adv50;
+
+      const deadline = new Date();
+      deadline.setDate(deadline.getDate() + (activePackage.name.toLowerCase().includes('web') ? 10 : 3));
+
+      // Disable button with sleek loading state
+      btn.disabled = true;
+      btn.innerHTML = `<span>Booking Project &amp; Securing Queue... ⏳</span>`;
+
+      try {
+        // 1. Initialize or get Firestore db instance
+        let firestoreDb = null;
+        if (window._editzaarDb) {
+          firestoreDb = window._editzaarDb;
+        } else {
+          const { initializeApp, getApps, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+          const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const firebaseConfig = {
+            apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+            authDomain: "editzaar-fa8d9.firebaseapp.com",
+            projectId: "editzaar-fa8d9",
+            storageBucket: "editzaar-fa8d9.firebasestorage.app",
+            messagingSenderId: "419930711716",
+            appId: "1:419930711716:web:b1504f651e397a14726831"
+          };
+          const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+          firestoreDb = getFirestore(app);
+          window._editzaarDb = firestoreDb;
+        }
+
+        const { collection, addDoc, doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        const auth = getAuth();
+
+        const clientUid = auth.currentUser ? auth.currentUser.uid : ('client_' + btoa(email.toLowerCase()).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20));
+
+        // 2. Save / update Client User Record in Firestore
+        try {
+          await setDoc(doc(firestoreDb, 'users', clientUid), {
+            name: name,
+            email: email,
+            mobile: phone,
+            role: 'client',
+            businessName: brand || '',
+            gstin: gstin || '',
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+        } catch(uErr) {
+          console.warn('[User Doc write notice]', uErr);
+        }
+
+        // 3. Save Project Record in Firestore 'projects' collection
+        const projTitle = activePackage.name + (brand ? ` (${brand})` : '');
+        const projectRef = await addDoc(collection(firestoreDb, 'projects'), {
+          title: projTitle,
+          serviceName: activePackage.name,
+          description: brief,
+          brief: brief,
+          clientId: clientUid,
+          clientName: name,
+          clientEmail: email,
+          clientPhone: phone,
+          clientBrand: brand || '',
+          clientGstin: gstin || '',
+          editorId: '',
+          rawFootageUrl: footage || '',
+          deliveryUrl: '',
+          invoiceAmount: discountedBase,
+          totalAmount: total,
+          advanceRequired: adv50,
+          balanceRequired: Math.max(0, total - depositAmt),
+          depositPaidAmount: depositAmt,
+          advancePaid: depositAmt >= total,
+          advanceTxnId: utrNum || '',
+          advanceStatus: utrNum ? 'submitted' : (depositAmt > 0 ? 'submitted' : 'unpaid'),
+          balancePaid: depositAmt >= total,
+          balanceStatus: depositAmt >= total ? 'verified' : 'unpaid',
+          deliveryLocked: depositAmt < total,
+          invoicePaid: depositAmt >= total,
+          couponCode: couponCode || '',
+          couponDiscount: discountAmt || 0,
+          currency: isUSD ? 'USD' : 'INR',
+          status: 'pending',
+          createdAt: serverTimestamp(),
+          deadline: deadline
+        });
+
+        const createdProjectId = projectRef.id;
+
+        // 4. Dispatch Telegram Master Alert to Admin & Agency Team
+        if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendOrderAlert === 'function') {
+          window.EditzaarTelegram.sendOrderAlert({
+            orderId: createdProjectId,
+            name: name,
+            phone: phone,
+            email: email,
+            brand: brand,
+            gstin: gstin,
+            packageName: activePackage.name,
+            basePrice: price,
+            paidAmount: depositAmt,
+            remainingAmount: Math.max(0, total - depositAmt),
+            delivery: activePackage.delivery,
+            brief: brief,
+            footageLink: footage
+          });
+        }
+
+        // 5. Construct WhatsApp message for optional direct chat
+        const waMsg = `🚨 *NEW PROJECT ORDER (${createdProjectId})* 🚨\n\n` +
                       `📦 *PACKAGE:* ${activePackage.name}\n` +
                       `⏱ *Est. Delivery:* ${activePackage.delivery}\n` +
                       `💵 *Base Price:* ${sym}${price.toLocaleString()}\n` +
+                      (discountAmt > 0 ? `🎟️ *Coupon:* ${couponCode} (-${sym}${discountAmt.toLocaleString()})\n` : ``) +
                       (isUSD ? `` : `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n`) +
                       `💰 *Total Package Value:* ${sym}${total.toLocaleString()}\n` +
-                      `💳 *50% Advance Booking Deposit:* ${sym}${advance.toLocaleString()}\n\n` +
-                      `👤 *CLIENT DETAILS:*\n` +
-                      `• Name: ${name}\n` +
-                      `• Phone: ${phone}\n` +
-                      `• Email: ${email}\n` +
-                      `• Brand/Company: ${brand || 'N/A'}\n` +
-                      (gstin ? `• Client GSTIN: ${gstin}\n` : ``) +
+                      `💳 *Deposit Paid:* ${sym}${depositAmt.toLocaleString()}\n\n` +
+                      `👤 *CLIENT:* ${name} (${phone} | ${email})\n` +
+                      (brand ? `• Brand: ${brand}\n` : ``) +
                       (utrNum ? `🧾 *PAYMENT UTR / REF ID:* ${utrNum}\n\n` : `\n`) +
-                      `📝 *REQUIREMENT BRIEF:*\n${brief}\n\n` +
-                      `📁 *RAW FOOTAGE LINK:*\n${footage || 'Not attached (will upload in portal)'}\n\n` +
-                      `Please confirm my deposit of ${sym}${advance.toLocaleString()}!`;
+                      `📝 *BRIEF:* ${brief}\n\n` +
+                      `📁 *FOOTAGE:* ${footage || 'Uploading in portal'}\n\n` +
+                      `✅ *Project ID:* ${createdProjectId}`;
 
-      window.open(`https://wa.me/919476766340?text=${encodeURIComponent(message)}`, '_blank');
-      modal.classList.remove('open');
+        // 6. Show Luxury Confirmation Screen inside Modal
+        const modalBox = modal.querySelector('.checkout-box');
+        modalBox.innerHTML = `
+          <div style="text-align:center;padding:24px 12px;">
+            <div style="font-size:3.5rem;margin-bottom:12px;animation:pulse 1.5s infinite;">🎉</div>
+            <div style="font-family:var(--font-h);font-size:2.2rem;color:var(--gold);margin-bottom:8px;">Booking Confirmed!</div>
+            <div style="font-size:1.05rem;color:var(--t1);font-weight:600;margin-bottom:14px;">Your project brief is created &amp; queued in our production backend.</div>
+            
+            <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;font-size:0.9rem;line-height:1.8;">
+              <div style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--border);padding-bottom:8px;margin-bottom:8px;">
+                <span style="color:var(--t2);">Tracking Reference:</span>
+                <strong style="color:var(--gold);font-family:monospace;font-size:1rem;">${createdProjectId}</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--t2);">Selected Service:</span>
+                <strong>${activePackage.name}</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--t2);">Deposit Amount:</span>
+                <strong style="color:#28C840;">${sym}${depositAmt.toLocaleString()} (${utrNum ? 'UTR: ' + utrNum : 'Submitted'})</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--t2);">Estimated Delivery:</span>
+                <strong>${activePackage.delivery}</strong>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <a href="dashboard/index.html" class="btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:1rem;text-decoration:none;display:flex;align-items:center;background:var(--gold);color:#000;font-weight:700;border-radius:12px;">
+                📁 Open Client Portal to Track &amp; Chat →
+              </a>
+              <button onclick="document.getElementById('checkoutModal').classList.remove('open')" style="background:transparent;border:1px solid var(--gold-border);color:var(--t2);padding:10px;border-radius:10px;cursor:pointer;font-size:0.9rem;">
+                ✕ Close Window
+              </button>
+            </div>
+          </div>
+        `;
+
+      } catch(err) {
+        console.error('[Booking Error]', err);
+        alert('Error submitting project: ' + (err.message || 'Please check your connection and try again.'));
+        btn.disabled = false;
+        btn.innerHTML = `Submit Project Brief →`;
+      }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -1098,8 +1279,11 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+      navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+        .then(function(reg) {
+          reg.update();
+          console.log('[SW] Registered & updated:', reg.scope);
+        })
         .catch(function(err) { console.warn('[SW] Error:', err); });
     }
     let _deferredInstallPrompt = null;

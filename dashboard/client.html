@@ -8,8 +8,10 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Outfit:wght@300;400;500;600;700&display=swap?v=270.0" rel="stylesheet"/>
   <link rel="stylesheet" href="css/dashboard.css?v=300.0"/>
+  <script src="../js/services-config.js?v=310.0"></script>
+  <script src="../js/telegram-service.js?v=310.0"></script>
+  <script src="../js/drive-service.js?v=310.0"></script>
 
   <style>
     .welcome-banner {
@@ -202,6 +204,8 @@
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
   <meta name="theme-color" content="#FFB800">
   <script src="../js/services-config.js?v=310.0"></script>
+  <script src="../js/telegram-service.js?v=310.0"></script>
+  <script src="../js/drive-service.js?v=310.0"></script>
   <script src="../js/theme.js?v=310.0"></script>
 </head>
 <body>
@@ -1126,9 +1130,39 @@
       const txt = inp.value.trim();
       if(!txt || !globalChatPid) return;
       inp.value = '';
+      const cName = currentUser ? (currentUser.name || currentUser.displayName || currentUser.email || 'Client') : 'Client';
       await addDoc(collection(db,'projects',globalChatPid,'chat'), {
-        senderId: currentUser.uid, senderName: currentUser.name||'Client', text: txt, timestamp: serverTimestamp()
+        senderId: currentUser ? currentUser.uid : 'client', 
+        senderName: cName, 
+        text: txt, 
+        timestamp: serverTimestamp()
       });
+
+      if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendChatAlert === 'function') {
+        const pList = (typeof projects !== 'undefined' && projects && projects.length) ? projects : (typeof myProjects !== 'undefined' ? myProjects : []);
+        const p = pList.find(x => x.id === globalChatPid);
+        let edTgId = '';
+        if (p && p.editorId) {
+          try {
+            const edSnap = await getDoc(doc(db, 'users', p.editorId));
+            if (edSnap.exists()) edTgId = edSnap.data().telegramChatId || '';
+          } catch(e) {}
+        }
+        window.EditzaarTelegram.sendChatAlert({
+          senderName: cName,
+          projectTitle: p ? (p.title || 'Project') : 'Project',
+          message: txt,
+          editorTelegramChatId: edTgId,
+          isClient: true
+        });
+      }
+    });
+
+    document.getElementById('globalChatInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('globalBtnSendMsg').click();
+      }
     });
     
     window.switchFileTab = (tab) => {
@@ -1728,6 +1762,21 @@
 
         showToast('Project booked successfully! Acknowledgment receipt created ✅', 'success');
         modalClientNewProject.classList.remove('open');
+
+        // Dispatch real-time Telegram Push Alert to Agency Team
+        if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendOrderAlert === 'function') {
+          window.EditzaarTelegram.sendOrderAlert({
+            name: cName,
+            email: cEmail,
+            packageName: finalServiceName,
+            basePrice: activeCnpBase,
+            paidAmount: enteredDeposit,
+            remainingAmount: Math.max(0, totAmount - enteredDeposit),
+            delivery: serviceName.includes('Web') ? '10 Days' : '48 Hours',
+            brief: desc,
+            footageLink: footage
+          });
+        }
         
         if (titleInput) titleInput.value = '';
         if (document.getElementById('cnp-desc')) document.getElementById('cnp-desc').value = '';
@@ -1806,7 +1855,10 @@
             // Set up dynamic QR code image in the locked wrap
             const qrImg = document.getElementById('detailBalQrImg');
             if (qrImg) {
-              const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Editzaar&am=${balDue}&cu=INR&tn=${encodeURIComponent('Balance for ' + (currentProject.title||'Video Edit').substring(0,25))}`;
+              const noteText = 'Balance for ' + (currentProject.title||'Video Edit').substring(0,25);
+              const upiUrl = (window.EditzaarServices && typeof window.EditzaarServices.getMerchantUpiUrl === 'function')
+                ? window.EditzaarServices.getMerchantUpiUrl(balDue, noteText)
+                : `upi://pay?pa=nbikram704@okhdfcbank&pn=Editzaar&am=${balDue}&cu=INR&tn=${encodeURIComponent(noteText)}&mc=7392`;
               qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
             }
 
@@ -1867,6 +1919,14 @@
       currentProject.rawFootageUrl = url;
       document.getElementById('footageLinkDisplay').innerHTML = `<span style="color:var(--green);">✓ Saved:</span> <a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Open Raw Footage Link ↗</a>`;
       showToast('Footage link saved! ✅','success');
+
+      if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendFileUploadAlert === 'function') {
+        window.EditzaarTelegram.sendFileUploadAlert({
+          clientName: currentUser ? (currentUser.name || currentUser.displayName) : 'Client',
+          projectTitle: currentProject.title || 'Project',
+          link: url
+        });
+      }
     });
 
     function loadChat(pid) {
@@ -1895,11 +1955,31 @@
       const text=input.value.trim();
       if (!text||!currentProject) return;
       input.value='';
+      const cName = currentUser ? (currentUser.name || currentUser.displayName || currentUser.email || 'Client') : 'Client';
       await addDoc(collection(db,'projects',currentProject.id,'chat'),{
-        senderId:   currentUser.uid,
-        senderName: currentUser.name||'Client',
+        senderId:   currentUser ? currentUser.uid : 'client',
+        senderName: cName,
         text, timestamp:serverTimestamp()
       });
+
+      if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendChatAlert === 'function') {
+        let edTgId = '';
+        if (currentProject && currentProject.editorId) {
+          try {
+            const edSnap = await getDoc(doc(db, 'users', currentProject.editorId));
+            if (edSnap.exists()) {
+              edTgId = edSnap.data().telegramChatId || '';
+            }
+          } catch(e) {}
+        }
+        window.EditzaarTelegram.sendChatAlert({
+          senderName: cName,
+          projectTitle: currentProject.title || 'Project',
+          message: text,
+          editorTelegramChatId: edTgId,
+          isClient: true
+        });
+      }
     }
     document.getElementById('btnSendMsg').addEventListener('click',sendMessage);
     document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
@@ -2296,8 +2376,11 @@ function showSection(name){
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js')
-        .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+      navigator.serviceWorker.register('../sw.js?v=' + Date.now())
+        .then(function(reg) {
+          reg.update();
+          console.log('[SW] Registered & updated:', reg.scope);
+        })
         .catch(function(err) { console.warn('[SW] Error:', err); });
     }
     let _deferredInstallPrompt = null;

@@ -5,11 +5,33 @@
     "trailingSlash": false,
     "ignore": [
       "firebase.json",
+      "firestore.rules",
+      "firestore.rules.metadata.json",
+      "dev_server.py",
       "**/.*",
-      "**/node_modules/**",
-      "firestore.rules"
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(html|js|css)",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        ]
+      },
+      {
+        "source": "/dashboard/admin.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+          { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+          { "key": "X-Frame-Options", "value": "DENY" }
+        ]
+      }
     ],
     "rewrites": [
+      {
+        "source": "/dashboard",
+        "destination": "/dashboard/index.html"
+      },
       {
         "source": "/",
         "destination": "/index.html"
