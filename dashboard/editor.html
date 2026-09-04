@@ -906,6 +906,24 @@
       }
     };
 
+    if (typeof window.OneSignalDeferred !== 'undefined') {
+      window.OneSignalDeferred.push((OneSignal) => {
+        if (OneSignal.Notifications && typeof OneSignal.Notifications.addEventListener === 'function') {
+          OneSignal.Notifications.addEventListener('permissionChange', (permission) => {
+            console.log('[EditorPush] Permission changed:', permission);
+            window.checkEditorPushStatus();
+            if (currentUser?.uid && typeof db !== 'undefined') {
+              updateDoc(doc(db, 'users', currentUser.uid), {
+                pushSubscribed: Boolean(permission),
+                pushPermission: permission ? 'granted' : 'denied',
+                pushUpdatedAt: serverTimestamp()
+              }).catch(() => {});
+            }
+          });
+        }
+      });
+    }
+
     window.testEditorPushSelf = async function() {
       if (!currentUser?.uid) return;
       showToast('Dispatching test alert to your device... 🚀', 'info');

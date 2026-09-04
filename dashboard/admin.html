@@ -1204,11 +1204,15 @@
         </div>
 
         <!-- Live Subscribers Directory Card (Collapsible) -->
-        <div id="subscribersDirectoryCard" class="dash-card" style="display:none;margin-bottom:20px;border-color:rgba(255,184,0,0.35);background:rgba(20,20,28,0.95);">
+        <div id="subscribersDirectoryCard" class="dash-card" style="display:none;margin-bottom:20px;border-color:rgba(255,184,0,0.35);background:var(--bg2, var(--card, #ffffff));">
           <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-            <div class="dash-card-title">👥 Registered <em>Push Subscribers &amp; Devices</em></div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn-outline btn-sm" style="padding:4px 10px;font-size:11px;" onclick="window.loadSubscribersDirectory(true)">🔄 Refresh List</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <div class="dash-card-title">👥 Registered <em>Push Subscribers &amp; Devices</em></div>
+              <span id="subscribersLiveSummaryBadge" class="live-badge" style="font-size:10px;background:rgba(40,200,64,0.12);color:#28C840;">Live Sync 🟢</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span style="font-size:11px;color:var(--t3);display:inline-flex;align-items:center;gap:4px;">⏱️ Auto-updates every 15s</span>
+              <button class="btn-outline btn-sm" style="padding:4px 10px;font-size:11px;" onclick="window.loadSubscribersDirectory(false)">🔄 Refresh List</button>
               <button class="btn-outline btn-sm" style="padding:4px 10px;font-size:11px;" onclick="window.toggleSubscribersDirectory()">✖ Close</button>
             </div>
           </div>
@@ -4393,20 +4397,35 @@
       }
     };
 
+    let subscribersAutoPollTimer = null;
+
     window.toggleSubscribersDirectory = function() {
       const card = document.getElementById('subscribersDirectoryCard');
       if (!card) return;
       const isHidden = card.style.display === 'none' || !card.style.display;
       card.style.display = isHidden ? 'block' : 'none';
       if (isHidden) {
-        window.loadSubscribersDirectory();
+        window.loadSubscribersDirectory(false);
+        // Start automatic polling every 15 seconds while directory card is open
+        if (subscribersAutoPollTimer) clearInterval(subscribersAutoPollTimer);
+        subscribersAutoPollTimer = setInterval(() => {
+          if (card.style.display !== 'none') {
+            window.loadSubscribersDirectory(true); // silent refresh
+          } else {
+            clearInterval(subscribersAutoPollTimer);
+          }
+        }, 15000);
+      } else {
+        if (subscribersAutoPollTimer) clearInterval(subscribersAutoPollTimer);
       }
     };
 
-    window.loadSubscribersDirectory = async function(force = false) {
+    window.loadSubscribersDirectory = async function(silent = false) {
       const tbody = document.getElementById('subscribersDirectoryTbody');
       if (!tbody) return;
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gold);padding:18px;">Fetching registered subscribers from OneSignal... ⏳</td></tr>';
+      if (!silent) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gold);padding:18px;">Fetching registered subscribers from OneSignal... ⏳</td></tr>';
+      }
 
       if (window.EditzaarPush && typeof window.EditzaarPush.getSubscribersList === 'function') {
         const res = await window.EditzaarPush.getSubscribersList(50);
@@ -4415,10 +4434,29 @@
           return;
         }
 
-        const statEl = document.getElementById('onesignalSubscribersCount');
-        if (statEl) statEl.textContent = 'Active (' + res.players.length + ')';
+        // Accurately determine active vs unsubscribed
+        const activePlayers = res.players.filter(p => !p.invalid_identifier && Boolean(p.identifier));
+        const unsubPlayers  = res.players.filter(p => p.invalid_identifier || !p.identifier);
 
-        tbody.innerHTML = res.players.map(p => {
+        const statEl = document.getElementById('onesignalSubscribersCount');
+        if (statEl) statEl.textContent = 'Active (' + activePlayers.length + ')';
+
+        const summaryBadge = document.getElementById('subscribersLiveSummaryBadge');
+        if (summaryBadge) {
+          summaryBadge.innerHTML = `🟢 ${activePlayers.length} Active · 🔴 ${unsubPlayers.length} Unsubscribed`;
+        }
+
+        // Sort: active subscribers first, then unsubscribed
+        const sorted = [...res.players].sort((a, b) => {
+          const aSub = !a.invalid_identifier && Boolean(a.identifier);
+          const bSub = !b.invalid_identifier && Boolean(b.identifier);
+          if (aSub === bSub) {
+            return (b.last_active || 0) - (a.last_active || 0);
+          }
+          return aSub ? -1 : 1;
+        });
+
+        tbody.innerHTML = sorted.map(p => {
           const tags = p.tags || {};
           const name = tags.name || tags.user_name || p.external_user_id || 'Subscriber';
           const email = tags.email || '—';
@@ -4436,8 +4474,13 @@
           const createdDate = p.created_at ? new Date(p.created_at * 1000).toLocaleDateString('en-IN') : '—';
           const lastActiveDate = p.last_active ? new Date(p.last_active * 1000).toLocaleString('en-IN') : 'Recently';
 
+          const isSubscribed = !p.invalid_identifier && Boolean(p.identifier);
+          const statusBadge = isSubscribed 
+            ? `<span style="color:#28C840;background:rgba(40,200,64,0.12);border:1px solid rgba(40,200,64,0.3);padding:2px 8px;border-radius:12px;font-weight:700;font-size:0.75rem;display:inline-flex;align-items:center;gap:4px;">SUBSCRIBED 🟢</span>`
+            : `<span style="color:#FF4B4B;background:rgba(255,75,75,0.12);border:1px solid rgba(255,75,75,0.3);padding:2px 8px;border-radius:12px;font-weight:700;font-size:0.75rem;display:inline-flex;align-items:center;gap:4px;">UNSUBSCRIBED 🔴</span>`;
+
           return `
-            <tr>
+            <tr style="${isSubscribed ? '' : 'opacity:0.65;'}">
               <td>
                 <strong style="color:var(--t1);">${escapeHtml(name)}</strong>
                 <div style="font-size:0.75rem;color:var(--t3);">${escapeHtml(email)}</div>
@@ -4446,7 +4489,7 @@
               <td style="font-size:0.8rem;color:var(--t2);">${escapeHtml(deviceName)}</td>
               <td style="font-size:0.8rem;color:var(--t3);">${escapeHtml(createdDate)}</td>
               <td style="font-size:0.8rem;color:var(--t2);">${escapeHtml(lastActiveDate)}</td>
-              <td><span style="color:#28C840;font-weight:700;font-size:0.75rem;">SUBSCRIBED 🟢</span></td>
+              <td>${statusBadge}</td>
             </tr>
           `;
         }).join('');
@@ -4462,7 +4505,8 @@
       if (window.EditzaarPush && typeof window.EditzaarPush.getSubscribersList === 'function') {
         const res = await window.EditzaarPush.getSubscribersList(50);
         if (res && res.success && res.players) {
-          el.textContent = 'Active (' + res.players.length + ')';
+          const activeCount = res.players.filter(p => !p.invalid_identifier && Boolean(p.identifier)).length;
+          el.textContent = 'Active (' + activeCount + ')';
           return;
         }
       }
@@ -4476,6 +4520,7 @@
       }
     }
     setTimeout(loadOneSignalSubscriberCount, 2500);
+    setInterval(loadOneSignalSubscriberCount, 30000);
 
     document.getElementById('btnSendBroadcast').addEventListener('click', async () => {
       const targetGroup = document.getElementById('bc-target').value;
