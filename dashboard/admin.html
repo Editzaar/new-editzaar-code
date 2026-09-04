@@ -2020,6 +2020,7 @@
                   <option value="Video Post-Production">🎬 Video Post-Production</option>
                   <option value="Website Design & Development">💻 Website Design & Development</option>
                   <option value="Paid Advertising & Growth">📈 Paid Advertising & Growth</option>
+                  <option value="Social Media Management">📣 Social Media Management</option>
                   <option value="Custom Creative Service">⭐ Custom Creative Service</option>
                 </select>
               </div>
@@ -3032,6 +3033,92 @@
           </div>
           <button class="btn-gold btn-sm" id="btnSendTicketReply" onclick="window.submitTicketReply()" style="padding:8px 18px;">
             Send Reply to Client 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL: MASTER SERVICE PACKAGE FULL EDITOR (ALL TEXT, BULLETS, PRICING, CUSTOM) ══ -->
+  <div class="modal-overlay" id="modalEditServicePackage">
+    <div class="modal-box" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close" onclick="closeModal('modalEditServicePackage')">✕</button>
+      <div class="modal-title">Edit Service Package <em>&amp; Deliverables</em></div>
+      <div style="font-size:0.85rem;color:var(--t2);margin-bottom:16px;">Update all package details, marketing copy, deliverable bullets, turnaround time, and pricing across the live site and checkout system.</div>
+
+      <div class="dash-form">
+        <input type="hidden" id="editSvcId" />
+
+        <div class="form-grid-2">
+          <div class="field">
+            <label>Service Category *</label>
+            <select id="editSvcCategory">
+              <option value="Video Post-Production">🎬 Video Post-Production</option>
+              <option value="Website Design & Development">💻 Website Design & Development</option>
+              <option value="Paid Advertising & Growth">📈 Paid Advertising & Growth</option>
+              <option value="Social Media Management">📣 Social Media Management</option>
+              <option value="Custom Creative Service">⭐ Custom Creative Service</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Package Title / Name *</label>
+            <input type="text" id="editSvcName" placeholder="e.g. YouTube Authority & Domination" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;" class="form-grid-3">
+          <div class="field">
+            <label>Price in INR (₹) *</label>
+            <input type="number" id="editSvcPrice" min="0" placeholder="0 for Custom" oninput="window.onEditModalInrInput(this.value)" />
+          </div>
+          <div class="field">
+            <label>Intl Price in USD ($) *</label>
+            <input type="number" id="editSvcPriceUSD" min="0" placeholder="Auto or 0" />
+          </div>
+          <div class="field">
+            <label>Billing Unit *</label>
+            <input type="text" id="editSvcUnit" placeholder="e.g. / video, / project, / month, Custom" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="field">
+            <label>Turnaround / Delivery Time *</label>
+            <input type="text" id="editSvcDelivery" placeholder="e.g. 48 Hours, 5-7 Days, Monthly Retainer" />
+          </div>
+          <div class="field">
+            <label>Badge / Ribbon Tag (Optional)</label>
+            <input type="text" id="editSvcBadge" placeholder="e.g. Most Popular, Best ROI, Enterprise, VIP Scale" />
+          </div>
+        </div>
+
+        <div class="field" style="background:rgba(255,184,0,0.04);border:1px solid var(--gold-border);border-radius:10px;padding:12px 14px;">
+          <label style="display:flex;align-items:center;gap:10px;margin:0;cursor:pointer;">
+            <input type="checkbox" id="editSvcIsCustom" style="width:18px;height:18px;accent-color:var(--gold);" />
+            <div>
+              <span style="font-weight:700;color:var(--gold);">Enable Custom Scope &amp; Quote Mode</span>
+              <div style="font-size:0.8rem;color:var(--t2);">When enabled, clicking this package on the pricing page opens the interactive Custom Scope &amp; Quote Builder instead of standard fixed checkout.</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="field">
+          <label>Short Overview / Subtitle</label>
+          <input type="text" id="editSvcDesc" placeholder="Brief summary displayed under the price..." />
+        </div>
+
+        <div class="field">
+          <label>Feature &amp; Deliverable Bullets (✦ One per line)</label>
+          <textarea id="editSvcFeatures" rows="5" placeholder="✦ First deliverable bullet&#10;✦ Second deliverable bullet&#10;✦ Third deliverable bullet" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--t1);font-family:var(--font-b);font-size:0.88rem;line-height:1.5;resize:vertical;"></textarea>
+          <div style="font-size:0.78rem;color:var(--t3);margin-top:4px;">Each line in this box will become a bullet point with the luxury gold ✦ icon on the pricing card.</div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button type="button" class="btn-gold" style="flex:1;justify-content:center;height:42px;" id="btnSaveFullServicePackage" onclick="window.saveFullAdminServicePackage()">
+            💾 Save All Package Details &amp; Publish Live →
+          </button>
+          <button type="button" class="btn-outline" style="padding:0 20px;" onclick="closeModal('modalEditServicePackage')">
+            Cancel
           </button>
         </div>
       </div>
@@ -8395,15 +8482,320 @@
   var hasSeededServices = false;
 
   var DEFAULT_SERVICES_LIST = [
-    { id: "shorts-reels", category: "Video Post-Production", categoryIcon: "🎬", name: "Shorts & Instagram Reels", price: 1000, unit: "/ video", delivery: "48 Hours", description: "High-retention vertical editing with kinetic typography, SFX & 3-second hook structure.", order: 1 },
-    { id: "motion-graphics", category: "Video Post-Production", categoryIcon: "🎬", name: "Motion Graphic & Animated Video", price: 2500, unit: "/ video", delivery: "48 Hours", description: "2D animations, title cards, animated infographics, lower thirds, and logo reveals.", order: 2 },
-    { id: "long-form-youtube", category: "Video Post-Production", categoryIcon: "🎬", name: "Long Form YouTube Video Edit", price: 5000, unit: "/ video", delivery: "48-72 Hours", description: "Full YouTube video editing: narrative pacing, seamless jump-cuts, zoom-ins, meme overlays & B-roll.", order: 3 },
-    { id: "cinematic-documentary", category: "Video Post-Production", categoryIcon: "🎬", name: "Cinematic Documentary & Ad Film", price: 10000, unit: "/ video", delivery: "3-5 Days", description: "Cinematic grade brand films, high-end product showcases, and documentary storytelling.", order: 4 },
-    { id: "landing-page", category: "Website Design & Development", categoryIcon: "💻", name: "High-Converting Landing Page", price: 4999, unit: "/ project", delivery: "3-5 Days", description: "Single-page responsive landing page engineered to capture leads and drive sales.", order: 5 },
-    { id: "ecommerce-store", category: "Website Design & Development", categoryIcon: "💻", name: "D2C Brand & E-Commerce Store", price: 12999, unit: "/ project", delivery: "7-10 Days", description: "Full-featured online store with payment gateway, product catalog, cart, and order system.", order: 6 },
-    { id: "full-web-portal", category: "Website Design & Development", categoryIcon: "💻", name: "Full Web System & Portal", price: 24999, unit: "/ project", delivery: "10-14 Days", description: "Custom SaaS portal, multi-role client/staff dashboard with realtime database & live chat.", order: 7 },
-    { id: "paid-ads-setup", category: "Paid Advertising & Growth", categoryIcon: "📈", name: "Paid Ad Setup & Creatives", price: 7999, unit: "/ campaign", delivery: "3-5 Days", description: "Data-driven Meta (FB/IG) & Google ad campaign setup with 3 direct-response video creatives.", order: 8 },
-    { id: "growth-retainer", category: "Paid Advertising & Growth", categoryIcon: "📈", name: "Monthly Growth Retainer", price: 19999, unit: "/ month", delivery: "Monthly", description: "Full-service digital growth: 12 edited videos + paid ad management + creative strategy.", order: 9 }
+    // 🎬 1. Video Post-Production
+    {
+      id: "shorts-reels",
+      category: "Video Post-Production",
+      categoryIcon: "🎬",
+      name: "Shorts & Instagram Reels",
+      price: 1000,
+      priceUSD: 29,
+      unit: "/ video",
+      delivery: "48 Hours",
+      description: "High-retention vertical editing with kinetic typography, SFX & 3-second hook structure.",
+      features: [
+        "Kinetic Subtitles & Sound Design (SFX)",
+        "Motion Graphics & Dynamic B-Roll",
+        "Hook Optimization for Max Retention",
+        "Color Grading & Audio Enhancement"
+      ],
+      order: 1
+    },
+    {
+      id: "motion-graphics",
+      category: "Video Post-Production",
+      categoryIcon: "🎬",
+      name: "Motion Graphic & Animated Video",
+      price: 2500,
+      priceUSD: 69,
+      unit: "/ video",
+      delivery: "48 Hours",
+      description: "2D animations, title cards, animated infographics, lower thirds, and logo reveals.",
+      features: [
+        "Custom 2D Vector Animations",
+        "Kinetic Typography & Lower Thirds",
+        "Animated Charts, Icons & UI Mockups",
+        "Commercial Sound Design & SFX Sync"
+      ],
+      order: 2
+    },
+    {
+      id: "long-form-youtube",
+      category: "Video Post-Production",
+      categoryIcon: "🎬",
+      name: "Long Form YouTube Video Edit",
+      price: 5000,
+      priceUSD: 139,
+      unit: "/ video",
+      delivery: "48-72 Hours",
+      popular: true,
+      badge: "Most Popular",
+      description: "Full YouTube video editing: narrative pacing, seamless jump-cuts, zoom-ins, meme overlays & B-roll.",
+      features: [
+        "Story Pacing & Dead-Air Removal",
+        "Relevant B-Roll & Visual Pattern Interrupts",
+        "Multi-Layer Sound Design & Audio Leveling",
+        "High-CTR YouTube Thumbnail Included"
+      ],
+      order: 3
+    },
+    {
+      id: "video-custom-production",
+      category: "Video Post-Production",
+      categoryIcon: "🎬",
+      name: "Custom Studio Production",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Milestone Based",
+      badge: "Enterprise",
+      description: "Milestone based · Dedicated senior director & motion designers.",
+      features: [
+        "Dedicated senior director & motion designers",
+        "Custom scope, 3D animations, podcast suites & documentaries",
+        "Unlimited revisions & dedicated project manager",
+        "Direct Slack / WhatsApp war room access"
+      ],
+      order: 4
+    },
+
+    // 💻 2. Website Design & Development
+    {
+      id: "landing-page",
+      category: "Website Design & Development",
+      categoryIcon: "💻",
+      name: "High-Converting Landing Page",
+      price: 4999,
+      priceUSD: 139,
+      unit: "/ project",
+      delivery: "3-5 Days",
+      description: "Single-page responsive landing page engineered to capture leads and drive sales.",
+      features: [
+        "Single High-Converting Landing Page",
+        "100/100 Mobile & Desktop Speed",
+        "WhatsApp & Lead Form Integration",
+        "Custom UI/UX Animation",
+        "On-Page SEO Setup"
+      ],
+      order: 5
+    },
+    {
+      id: "ecommerce-store",
+      category: "Website Design & Development",
+      categoryIcon: "💻",
+      name: "Corporate / D2C Storefront",
+      price: 12999,
+      priceUSD: 349,
+      unit: "/ project",
+      delivery: "5-7 Days",
+      popular: true,
+      badge: "Most Popular",
+      description: "Full-featured online store with payment gateway, product catalog, cart, and order system.",
+      features: [
+        "Up to 5-7 Custom Pages",
+        "E-Commerce & Payment Gateway Setup",
+        "Product Catalog & Cart Logic",
+        "Admin CMS Dashboard",
+        "Mobile-First Responsive"
+      ],
+      order: 6
+    },
+    {
+      id: "full-web-portal",
+      category: "Website Design & Development",
+      categoryIcon: "💻",
+      name: "Full Web System & Portal",
+      price: 24999,
+      priceUSD: 699,
+      unit: "/ project",
+      delivery: "10-14 Days",
+      description: "Custom SaaS portal, multi-role client/staff dashboard with realtime database & live chat.",
+      features: [
+        "Firebase Auth & Role-Based User Portals",
+        "Real-Time Firestore Database Integration",
+        "Admin, Client & Staff Dashboards",
+        "Live Chat & File Tracking System",
+        "Dedicated Support & Deployment"
+      ],
+      order: 7
+    },
+    {
+      id: "web-custom-system",
+      category: "Website Design & Development",
+      categoryIcon: "💻",
+      name: "Custom Web & Enterprise System",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Milestone Based",
+      badge: "Enterprise",
+      description: "Milestone based · Dedicated full-stack software engineer & designer.",
+      features: [
+        "Dedicated full-stack software engineer & designer",
+        "Custom system architecture, database & API integrations",
+        "SaaS platforms, CRM dashboards & portal development",
+        "Direct Slack / WhatsApp engineering channel access"
+      ],
+      order: 8
+    },
+
+    // 📈 3. Paid Advertising & Growth
+    {
+      id: "paid-ads-setup",
+      category: "Paid Advertising & Growth",
+      categoryIcon: "📈",
+      name: "Paid Ad Setup & Creatives",
+      price: 7999,
+      priceUSD: 219,
+      unit: "/ campaign",
+      delivery: "3-5 Days",
+      description: "Data-driven Meta (FB/IG) & Google ad campaign setup with 3 direct-response video creatives.",
+      features: [
+        "Meta (FB/IG) & Google Ad Campaign Setup",
+        "3 Direct-Response Video Ad Creatives",
+        "A/B Hook Variation Testing",
+        "Audience Targeting & Pixel Setup"
+      ],
+      order: 9
+    },
+    {
+      id: "growth-retainer",
+      category: "Paid Advertising & Growth",
+      categoryIcon: "📈",
+      name: "Monthly Growth Retainer",
+      price: 14999,
+      priceUSD: 399,
+      unit: "/ month",
+      delivery: "Monthly Retainer",
+      popular: true,
+      badge: "Best ROI",
+      description: "All-in-one monthly growth partnership: 12 edited videos, SEO, thumbnails & ad management.",
+      features: [
+        "12 Reels / Shorts Editing per month",
+        "YouTube Channel SEO & Thumbnail Design",
+        "Meta & Google Paid Ads Management",
+        "Monthly Strategy & Analytics Reports"
+      ],
+      order: 10
+    },
+    {
+      id: "ads-scale-engine",
+      category: "Paid Advertising & Growth",
+      categoryIcon: "📈",
+      name: "Multi-Platform Scale Engine",
+      price: 24999,
+      priceUSD: 699,
+      unit: "/ month",
+      delivery: "7-10 Days / Ongoing",
+      description: "High-volume acquisition engine combining omni-channel paid media and rapid creative iteration.",
+      features: [
+        "Meta + Google + YouTube Ads Management",
+        "8 Direct-Response Video Ad Creatives",
+        "Continuous A/B Creative Testing & Retargeting",
+        "Custom Tracking Pixel, CAPI & Funnel Analytics"
+      ],
+      order: 11
+    },
+    {
+      id: "growth-custom-enterprise",
+      category: "Paid Advertising & Growth",
+      categoryIcon: "📈",
+      name: "Custom Enterprise Growth Partner",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Monthly Retainer",
+      badge: "VIP Scale",
+      description: "Billed monthly · Dedicated media buyer & ad creative director.",
+      features: [
+        "Dedicated performance marketing director & ad strategist",
+        "High-budget omni-channel scaling (Meta, Google, YouTube, TikTok)",
+        "Weekly executive ROAS & attribution audits",
+        "Direct Slack / WhatsApp 24/7 priority channel access"
+      ],
+      order: 12
+    },
+
+    // 📣 4. Social Media Management
+    {
+      id: "social-essential",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "Essential Social Presence",
+      price: 6999,
+      priceUSD: 189,
+      unit: "/ month",
+      delivery: "Monthly Retainer",
+      description: "Consistent social presence with high-retention reels, graphic creatives, and caption strategy.",
+      features: [
+        "12 High-Retention Reels/Shorts + Static Graphics",
+        "Content Calendar, Copywriting & Hashtags",
+        "Monthly Performance & Growth Insights",
+        "Instagram & Facebook Management"
+      ],
+      order: 13
+    },
+    {
+      id: "social-omnichannel",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "Omnichannel Growth Engine",
+      price: 12999,
+      priceUSD: 349,
+      unit: "/ month",
+      delivery: "Monthly Retainer",
+      popular: true,
+      badge: "Most Popular",
+      description: "Aggressive multi-platform content engine engineered to build authority and grow followers.",
+      features: [
+        "20 Vertical Videos (Reels, TikTok, Shorts)",
+        "Complete YouTube Channel SEO & Custom Thumbnails",
+        "Active Community Engagement & Comment Moderation",
+        "Bi-Weekly Strategy Calls & Trend Adaptation"
+      ],
+      order: 14
+    },
+    {
+      id: "social-youtube-authority",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "YouTube Authority & Domination",
+      price: 18999,
+      priceUSD: 499,
+      unit: "/ month",
+      delivery: "Monthly Retainer",
+      description: "End-to-end management for YouTube channels looking to scale subscribers and watch time.",
+      features: [
+        "4 Long-Form YouTube Edits + 16 Short Repurposed Cuts",
+        "High-CTR Custom Thumbnails & Title A/B Testing",
+        "Complete YouTube SEO, Descriptions & Chapters",
+        "Dedicated Social Manager & Channel Audits"
+      ],
+      order: 15
+    },
+    {
+      id: "social-custom-partnership",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "Custom Brand Authority Partnership",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Monthly Retainer",
+      badge: "Full Takeover",
+      description: "Billed monthly · Dedicated social media team, viral strategy & production.",
+      features: [
+        "Dedicated social media team (strategist, editor, designer)",
+        "End-to-end multi-platform takeover (IG, YT, LinkedIn, X, FB)",
+        "Custom content production schedules & viral format tests",
+        "24/7 Priority Slack / WhatsApp communication"
+      ],
+      order: 16
+    }
   ];
 
   window.initServicesFirestoreListener = function() {
@@ -8413,7 +8805,12 @@
       if (localCached) {
         var parsed = JSON.parse(localCached);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          allAdminServices = parsed;
+          var merged = parsed.slice();
+          DEFAULT_SERVICES_LIST.forEach(function(def) {
+            var exists = merged.find(function(m) { return m.id === def.id; });
+            if (!exists) merged.push(def);
+          });
+          allAdminServices = merged;
         }
       }
     } catch(e) {}
@@ -8457,8 +8854,14 @@
               var s = map[sid];
               var existing = allAdminServices.find(function(item) { return item.id === sid; });
               if (existing) {
-                if (s.price) existing.price = s.price;
+                if (s.name) existing.name = s.name;
+                if (s.price !== undefined) existing.price = s.price;
+                if (s.priceUSD !== undefined) existing.priceUSD = s.priceUSD;
                 if (s.delivery) existing.delivery = s.delivery;
+                if (s.description) existing.description = s.description;
+                if (s.badge !== undefined) existing.badge = s.badge;
+                if (s.isCustom !== undefined) existing.isCustom = s.isCustom;
+                if (s.features) existing.features = s.features;
               } else {
                 allAdminServices.push(s);
               }
@@ -8477,13 +8880,18 @@
       for (var i = 0; i < DEFAULT_SERVICES_LIST.length; i++) {
         var s = DEFAULT_SERVICES_LIST[i];
         await setDoc(doc(db, 'services', s.id), {
+          id: s.id,
           category: s.category,
           categoryIcon: s.categoryIcon,
           name: s.name,
           price: s.price,
+          priceUSD: s.priceUSD,
           unit: s.unit,
           delivery: s.delivery,
           description: s.description,
+          features: s.features || [],
+          badge: s.badge || '',
+          isCustom: !!s.isCustom,
           order: s.order,
           active: true,
           createdAt: serverTimestamp()
@@ -8508,26 +8916,157 @@
     var html = '';
     allAdminServices.forEach(function(s) {
       var inrVal = s.price || 0;
+      var isCustom = !!(s.isCustom || s.price <= 0 || s.unit === 'Custom');
       var usdVal = (s.priceUSD !== undefined) ? s.priceUSD : (window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(inrVal) : Math.round(inrVal / 80));
+      var badgeBadge = s.badge ? '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);margin-left:6px;font-size:10px;">' + s.badge + '</span>' : '';
+      var customBadge = isCustom ? '<span class="status-badge" style="background:rgba(147,51,234,0.18);color:#c084fc;margin-left:6px;font-size:10px;">💎 CUSTOM</span>' : '';
+
       html += '<tr>'
         + '<td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">' + (s.categoryIcon || '📌') + ' ' + (s.category || 'General') + '</span></td>'
-        + '<td><strong>' + (s.name || '') + '</strong></td>'
+        + '<td><div style="font-weight:700;color:var(--t1);">' + (s.name || '') + badgeBadge + customBadge + '</div>'
+        + '<div style="font-size:0.75rem;color:var(--t3);">' + (s.unit || '/ project') + (s.features && s.features.length ? ' · ' + s.features.length + ' features' : '') + '</div></td>'
         + '<td><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:var(--gold);font-weight:700;">₹</span>'
-        + '<input type="number" id="inp-price-' + s.id + '" value="' + inrVal + '" style="width:85px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.9rem;" min="100"/>'
+        + '<input type="number" id="inp-price-' + s.id + '" value="' + inrVal + '" style="width:85px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.9rem;" min="0"/>'
         + '</div></td>'
         + '<td><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:#28c840;font-weight:700;">$</span>'
-        + '<input type="number" id="inp-price-usd-' + s.id + '" value="' + usdVal + '" style="width:75px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:#28c840;font-weight:700;font-size:0.9rem;" min="1"/>'
+        + '<input type="number" id="inp-price-usd-' + s.id + '" value="' + usdVal + '" style="width:75px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:#28c840;font-weight:700;font-size:0.9rem;" min="0"/>'
         + '</div></td>'
         + '<td><input type="text" id="inp-time-' + s.id + '" value="' + (s.delivery || '48 Hours') + '" style="width:115px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:0.85rem;"/></td>'
-        + '<td style="font-size:0.85rem;color:var(--t2);max-width:240px;">' + (s.description || '—') + '</td>'
-        + '<td><div style="display:flex;gap:6px;">'
-        + '<button class="btn-gold btn-sm" id="btn-save-svc-' + s.id + '" onclick="window.saveAdminServicePrice(\'' + s.id + '\')">💾 SAVE</button>'
-        + '<button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminService(\'' + s.id + '\')">🗑️</button>'
+        + '<td style="font-size:0.85rem;color:var(--t2);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (s.description || '') + '">' + (s.description || '—') + '</td>'
+        + '<td><div style="display:flex;gap:6px;align-items:center;">'
+        + '<button class="btn-gold btn-sm" id="btn-save-svc-' + s.id + '" onclick="window.saveAdminServicePrice(\'' + s.id + '\')" title="Quick Save Price &amp; Delivery">💾 SAVE</button>'
+        + '<button class="btn-outline btn-sm" style="color:var(--gold);border-color:var(--gold-border);" onclick="window.openEditServiceModal(\'' + s.id + '\')" title="Edit All Information &amp; Feature Bullets">✏️ EDIT ALL</button>'
+        + '<button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminService(\'' + s.id + '\')" title="Delete Service">🗑️</button>'
         + '</div></td></tr>';
     });
     tbody.innerHTML = html;
+  };
+
+  // ✏️ OPEN FULL SERVICE PACKAGE EDITOR MODAL
+  window.openEditServiceModal = function(id) {
+    var s = allAdminServices.find(function(item) { return item.id === id; });
+    if (!s) { showToast('Service not found.', 'error'); return; }
+
+    document.getElementById('editSvcId').value = s.id || '';
+    document.getElementById('editSvcCategory').value = s.category || 'Video Post-Production';
+    document.getElementById('editSvcName').value = s.name || '';
+    document.getElementById('editSvcPrice').value = s.price || 0;
+    document.getElementById('editSvcPriceUSD').value = (s.priceUSD !== undefined) ? s.priceUSD : (window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(s.price || 0) : Math.round((s.price || 0) / 80));
+    document.getElementById('editSvcUnit').value = s.unit || '/ project';
+    document.getElementById('editSvcDelivery').value = s.delivery || '48 Hours';
+    document.getElementById('editSvcBadge').value = s.badge || '';
+    document.getElementById('editSvcIsCustom').checked = !!(s.isCustom || s.price <= 0 || s.unit === 'Custom');
+    document.getElementById('editSvcDesc').value = s.description || '';
+    
+    var featuresArr = Array.isArray(s.features) ? s.features : [];
+    document.getElementById('editSvcFeatures').value = featuresArr.join('\n');
+
+    openModal('modalEditServicePackage');
+  };
+
+  window.onEditModalInrInput = function(val) {
+    var usdInp = document.getElementById('editSvcPriceUSD');
+    if (!usdInp) return;
+    var num = parseInt(val) || 0;
+    if (num > 0 && window.EditzaarServices) {
+      usdInp.value = window.EditzaarServices.calculateAutoUSD(num);
+    }
+  };
+
+  // 💾 SAVE FULL SERVICE PACKAGE (ALL TEXT, BULLETS, PRICING, CUSTOM)
+  window.saveFullAdminServicePackage = async function() {
+    var id = document.getElementById('editSvcId').value;
+    var cat = document.getElementById('editSvcCategory').value;
+    var name = document.getElementById('editSvcName').value.trim();
+    var price = parseInt(document.getElementById('editSvcPrice').value) || 0;
+    var priceUSD = parseInt(document.getElementById('editSvcPriceUSD').value) || 0;
+    var unit = document.getElementById('editSvcUnit').value.trim() || '/ project';
+    var delivery = document.getElementById('editSvcDelivery').value.trim() || '48 Hours';
+    var badge = document.getElementById('editSvcBadge').value.trim();
+    var isCustom = document.getElementById('editSvcIsCustom').checked;
+    var desc = document.getElementById('editSvcDesc').value.trim();
+    var rawFeatures = document.getElementById('editSvcFeatures').value;
+    var features = rawFeatures.split('\n').map(function(f) { return f.replace(/^[✦•\-*]\s*/, '').trim(); }).filter(Boolean);
+
+    if (!name) { showToast('Package name is required.', 'error'); return; }
+
+    var saveBtn = document.getElementById('btnSaveFullServicePackage');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving package... ⏳'; }
+
+    var catIcon = '🎬';
+    if (cat.indexOf('Web') >= 0) catIcon = '💻';
+    else if (cat.indexOf('Paid') >= 0) catIcon = '📈';
+    else if (cat.indexOf('Social') >= 0) catIcon = '📣';
+    else if (cat.indexOf('Custom') >= 0) catIcon = '⭐';
+
+    // 1. Update in-memory
+    var s = allAdminServices.find(function(item) { return item.id === id; });
+    if (!s) {
+      s = { id: id || (name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now()), order: allAdminServices.length + 1 };
+      allAdminServices.push(s);
+    }
+
+    s.name = name;
+    s.category = cat;
+    s.categoryIcon = catIcon;
+    s.price = price;
+    s.priceUSD = priceUSD;
+    s.unit = unit;
+    s.delivery = delivery;
+    s.badge = badge;
+    s.isCustom = isCustom;
+    s.description = desc;
+    s.features = features;
+
+    // 2. Persist to localStorage
+    try {
+      localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices));
+      if (window.EditzaarServices && typeof window.EditzaarServices.saveCustomCatalog === 'function') {
+        window.EditzaarServices.saveCustomCatalog(allAdminServices);
+      }
+    } catch(e) {}
+
+    // 3. Persist to Firestore 'services'
+    try {
+      await setDoc(doc(db, 'services', s.id), {
+        id: s.id,
+        name: s.name,
+        category: s.category,
+        categoryIcon: s.categoryIcon,
+        price: s.price,
+        priceUSD: s.priceUSD,
+        unit: s.unit,
+        delivery: s.delivery,
+        badge: s.badge || '',
+        isCustom: s.isCustom,
+        description: s.description,
+        features: s.features,
+        order: s.order || 1,
+        active: true,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch(e1) {
+      console.warn('Direct services doc write note:', e1.message);
+    }
+
+    // 4. Persist to Firestore fallback 'projects/config_services'
+    try {
+      var servicesMap = {};
+      allAdminServices.forEach(function(item) { servicesMap[item.id] = item; });
+      await setDoc(doc(db, 'projects', 'config_services'), {
+        services: servicesMap,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch(e2) {
+      console.warn('Fallback config_services write note:', e2.message);
+    }
+
+    window.renderAdminServicesTable();
+    closeModal('modalEditServicePackage');
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save All Package Details & Publish Live →'; }
+    showToast('✅ Package "' + name + '" fully updated! Live across website & checkout.', 'success');
   };
 
   window.saveAdminServicePrice = async function(id) {
@@ -8540,7 +9079,6 @@
     var newPrice = parseInt(pInp.value) || 0;
     var newPriceUSD = pUsdInp ? (parseInt(pUsdInp.value) || Math.round(newPrice / 80)) : Math.round(newPrice / 80);
     var newDelivery = tInp.value.trim() || '48 Hours';
-    if (newPrice < 100) { showToast('Price must be at least ₹100.', 'error'); return; }
 
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
 
@@ -8560,6 +9098,7 @@
     try {
       await setDoc(doc(db, 'services', id), {
         price: newPrice,
+        priceUSD: newPriceUSD,
         delivery: newDelivery,
         updatedAt: serverTimestamp()
       }, { merge: true });
@@ -8598,7 +9137,7 @@
     if (cloudSaved) {
       showToast('✅ Price updated to ₹' + newPrice.toLocaleString('en-IN') + ' (' + newDelivery + ')! Live on website & checkout.', 'success');
     } else {
-      showToast('✅ Price saved! Please publish Firestore rules in Firebase Console for cloud sync.', 'info');
+      showToast('✅ Price saved locally! Firestore sync pending rules.', 'info');
     }
   };
 
@@ -8630,7 +9169,11 @@
     if (!name || !price) { showToast('Please enter a service name and base price.', 'error'); return; }
 
     var cleanId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now();
-    var catIcon = cat.indexOf('Video') >= 0 ? '🎬' : (cat.indexOf('Web') >= 0 ? '💻' : '📈');
+    var catIcon = '🎬';
+    if (cat.indexOf('Web') >= 0) catIcon = '💻';
+    else if (cat.indexOf('Paid') >= 0) catIcon = '📈';
+    else if (cat.indexOf('Social') >= 0) catIcon = '📣';
+    else if (cat.indexOf('Custom') >= 0) catIcon = '⭐';
 
     try {
       await setDoc(doc(db, 'services', cleanId), {

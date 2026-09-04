@@ -8,113 +8,122 @@
   'use strict';
 
   const DEFAULT_SERVICES = [
-    // 🎬 Video Post-Production
+    // 🎬 1. Video Post-Production
     {
       id: "shorts-reels",
       category: "Video Post-Production",
       categoryIcon: "🎬",
-      name: "Shorts & Instagram Reels",
+      name: "Shorts & Reels",
       price: 1000,
       priceUSD: 29,
       unit: "/ video",
       delivery: "48 Hours",
       description: "High-retention vertical editing with kinetic typography, SFX & 3-second hook structure.",
       features: [
-        "Custom Subtitles & Kinetic Typography",
-        "Dynamic B-Roll & Sound Design (SFX)",
-        "Color Correction & Platform Formatting",
-        "48-Hour Fast Delivery"
-      ],
-      popular: true,
-      badge: "Most Popular"
+        "Up to 60-second video cut",
+        "3-sec hook optimization",
+        "Kinetic subtitles & captions",
+        "Background music & audio balancing",
+        "Custom sound design & SFX",
+        "Revisions: 1"
+      ]
     },
     {
       id: "motion-graphics",
       category: "Video Post-Production",
       categoryIcon: "🎬",
-      name: "Motion Graphic & Animated Video",
+      name: "Motion Graphic / Animated",
       price: 2500,
       priceUSD: 69,
       unit: "/ video",
       delivery: "48 Hours",
       description: "2D animations, title cards, animated infographics, lower thirds, and logo reveals.",
+      popular: true,
+      badge: "Most Popular",
       features: [
-        "2D Motion Graphics & Icon Animation",
-        "Custom Brand Color Theming",
-        "Sound FX & Royalty-Free Music Sync",
-        "Up to 60 Seconds"
+        "Up to 60-second video",
+        "Custom vector animation & motion graphics",
+        "Stylish kinetic typography",
+        "Color grading & sound FX",
+        "Voiceover syncing",
+        "Revisions: 2"
       ]
     },
     {
       id: "long-form-youtube",
       category: "Video Post-Production",
       categoryIcon: "🎬",
-      name: "Long Form YouTube Video Edit",
+      name: "Long-Form YouTube",
       price: 5000,
       priceUSD: 129,
       unit: "/ video",
       delivery: "48-72 Hours",
       description: "Full YouTube video editing: narrative pacing, seamless jump-cuts, zoom-ins, meme overlays & B-roll.",
       features: [
-        "Up to 15-Minute Raw Footage Cut",
-        "Multi-Cam Sync & Audio Cleanup",
-        "Visual Hook, Chapters & Outro CTA",
-        "2 Revision Rounds Included"
+        "Up to 10–20 minute video edit",
+        "Storytelling cuts & B-roll integration",
+        "Custom lower thirds & titles",
+        "Cinematic color grading & audio mastering",
+        "Revisions: 4"
       ]
     },
     {
-      id: "cinematic-documentary",
+      id: "monthly-creator-partnership",
       category: "Video Post-Production",
       categoryIcon: "🎬",
-      name: "Cinematic Documentary & Ad Film",
-      price: 10000,
-      priceUSD: 249,
-      unit: "/ video",
-      delivery: "3-5 Days",
-      description: "Cinematic grade brand films, high-end product showcases, and documentary storytelling.",
+      name: "Monthly Creator Partnership",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Monthly Retainer",
+      badge: "Dedicated Team",
+      description: "Billed monthly · Dedicated editor & strategist for creators and brands.",
       features: [
-        "Cinematic LUT Color Grading",
-        "Custom Soundscape & Spatial Audio",
-        "Advanced 3D/VFX Compositing",
-        "Commercial Usage Rights"
+        "Dedicated video editor & strategist",
+        "Unlimited video length & revisions",
+        "Priority 24-48h turnarounds",
+        "Direct Slack / WhatsApp channel access"
       ]
     },
 
-    // 💻 Website Design & Development
+    // 💻 2. Web Design & Development
     {
       id: "landing-page",
       category: "Website Design & Development",
       categoryIcon: "💻",
-      name: "High-Converting Landing Page",
+      name: "Landing Page",
       price: 4999,
       priceUSD: 149,
       unit: "/ project",
-      delivery: "3-5 Days",
+      delivery: "3 Days",
       description: "Single-page responsive landing page engineered to capture leads and drive sales.",
       features: [
-        "Custom Modern Design & Copy Layout",
-        "Mobile-First Responsive (98/100 Speed)",
-        "WhatsApp & Direct Form Lead Integration",
-        "Free Hosting & SSL Setup"
-      ],
-      popular: true,
-      badge: "Best for Ads"
+        "Single High-Converting Landing Page",
+        "100/100 Mobile & Desktop Speed",
+        "WhatsApp & Lead Form Integration",
+        "Custom UI/UX Animation",
+        "On-Page SEO Setup"
+      ]
     },
     {
       id: "ecommerce-store",
       category: "Website Design & Development",
       categoryIcon: "💻",
-      name: "D2C Brand & E-Commerce Store",
+      name: "Corporate / D2C Storefront",
       price: 12999,
       priceUSD: 349,
       unit: "/ project",
-      delivery: "7-10 Days",
+      delivery: "5-7 Days",
+      popular: true,
+      badge: "Most Popular",
       description: "Full-featured online store with payment gateway, product catalog, cart, and order system.",
       features: [
-        "Payment Gateway (UPI / Razorpay / Stripe)",
+        "Up to 5-7 Custom Pages",
+        "E-Commerce & Payment Gateway Setup",
         "Product Catalog & Cart Logic",
-        "Admin CMS & Order Tracking",
-        "Mobile-First Responsive Layout"
+        "Admin CMS Dashboard",
+        "Mobile-First Responsive"
       ]
     },
     {
@@ -128,14 +137,34 @@
       delivery: "10-14 Days",
       description: "Custom SaaS portal, multi-role client/staff dashboard with realtime database & live chat.",
       features: [
-        "Firebase Auth & Role-Based Portals",
-        "Real-Time Firestore Database",
+        "Firebase Auth & Role-Based User Portals",
+        "Real-Time Firestore Database Integration",
         "Admin, Client & Staff Dashboards",
-        "Live Chat & File Tracking System"
+        "Live Chat & File Tracking System",
+        "Dedicated Support & Deployment"
+      ]
+    },
+    {
+      id: "web-custom-system",
+      category: "Website Design & Development",
+      categoryIcon: "💻",
+      name: "Custom Web & Enterprise System",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Milestone Based",
+      badge: "Enterprise",
+      description: "Milestone based · Dedicated full-stack software engineer & designer.",
+      features: [
+        "Dedicated full-stack software engineer & designer",
+        "Custom system architecture, database & API integrations",
+        "SaaS platforms, CRM dashboards & portal development",
+        "Direct Slack / WhatsApp engineering channel access"
       ]
     },
 
-    // 📈 Paid Advertising & Growth
+    // 📈 3. Paid Advertising & Growth
     {
       id: "paid-ads-setup",
       category: "Paid Advertising & Growth",
@@ -147,7 +176,7 @@
       delivery: "3-5 Days",
       description: "Data-driven Meta (FB/IG) & Google ad campaign setup with 3 direct-response video creatives.",
       features: [
-        "Meta & Google Ad Campaign Setup",
+        "Meta (FB/IG) & Google Ad Campaign Setup",
         "3 Direct-Response Video Ad Creatives",
         "A/B Hook Variation Testing",
         "Audience Targeting & Pixel Setup"
@@ -162,15 +191,125 @@
       priceUSD: 399,
       unit: "/ month",
       delivery: "Monthly Retainer",
+      popular: true,
+      badge: "Best ROI",
       description: "All-in-one monthly growth partnership: 12 edited videos, SEO, thumbnails & ad management.",
       features: [
         "12 Reels / Shorts Editing per month",
         "YouTube Channel SEO & Thumbnail Design",
         "Meta & Google Paid Ads Management",
         "Monthly Strategy & Analytics Reports"
-      ],
+      ]
+    },
+    {
+      id: "ads-scale-engine",
+      category: "Paid Advertising & Growth",
+      categoryIcon: "📈",
+      name: "Multi-Platform Scale Engine",
+      price: 24999,
+      priceUSD: 699,
+      unit: "/ month",
+      delivery: "7-10 Days / Ongoing",
+      description: "High-volume acquisition engine combining omni-channel paid media and rapid creative iteration.",
+      features: [
+        "Meta + Google + YouTube Ads Management",
+        "8 Direct-Response Video Ad Creatives",
+        "Continuous A/B Creative Testing & Retargeting",
+        "Custom Tracking Pixel, CAPI & Funnel Analytics"
+      ]
+    },
+    {
+      id: "growth-custom-enterprise",
+      category: "Paid Advertising & Growth",
+      categoryIcon: "📈",
+      name: "Custom Enterprise Growth Partner",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Monthly Retainer",
+      badge: "VIP Scale",
+      description: "Billed monthly · Dedicated media buyer & ad creative director.",
+      features: [
+        "Dedicated performance marketing director & ad strategist",
+        "High-budget omni-channel scaling (Meta, Google, YouTube, TikTok)",
+        "Weekly executive ROAS & attribution audits",
+        "Direct Slack / WhatsApp 24/7 priority channel access"
+      ]
+    },
+
+    // 📣 4. Social Media Management
+    {
+      id: "social-essential",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "Essential Social Presence",
+      price: 6999,
+      priceUSD: 189,
+      unit: "/ month",
+      delivery: "Monthly Retainer",
+      description: "Consistent social presence with high-retention reels, graphic creatives, and caption strategy.",
+      features: [
+        "12 High-Retention Reels/Shorts + Static Graphics",
+        "Content Calendar, Copywriting & Hashtags",
+        "Monthly Performance & Growth Insights",
+        "Instagram & Facebook Management"
+      ]
+    },
+    {
+      id: "social-omnichannel",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "Omnichannel Growth Engine",
+      price: 12999,
+      priceUSD: 349,
+      unit: "/ month",
+      delivery: "Monthly Retainer",
       popular: true,
-      badge: "Best ROI"
+      badge: "Most Popular",
+      description: "Aggressive multi-platform content engine engineered to build authority and grow followers.",
+      features: [
+        "20 Vertical Videos (Reels, TikTok, Shorts)",
+        "Complete YouTube Channel SEO & Custom Thumbnails",
+        "Active Community Engagement & Comment Moderation",
+        "Bi-Weekly Strategy Calls & Trend Adaptation"
+      ]
+    },
+    {
+      id: "social-youtube-authority",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "YouTube Authority & Domination",
+      price: 18999,
+      priceUSD: 499,
+      unit: "/ month",
+      delivery: "Monthly Retainer",
+      description: "End-to-end management for YouTube channels looking to scale subscribers and watch time.",
+      features: [
+        "4 Long-Form YouTube Edits + 16 Short Repurposed Cuts",
+        "High-CTR Custom Thumbnails & Title A/B Testing",
+        "Complete YouTube SEO, Descriptions & Chapters",
+        "Dedicated Social Manager & Channel Audits"
+      ]
+    },
+    {
+      id: "social-custom-partnership",
+      category: "Social Media Management",
+      categoryIcon: "📣",
+      name: "Custom Brand Authority Partnership",
+      price: 0,
+      priceUSD: 0,
+      isCustom: true,
+      unit: "Custom",
+      delivery: "Monthly Retainer",
+      badge: "Full Takeover",
+      description: "Billed monthly · Dedicated social media team, viral strategy & production.",
+      features: [
+        "Dedicated social media team (strategist, editor, designer)",
+        "End-to-end multi-platform takeover (IG, YT, LinkedIn, X, FB)",
+        "Custom content production schedules & viral format tests",
+        "24/7 Priority Slack / WhatsApp communication"
+      ]
     }
   ];
 
@@ -290,7 +429,14 @@
         if (local) {
           const parsed = JSON.parse(local);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed.map(s => ({
+            const merged = [...parsed];
+            DEFAULT_SERVICES.forEach(def => {
+              const exists = merged.find(m => m.id === def.id);
+              if (!exists) {
+                merged.push(def);
+              }
+            });
+            return merged.map(s => ({
               ...s,
               priceUSD: s.priceUSD !== undefined ? s.priceUSD : window.EditzaarServices.calculateAutoUSD(s.price)
             }));

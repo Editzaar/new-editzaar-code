@@ -268,6 +268,7 @@
       <div class="catalog-tab active" data-target="cat-video">🎬 Video Post-Production</div>
       <div class="catalog-tab" data-target="cat-web">💻 Web Design &amp; Development</div>
       <div class="catalog-tab" data-target="cat-growth">📈 Paid Ads &amp; Growth</div>
+      <div class="catalog-tab" data-target="cat-social">📣 Social Media Management</div>
     </div>
   </section>
 
@@ -281,8 +282,8 @@
     <!-- CATALOG 1: VIDEO POST-PRODUCTION -->
     <div class="pricing-cards catalog-grid active" id="cat-video">
       <div class="pricing-card" data-svc-id="shorts-reels">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Shorts &amp; Reels</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹1,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Shorts &amp; Reels</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹1,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48h Delivery</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Shorts & Reels', 1000, '48 Hours', 29, 'shorts-reels')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -297,8 +298,8 @@
 
       <div class="pricing-card popular" data-svc-id="motion-graphics">
         <div class="pc-badge">Most Popular</div>
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Motion Graphic / Animated</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹2,500 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Motion Graphic / Animated</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹2,500 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48h Delivery</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Motion Graphic / Animated Video', 2500, '48 Hours', 69, 'motion-graphics')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -312,8 +313,8 @@
       </div>
 
       <div class="pricing-card" data-svc-id="long-form-youtube">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Long-Form YouTube</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹5,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Long-Form YouTube</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹5,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48-72h Delivery</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Long-Form YouTube Video', 5000, '48-72 Hours', 129, 'long-form-youtube')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -325,11 +326,12 @@
         </ul>
       </div>
 
-      <div class="pricing-card">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Monthly Creator Partnership</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
-        <div class="pc-gst">Billed monthly · Dedicated editor</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Monthly Creator Partnership', 15000, 'Monthly Retainer', 399, 'growth-retainer')">Get Custom Quote →</button>
+      <div class="pricing-card" data-svc-id="monthly-creator-partnership">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">Dedicated Team</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Monthly Creator Partnership</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Billed monthly · Dedicated editor &amp; strategist</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Monthly Creator Partnership', 'Video Post-Production', 'monthly-creator-partnership')">Get Custom Quote →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Dedicated video editor &amp; strategist</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Unlimited video length &amp; revisions</li>
@@ -342,8 +344,8 @@
     <!-- CATALOG 2: WEB DESIGN & DEVELOPMENT -->
     <div class="pricing-cards catalog-grid" id="cat-web">
       <div class="pricing-card" data-svc-id="landing-page">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Landing Page</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹4,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Landing Page</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹4,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 3-Day Delivery</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('High-Converting Landing Page', 4999, '3 Days', 149, 'landing-page')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -357,8 +359,8 @@
 
       <div class="pricing-card popular" data-svc-id="ecommerce-store">
         <div class="pc-badge">Most Popular</div>
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Corporate / D2C Storefront</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Corporate / D2C Storefront</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 5-7 Day Delivery</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Corporate / D2C E-Commerce Storefront', 12999, '5-7 Days', 349, 'ecommerce-store')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -371,8 +373,8 @@
       </div>
 
       <div class="pricing-card" data-svc-id="full-web-portal">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Web System &amp; Portal</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Web System &amp; Portal</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 10-14 Day Delivery</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Web System & Portal', 24999, '10-14 Days', 699, 'full-web-portal')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -383,13 +385,27 @@
           <li class="pc-feat"><span class="pc-check">✦</span> Dedicated Support &amp; Deployment</li>
         </ul>
       </div>
+
+      <div class="pricing-card" data-svc-id="web-custom-system">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">Enterprise</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Custom Web &amp; Enterprise System</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Milestone based · Dedicated Full-Stack Team</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Custom Web & Enterprise System', 'Website Design & Development', 'web-custom-system')">Get Custom Quote →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated full-stack software engineer &amp; designer</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Custom system architecture, database &amp; API integrations</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> SaaS platforms, CRM dashboards &amp; portal development</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Direct Slack / WhatsApp engineering channel access</li>
+        </ul>
+      </div>
     </div>
 
     <!-- CATALOG 3: PAID ADS & GROWTH -->
     <div class="pricing-cards catalog-grid" id="cat-growth">
       <div class="pricing-card" data-svc-id="paid-ads-setup">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Paid Ad Setup &amp; Creatives</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹7,999 <span style="font-size:1rem;color:var(--t3);">/ campaign</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Paid Ad Setup &amp; Creatives</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹7,999 <span style="font-size:1rem;color:var(--t3);">/ campaign</span></div>
         <div class="pc-gst">+ 18% GST · Meta &amp; Google Ads</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Paid Ad Setup & Creatives', 7999, '3-5 Days', 199, 'paid-ads-setup')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -402,8 +418,8 @@
 
       <div class="pricing-card popular" data-svc-id="growth-retainer">
         <div class="pc-badge">Best ROI</div>
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Channel Growth Retainer</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹14,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Channel Growth Retainer</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹14,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
         <div class="pc-gst">Billed monthly · Complete Management</div>
         <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Channel Growth Retainer', 14999, 'Monthly Retainer', 399, 'growth-retainer')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
@@ -413,6 +429,90 @@
           <li class="pc-feat"><span class="pc-check">✦</span> Monthly Strategy &amp; Analytics Reports</li>
         </ul>
       </div>
+
+      <div class="pricing-card" data-svc-id="ads-scale-engine">
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Multi-Platform Scale Engine</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · 7-10 Days / Ongoing</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Multi-Platform Scale Engine', 24999, '7-10 Days', 699, 'ads-scale-engine')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Meta + Google + YouTube Ads Management</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> 8 Direct-Response Video Ad Creatives</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Continuous A/B Creative Testing &amp; Retargeting</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Custom Tracking Pixel, CAPI &amp; Funnel Analytics</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card" data-svc-id="growth-custom-enterprise">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">VIP Scale</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Custom Enterprise Growth Partner</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Billed monthly · Dedicated Media Buyer &amp; Team</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Custom Enterprise Growth Partner', 'Paid Advertising & Growth', 'growth-custom-enterprise')">Get Custom Quote →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated performance marketing director &amp; ad strategist</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> High-budget omni-channel scaling (Meta, Google, YouTube, TikTok)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Weekly executive ROAS &amp; attribution audits</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Direct Slack / WhatsApp 24/7 priority channel access</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CATALOG 4: SOCIAL MEDIA MANAGEMENT -->
+    <div class="pricing-cards catalog-grid" id="cat-social">
+      <div class="pricing-card" data-svc-id="social-essential">
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Essential Social Presence</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹6,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · Monthly Retainer</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Essential Social Presence', 6999, 'Monthly Retainer', 189, 'social-essential')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> 12 High-Retention Reels/Shorts + Static Graphics</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Content Calendar, Copywriting &amp; Hashtags</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Monthly Performance &amp; Growth Insights</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Instagram &amp; Facebook Management</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card popular" data-svc-id="social-omnichannel">
+        <div class="pc-badge">Most Popular</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Omnichannel Growth Engine</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · Monthly Retainer</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Omnichannel Growth Engine', 12999, 'Monthly Retainer', 349, 'social-omnichannel')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> 20 Vertical Videos (Reels, TikTok, Shorts)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Complete YouTube Channel SEO &amp; Custom Thumbnails</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Active Community Engagement &amp; Comment Moderation</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Bi-Weekly Strategy Calls &amp; Trend Adaptation</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card" data-svc-id="social-youtube-authority">
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">YouTube Authority &amp; Domination</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹18,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · Monthly Retainer</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('YouTube Authority & Domination', 18999, 'Monthly Retainer', 499, 'social-youtube-authority')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> 4 Long-Form YouTube Edits + 16 Short Repurposed Cuts</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> High-CTR Custom Thumbnails &amp; Title A/B Testing</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Complete YouTube SEO, Descriptions &amp; Chapters</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated Social Manager &amp; Channel Audits</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card" data-svc-id="social-custom-partnership">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">Full Takeover</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Custom Brand Authority Partnership</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Billed monthly · Dedicated Social Media Team</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Custom Brand Authority Partnership', 'Social Media Management', 'social-custom-partnership')">Get Custom Quote →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated social media team (strategist, editor, designer)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> End-to-end multi-platform takeover (IG, YT, LinkedIn, X, FB)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Custom content production schedules &amp; viral format tests</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> 24/7 Priority Slack / WhatsApp communication</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -420,60 +520,116 @@
   <div class="checkout-modal" id="checkoutModal">
     <div class="checkout-box">
       <button class="checkout-close" id="btnCloseCheckout">✕</button>
-      <div style="font-family:var(--font-h);font-size:1.8rem;margin-bottom:6px;">Project Checkout &amp; <em>Onboarding</em></div>
-      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;">Review your price breakdown, choose your deposit amount, scan the dynamic auto-amount UPI QR, and submit project details.</div>
+      <div style="font-family:var(--font-h);font-size:1.8rem;margin-bottom:6px;" id="modalTitleText">Project Checkout &amp; <em>Onboarding</em></div>
+      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;" id="modalSubText">Review your price breakdown, choose your deposit amount, scan the dynamic auto-amount UPI QR, and submit project details.</div>
 
-      <!-- PRICE SUMMARY CARD -->
-      <div class="summary-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <div style="font-size: 13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-weight:700;">Selected Package Breakdown</div>
-          <!-- Modal Inline Currency Switcher -->
-          <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:20px;padding:2px 4px;font-size:0.75rem;font-weight:700;">
-            <button type="button" id="btnModalCurrINR" onclick="window.switchEditzaarCurrency('INR')" style="background:var(--gold);color:#0b0b0d;border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇮🇳 INR (₹)</button>
-            <button type="button" id="btnModalCurrUSD" onclick="window.switchEditzaarCurrency('USD')" style="background:transparent;color:var(--t2);border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇺🇸 USD ($)</button>
+      <!-- ── CUSTOM SCOPE & QUOTE BUILDER SECTION (Active for Custom cards) ── -->
+      <div id="customScopeBuilder" style="display:none;margin-bottom:20px;">
+        <div class="summary-card" style="border-color:rgba(255,184,0,0.35);background:linear-gradient(135deg,rgba(255,184,0,0.06) 0%,rgba(0,0,0,0.5) 100%);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-weight:700;">✨ Custom Package / Scope Builder</div>
+            <div style="font-size:12px;color:var(--t3);">Tailored to your exact requirements</div>
           </div>
-        </div>
-        <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
-        <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
-        <div class="summary-row" id="chkDiscountRow" style="display:none;color:#28C840;font-weight:600;">
-          <span>Coupon Discount (<span id="chkDiscountCode"></span>)</span>
-          <span id="chkDiscountAmt">-₹0</span>
-        </div>
-        <div class="summary-row" id="chkGstRow"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
-        <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
-
-        <!-- COUPON PROMO CODE INPUT -->
-        <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🎟️ Have a Coupon Code?</div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="text" id="chkCouponCode" placeholder="e.g. WELCOME10 / LAUNCH20" style="flex:1;text-transform:uppercase;padding:7px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:monospace;font-weight:700;outline:none;font-size:0.9rem;"/>
-            <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
-          </div>
-          <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
-          <div id="chkUtrContainer" style="margin-top:12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 14px;">
-            <label for="chkUtrNum" style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;display:block;margin-bottom:4px;">🧾 UPI Transaction / UTR Number (Optional)</label>
-            <input type="text" id="chkUtrNum" placeholder="e.g. 423589012345 (from GPay / PhonePe / Paytm)" style="width:100%;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-family:var(--font-b);font-size:0.88rem;"/>
-          </div>
-        </div>
-
-        <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
-        <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
-          <div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;">💳 Choose Amount to Pay Now</div>
           
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-            <button type="button" class="pay-preset-btn active" id="btnPreset50" onclick="window.setCheckoutDeposit('50%')">50% Advance (<span id="txtPreset50">₹0</span>)</button>
-            <button type="button" class="pay-preset-btn" id="btnPreset100" onclick="window.setCheckoutDeposit('100%')">100% Full Payment (<span id="txtPreset100">₹0</span>)</button>
-            <button type="button" class="pay-preset-btn" id="btnPresetCustom" onclick="window.setCheckoutDeposit('custom')">Custom Amount ✏️</button>
+          <div style="font-size:0.95rem;color:var(--t1);font-weight:700;margin-bottom:12px;">Selected Pillar: <span style="color:var(--gold);" id="chkCustomPillarName">Monthly Creator Partnership</span></div>
+          
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t2);margin-bottom:8px;font-weight:700;">Select What You Need:</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Shorts &amp; Reels Editing" checked style="accent-color:var(--gold);"/> 🎬 Reels &amp; Shorts
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Motion Graphics &amp; 2D Animation" style="accent-color:var(--gold);"/> 🎨 Motion VFX &amp; Animation
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Long-Form YouTube Video Edit" style="accent-color:var(--gold);"/> 📹 Long-Form YouTube
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Custom Website / Landing Page" style="accent-color:var(--gold);"/> 💻 Website / Landing Page
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Paid Ads &amp; Meta/Google Campaigns" style="accent-color:var(--gold);"/> 📈 Paid Ads &amp; ROAS
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Social Media Channel Management" style="accent-color:var(--gold);"/> 📣 Social Media Management
+            </label>
           </div>
 
-          <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div>
-              <label for="chkCustomPayAmount" id="lblDepositAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
-              <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
+              <label for="chkCustomBudget" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold);font-weight:700;display:block;margin-bottom:4px;">Target Budget (Optional):</label>
+              <input type="text" id="chkCustomBudget" placeholder="e.g. ₹15,000 / $300 / Flexible" style="width:100%;height:38px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.5);color:var(--gold);font-weight:700;font-size:0.92rem;" oninput="window.onCustomBudgetInput(this.value)"/>
             </div>
-            <div style="text-align:right;">
-              <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
-              <div style="font-size:1.15rem;font-weight:700;color:var(--t1);" id="chkRemainingBalance">₹0</div>
+            <div>
+              <label for="chkCustomTimeline" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t2);font-weight:600;display:block;margin-bottom:4px;">Timeline / Urgency:</label>
+              <select id="chkCustomTimeline" style="width:100%;height:38px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:rgba(0,0,0,0.5);color:var(--t1);font-size:0.88rem;">
+                <option value="Standard (3-5 Days)">Standard (3-5 Days)</option>
+                <option value="Urgent Priority (24-48 Hours)">⚡ Urgent Priority (24-48 Hours)</option>
+                <option value="Monthly Dedicated Retainer">📆 Monthly Dedicated Retainer</option>
+                <option value="Flexible / Discussion">Flexible / Discuss on Call</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03);border:1px dashed var(--gold-border);border-radius:8px;padding:10px 14px;font-size:0.82rem;color:var(--t2);line-height:1.5;">
+            💡 <strong>100% Customizable:</strong> You can submit this custom quote request directly for an instant tailored proposal &amp; strategy call without any mandatory upfront payment, OR optionally enter an amount above if you wish to pay a token deposit now.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FIXED PRICE SUMMARY CARD (Active for Standard packages) ── -->
+      <div id="fixedPriceBreakdown">
+        <div class="summary-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="font-size: 13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-weight:700;">Selected Package Breakdown</div>
+            <!-- Modal Inline Currency Switcher -->
+            <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:20px;padding:2px 4px;font-size:0.75rem;font-weight:700;">
+              <button type="button" id="btnModalCurrINR" onclick="window.switchEditzaarCurrency('INR')" style="background:var(--gold);color:#0b0b0d;border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇮🇳 INR (₹)</button>
+              <button type="button" id="btnModalCurrUSD" onclick="window.switchEditzaarCurrency('USD')" style="background:transparent;color:var(--t2);border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇺🇸 USD ($)</button>
+            </div>
+          </div>
+          <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
+          <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
+          <div class="summary-row" id="chkDiscountRow" style="display:none;color:#28C840;font-weight:600;">
+            <span>Coupon Discount (<span id="chkDiscountCode"></span>)</span>
+            <span id="chkDiscountAmt">-₹0</span>
+          </div>
+          <div class="summary-row" id="chkGstRow"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
+          <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
+
+          <!-- COUPON PROMO CODE INPUT -->
+          <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🎟️ Have a Coupon Code?</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="chkCouponCode" placeholder="e.g. WELCOME10 / LAUNCH20" style="flex:1;text-transform:uppercase;padding:7px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:monospace;font-weight:700;outline:none;font-size:0.9rem;"/>
+              <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
+            </div>
+            <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
+            <div id="chkUtrContainer" style="margin-top:12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 14px;">
+              <label for="chkUtrNum" style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;display:block;margin-bottom:4px;">🧾 UPI Transaction / UTR Number (Optional)</label>
+              <input type="text" id="chkUtrNum" placeholder="e.g. 423589012345 (from GPay / PhonePe / Paytm)" style="width:100%;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-family:var(--font-b);font-size:0.88rem;"/>
+            </div>
+          </div>
+
+          <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
+          <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
+            <div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;">💳 Choose Amount to Pay Now</div>
+            
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+              <button type="button" class="pay-preset-btn active" id="btnPreset50" onclick="window.setCheckoutDeposit('50%')">50% Advance (<span id="txtPreset50">₹0</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnPreset100" onclick="window.setCheckoutDeposit('100%')">100% Full Payment (<span id="txtPreset100">₹0</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnPresetCustom" onclick="window.setCheckoutDeposit('custom')">Custom Amount ✏️</button>
+            </div>
+
+            <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div>
+                <label for="chkCustomPayAmount" id="lblDepositAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
+                <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
+                <div style="font-size:1.15rem;font-weight:700;color:var(--t1);" id="chkRemainingBalance">₹0</div>
+              </div>
             </div>
           </div>
         </div>
@@ -612,7 +768,8 @@
     const titles = {
       'cat-video': 'Video <em>Post-Production Packages</em>',
       'cat-web': 'Web Design &amp; <em>Development Packages</em>',
-      'cat-growth': 'Paid Ads &amp; <em>Growth Packages</em>'
+      'cat-growth': 'Paid Ads &amp; <em>Growth Packages</em>',
+      'cat-social': 'Social Media &amp; <em>Channel Growth Packages</em>'
     };
 
     tabs.forEach(tab => {
@@ -621,13 +778,14 @@
         grids.forEach(g => g.classList.remove('active'));
         tab.classList.add('active');
         const targetId = tab.dataset.target;
-        document.getElementById(targetId).classList.add('active');
+        const targetGrid = document.getElementById(targetId);
+        if (targetGrid) targetGrid.classList.add('active');
         document.getElementById('catTitle').innerHTML = titles[targetId] || 'Pricing <em>Packages</em>';
       });
     });
 
     // Dynamic Multi-Currency State
-    let activePackage = { name: 'Shorts & Instagram Reels', basePrice: 1000, priceUSD: 29, delivery: '48 Hours', svcId: 'shorts-reels' };
+    let activePackage = { name: 'Shorts & Reels', basePrice: 1000, priceUSD: 29, delivery: '48 Hours', svcId: 'shorts-reels', isCustom: false };
     const modal = document.getElementById('checkoutModal');
     let currentCurrency = 'INR';
 
@@ -638,7 +796,11 @@
       updateCurrencySwitcherUI();
       renderDynamicPackagePrices();
       if (document.getElementById('checkoutModal')?.classList.contains('open')) {
-        refreshCheckoutCalculations();
+        if (activePackage.isCustom) {
+          refreshCustomQuoteCalculations();
+        } else {
+          refreshCheckoutCalculations();
+        }
       }
     };
 
@@ -672,22 +834,126 @@
       all.forEach(s => {
         const card = document.querySelector(`.pricing-card[data-svc-id="${s.id}"]`);
         if (card) {
-          const priceDisplay = card.querySelector('[style*="font-size:2.8rem"]');
-          const finalPrice = isUSD ? (s.priceUSD || Math.round(s.price / 80)) : s.price;
-          const gstText = card.querySelector('.pc-gst');
-          const btn = card.querySelector('button.btn-gold-brand');
+          // 1. Dynamic Title
+          const titleEl = card.querySelector('.pc-title') || card.querySelector('[style*="letter-spacing:0.1em"]');
+          if (titleEl && s.name) {
+            titleEl.textContent = s.name;
+          }
 
+          // 2. Dynamic Badge
+          let badgeEl = card.querySelector('.pc-badge');
+          if (s.badge) {
+            if (!badgeEl) {
+              badgeEl = document.createElement('div');
+              badgeEl.className = 'pc-badge';
+              card.prepend(badgeEl);
+            }
+            badgeEl.textContent = s.badge;
+            badgeEl.style.display = 'block';
+          } else if (badgeEl && !s.isCustom) {
+            badgeEl.style.display = 'none';
+          }
+
+          // 3. Dynamic Price & Unit
+          const priceDisplay = card.querySelector('.pc-price') || card.querySelector('[style*="font-size:2.8rem"]');
           if (priceDisplay) {
-            priceDisplay.innerHTML = `${sym}${finalPrice.toLocaleString()} <span style="font-size:1rem;color:var(--t3);">${s.unit || '/ project'}</span>`;
+            if (s.isCustom || s.price <= 0) {
+              priceDisplay.innerHTML = `Custom`;
+            } else {
+              const finalPrice = isUSD ? (s.priceUSD || Math.round(s.price / 80)) : s.price;
+              priceDisplay.innerHTML = `${sym}${finalPrice.toLocaleString()} <span style="font-size:1rem;color:var(--t3);">${s.unit || '/ project'}</span>`;
+            }
           }
+
+          // 4. Dynamic Turnaround / GST Subtitle
+          const gstText = card.querySelector('.pc-gst');
           if (gstText) {
-            gstText.textContent = isUSD ? `Zero GST (Export of Services) · ${s.delivery}` : `+ 18% GST · ${s.delivery}`;
+            if (s.isCustom || s.price <= 0) {
+              gstText.textContent = s.description || 'Billed per scope · Dedicated team';
+            } else {
+              gstText.textContent = isUSD ? `Zero GST (Export of Services) · ${s.delivery}` : `+ 18% GST · ${s.delivery}`;
+            }
           }
+
+          // 5. Dynamic Features Bullets
+          if (Array.isArray(s.features) && s.features.length > 0) {
+            const featUl = card.querySelector('.pc-features');
+            if (featUl) {
+              featUl.innerHTML = s.features.map(f => `<li class="pc-feat"><span class="pc-check">✦</span> ${f}</li>`).join('');
+            }
+          }
+
+          // 6. Dynamic Button Action
+          const btn = card.querySelector('button.btn-gold-brand');
           if (btn) {
-            btn.onclick = () => window.openCheckout(s.name, s.price, s.delivery, s.priceUSD, s.id);
+            if (s.isCustom || s.price <= 0) {
+              btn.textContent = 'Get Custom Quote →';
+              btn.onclick = () => window.openCustomQuote(s.name, s.category, s.id);
+            } else {
+              btn.textContent = 'Choose Plan & Checkout →';
+              btn.onclick = () => window.openCheckout(s.name, s.price, s.delivery, s.priceUSD, s.id);
+            }
           }
         }
       });
+    }
+
+    // Custom Quote Modal Handler (100% Customizable, No Forced Price)
+    window.openCustomQuote = function(pName, category, svcId) {
+      activePackage = {
+        name: pName || 'Custom Project Package',
+        category: category || 'General Services',
+        basePrice: 0,
+        priceUSD: 0,
+        delivery: 'Milestone / Retainer',
+        svcId: svcId || 'custom',
+        isCustom: true
+      };
+
+      if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
+
+      const customScopeSection = document.getElementById('customScopeBuilder');
+      const fixedBreakdownSection = document.getElementById('fixedPriceBreakdown');
+      if (customScopeSection) customScopeSection.style.display = 'block';
+      if (fixedBreakdownSection) fixedBreakdownSection.style.display = 'none';
+
+      document.getElementById('modalTitleText').innerHTML = `Custom Project Scope & <em>Quote Builder</em>`;
+      document.getElementById('modalSubText').textContent = `Customize your service deliverables, set your target budget, and request a tailored quote without forced pricing.`;
+      
+      const pillarEl = document.getElementById('chkCustomPillarName');
+      if (pillarEl) pillarEl.textContent = activePackage.name;
+
+      const budgetInp = document.getElementById('chkCustomBudget');
+      if (budgetInp) budgetInp.value = '';
+
+      const btnConfirm = document.getElementById('btnConfirmCheckout');
+      if (btnConfirm) {
+        btnConfirm.innerHTML = `Request Tailored Quote &amp; Strategy Call →`;
+      }
+
+      // Hide payment wrappers in quote mode
+      document.getElementById('upiCheckoutWrap').style.display = 'none';
+      document.getElementById('paypalCheckoutWrap').style.display = 'none';
+
+      modal.classList.add('open');
+    };
+
+    window.onCustomBudgetInput = function(val) {
+      const num = parseInt(String(val).replace(/[^0-9]/g, '')) || 0;
+      const btnConfirm = document.getElementById('btnConfirmCheckout');
+      if (!btnConfirm) return;
+      if (num > 0) {
+        btnConfirm.innerHTML = `Submit Custom Brief (Budget: ${currentCurrency === 'USD' ? '$' : '₹'}${num.toLocaleString()}) →`;
+      } else {
+        btnConfirm.innerHTML = `Request Tailored Quote &amp; Strategy Call →`;
+      }
+    };
+
+    function refreshCustomQuoteCalculations() {
+      const budgetInp = document.getElementById('chkCustomBudget');
+      if (budgetInp && budgetInp.value) {
+        window.onCustomBudgetInput(budgetInp.value);
+      }
     }
 
     // Auto-detect visitor location: Indian visitors default to INR, Outside India default to USD
@@ -1069,8 +1335,173 @@
       const utrNum = (document.getElementById('chkUtrNum')?.value || '').trim();
       const customPayInput = document.getElementById('chkCustomPayAmount');
 
-      if (!name || !phone || !email || !brief) {
-        alert('Please fill in your Name, WhatsApp/Phone, Email, and Project Requirements Brief.');
+      if (!name || !phone || !email) {
+        alert('Please fill in your Name, WhatsApp/Phone, and Email to proceed.');
+        return;
+      }
+
+      // CUSTOM SCOPE & QUOTE REQUEST HANDLER (NO FORCED PRICING)
+      if (activePackage.isCustom) {
+        const customScopeChecks = Array.from(document.querySelectorAll('.chk-scope-item:checked')).map(el => el.value);
+        const customBudgetVal = (document.getElementById('chkCustomBudget')?.value || '').trim();
+        const customTimelineVal = (document.getElementById('chkCustomTimeline')?.value || '').trim();
+
+        if (!brief && customScopeChecks.length === 0) {
+          alert('Please specify your required deliverables or describe your project requirements.');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<span>Submitting Custom Brief &amp; Booking Strategy Call... ⏳</span>`;
+
+        try {
+          let firestoreDb = null;
+          if (window._editzaarDb) {
+            firestoreDb = window._editzaarDb;
+          } else {
+            const { initializeApp, getApps, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+            const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+            const firebaseConfig = {
+              apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+              authDomain: "editzaar-fa8d9.firebaseapp.com",
+              projectId: "editzaar-fa8d9",
+              storageBucket: "editzaar-fa8d9.firebasestorage.app",
+              messagingSenderId: "419930711716",
+              appId: "1:419930711716:web:b1504f651e397a14726831"
+            };
+            const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+            firestoreDb = getFirestore(app);
+            window._editzaarDb = firestoreDb;
+          }
+
+          const { collection, addDoc, doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+          const auth = getAuth();
+          const clientUid = auth.currentUser ? auth.currentUser.uid : ('client_' + btoa(email.toLowerCase()).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20));
+
+          try {
+            await setDoc(doc(firestoreDb, 'users', clientUid), {
+              name: name,
+              email: email,
+              mobile: phone,
+              role: 'client',
+              businessName: brand || '',
+              gstin: gstin || '',
+              updatedAt: serverTimestamp()
+            }, { merge: true });
+          } catch(uErr) {}
+
+          const customNumericBudget = parseInt(customBudgetVal.replace(/[^0-9]/g, '')) || 0;
+          const projTitle = activePackage.name + (brand ? ` (${brand})` : '') + ' [CUSTOM QUOTE]';
+
+          const quoteRef = await addDoc(collection(firestoreDb, 'projects'), {
+            title: projTitle,
+            serviceName: activePackage.name,
+            serviceCategory: activePackage.category || 'Custom Creative Service',
+            description: brief || 'Custom project brief with tailored deliverables.',
+            brief: brief || 'Custom project brief with tailored deliverables.',
+            isCustomQuote: true,
+            selectedScopes: customScopeChecks,
+            targetBudget: customBudgetVal || 'Flexible / Proposal Requested',
+            customTimeline: customTimelineVal || 'Standard Milestone',
+            clientId: clientUid,
+            clientName: name,
+            clientEmail: email,
+            clientPhone: phone,
+            clientBrand: brand || '',
+            clientGstin: gstin || '',
+            editorId: '',
+            rawFootageUrl: footage || '',
+            deliveryUrl: '',
+            totalAmount: customNumericBudget,
+            depositPaidAmount: 0,
+            advancePaid: false,
+            advanceStatus: 'unpaid',
+            status: 'pending_quote',
+            currency: currentCurrency,
+            createdAt: serverTimestamp()
+          });
+
+          const createdQuoteId = quoteRef.id;
+
+          // Dispatch Telegram Alert to Admin
+          if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendOrderAlert === 'function') {
+            window.EditzaarTelegram.sendOrderAlert({
+              orderId: createdQuoteId,
+              name: name,
+              phone: phone,
+              email: email,
+              brand: brand,
+              gstin: gstin,
+              packageName: activePackage.name + ' (CUSTOM QUOTE)',
+              basePrice: customNumericBudget,
+              paidAmount: 0,
+              remainingAmount: customNumericBudget,
+              delivery: customTimelineVal || 'Milestone / Retainer',
+              brief: `[CUSTOM QUOTE REQUEST]\n• Deliverables: ${customScopeChecks.join(', ') || 'Custom Defined'}\n• Target Budget: ${customBudgetVal || 'Flexible'}\n• Timeline: ${customTimelineVal}\n• Brief: ${brief || 'N/A'}`
+            });
+          }
+
+          // Show Custom Confirmation Screen
+          const modalBox = modal.querySelector('.checkout-box');
+          modalBox.innerHTML = `
+            <div style="text-align:center;padding:24px 12px;">
+              <div style="font-size:3.5rem;margin-bottom:12px;animation:pulse 1.5s infinite;">💎</div>
+              <div style="font-family:var(--font-h);font-size:2.2rem;color:var(--gold);margin-bottom:8px;">Custom Scope Received!</div>
+              <div style="font-size:1.05rem;color:var(--t1);font-weight:600;margin-bottom:14px;">Your tailored project brief is being reviewed by our production lead.</div>
+              
+              <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;font-size:0.9rem;line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--border);padding-bottom:8px;margin-bottom:8px;">
+                  <span style="color:var(--t2);">Quote Tracking Ref:</span>
+                  <strong style="color:var(--gold);font-family:monospace;font-size:1rem;">${createdQuoteId}</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:var(--t2);">Package Category:</span>
+                  <strong>${activePackage.name}</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:var(--t2);">Target Planned Budget:</span>
+                  <strong style="color:#28C840;">${customBudgetVal || 'Flexible / Proposal Requested'}</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:var(--t2);">Required Urgency:</span>
+                  <strong>${customTimelineVal || 'Standard Milestone'}</strong>
+                </div>
+                ${customScopeChecks.length > 0 ? `
+                <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);">
+                  <span style="color:var(--t2);display:block;margin-bottom:4px;">Selected Deliverables:</span>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                    ${customScopeChecks.map(s => `<span style="background:rgba(255,184,0,0.12);border:1px solid var(--gold-border);border-radius:6px;padding:2px 8px;font-size:0.8rem;color:var(--gold);">✦ ${s}</span>`).join('')}
+                  </div>
+                </div>` : ''}
+              </div>
+
+              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;line-height:1.6;">
+                Our production team will reach out via WhatsApp / Email within <strong>2 to 4 hours</strong> with a detailed proposal, scope agreement, and kickoff timeline.
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <a href="https://wa.me/919476766340?text=${encodeURIComponent('Hi Bikram! I just submitted a custom project quote request for ' + activePackage.name + ' (Ref: ' + createdQuoteId + '). Let\'s discuss the deliverables!')}" target="_blank" class="btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:1rem;text-decoration:none;display:flex;align-items:center;background:var(--gold);color:#000;font-weight:700;border-radius:12px;">
+                  💬 Chat with Lead Producer on WhatsApp →
+                </a>
+                <button onclick="document.getElementById('checkoutModal').classList.remove('open')" style="background:transparent;border:1px solid var(--gold-border);color:var(--t2);padding:10px;border-radius:10px;cursor:pointer;font-size:0.9rem;">
+                  ✕ Close Window
+                </button>
+              </div>
+            </div>
+          `;
+          return;
+        } catch(cErr) {
+          console.error('[Custom Quote Submit Error]', cErr);
+          alert('Error submitting custom quote request: ' + cErr.message);
+          btn.disabled = false;
+          btn.innerHTML = `Request Tailored Quote &amp; Strategy Call →`;
+          return;
+        }
+      }
+
+      if (!brief) {
+        alert('Please fill in your Project Requirements Brief.');
         return;
       }
 
