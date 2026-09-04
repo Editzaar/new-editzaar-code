@@ -3481,10 +3481,40 @@
       return getAuth(secApp);
     }
 
+    const isAdminEmail = (email) => {
+      const e = (email || '').toLowerCase().trim();
+      return e === 'editzaarbooking@gmail.com' || e === 'nbikram704@gmail.com';
+    };
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('index.html'); return; }
       currentUser = user;
       document.getElementById('adminEmail').textContent = user.email;
+
+      // Master Admin role check & auto-healing
+      if (isAdminEmail(user.email)) {
+        try {
+          await setDoc(doc(db, 'users', user.uid), {
+            role: 'admin',
+            email: user.email,
+            name: user.displayName || 'Bikram (Admin)',
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+        } catch(e) { console.warn('[Admin Doc Self-Heal]', e); }
+      } else {
+        // Guard non-admin visitors
+        try {
+          const uDoc = await getDoc(doc(db, 'users', user.uid));
+          if (uDoc.exists()) {
+            const r = uDoc.data().role;
+            if (r !== 'admin' && r !== 'manager') {
+              window.location.replace(r === 'editor' ? 'editor.html' : 'client.html');
+              return;
+            }
+          }
+        } catch(e) {}
+      }
+
       initRealtimeListeners();
       initPortfolioCmsListeners();
       initExtendedCmsListeners();
@@ -3622,8 +3652,15 @@
       // Robust Users listener: Categorizes Staff (Editors & Managers), Admins, and Clients
       onSnapshot(collection(db, 'users'), (snap) => {
         users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Self-heal any admin accounts in Firestore if they are mistakenly flagged as client
+        users.forEach(u => {
+          if (isAdminEmail(u.email) && u.role !== 'admin') {
+            u.role = 'admin';
+            updateDoc(doc(db, 'users', u.id), { role: 'admin', updatedAt: serverTimestamp() }).catch(e => console.warn('[Auto-heal Admin Doc]', e));
+          }
+        });
         editors = users.filter(u => u.role === 'editor' || u.role === 'manager');
-        clients = users.filter(u => u.role !== 'admin' && u.role !== 'editor' && u.role !== 'manager');
+        clients = users.filter(u => !isAdminEmail(u.email) && u.role !== 'admin' && u.role !== 'editor' && u.role !== 'manager');
         clients.sort((a, b) => {
           const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
           const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
@@ -3858,18 +3895,21 @@
             </div>
           </td>
           <td>
-            <select class="editor-assign-select" style="font-weight:600;" onchange="window.updateStaffRole('${e.id}', this.value)">
-              <option value="editor" ${curRole==='editor'?'selected':''}>🎬 Freelance Editor</option>
-              <option value="manager" ${curRole==='manager'?'selected':''}>🛡️ Operations Manager</option>
-              <option value="admin" ${curRole==='admin'?'selected':''}>👑 Administrator</option>
-            </select>
+            ${isAdminEmail(e.email) ? 
+              `<span style="color:var(--gold);font-weight:700;font-size:12px;">👑 Master Admin</span>` : 
+              `<select class="editor-assign-select" style="font-weight:600;" onchange="window.updateStaffRole('${e.id}', this.value)">
+                <option value="editor" ${curRole==='editor'?'selected':''}>🎬 Freelance Editor</option>
+                <option value="manager" ${curRole==='manager'?'selected':''}>🛡️ Operations Manager</option>
+                <option value="admin" ${curRole==='admin'?'selected':''}>👑 Administrator</option>
+              </select>`
+            }
           </td>
           <td><strong style="color:var(--gold);">${activeCount}</strong></td>
           <td>
             <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
               <button class="btn-gold btn-sm" onclick="window.openStaffPermModal('${e.id}')" style="background:#B88200;font-size:11px;font-weight:700;letter-spacing:0.04em;">🔐 PERMISSIONS</button>
               <button class="btn-outline btn-sm" onclick="window.assignProjectToEditorModal('${e.id}')">＋ Assign Project</button>
-              <button class="btn-danger btn-sm" onclick="window.deleteEditor('${e.id}')">Delete</button>
+              ${isAdminEmail(e.email) ? '' : `<button class="btn-danger btn-sm" onclick="window.deleteEditor('${e.id}')">Delete</button>`}
             </div>
           </td>
         </tr>`;
@@ -5767,7 +5807,7 @@
       const name  = document.getElementById('ne-name').value.trim();
       const email = document.getElementById('ne-email').value.trim();
       const pass  = document.getElementById('ne-pass').value;
-      const role  = document.getElementById('ne-role') ? document.getElementById('ne-role').value : 'editor';
+      const role  = isAdminEmail(email) ? 'admin' : (document.getElementById('ne-role') ? document.getElementById('ne-role').value : 'editor');
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
       if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
 
@@ -5864,6 +5904,7 @@
       const pass         = document.getElementById('nc-pass').value;
       const assignedEditor = document.getElementById('nc-editor').value;
       if (!name||!email||!pass) { showToast('Fill all fields.','error'); return; }
+      if (isAdminEmail(email)) { showToast('Cannot register Master Admin as client account.', 'error'); return; }
       if (pass.length < 6) { showToast('Password must be at least 6 characters.','error'); return; }
 
       const appName = 'sec_client_' + Date.now();
@@ -7283,19 +7324,23 @@
       const tb = document.getElementById('rolesTbody');
       if (!tb) return;
       tb.innerHTML = users.map(u => {
-        const curRole = u.role || 'client';
+        const isMaster = isAdminEmail(u.email);
+        const curRole = isMaster ? 'admin' : (u.role || 'client');
         const isStaff = curRole === 'editor' || curRole === 'manager' || curRole === 'admin';
         return `<tr>
           <td><strong>${u.name||'User'}</strong></td>
           <td>${u.email}</td>
           <td><span class="status-badge ${curRole === 'admin' ? 'invoice-paid' : (curRole === 'manager' ? 'status-in_progress' : (curRole === 'editor' ? 'status-review' : 'status-pending'))}">${curRole.toUpperCase()}</span></td>
           <td>
-            <select class="editor-assign-select" onchange="updateStaffRole('${u.id}', this.value)">
-              <option value="client" ${curRole==='client'?'selected':''}>👤 Client</option>
-              <option value="editor" ${curRole==='editor'?'selected':''}>🎬 Freelance Editor (Privacy Masked)</option>
-              <option value="manager" ${curRole==='manager'?'selected':''}>🛡️ Operations Manager</option>
-              <option value="admin" ${curRole==='admin'?'selected':''}>👑 Administrator</option>
-            </select>
+            ${isMaster ? 
+              `<span style="color:var(--gold);font-weight:700;font-size:12px;">👑 Master Admin (Protected)</span>` : 
+              `<select class="editor-assign-select" onchange="updateStaffRole('${u.id}', this.value)">
+                <option value="client" ${curRole==='client'?'selected':''}>👤 Client</option>
+                <option value="editor" ${curRole==='editor'?'selected':''}>🎬 Freelance Editor (Privacy Masked)</option>
+                <option value="manager" ${curRole==='manager'?'selected':''}>🛡️ Operations Manager</option>
+                <option value="admin" ${curRole==='admin'?'selected':''}>👑 Administrator</option>
+              </select>`
+            }
           </td>
           <td>
             ${isStaff ? `<button class="btn-gold btn-sm" onclick="openStaffPermissions('${u.id}')">🔐 Permissions</button>` : '<span style="color:var(--t3);font-size: 13px;">Client Account</span>'}
@@ -7359,7 +7404,14 @@
     window.onPermModalRoleChange = async (newRole) => {
       const uid = document.getElementById('permUid').value;
       if (!uid) return;
-      await updateDoc(doc(db, 'users', uid), { role: newRole });
+      const targetUser = (typeof users !== 'undefined' && Array.isArray(users)) ? users.find(u => u.id === uid) : null;
+      if (targetUser && isAdminEmail(targetUser.email) && newRole !== 'admin') {
+        showToast('Protected Account: Master Administrator email cannot be demoted!', 'error');
+        const roleSel = document.getElementById('permStaffRoleSelect');
+        if (roleSel) roleSel.value = 'admin';
+        return;
+      }
+      await updateDoc(doc(db, 'users', uid), { role: newRole, updatedAt: serverTimestamp() });
       showToast(`Role updated to ${newRole.toUpperCase()}! ✅`, 'success');
       const adminNotice = document.getElementById('permAdminNotice');
       if (adminNotice) adminNotice.style.display = newRole === 'admin' ? 'block' : 'none';
@@ -9800,7 +9852,12 @@
     // ── STAFF & EDITOR MANAGEMENT (DELETE, ROLE, PERMISSIONS, ASSIGN) ──
     window.deleteEditor = async function(editorId) {
       var ed = (typeof editors !== 'undefined' ? editors.find(function(x) { return x.id === editorId; }) : null) || 
-               (typeof allUsers !== 'undefined' && allUsers[editorId] ? allUsers[editorId] : { name: 'Editor' });
+               (typeof allUsers !== 'undefined' && allUsers[editorId] ? allUsers[editorId] : null) ||
+               (typeof users !== 'undefined' ? users.find(function(x) { return x.id === editorId; }) : null) || { name: 'Editor' };
+      if (isAdminEmail(ed.email)) {
+        showToast('Protected Account: Master Administrator cannot be deleted!', 'error');
+        return;
+      }
       var edName = ed.name || ed.email || 'Editor';
       if (confirm('Are you sure you want to delete editor "' + edName + '"? This will remove their credentials and unassign any active projects.')) {
         try {
@@ -9821,6 +9878,13 @@
     };
 
     window.updateStaffRole = async function(userId, newRole) {
+      const targetUser = (typeof users !== 'undefined' && Array.isArray(users)) ? users.find(u => u.id === userId) : null;
+      if (targetUser && isAdminEmail(targetUser.email) && newRole !== 'admin') {
+        showToast('Protected Account: Master Administrator email cannot be demoted!', 'error');
+        if (typeof renderRoles === 'function') renderRoles();
+        if (typeof renderEditors === 'function') renderEditors();
+        return;
+      }
       try {
         await updateDoc(doc(db, 'users', userId), {
           role: newRole,

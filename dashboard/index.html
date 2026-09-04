@@ -271,6 +271,11 @@
     const errorEl   = document.getElementById('authError');
     const successEl = document.getElementById('authSuccess');
 
+    const isAdminEmail = (email) => {
+      const e = (email || '').toLowerCase().trim();
+      return e === 'editzaarbooking@gmail.com' || e === 'nbikram704@gmail.com';
+    };
+
     // ── Redirect already logged-in users ──
     onAuthStateChanged(auth, async (user) => {
       if (user) { await redirectByRole(user); }
@@ -279,14 +284,14 @@
     // ── Role redirect with GUARANTEED Firestore write + retry logic ──
     async function redirectByRole(user) {
       const userRef = doc(db, 'users', user.uid);
-      let role = 'client';
+      const isMasterAdmin = isAdminEmail(user.email);
+      let role = isMasterAdmin ? 'admin' : 'client';
 
       for (let attempt = 1; attempt <= 3; attempt++) {
         try {
           const snap = await getDoc(userRef);
           if (!snap.exists()) {
-            const defaultName = user.displayName || (user.email ? user.email.split('@')[0] : 'Client');
-            role = user.email === 'editzaarbooking@gmail.com' ? 'admin' : 'client';
+            const defaultName = user.displayName || (user.email ? user.email.split('@')[0] : (isMasterAdmin ? 'Admin' : 'Client'));
             const phone = user.phoneNumber || '';
             await setDoc(userRef, {
               name:           defaultName,
@@ -298,7 +303,15 @@
               createdAt:      serverTimestamp()
             });
           } else {
-            role = snap.data().role || 'client';
+            const existingRole = snap.data().role;
+            if (isMasterAdmin) {
+              role = 'admin';
+              if (existingRole !== 'admin') {
+                await setDoc(userRef, { role: 'admin', updatedAt: serverTimestamp() }, { merge: true });
+              }
+            } else {
+              role = existingRole || 'client';
+            }
           }
           break;
         } catch (err) {
@@ -307,9 +320,9 @@
         }
       }
 
-      if      (role === 'admin')  window.location.replace('admin.html');
-      else if (role === 'editor') window.location.replace('editor.html');
-      else                        window.location.replace('client.html');
+      if      (role === 'admin' || isMasterAdmin)  window.location.replace('admin.html');
+      else if (role === 'editor')                  window.location.replace('editor.html');
+      else                                         window.location.replace('client.html');
     }
 
     // ── Helper: show error / success ──
@@ -534,7 +547,7 @@
             name:           name,
             email:          email,
             mobile:         mobile,
-            role:           'client',
+            role:           isAdminEmail(email) ? 'admin' : 'client',
             tempPass:       pass,
             assignedEditor: '',
             createdAt:      serverTimestamp()

@@ -1,7 +1,7 @@
 // Universal Navigation Auth for Editzaar Public Pages
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
@@ -78,14 +78,29 @@ try {
 
     if (user) {
       let displayName = user.displayName || '';
-      let role = 'client';
+      const isAdminUser = (user.email && (user.email.toLowerCase().trim() === 'editzaarbooking@gmail.com' || user.email.toLowerCase().trim() === 'nbikram704@gmail.com'));
+      let role = isAdminUser ? 'admin' : 'client';
 
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (snap.exists()) {
           const data = snap.data();
           if (data.name) displayName = data.name;
-          if (data.role) role = data.role;
+          if (isAdminUser) {
+            role = 'admin';
+            if (data.role !== 'admin') {
+              setDoc(doc(db, 'users', user.uid), { role: 'admin' }, { merge: true }).catch(() => {});
+            }
+          } else if (data.role) {
+            role = data.role;
+          }
+        } else if (isAdminUser) {
+          role = 'admin';
+          setDoc(doc(db, 'users', user.uid), {
+            name: user.displayName || 'Bikram (Admin)',
+            email: user.email,
+            role: 'admin'
+          }, { merge: true }).catch(() => {});
         }
       } catch (err) {
         console.warn('[NavAuth Firestore]', err);

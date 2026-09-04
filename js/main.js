@@ -452,12 +452,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
           const clientUid = auth.currentUser ? auth.currentUser.uid : ('client_' + btoa(email.toLowerCase()).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20));
 
+          const isMasterAdminEmail = email && (email.toLowerCase().trim() === 'editzaarbooking@gmail.com' || email.toLowerCase().trim() === 'nbikram704@gmail.com');
           try {
             await setDoc(doc(firestoreDb, 'users', clientUid), {
               name: name,
               email: email,
               mobile: phone,
-              role: 'client',
+              role: isMasterAdminEmail ? 'admin' : 'client',
               businessName: brand || '',
               gstin: gstin || '',
               updatedAt: serverTimestamp()

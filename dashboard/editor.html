@@ -942,23 +942,35 @@
       }
     };
 
+    const isAdminEmail = (email) => {
+      const e = (email || '').toLowerCase().trim();
+      return e === 'editzaarbooking@gmail.com' || e === 'nbikram704@gmail.com';
+    };
+
     setTimeout(window.checkEditorPushStatus, 1500);
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('index.html'); return; }
+      const isMasterAdmin = isAdminEmail(user.email);
+      if (isMasterAdmin) {
+        try {
+          await setDoc(doc(db,'users',user.uid), { role: 'admin', updatedAt: serverTimestamp() }, { merge: true });
+        } catch(e) {}
+      }
+
       const snap = await getDoc(doc(db,'users',user.uid));
-      if (!snap.exists()) { window.location.replace('client.html'); return; }
+      if (!snap.exists() && !isMasterAdmin) { window.location.replace('client.html'); return; }
       
-      const role = snap.data().role;
+      const role = isMasterAdmin ? 'admin' : (snap.exists() ? snap.data().role : 'client');
       if (role !== 'editor' && role !== 'manager' && role !== 'admin') {
         window.location.replace('/dashboard/client.html');
         return;
       }
       
-      currentUser = { uid:user.uid, ...snap.data() };
+      currentUser = { uid:user.uid, ...(snap.exists() ? snap.data() : {}), role: role };
       // Tag editor in OneSignal for presence-aware notifications
       if (window.EditzaarPush && typeof window.EditzaarPush.identifyUser === 'function') {
-        window.EditzaarPush.identifyUser(user.uid, 'editor', { name: currentUser.name || 'Editor', email: user.email || '' });
+        window.EditzaarPush.identifyUser(user.uid, isMasterAdmin ? 'admin' : 'editor', { name: currentUser.name || 'Editor', email: user.email || '' });
       }
       
       // Update Sidebar UI
@@ -989,10 +1001,10 @@
           return;
         }
         const updatedData = userSnap.data();
-        currentUser = { uid: user.uid, ...updatedData };
+        currentUser = { uid: user.uid, ...updatedData, role: isMasterAdmin ? 'admin' : (updatedData.role || 'editor') };
 
         // Real-time live role change check
-        if (updatedData.role !== 'editor' && updatedData.role !== 'manager' && updatedData.role !== 'admin') {
+        if (!isMasterAdmin && updatedData.role !== 'editor' && updatedData.role !== 'manager' && updatedData.role !== 'admin') {
           alert('Your account role has been changed to ' + (updatedData.role || 'client') + '. Redirecting...');
           window.location.replace('/dashboard/client.html');
           return;
