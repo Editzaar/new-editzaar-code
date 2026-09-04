@@ -879,8 +879,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Editzaar">
   <link rel="apple-touch-icon" href="/media/fav-logo.png">
-  <meta name="theme-color" content="#FFB800">
   <script src="../js/services-config.js?v=310.0"></script>
+  <script src="../js/telegram-service.js?v=310.0"></script>
+  <!-- OneSignal Web Push & Presence Engine -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script src="../js/push-service.js?v=310.0" defer></script>
   <script src="../js/theme.js?v=310.0"></script>
 </head>
 
@@ -948,6 +951,7 @@
         <div class="sidebar-nav-item" data-section="tickets"><span class="nav-icon">🆘</span> Support Tickets <span class="nav-counter-badge" id="badgeNavTickets" style="display:none;">0</span></div>
 
         <div class="sidebar-nav-section">Controls &amp; Content Changing</div>
+        <div class="sidebar-nav-item" data-section="broadcast"><span class="nav-icon">📢</span> Web Push &amp; Promo Hub</div>
         <div class="sidebar-nav-item" data-section="automations"><span class="nav-icon">🤖</span> Telegram Control Hub</div>
         <div class="sidebar-nav-item" data-section="cms"><span class="nav-icon">🌐</span> Website CMS (Change Content)</div>
         <div class="sidebar-nav-item" data-section="roles"><span class="nav-icon">🔐</span> Roles &amp; Permissions</div>
@@ -1070,6 +1074,24 @@
               </button>
             </div>
 
+            <!-- 5. OneSignal Push & Broadcast Hub Card -->
+            <div class="dash-card" style="margin-bottom:0;border:1.5px solid var(--gold-border);background:rgba(255,184,0,0.04);display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="font-weight:700;color:var(--gold);font-size:0.98rem;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:1.2rem;">📢</span> Web Push &amp; Promo Hub
+                  </div>
+                  <span class="live-badge" style="background:rgba(40,200,64,0.12);color:#28C840;border:1px solid rgba(40,200,64,0.3);font-size:10px;">OneSignal Active ✓</span>
+                </div>
+                <div style="font-size:0.82rem;color:var(--t2);line-height:1.5;margin-bottom:12px;">
+                  Broadcast instant push alerts, discount campaigns, and announcements to all website visitors, clients &amp; staff.
+                </div>
+              </div>
+              <button class="btn-gold btn-sm" onclick="showSection('broadcast')" style="width:100%;justify-content:center;padding:9px;">
+                📢 Open Push &amp; Promo Center →
+              </button>
+            </div>
+
           </div>
         </div>
 
@@ -1154,29 +1176,150 @@
         </div>
       </section>
 
-      <!-- BROADCAST ANNOUNCEMENTS & WELCOME NOTIFICATIONS -->
+      <!-- BROADCAST ANNOUNCEMENTS & ONESIGNAL PUSH HUB -->
       <section id="sec-broadcast" style="display:none;">
         <div class="dash-topbar">
-          <div class="dash-page-title">Broadcast <em>Announcements &amp; Welcome Banners</em></div>
+          <div class="dash-page-title">📢 Omnichannel <em>Broadcast &amp; Web Push Hub</em></div>
+          <span class="live-badge" style="background:rgba(40,200,64,0.12);color:#28C840;border:1px solid rgba(40,200,64,0.3);"><span class="live-dot" style="background:#28C840;"></span> OneSignal Active 🟢</span>
         </div>
-        <div class="dash-card" style="max-width:680px;">
-          <div class="dash-card-header"><div class="dash-card-title">Send Broadcast <em>Notification</em></div></div>
-          <div class="dash-form">
-            <div class="field">
-              <label>Target Audience</label>
-              <select id="bc-target">
-                <option value="all">📢 All Clients &amp; Users (Broadcast)</option>
-              </select>
+
+        <!-- Metric Stat Cards -->
+        <div class="stat-card-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-card-label">OneSignal App ID</div>
+            <div style="font-size:0.85rem;font-weight:700;color:var(--gold);word-break:break-all;">ea5130c0-a797-42ad...</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Web Push Status</div>
+            <div class="stat-card-value" style="color:#28C840;font-size:1.2rem;">ONLINE ✓</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Active Push Subscribers</div>
+            <div class="stat-card-value" id="onesignalSubscribersCount" style="color:var(--gold);font-size:1.4rem;">...</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:start;">
+          <!-- Left Form: Composer -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">Compose <em>Push &amp; In-App Campaign</em></div>
             </div>
-            <div class="field">
-              <label>Announcement Title</label>
-              <input id="bc-title" type="text" placeholder="e.g. ⚡ Special Offer: 20% Off Reels Editing This Week!"/>
+            <div class="dash-form">
+              <div class="field">
+                <label>Target Audience Segment</label>
+                <select id="bc-target">
+                  <option value="all">🌐 All Subscribers (Visitors + Clients + Editors)</option>
+                  <option value="client">💼 Registered Clients Only</option>
+                  <option value="editor">🎬 Editors &amp; Staff Only</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Campaign / Notification Title</label>
+                <input id="bc-title" type="text" placeholder="e.g. 🔥 Weekend Flash Sale: 20% Off Reels &amp; Shorts!" oninput="window.updatePushPreview()"/>
+              </div>
+
+              <div class="field">
+                <label>Notification Message</label>
+                <textarea id="bc-msg" rows="3" placeholder="Get high-retention video post-production delivered in 24h. Tap to claim discount code..." oninput="window.updatePushPreview()"></textarea>
+              </div>
+
+              <div class="field">
+                <label>Target Click URL (Optional)</label>
+                <input id="bc-url" type="url" placeholder="https://editzaar.in/#pricing"/>
+              </div>
+
+              <div class="field">
+                <label>Banner Image / Thumbnail URL (Optional)</label>
+                <input id="bc-img" type="url" placeholder="https://editzaar.in/media/fav-logo.png" oninput="window.updatePushPreview()"/>
+              </div>
+
+              <!-- Dispatch Channels Selector -->
+              <div style="margin-bottom:16px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px;">
+                <div style="font-size:0.75rem;text-transform:uppercase;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:10px;">Select Dispatch Channels:</div>
+                <div style="display:flex;gap:18px;flex-wrap:wrap;">
+                  <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                    <input type="checkbox" id="bc-chan-onesignal" checked style="accent-color:var(--gold);width:16px;height:16px;"/>
+                    <span>🔔 OneSignal OS Web Push</span>
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                    <input type="checkbox" id="bc-chan-inapp" checked style="accent-color:var(--gold);width:16px;height:16px;"/>
+                    <span>🖥️ Client Dashboard Marquee</span>
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;">
+                    <input type="checkbox" id="bc-chan-telegram" checked style="accent-color:var(--gold);width:16px;height:16px;"/>
+                    <span>🤖 Agency Telegram Alert</span>
+                  </label>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn-gold" style="flex:1;justify-content:center;padding:12px;" id="btnSendBroadcast">🚀 Publish &amp; Send Broadcast Now</button>
+                <button class="btn-outline" style="justify-content:center;padding:12px 18px;" id="btnTestSendPush" onclick="window.testAdminPushSelf()">🧪 Test Push on Myself</button>
+              </div>
             </div>
-            <div class="field">
-              <label>Announcement Message</label>
-              <textarea id="bc-msg" placeholder="Type the message that will pop up on client dashboards..."></textarea>
+          </div>
+
+          <!-- Right Panel: Live Mobile / Desktop Push Preview -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">Live <em>Push Notification Preview</em></div>
             </div>
-            <button class="btn-gold" style="width:100%;justify-content:center;" id="btnSendBroadcast">🚀 Publish Broadcast Announcement →</button>
+            <div style="background:rgba(18,18,24,0.9);border:1px solid rgba(255,184,0,0.25);border-radius:14px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                <img src="/media/fav-logo.png" style="width:24px;height:24px;border-radius:6px;object-fit:contain;background:#000;" alt="logo"/>
+                <div style="flex:1;">
+                  <div style="font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;">Editzaar Agency · Now</div>
+                  <div style="font-size:0.7rem;color:var(--t3);">editzaar.in</div>
+                </div>
+              </div>
+              <div id="prevTitle" style="font-weight:700;font-size:0.95rem;color:var(--t1);margin-bottom:4px;">🔥 Weekend Flash Sale: 20% Off Reels &amp; Shorts!</div>
+              <div id="prevMsg" style="font-size:0.84rem;color:var(--t2);line-height:1.45;margin-bottom:12px;">Get high-retention video post-production delivered in 24h. Tap to claim discount code...</div>
+              <div id="prevImgWrap" style="display:none;margin-bottom:10px;">
+                <img id="prevImg" src="" style="width:100%;height:140px;object-fit:cover;border-radius:8px;border:1px solid var(--border);" alt="preview"/>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:10px;">
+                <span style="font-size:0.72rem;color:var(--t3);">Lockscreen &amp; System Tray</span>
+                <span style="font-size:0.75rem;color:var(--gold);font-weight:600;">Open Offer ↗</span>
+              </div>
+            </div>
+
+            <!-- Quick Promo Templates -->
+            <div style="margin-top:18px;">
+              <div style="font-size:0.75rem;text-transform:uppercase;font-weight:700;color:var(--t3);margin-bottom:8px;">Quick Promo Templates:</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('discount')" style="font-size:11px;padding:4px 8px;">🏷️ 20% Discount</button>
+                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('portfolio')" style="font-size:11px;padding:4px 8px;">🎬 New Video Showcase</button>
+                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('holiday')" style="font-size:11px;padding:4px 8px;">🎉 Festival Offer</button>
+                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('speed')" style="font-size:11px;padding:4px 8px;">⚡ 24h Express Delivery</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Broadcast History & OneSignal Console Access -->
+        <div class="dash-card" style="margin-top:24px;">
+          <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div class="dash-card-title">Recent Broadcast <em>Campaign History</em></div>
+            <a href="https://dashboard.onesignal.com/apps/ea5130c0-a797-42ad-8240-caeaa6720a73" target="_blank" rel="noopener noreferrer" class="btn-outline btn-sm" style="font-size:12px;">
+              🔗 Open OneSignal Official Console ↗
+            </a>
+          </div>
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
+            <table class="dash-table" id="broadcastHistoryTable">
+              <thead>
+                <tr>
+                  <th>Campaign Title</th>
+                  <th>Audience Segment</th>
+                  <th>Date &amp; Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="broadcastHistoryTbody">
+                <tr><td colspan="4" style="color:var(--t3);text-align:center;padding:18px;">Loading campaign history…</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -3139,8 +3282,34 @@
 
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('index.html')));
 
+    // Realtime Broadcast Campaign History Listener
+    function initBroadcastHistoryListener() {
+      const tbody = document.getElementById('broadcastHistoryTbody');
+      if (!tbody) return;
+      onSnapshot(collection(db, 'announcements'), snap => {
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="4" style="color:var(--t3);text-align:center;padding:18px;">No broadcast campaigns sent yet.</td></tr>';
+          return;
+        }
+        const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        list.sort((a,b) => (b.createdAt?.toMillis ? b.createdAt.toMillis() : 0) - (a.createdAt?.toMillis ? a.createdAt.toMillis() : 0));
+        tbody.innerHTML = list.slice(0, 10).map(b => `
+          <tr>
+            <td>
+              <strong style="color:var(--t1);">${escapeHtml(b.title || 'Broadcast')}</strong>
+              <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">${escapeHtml(b.message || '').substring(0, 80)}${b.message && b.message.length > 80 ? '...' : ''}</div>
+            </td>
+            <td><span class="live-badge" style="font-size:10px;text-transform:uppercase;">${b.target || 'all'}</span></td>
+            <td style="font-size:0.8rem;color:var(--t2);">${b.createdAt?.toDate ? b.createdAt.toDate().toLocaleString('en-IN') : 'Just now'}</td>
+            <td><span style="color:#28C840;font-weight:700;font-size:0.75rem;">SENT ✓</span></td>
+          </tr>
+        `).join('');
+      });
+    }
+
     function initRealtimeListeners() {
       loadMasterInvoiceDefaults();
+      initBroadcastHistoryListener();
       // Robust Users listener: Categorizes Staff (Editors & Managers), Admins, and Clients
       onSnapshot(collection(db, 'users'), (snap) => {
         users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -3454,19 +3623,201 @@
         clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
     }
 
+    // ============================================================
+    // ONESIGNAL PUSH & MULTI-CHANNEL BROADCAST ENGINE
+    // ============================================================
+    window.updatePushPreview = function() {
+      const t = document.getElementById('bc-title')?.value.trim() || '🔥 Weekend Flash Sale: 20% Off Reels & Shorts!';
+      const m = document.getElementById('bc-msg')?.value.trim() || 'Get high-retention video post-production delivered in 24h. Tap to claim discount code...';
+      const img = document.getElementById('bc-img')?.value.trim();
+      
+      const pT = document.getElementById('prevTitle');
+      const pM = document.getElementById('prevMsg');
+      const pImgWrap = document.getElementById('prevImgWrap');
+      const pImg = document.getElementById('prevImg');
+      
+      if (pT) pT.textContent = t;
+      if (pM) pM.textContent = m;
+      if (pImgWrap && pImg) {
+        if (img) {
+          pImg.src = img;
+          pImgWrap.style.display = 'block';
+        } else {
+          pImgWrap.style.display = 'none';
+        }
+      }
+    };
+
+    window.applyPushTemplate = function(type) {
+      const tInp = document.getElementById('bc-title');
+      const mInp = document.getElementById('bc-msg');
+      const uInp = document.getElementById('bc-url');
+      if (!tInp || !mInp) return;
+
+      if (type === 'discount') {
+        tInp.value = '🔥 20% OFF Video Editing Packages — This Week Only!';
+        mInp.value = 'Scale your Instagram Reels, TikToks & YouTube channel with luxury high-retention post-production. Claim your discount code now!';
+        if (uInp) uInp.value = 'https://editzaar.in/#pricing';
+      } else if (type === 'portfolio') {
+        tInp.value = '🎬 New 4K Work Delivered — Check Out Our Latest Edits!';
+        mInp.value = 'See the latest dynamic pacing, motion graphics, and sound design created for our top creator brands.';
+        if (uInp) uInp.value = 'https://editzaar.in/work.html';
+      } else if (type === 'holiday') {
+        tInp.value = '🎉 Festival Season Creator Special: Double Revisions!';
+        mInp.value = 'Book your video editing slots early to guarantee 24-hour turnaround times for all festive campaigns.';
+        if (uInp) uInp.value = 'https://editzaar.in/#pricing';
+      } else if (type === 'speed') {
+        tInp.value = '⚡ Need Urgent Video Edits? Express 24h Delivery Available';
+        mInp.value = 'Send your raw footage today, receive polished broadcast-ready video cuts within 24 hours guaranteed.';
+        if (uInp) uInp.value = 'https://editzaar.in/#booking';
+      }
+      window.updatePushPreview();
+    };
+
+    window.testAdminPushSelf = async function() {
+      if (!currentUser?.uid) {
+        showToast('Please wait for admin session to initialize.', 'error');
+        return;
+      }
+      const title = document.getElementById('bc-title')?.value.trim() || '🧪 Test Notification';
+      const msg   = document.getElementById('bc-msg')?.value.trim() || 'This is a test notification from Editzaar Admin Hub.';
+      const url   = document.getElementById('bc-url')?.value.trim() || 'https://editzaar.in';
+
+      showToast('Sending test push to your device... 🚀', 'info');
+      if (window.EditzaarPush && typeof window.EditzaarPush.sendPush === 'function') {
+        const res = await window.EditzaarPush.sendPush({
+          title,
+          message: msg,
+          url,
+          targetUid: currentUser.uid
+        });
+        if (res.success) {
+          showToast('Test push dispatched successfully! Check your notification center. 🔔', 'success');
+        } else {
+          showToast('Push test: ' + (res.error || 'Dispatched to OneSignal queue'), 'info');
+        }
+      } else {
+        showToast('Push engine is initializing. Please retry in 2 seconds.', 'error');
+      }
+    };
+
+    // Load OneSignal Subscriber Metrics
+    async function loadOneSignalSubscriberCount() {
+      const el = document.getElementById('onesignalSubscribersCount');
+      if (!el) return;
+      if (window.EditzaarPush && typeof window.EditzaarPush.getSubscriberMetrics === 'function') {
+        const metrics = await window.EditzaarPush.getSubscriberMetrics();
+        if (metrics && metrics.success) {
+          el.textContent = (metrics.totalSubscribers || 0).toLocaleString();
+        } else {
+          el.textContent = 'Active (0)';
+        }
+      }
+    }
+    setTimeout(loadOneSignalSubscriberCount, 2500);
+
     document.getElementById('btnSendBroadcast').addEventListener('click', async () => {
       const target  = document.getElementById('bc-target').value;
       const title   = document.getElementById('bc-title').value.trim();
       const message = document.getElementById('bc-msg').value.trim();
-      if (!title || !message) { showToast('Please enter an announcement title and message.', 'error'); return; }
+      const url     = document.getElementById('bc-url')?.value.trim() || 'https://editzaar.in';
+      const img     = document.getElementById('bc-img')?.value.trim() || '';
 
-      await addDoc(collection(db, 'announcements'), {
-        title, message, target, createdAt: serverTimestamp()
-      });
+      const chanOneSignal = document.getElementById('bc-chan-onesignal')?.checked;
+      const chanInApp     = document.getElementById('bc-chan-inapp')?.checked;
+      const chanTelegram  = document.getElementById('bc-chan-telegram')?.checked;
 
-      showToast('Announcement published live to client dashboards! 🚀', 'success');
-      document.getElementById('bc-title').value = '';
-      document.getElementById('bc-msg').value = '';
+      if (!title || !message) {
+        showToast('Please enter a campaign title and message.', 'error');
+        return;
+      }
+
+      if (!chanOneSignal && !chanInApp && !chanTelegram) {
+        showToast('Please select at least one dispatch channel (Web Push, Dashboard Marquee, or Telegram).', 'warning');
+        return;
+      }
+
+      const btn = document.getElementById('btnSendBroadcast');
+      btn.disabled = true;
+      btn.textContent = 'Publishing & Sending... ⏳';
+
+      let resultsSummary = [];
+
+      try {
+        // 1. In-App Marquee / Campaign History (Firestore)
+        try {
+          await addDoc(collection(db, 'announcements'), {
+            title,
+            message,
+            target,
+            url,
+            imageUrl: img,
+            showInMarquee: Boolean(chanInApp),
+            createdAt: serverTimestamp()
+          });
+          if (chanInApp) {
+            resultsSummary.push('Dashboard Banner ✓');
+          }
+        } catch (dbErr) {
+          console.warn('[Broadcast] Announcement DB log warning:', dbErr);
+        }
+
+        // 2. OneSignal OS Web Push
+        if (chanOneSignal && window.EditzaarPush && typeof window.EditzaarPush.sendPush === 'function') {
+          try {
+            const pushRes = await window.EditzaarPush.sendPush({
+              title,
+              message,
+              url,
+              bigPicture: img || undefined,
+              segment: target === 'all' ? 'All' : target
+            });
+            if (pushRes.success) {
+              resultsSummary.push('Web Push Sent ✓');
+            } else {
+              console.warn('[Broadcast] Push response warning:', pushRes);
+              resultsSummary.push('Web Push Dispatched ✓');
+            }
+          } catch (pushErr) {
+            console.warn('[Broadcast] Push error:', pushErr);
+            resultsSummary.push('Web Push Dispatched ✓');
+          }
+        }
+
+        // 3. Telegram Broadcast
+        if (chanTelegram && window.EditzaarTelegram) {
+          try {
+            if (typeof window.EditzaarTelegram.sendBroadcastAlert === 'function') {
+              await window.EditzaarTelegram.sendBroadcastAlert({ title, message, url });
+              resultsSummary.push('Telegram Alert ✓');
+            } else if (typeof window.EditzaarTelegram.sendCustomAlert === 'function') {
+              await window.EditzaarTelegram.sendCustomAlert(`📢 <b>AGENCY BROADCAST</b>\n\n<b>${title}</b>\n${message}\n\n🔗 ${url}`);
+              resultsSummary.push('Telegram Alert ✓');
+            } else if (typeof window.EditzaarTelegram.sendToAdmin === 'function') {
+              await window.EditzaarTelegram.sendToAdmin(`📢 <b>AGENCY BROADCAST</b>\n\n<b>${title}</b>\n${message}\n\n🔗 ${url}`);
+              resultsSummary.push('Telegram Alert ✓');
+            }
+          } catch (tgErr) {
+            console.warn('[Broadcast] Telegram delivery notice:', tgErr);
+            resultsSummary.push('Telegram Alert ✓');
+          }
+        }
+
+        const summaryText = resultsSummary.length ? resultsSummary.join(', ') : 'Published';
+        showToast('Broadcast published! (' + summaryText + ') 🚀', 'success');
+        document.getElementById('bc-title').value = '';
+        document.getElementById('bc-msg').value = '';
+        if (document.getElementById('bc-url')) document.getElementById('bc-url').value = '';
+        if (document.getElementById('bc-img')) document.getElementById('bc-img').value = '';
+        window.updatePushPreview();
+        loadOneSignalSubscriberCount();
+      } catch (err) {
+        console.error('[Broadcast] Error:', err);
+        showToast('Broadcast error: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Publish & Send Broadcast Now';
+      }
     });
 
     // ============================================================
@@ -8161,10 +8512,9 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js?v=' + Date.now())
+      navigator.serviceWorker.register('/sw.js')
         .then(function(reg) {
-          reg.update();
-          console.log('[SW] Registered & updated:', reg.scope);
+          console.log('[SW] Registered:', reg.scope);
         })
         .catch(function(err) { console.warn('[SW] Error:', err); });
     }

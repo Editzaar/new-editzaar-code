@@ -14,6 +14,9 @@
   <script src="../js/services-config.js?v=310.0"></script>
   <script src="../js/telegram-service.js?v=310.0"></script>
   <script src="../js/drive-service.js?v=310.0"></script>
+  <!-- OneSignal Web Push & Presence Engine -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script src="../js/push-service.js?v=310.0" defer></script>
   <script src="../js/theme.js?v=310.0"></script>
 
   <style>
@@ -703,6 +706,10 @@
       }
       
       currentUser = { uid:user.uid, ...snap.data() };
+      // Tag editor in OneSignal for presence-aware notifications
+      if (window.EditzaarPush && typeof window.EditzaarPush.identifyUser === 'function') {
+        window.EditzaarPush.identifyUser(user.uid, 'editor', { name: currentUser.name || 'Editor', email: user.email || '' });
+      }
       
       // Update Sidebar UI
       const n = currentUser.name || 'Editor User';

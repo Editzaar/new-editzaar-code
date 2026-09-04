@@ -383,6 +383,28 @@ ${message}
     },
 
     /**
+     * SEND CUSTOM ALERT / RAW HTML TO ADMIN
+     */
+    sendCustomAlert: function (htmlText) {
+      return this.sendToAdmin(htmlText);
+    },
+
+    /**
+     * 10. SEND OMNICHANNEL BROADCAST ALERT TO TELEGRAM
+     */
+    sendBroadcastAlert: function (bcData) {
+      const title = escapeHtml(bcData.title || 'Broadcast Announcement');
+      const msg = escapeHtml(bcData.message || '');
+      const url = escapeHtml(bcData.url || 'https://editzaar.in');
+      const text = `📢 <b>EDITZAAR AGENCY BROADCAST</b>\n\n` +
+        `🎯 <b>Title:</b> ${title}\n` +
+        `📝 <b>Message:</b>\n${msg}\n\n` +
+        `🔗 <b>Link:</b> ${url}\n` +
+        `⏰ <i>${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</i>`;
+      return this.sendToAdmin(text);
+    },
+
+    /**
      * 10. TEST PING BOT CONNECTION
      */
     testConnection: async function (targetChatId) {

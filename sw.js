@@ -3,7 +3,15 @@
  * Handles:
  *   1. Offline caching (PWA)
  *   2. Firebase Cloud Messaging background push notifications
+ *   3. OneSignal Web Push background notifications
  */
+
+// ── OneSignal Background Push Handler ─────────────────────────────────────────
+try {
+  importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
+} catch (e) {
+  console.warn('[sw.js] OneSignal service worker failed to load:', e);
+}
 
 // ── FCM Background Message Handler ──────────────────────────────────────────
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
@@ -39,12 +47,19 @@ messaging.onBackgroundMessage(function (payload) {
     actions: [{ action: 'open', title: 'Open Dashboard' }]
   };
 
+  if (self.navigator && 'setAppBadge' in self.navigator) {
+    self.navigator.setAppBadge(1).catch(function () {});
+  }
+
   self.registration.showNotification(title, options);
 });
 
-// Clicking the notification opens dashboard
+// Clicking the notification opens dashboard & clears app badge
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
+  if (self.navigator && 'clearAppBadge' in self.navigator) {
+    self.navigator.clearAppBadge().catch(function () {});
+  }
   const url = (event.notification.data && event.notification.data.url) || '/dashboard/index.html';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (windowClients) {
