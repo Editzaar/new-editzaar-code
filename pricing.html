@@ -110,14 +110,77 @@
       box-shadow: 0 0 16px rgba(255,184,0,0.3);
     }
 
-    @media (max-width: 600px) {
-      .checkout-box { padding: 22px 14px; border-radius: 14px; }
-      .summary-card { padding: 14px 12px; }
-      .form-grid-2 { grid-template-columns: 1fr !important; gap: 0 !important; }
-      .summary-row { font-size: 0.85rem; }
-      .summary-row.total { font-size: 1.05rem; }
-      .pay-preset-btn { min-width: 100%; font-size: 0.85rem; padding: 10px; }
+    /* ── COMPREHENSIVE RESPONSIVE ENHANCEMENTS FOR ALL DEVICES ── */
+    @media (max-width: 768px) {
+      .catalog-tabs {
+        display: flex !important;
+        overflow-x: auto !important;
+        justify-content: flex-start !important;
+        padding: 6px 14px 14px !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        flex-wrap: nowrap !important;
+        -ms-overflow-style: none !important;
+        gap: 10px !important;
+        margin-bottom: 24px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .catalog-tabs::-webkit-scrollbar { display: none !important; }
+      .catalog-tab {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        padding: 10px 20px !important;
+        font-size: 0.84rem !important;
+      }
+      .srv-hero { padding: 84px 16px 20px !important; }
+      .srv-hero h1 { font-size: 2.1rem !important; }
+      .srv-hero p { font-size: 0.88rem !important; margin-bottom: 20px !important; }
+      .pricing-cards {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+      }
+      .pricing-card {
+        padding: 30px 20px !important;
+      }
+      .pc-badge {
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        white-space: nowrap !important;
+      }
     }
+
+    @media (min-width: 769px) and (max-width: 1100px) {
+      .pricing-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .checkout-modal { padding: 8px !important; }
+      .checkout-box {
+        padding: 22px 14px !important;
+        border-radius: 16px !important;
+        max-height: 94vh !important;
+      }
+      .summary-card { padding: 14px 10px !important; }
+      .summary-row { font-size: 0.85rem !important; }
+      .summary-row.total { font-size: 1.05rem !important; }
+      .checkout-close { top: 12px !important; right: 12px !important; width: 32px !important; height: 32px !important; }
+      .form-grid-2 { grid-template-columns: 1fr !important; gap: 0 !important; }
+      .payment-box { grid-template-columns: 1fr !important; justify-items: center !important; text-align: center !important; }
+      .pay-preset-btn { min-width: 100% !important; font-size: 0.85rem !important; padding: 10px !important; }
+      .custom-quote-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+      .btn-gold-brand {
+        font-size: 0.9rem !important;
+        padding: 12px 16px !important;
+      }
+    }
+
     .summary-row.advance {
       background: rgba(40,200,64,0.1); border: 1px solid rgba(40,200,64,0.3);
       padding: 10px 14px; border-radius: 8px; color: #28C840; font-weight: 700; margin-top: 10px;
@@ -173,12 +236,6 @@
       margin-top: 12px; transition: transform 0.2s;
     }
     .btn-upi-mobile:hover { transform: scale(1.03); }
-
-    @media (max-width: 650px) {
-      .form-grid-2 { grid-template-columns: 1fr; }
-      .payment-box { grid-template-columns: 1fr; justify-items: center; text-align: center; }
-      .checkout-box { padding: 24px 18px; }
-    }
   
     /* ── LIGHT MODE OVERRIDES ── */
     [data-theme="light"] .pc-cross {
@@ -555,7 +612,7 @@
             </label>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div class="custom-quote-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div>
               <label for="chkCustomBudget" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold);font-weight:700;display:block;margin-bottom:4px;">Target Budget (Optional):</label>
               <input type="text" id="chkCustomBudget" placeholder="e.g. ₹15,000 / $300 / Flexible" style="width:100%;height:38px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.5);color:var(--gold);font-weight:700;font-size:0.92rem;" oninput="window.onCustomBudgetInput(this.value)"/>
@@ -883,15 +940,22 @@
             }
           }
 
-          // 6. Dynamic Button Action
+          // 6. Dynamic Button Action & Text
           const btn = card.querySelector('button.btn-gold-brand');
           if (btn) {
-            if (s.isCustom || s.price <= 0) {
-              btn.textContent = 'Get Custom Quote →';
-              btn.onclick = () => window.openCustomQuote(s.name, s.category, s.id);
+            const customBtnLabel = (s.btnText || s.buttonText || '').trim();
+            if (customBtnLabel) {
+              btn.textContent = customBtnLabel;
+            } else if (s.isCustom || s.price <= 0) {
+              btn.textContent = 'Book Custom Service →';
             } else {
               btn.textContent = 'Choose Plan & Checkout →';
-              btn.onclick = () => window.openCheckout(s.name, s.price, s.delivery, s.priceUSD, s.id);
+            }
+
+            if (s.isCustom || s.price <= 0) {
+              btn.onclick = () => window.openCustomQuote(s.name, s.category, s.id, customBtnLabel);
+            } else {
+              btn.onclick = () => window.openCheckout(s.name, s.price, s.delivery, s.priceUSD, s.id, customBtnLabel);
             }
           }
         }
@@ -899,7 +963,8 @@
     }
 
     // Custom Quote Modal Handler (100% Customizable, No Forced Price)
-    window.openCustomQuote = function(pName, category, svcId) {
+    window.openCustomQuote = function(pName, category, svcId, customBtnLabel) {
+      const defaultQuoteAction = customBtnLabel || 'Book Custom Service →';
       activePackage = {
         name: pName || 'Custom Project Package',
         category: category || 'General Services',
@@ -907,7 +972,8 @@
         priceUSD: 0,
         delivery: 'Milestone / Retainer',
         svcId: svcId || 'custom',
-        isCustom: true
+        isCustom: true,
+        btnText: defaultQuoteAction
       };
 
       if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
@@ -928,7 +994,7 @@
 
       const btnConfirm = document.getElementById('btnConfirmCheckout');
       if (btnConfirm) {
-        btnConfirm.innerHTML = `Request Tailored Quote &amp; Strategy Call →`;
+        btnConfirm.innerHTML = defaultQuoteAction;
       }
 
       // Hide payment wrappers in quote mode
@@ -942,10 +1008,11 @@
       const num = parseInt(String(val).replace(/[^0-9]/g, '')) || 0;
       const btnConfirm = document.getElementById('btnConfirmCheckout');
       if (!btnConfirm) return;
+      const baseAction = (activePackage && activePackage.btnText) ? activePackage.btnText.replace(/\s*→$/, '') : 'Submit Custom Brief';
       if (num > 0) {
-        btnConfirm.innerHTML = `Submit Custom Brief (Budget: ${currentCurrency === 'USD' ? '$' : '₹'}${num.toLocaleString()}) →`;
+        btnConfirm.innerHTML = `${baseAction} (Budget: ${currentCurrency === 'USD' ? '$' : '₹'}${num.toLocaleString()}) →`;
       } else {
-        btnConfirm.innerHTML = `Request Tailored Quote &amp; Strategy Call →`;
+        btnConfirm.innerHTML = (activePackage && activePackage.btnText) || `Book Custom Service →`;
       }
     };
 
@@ -1159,7 +1226,7 @@
       }
     }
 
-    window.openCheckout = (pName, price, deliveryTime, priceUSD, svcId) => {
+    window.openCheckout = (pName, price, deliveryTime, priceUSD, svcId, customBtnLabel) => {
       if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
       
       let inrPrice = price;
@@ -1175,7 +1242,14 @@
         usdPrice = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(inrPrice || 1000) : Math.round((inrPrice || 1000) / 80);
       }
       
-      activePackage = { name: pName, basePrice: inrPrice || 1000, priceUSD: usdPrice, delivery: deliveryTime || '48 Hours', svcId: svcId || '' };
+      activePackage = {
+        name: pName,
+        basePrice: inrPrice || 1000,
+        priceUSD: usdPrice,
+        delivery: deliveryTime || '48 Hours',
+        svcId: svcId || '',
+        btnText: customBtnLabel || ''
+      };
       
       // Default deposit to 50% preset
       document.querySelectorAll('.pay-preset-btn').forEach(b => b.classList.remove('active'));

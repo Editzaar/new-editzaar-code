@@ -2043,9 +2043,15 @@
                 <input id="svc-time" type="text" placeholder="e.g. 48 Hours / 3-5 Days"/>
               </div>
             </div>
-            <div class="field">
-              <label>Service Short Description</label>
-              <input id="svc-desc" type="text" placeholder="Brief explanation of what is included in this service..."/>
+            <div class="form-grid-2">
+              <div class="field">
+                <label>Service Short Description</label>
+                <input id="svc-desc" type="text" placeholder="Brief explanation of what is included in this service..."/>
+              </div>
+              <div class="field">
+                <label>Button / Booking CTA Text (Optional)</label>
+                <input id="svc-btn-text" type="text" placeholder="e.g. Choose Plan &amp; Checkout → or Book Custom Service →"/>
+              </div>
             </div>
             <button class="btn-gold" style="margin-top:6px;width:100%;justify-content:center;height:40px;" id="btnAddService" onclick="window.createAdminServiceNow()">Save Service Package →</button>
           </div>
@@ -3105,6 +3111,12 @@
         <div class="field">
           <label>Short Overview / Subtitle</label>
           <input type="text" id="editSvcDesc" placeholder="Brief summary displayed under the price..." />
+        </div>
+
+        <div class="field">
+          <label>Custom Button / Booking CTA Text</label>
+          <input type="text" id="editSvcBtnText" placeholder="e.g. Book Custom Service →, Get Custom Quote →, Choose Plan &amp; Checkout →" />
+          <div style="font-size:0.78rem;color:var(--t3);margin-top:4px;">Customize the button label displayed on this service card and in the booking modal. Leave blank for automatic default.</div>
         </div>
 
         <div class="field">
@@ -8540,22 +8552,23 @@
       order: 3
     },
     {
-      id: "video-custom-production",
+      id: "monthly-creator-partnership",
       category: "Video Post-Production",
       categoryIcon: "🎬",
-      name: "Custom Studio Production",
+      name: "Monthly Creator Partnership",
       price: 0,
       priceUSD: 0,
       isCustom: true,
       unit: "Custom",
-      delivery: "Milestone Based",
-      badge: "Enterprise",
-      description: "Milestone based · Dedicated senior director & motion designers.",
+      delivery: "Monthly Retainer",
+      badge: "Dedicated Team",
+      btnText: "Book Custom Service →",
+      description: "Billed monthly · Dedicated editor & strategist for creators and brands.",
       features: [
-        "Dedicated senior director & motion designers",
-        "Custom scope, 3D animations, podcast suites & documentaries",
-        "Unlimited revisions & dedicated project manager",
-        "Direct Slack / WhatsApp war room access"
+        "Dedicated video editor & strategist",
+        "Unlimited video length & revisions",
+        "Priority 24-48h turnarounds",
+        "Direct Slack / WhatsApp channel access"
       ],
       order: 4
     },
@@ -8921,10 +8934,12 @@
       var badgeBadge = s.badge ? '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);margin-left:6px;font-size:10px;">' + s.badge + '</span>' : '';
       var customBadge = isCustom ? '<span class="status-badge" style="background:rgba(147,51,234,0.18);color:#c084fc;margin-left:6px;font-size:10px;">💎 CUSTOM</span>' : '';
 
+      var btnLabel = s.btnText || (isCustom ? 'Book Custom Service →' : 'Choose Plan & Checkout →');
+
       html += '<tr>'
         + '<td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">' + (s.categoryIcon || '📌') + ' ' + (s.category || 'General') + '</span></td>'
         + '<td><div style="font-weight:700;color:var(--t1);">' + (s.name || '') + badgeBadge + customBadge + '</div>'
-        + '<div style="font-size:0.75rem;color:var(--t3);">' + (s.unit || '/ project') + (s.features && s.features.length ? ' · ' + s.features.length + ' features' : '') + '</div></td>'
+        + '<div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">' + (s.unit || '/ project') + (s.features && s.features.length ? ' · ' + s.features.length + ' features' : '') + ' · <span style="color:var(--gold);font-weight:600;">Button: "' + btnLabel + '"</span></div></td>'
         + '<td><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:var(--gold);font-weight:700;">₹</span>'
         + '<input type="number" id="inp-price-' + s.id + '" value="' + inrVal + '" style="width:85px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.9rem;" min="0"/>'
@@ -8937,7 +8952,7 @@
         + '<td style="font-size:0.85rem;color:var(--t2);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (s.description || '') + '">' + (s.description || '—') + '</td>'
         + '<td><div style="display:flex;gap:6px;align-items:center;">'
         + '<button class="btn-gold btn-sm" id="btn-save-svc-' + s.id + '" onclick="window.saveAdminServicePrice(\'' + s.id + '\')" title="Quick Save Price &amp; Delivery">💾 SAVE</button>'
-        + '<button class="btn-outline btn-sm" style="color:var(--gold);border-color:var(--gold-border);" onclick="window.openEditServiceModal(\'' + s.id + '\')" title="Edit All Information &amp; Feature Bullets">✏️ EDIT ALL</button>'
+        + '<button class="btn-outline btn-sm" style="color:var(--gold);border-color:var(--gold-border);" onclick="window.openEditServiceModal(\'' + s.id + '\')" title="Edit All Information, Button Text &amp; Bullets">✏️ EDIT ALL</button>'
         + '<button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminService(\'' + s.id + '\')" title="Delete Service">🗑️</button>'
         + '</div></td></tr>';
     });
@@ -8957,6 +8972,7 @@
     document.getElementById('editSvcUnit').value = s.unit || '/ project';
     document.getElementById('editSvcDelivery').value = s.delivery || '48 Hours';
     document.getElementById('editSvcBadge').value = s.badge || '';
+    document.getElementById('editSvcBtnText').value = s.btnText || s.buttonText || '';
     document.getElementById('editSvcIsCustom').checked = !!(s.isCustom || s.price <= 0 || s.unit === 'Custom');
     document.getElementById('editSvcDesc').value = s.description || '';
     
@@ -8975,7 +8991,7 @@
     }
   };
 
-  // 💾 SAVE FULL SERVICE PACKAGE (ALL TEXT, BULLETS, PRICING, CUSTOM)
+  // 💾 SAVE FULL SERVICE PACKAGE (ALL TEXT, BULLETS, PRICING, CUSTOM, BUTTON CTA)
   window.saveFullAdminServicePackage = async function() {
     var id = document.getElementById('editSvcId').value;
     var cat = document.getElementById('editSvcCategory').value;
@@ -8985,6 +9001,7 @@
     var unit = document.getElementById('editSvcUnit').value.trim() || '/ project';
     var delivery = document.getElementById('editSvcDelivery').value.trim() || '48 Hours';
     var badge = document.getElementById('editSvcBadge').value.trim();
+    var btnText = document.getElementById('editSvcBtnText').value.trim();
     var isCustom = document.getElementById('editSvcIsCustom').checked;
     var desc = document.getElementById('editSvcDesc').value.trim();
     var rawFeatures = document.getElementById('editSvcFeatures').value;
@@ -9016,6 +9033,7 @@
     s.unit = unit;
     s.delivery = delivery;
     s.badge = badge;
+    s.btnText = btnText;
     s.isCustom = isCustom;
     s.description = desc;
     s.features = features;
@@ -9040,6 +9058,7 @@
         unit: s.unit,
         delivery: s.delivery,
         badge: s.badge || '',
+        btnText: s.btnText || '',
         isCustom: s.isCustom,
         description: s.description,
         features: s.features,
@@ -9165,6 +9184,8 @@
     var priceUSD = priceUsdEl ? (parseInt(priceUsdEl.value) || Math.round(price / 80)) : Math.round(price / 80);
     var delivery = timeEl ? (timeEl.value.trim() || '48 Hours') : '48 Hours';
     var desc = descEl ? descEl.value.trim() : '';
+    var btnTextEl = document.getElementById('svc-btn-text');
+    var btnText = btnTextEl ? btnTextEl.value.trim() : '';
 
     if (!name || !price) { showToast('Please enter a service name and base price.', 'error'); return; }
 
@@ -9185,6 +9206,7 @@
         unit: '/ project',
         delivery: delivery,
         description: desc,
+        btnText: btnText,
         order: allAdminServices.length + 1,
         active: true,
         createdAt: serverTimestamp()
@@ -9194,6 +9216,7 @@
       if (priceEl) priceEl.value = '';
       if (timeEl) timeEl.value = '';
       if (descEl) descEl.value = '';
+      if (btnTextEl) btnTextEl.value = '';
       showToast('Service "' + name + '" created successfully!', 'success');
     } catch(err) { showToast('Error creating service: ' + err.message, 'error'); }
   };

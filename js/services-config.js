@@ -507,6 +507,32 @@
     },
 
     /**
+     * Save the entire custom services catalog (used by Admin CMS)
+     */
+    saveCustomCatalog: function (allList) {
+      if (Array.isArray(allList)) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allList));
+        this.notifySubscribers(allList);
+        return allList;
+      }
+      return this.getAll();
+    },
+
+    /**
+     * Update any fields of a service by id
+     */
+    updateService: function (id, updates) {
+      const all = [...this.getAll()];
+      const idx = all.findIndex(s => s.id === id);
+      if (idx >= 0) {
+        all[idx] = { ...all[idx], ...updates };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+        this.notifySubscribers(all);
+      }
+      return all;
+    },
+
+    /**
      * Reset to factory default services
      */
     resetDefaults: function () {
