@@ -1005,7 +1005,14 @@
       onSnapshot(collection(db,'announcements'), (snap) => {
         const list = snap.docs.map(d=>({id:d.id,...d.data()}));
         list.sort((a,b)=>(b.createdAt?.toMillis?b.createdAt.toMillis():0)-(a.createdAt?.toMillis?a.createdAt.toMillis():0));
-        const myAnn = list.find(a => (a.showInMarquee !== false) && (a.target === 'all' || a.target === 'client' || a.target === currentUser.uid));
+        const myAnn = list.find(a => {
+          if (a.showInMarquee === false) return false;
+          if (a.target === 'all') return true;
+          if (a.target === 'clients' || a.target === 'client') return true;
+          if (a.target === currentUser.uid) return true;
+          if (Array.isArray(a.targetUids) && a.targetUids.includes(currentUser.uid)) return true;
+          return false;
+        });
         if (myAnn) {
           document.getElementById('bannerTitle').textContent = myAnn.title || '📢 Agency Announcement';
           document.getElementById('bannerDesc').textContent  = myAnn.message || '';

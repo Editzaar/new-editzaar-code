@@ -1184,6 +1184,7 @@
         </div>
 
         <!-- Metric Stat Cards -->
+        <!-- Metric Stat Cards -->
         <div class="stat-card-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
           <div class="stat-card">
             <div class="stat-card-label">OneSignal App ID</div>
@@ -1195,7 +1196,38 @@
           </div>
           <div class="stat-card">
             <div class="stat-card-label">Active Push Subscribers</div>
-            <div class="stat-card-value" id="onesignalSubscribersCount" style="color:var(--gold);font-size:1.4rem;">...</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+              <div class="stat-card-value" id="onesignalSubscribersCount" style="color:var(--gold);font-size:1.4rem;">...</div>
+              <button class="btn-outline btn-sm" style="padding:4px 10px;font-size:11px;" onclick="window.toggleSubscribersDirectory()">👥 View Subscribers</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Subscribers Directory Card (Collapsible) -->
+        <div id="subscribersDirectoryCard" class="dash-card" style="display:none;margin-bottom:20px;border-color:rgba(255,184,0,0.35);background:rgba(20,20,28,0.95);">
+          <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div class="dash-card-title">👥 Registered <em>Push Subscribers &amp; Devices</em></div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-outline btn-sm" style="padding:4px 10px;font-size:11px;" onclick="window.loadSubscribersDirectory(true)">🔄 Refresh List</button>
+              <button class="btn-outline btn-sm" style="padding:4px 10px;font-size:11px;" onclick="window.toggleSubscribersDirectory()">✖ Close</button>
+            </div>
+          </div>
+          <div class="table-scroll-wrap" style="overflow-x:auto;">
+            <table class="dash-table" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>Subscriber / Name</th>
+                  <th>Role</th>
+                  <th>Device / Platform</th>
+                  <th>Subscribed Date</th>
+                  <th>Last Active</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="subscribersDirectoryTbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:18px;">Click "View Subscribers" to load live device list...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -1207,11 +1239,16 @@
             </div>
             <div class="dash-form">
               <div class="field">
-                <label>Target Audience Segment</label>
-                <select id="bc-target">
-                  <option value="all">🌐 All Subscribers (Visitors + Clients + Editors)</option>
-                  <option value="client">💼 Registered Clients Only</option>
-                  <option value="editor">🎬 Editors &amp; Staff Only</option>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                  <label style="margin-bottom:0;">Target Audience Segment</label>
+                  <span id="bc-target-count" class="live-badge" style="font-size:10px;background:rgba(255,184,0,0.12);color:var(--gold);">🌐 All Subscribers</span>
+                </div>
+                <select id="bc-target" onchange="window.updateAudienceCounter()">
+                  <option value="all">🌐 All Subscribers (Broadcast to Everyone)</option>
+                  <option value="clients">💼 All Registered Clients</option>
+                  <option value="active_clients">⚡ Active Clients (In-Progress / Ongoing Projects)</option>
+                  <option value="payment_pending">💳 Payment Pending / Delayed Balance Clients</option>
+                  <option value="editors">🎬 Staff &amp; Editors Only</option>
                 </select>
               </div>
 
@@ -1301,10 +1338,16 @@
         <!-- Recent Broadcast History & OneSignal Console Access -->
         <div class="dash-card" style="margin-top:24px;">
           <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-            <div class="dash-card-title">Recent Broadcast <em>Campaign History</em></div>
-            <a href="https://dashboard.onesignal.com/apps/ea5130c0-a797-42ad-8240-caeaa6720a73" target="_blank" rel="noopener noreferrer" class="btn-outline btn-sm" style="font-size:12px;">
-              🔗 Open OneSignal Official Console ↗
-            </a>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="dash-card-title">Recent Broadcast <em>Campaign History</em></div>
+              <span class="live-badge" style="font-size:10px;background:rgba(255,255,255,0.06);color:var(--t3);">⏱️ Auto-purged after 15 days</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn-outline btn-sm" style="font-size:11px;padding:4px 10px;color:#FF7B7B;border-color:rgba(255,100,100,0.3);" onclick="window.clearAllBroadcastHistory()">🧹 Clear All History</button>
+              <a href="https://dashboard.onesignal.com/apps/ea5130c0-a797-42ad-8240-caeaa6720a73" target="_blank" rel="noopener noreferrer" class="btn-outline btn-sm" style="font-size:12px;">
+                🔗 Open OneSignal Official Console ↗
+              </a>
+            </div>
           </div>
           <div class="table-scroll-wrap" style="overflow-x:auto;">
             <table class="dash-table" id="broadcastHistoryTable">
@@ -1314,10 +1357,11 @@
                   <th>Audience Segment</th>
                   <th>Date &amp; Time</th>
                   <th>Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody id="broadcastHistoryTbody">
-                <tr><td colspan="4" style="color:var(--t3);text-align:center;padding:18px;">Loading campaign history…</td></tr>
+                <tr><td colspan="5" style="color:var(--t3);text-align:center;padding:18px;">Loading campaign history…</td></tr>
               </tbody>
             </table>
           </div>
@@ -3282,26 +3326,83 @@
 
     document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('index.html')));
 
-    // Realtime Broadcast Campaign History Listener
+    function formatAudienceBadge(target) {
+      if (!target || target === 'all') return '🌐 All';
+      if (target === 'clients' || target === 'client') return '💼 Clients';
+      if (target === 'active_clients') return '⚡ Active Clients';
+      if (target === 'payment_pending') return '💳 Payment Pending';
+      if (target === 'editors' || target === 'editor') return '🎬 Staff & Editors';
+      return String(target);
+    }
+
+    window.deleteBroadcastCampaign = async function(docId) {
+      if (!confirm('Are you sure you want to delete this broadcast campaign from history?')) return;
+      try {
+        await deleteDoc(doc(db, 'announcements', docId));
+        showToast('Campaign deleted successfully! 🗑️', 'info');
+      } catch (err) {
+        showToast('Delete error: ' + err.message, 'error');
+      }
+    };
+
+    window.clearAllBroadcastHistory = async function() {
+      if (!confirm('Are you sure you want to clear ALL broadcast campaign history? This cannot be undone.')) return;
+      try {
+        const snap = await getDocs(collection(db, 'announcements'));
+        const batchPromises = snap.docs.map(d => deleteDoc(doc(db, 'announcements', d.id)));
+        await Promise.all(batchPromises);
+        showToast('All broadcast history cleared! 🧹', 'success');
+      } catch (err) {
+        showToast('Clear error: ' + err.message, 'error');
+      }
+    };
+
+    // Realtime Broadcast Campaign History Listener with 15-Day Auto-Purge
     function initBroadcastHistoryListener() {
       const tbody = document.getElementById('broadcastHistoryTbody');
       if (!tbody) return;
+      const FIFTEEN_DAYS_MS = 15 * 24 * 60 * 60 * 1000;
+      const nowMs = Date.now();
+
       onSnapshot(collection(db, 'announcements'), snap => {
         if (snap.empty) {
-          tbody.innerHTML = '<tr><td colspan="4" style="color:var(--t3);text-align:center;padding:18px;">No broadcast campaigns sent yet.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:18px;">No broadcast campaigns sent yet.</td></tr>';
           return;
         }
         const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        list.sort((a,b) => (b.createdAt?.toMillis ? b.createdAt.toMillis() : 0) - (a.createdAt?.toMillis ? a.createdAt.toMillis() : 0));
-        tbody.innerHTML = list.slice(0, 10).map(b => `
+
+        // 15-Day Auto-Purge: Remove campaigns older than 15 days from database
+        list.forEach(item => {
+          const itemTime = item.createdAt?.toMillis ? item.createdAt.toMillis() : (item.createdAt ? new Date(item.createdAt).getTime() : 0);
+          if (itemTime > 0 && (nowMs - itemTime) > FIFTEEN_DAYS_MS) {
+            deleteDoc(doc(db, 'announcements', item.id)).catch(e => console.warn('[AutoPurge] Expired item delete:', e));
+          }
+        });
+
+        // Filter active campaigns for table view
+        const activeList = list.filter(item => {
+          const itemTime = item.createdAt?.toMillis ? item.createdAt.toMillis() : (item.createdAt ? new Date(item.createdAt).getTime() : 0);
+          return itemTime === 0 || (nowMs - itemTime) <= FIFTEEN_DAYS_MS;
+        });
+
+        activeList.sort((a,b) => (b.createdAt?.toMillis ? b.createdAt.toMillis() : 0) - (a.createdAt?.toMillis ? a.createdAt.toMillis() : 0));
+        if (activeList.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="color:var(--t3);text-align:center;padding:18px;">No active campaigns in the last 15 days.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = activeList.slice(0, 15).map(b => `
           <tr>
             <td>
               <strong style="color:var(--t1);">${escapeHtml(b.title || 'Broadcast')}</strong>
               <div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">${escapeHtml(b.message || '').substring(0, 80)}${b.message && b.message.length > 80 ? '...' : ''}</div>
             </td>
-            <td><span class="live-badge" style="font-size:10px;text-transform:uppercase;">${b.target || 'all'}</span></td>
+            <td><span class="live-badge" style="font-size:10px;text-transform:uppercase;">${escapeHtml(formatAudienceBadge(b.target))}</span></td>
             <td style="font-size:0.8rem;color:var(--t2);">${b.createdAt?.toDate ? b.createdAt.toDate().toLocaleString('en-IN') : 'Just now'}</td>
             <td><span style="color:#28C840;font-weight:700;font-size:0.75rem;">SENT ✓</span></td>
+            <td>
+              <button type="button" class="btn-outline btn-sm" style="color:#FF4B4B;border-color:rgba(255,75,75,0.3);padding:3px 8px;font-size:11px;" onclick="window.deleteBroadcastCampaign('${b.id}')" title="Delete from history">🗑️ Delete</button>
+            </td>
           </tr>
         `).join('');
       });
@@ -3323,6 +3424,7 @@
         renderStats(); renderEditors(); renderClients(); populateSelects(); populateBroadcastTargets();
         renderWorkload(); renderPerformance(); renderRoles(); renderAnalytics();
         if (typeof window.updateAdminBadges === 'function') window.updateAdminBadges();
+        if (typeof window.updateAudienceCounter === 'function') window.updateAudienceCounter();
       }, (err) => console.error('Users listener error:', err));
 
       // Robust Projects listener: Client-side sorting eliminates missing composite index crashes
@@ -3338,6 +3440,7 @@
         renderRevenue(); renderPayments(); renderEditorPayouts(); renderRevisions(); renderStorage();
         renderCalendar(); renderAnalytics(); renderBookings();
         if (typeof window.updateAdminBadges === 'function') window.updateAdminBadges();
+        if (typeof window.updateAudienceCounter === 'function') window.updateAudienceCounter();
       }, (err) => console.error('Projects listener error:', err));
 
       listenSupportTickets();
@@ -3701,14 +3804,146 @@
       }
     };
 
+    // ============================================================
+    // SUBSCRIBER DIRECTORY & SMART AUDIENCE RESOLUTION
+    // ============================================================
+    window.resolveTargetRecipients = function(targetType) {
+      const allClientsList = (clients || []);
+      const allEditorsList = (editors || []);
+
+      if (targetType === 'all') {
+        return { type: 'all', count: (users || []).length, uids: [] };
+      }
+      if (targetType === 'clients' || targetType === 'client') {
+        const uids = allClientsList.map(c => c.id || c.uid).filter(Boolean);
+        return { type: 'clients', count: uids.length, uids };
+      }
+      if (targetType === 'active_clients') {
+        const activeStatusList = ['active', 'in-progress', 'editing', 'assigned', 'in-review', 'revision'];
+        const activeClientIds = new Set();
+        (projects || []).forEach(p => {
+          const st = String(p.status || '').toLowerCase();
+          if (activeStatusList.includes(st) && p.clientId) {
+            activeClientIds.add(p.clientId);
+          }
+        });
+        const uids = Array.from(activeClientIds);
+        return { type: 'active_clients', count: uids.length, uids };
+      }
+      if (targetType === 'payment_pending') {
+        const paymentPendingIds = new Set();
+        (projects || []).forEach(p => {
+          const isPaid = (p.paymentStatus || '').toLowerCase() === 'paid' || p.invoicePaid === true;
+          const isBalPaid = p.balancePaid || p.invoicePaid;
+          const hasBalance = Number(p.balanceRequired || p.balanceAmount || 0) > 0 && !isBalPaid;
+          const isUnpaidStatus = ['pending', 'unpaid', 'due'].includes(String(p.paymentStatus || '').toLowerCase());
+          if ((!isPaid || hasBalance || isUnpaidStatus) && p.clientId) {
+            paymentPendingIds.add(p.clientId);
+          }
+        });
+        const uids = Array.from(paymentPendingIds);
+        return { type: 'payment_pending', count: uids.length, uids };
+      }
+      if (targetType === 'editors' || targetType === 'editor') {
+        const uids = allEditorsList.map(e => e.id || e.uid).filter(Boolean);
+        return { type: 'editors', count: uids.length, uids };
+      }
+      return { type: 'all', count: (users || []).length, uids: [] };
+    };
+
+    window.updateAudienceCounter = function() {
+      const sel = document.getElementById('bc-target');
+      const badge = document.getElementById('bc-target-count');
+      if (!sel || !badge) return;
+      const res = window.resolveTargetRecipients(sel.value);
+      if (sel.value === 'all') {
+        badge.textContent = '🌐 All Subscribers';
+        badge.style.background = 'rgba(40,200,64,0.12)';
+        badge.style.color = '#28C840';
+      } else {
+        badge.textContent = `👥 ${res.count} recipient${res.count === 1 ? '' : 's'} matching`;
+        badge.style.background = res.count > 0 ? 'rgba(255,184,0,0.15)' : 'rgba(255,75,75,0.15)';
+        badge.style.color = res.count > 0 ? 'var(--gold)' : '#FF4B4B';
+      }
+    };
+
+    window.toggleSubscribersDirectory = function() {
+      const card = document.getElementById('subscribersDirectoryCard');
+      if (!card) return;
+      const isHidden = card.style.display === 'none' || !card.style.display;
+      card.style.display = isHidden ? 'block' : 'none';
+      if (isHidden) {
+        window.loadSubscribersDirectory();
+      }
+    };
+
+    window.loadSubscribersDirectory = async function(force = false) {
+      const tbody = document.getElementById('subscribersDirectoryTbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gold);padding:18px;">Fetching registered subscribers from OneSignal... ⏳</td></tr>';
+
+      if (window.EditzaarPush && typeof window.EditzaarPush.getSubscribersList === 'function') {
+        const res = await window.EditzaarPush.getSubscribersList(50);
+        if (!res.success || !res.players || res.players.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:18px;">No push subscribers found yet. Open Editzaar on your phone and allow notifications.</td></tr>';
+          return;
+        }
+
+        const statEl = document.getElementById('onesignalSubscribersCount');
+        if (statEl) statEl.textContent = 'Active (' + res.players.length + ')';
+
+        tbody.innerHTML = res.players.map(p => {
+          const tags = p.tags || {};
+          const name = tags.name || tags.user_name || p.external_user_id || 'Subscriber';
+          const email = tags.email || '—';
+          const role = tags.role || (p.device_type === 5 ? 'Web / PWA' : 'Subscriber');
+          
+          let deviceName = 'Desktop / Web';
+          if (p.device_model && (p.device_model.toLowerCase().includes('arm') || p.device_model.toLowerCase().includes('android'))) {
+            deviceName = '📱 Android Device (' + p.device_model + ')';
+          } else if (p.device_model && p.device_model.toLowerCase().includes('iphone')) {
+            deviceName = '📱 iPhone (iOS)';
+          } else if (p.device_model) {
+            deviceName = '💻 ' + p.device_model;
+          }
+
+          const createdDate = p.created_at ? new Date(p.created_at * 1000).toLocaleDateString('en-IN') : '—';
+          const lastActiveDate = p.last_active ? new Date(p.last_active * 1000).toLocaleString('en-IN') : 'Recently';
+
+          return `
+            <tr>
+              <td>
+                <strong style="color:var(--t1);">${escapeHtml(name)}</strong>
+                <div style="font-size:0.75rem;color:var(--t3);">${escapeHtml(email)}</div>
+              </td>
+              <td><span class="live-badge" style="font-size:10px;text-transform:uppercase;">${escapeHtml(role)}</span></td>
+              <td style="font-size:0.8rem;color:var(--t2);">${escapeHtml(deviceName)}</td>
+              <td style="font-size:0.8rem;color:var(--t3);">${escapeHtml(createdDate)}</td>
+              <td style="font-size:0.8rem;color:var(--t2);">${escapeHtml(lastActiveDate)}</td>
+              <td><span style="color:#28C840;font-weight:700;font-size:0.75rem;">SUBSCRIBED 🟢</span></td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:18px;">Push engine initializing... Please retry in a moment.</td></tr>';
+      }
+    };
+
     // Load OneSignal Subscriber Metrics
     async function loadOneSignalSubscriberCount() {
       const el = document.getElementById('onesignalSubscribersCount');
       if (!el) return;
+      if (window.EditzaarPush && typeof window.EditzaarPush.getSubscribersList === 'function') {
+        const res = await window.EditzaarPush.getSubscribersList(50);
+        if (res && res.success && res.players) {
+          el.textContent = 'Active (' + res.players.length + ')';
+          return;
+        }
+      }
       if (window.EditzaarPush && typeof window.EditzaarPush.getSubscriberMetrics === 'function') {
         const metrics = await window.EditzaarPush.getSubscriberMetrics();
         if (metrics && metrics.success) {
-          el.textContent = (metrics.totalSubscribers || 0).toLocaleString();
+          el.textContent = 'Active (' + (metrics.totalSubscribers || 0) + ')';
         } else {
           el.textContent = 'Active (0)';
         }
@@ -3717,7 +3952,9 @@
     setTimeout(loadOneSignalSubscriberCount, 2500);
 
     document.getElementById('btnSendBroadcast').addEventListener('click', async () => {
-      const target  = document.getElementById('bc-target').value;
+      const targetGroup = document.getElementById('bc-target').value;
+      const targetRecipients = window.resolveTargetRecipients(targetGroup);
+      const targetUids = targetRecipients.uids;
       const title   = document.getElementById('bc-title').value.trim();
       const message = document.getElementById('bc-msg').value.trim();
       const url     = document.getElementById('bc-url')?.value.trim() || 'https://editzaar.in';
@@ -3749,7 +3986,8 @@
           await addDoc(collection(db, 'announcements'), {
             title,
             message,
-            target,
+            target: targetGroup,
+            targetUids: targetUids || [],
             url,
             imageUrl: img,
             showInMarquee: Boolean(chanInApp),
@@ -3770,7 +4008,8 @@
               message,
               url,
               bigPicture: img || undefined,
-              segment: target === 'all' ? 'All' : target
+              targetUid: targetGroup === 'all' ? undefined : (targetUids.length > 0 ? targetUids : undefined),
+              segment: targetGroup === 'all' ? 'All' : undefined
             });
             if (pushRes.success) {
               resultsSummary.push('Web Push Sent ✓');
@@ -3787,14 +4026,16 @@
         // 3. Telegram Broadcast
         if (chanTelegram && window.EditzaarTelegram) {
           try {
-            if (typeof window.EditzaarTelegram.sendBroadcastAlert === 'function') {
-              await window.EditzaarTelegram.sendBroadcastAlert({ title, message, url });
+            const audienceLabel = formatAudienceBadge(targetGroup);
+            const tgText = `📢 <b>EDITZAAR AGENCY BROADCAST (${audienceLabel})</b>\n\n🎯 <b>${title}</b>\n📝 ${message}\n\n🔗 ${url}`;
+            if (typeof window.EditzaarTelegram.sendCustomAlert === 'function') {
+              await window.EditzaarTelegram.sendCustomAlert(tgText);
               resultsSummary.push('Telegram Alert ✓');
-            } else if (typeof window.EditzaarTelegram.sendCustomAlert === 'function') {
-              await window.EditzaarTelegram.sendCustomAlert(`📢 <b>AGENCY BROADCAST</b>\n\n<b>${title}</b>\n${message}\n\n🔗 ${url}`);
+            } else if (typeof window.EditzaarTelegram.sendBroadcastAlert === 'function') {
+              await window.EditzaarTelegram.sendBroadcastAlert({ title: `[${audienceLabel}] ${title}`, message, url });
               resultsSummary.push('Telegram Alert ✓');
             } else if (typeof window.EditzaarTelegram.sendToAdmin === 'function') {
-              await window.EditzaarTelegram.sendToAdmin(`📢 <b>AGENCY BROADCAST</b>\n\n<b>${title}</b>\n${message}\n\n🔗 ${url}`);
+              await window.EditzaarTelegram.sendToAdmin(tgText);
               resultsSummary.push('Telegram Alert ✓');
             }
           } catch (tgErr) {

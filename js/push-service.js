@@ -134,8 +134,12 @@
 
       // Target specific user ID or segment
       if (opts.targetUid) {
+        const uids = Array.isArray(opts.targetUid) ? opts.targetUid : [opts.targetUid];
+        if (uids.length === 0) {
+          return { success: true, count: 0, message: 'No recipients matching audience filter' };
+        }
         payload.include_aliases = {
-          external_id: Array.isArray(opts.targetUid) ? opts.targetUid : [opts.targetUid]
+          external_id: uids
         };
         payload.target_channel = 'push';
       } else if (opts.segment && opts.segment !== 'All') {
@@ -188,6 +192,30 @@
     },
 
     /**
+     * Fetch live list of registered subscribers / devices from OneSignal API
+     */
+    getSubscribersList: async function (limit = 50) {
+      try {
+        const url = `https://onesignal.com/api/v1/players?app_id=${ONESIGNAL_APP_ID}&limit=${limit}`;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Key ' + ONESIGNAL_REST_API_KEY
+          }
+        });
+        const data = await res.json();
+        return {
+          success: true,
+          total: data.total_count || (data.players ? data.players.length : 0),
+          players: data.players || []
+        };
+      } catch (err) {
+        console.error('[EditzaarPush] Failed to fetch subscribers list:', err);
+        return { success: false, error: err.message, players: [] };
+      }
+    },
+
+    /**
      * Set badge on app icon (Windows taskbar, Mac dock, iOS PWA, Android)
      */
     setBadge: async function (count = 1) {
@@ -213,8 +241,10 @@
   window.EditzaarPush = EditzaarPush;
 
   // Auto clear app icon badge on window focus / visibility
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
     window.addEventListener('focus', () => EditzaarPush.clearBadge());
+  }
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         EditzaarPush.clearBadge();
@@ -223,7 +253,7 @@
   }
 
   // Auto-init on page load
-  if (document.readyState === 'loading') {
+  if (typeof document !== 'undefined' && document.readyState === 'loading' && typeof document.addEventListener === 'function') {
     document.addEventListener('DOMContentLoaded', () => EditzaarPush.init());
   } else {
     EditzaarPush.init();
