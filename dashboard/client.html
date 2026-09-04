@@ -195,42 +195,38 @@
       margin-bottom: 16px !important;
     }
 
-    /* Compact & Stylish Animated Button (From Uiverse.io by gharsh11032000) */
+    /* Compact & Stylish Editzaar Brand Gold Animated Button (From Uiverse.io by gharsh11032000) */
     .animated-button {
       position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       padding: 9px 24px;
-      border: 2px solid transparent;
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
       font-size: 13px;
-      background-color: transparent;
+      background: linear-gradient(135deg, #FFB800 0%, #E5A500 100%) !important;
       border-radius: 100px;
-      font-weight: 600;
-      color: #28C840;
-      box-shadow: 0 0 0 2px #28C840;
+      font-weight: 700;
+      color: #0A0A0D !important;
+      box-shadow: 0 4px 16px rgba(255, 184, 0, 0.35);
       cursor: pointer;
       overflow: hidden;
-      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
       text-decoration: none;
-    }
-
-    .animated-button.gold {
-      color: var(--gold, #FFB800);
-      box-shadow: 0 0 0 2px var(--gold, #FFB800);
+      user-select: none;
     }
 
     .animated-button svg {
       position: absolute;
       width: 16px;
       height: 16px;
-      fill: currentColor;
+      fill: #0A0A0D !important;
       z-index: 9;
-      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     .animated-button .arr-1 {
-      right: 12px;
+      right: 14px;
     }
 
     .animated-button .arr-2 {
@@ -244,24 +240,29 @@
       transform: translate(-50%, -50%);
       width: 14px;
       height: 14px;
-      background-color: currentColor;
+      background-color: rgba(255, 255, 255, 0.35) !important;
       border-radius: 50%;
       opacity: 0;
-      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     .animated-button .text {
       position: relative;
       z-index: 1;
       transform: translateX(-8px);
-      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
       white-space: nowrap;
+      color: #0A0A0D !important;
+      font-weight: 700;
+      letter-spacing: 0.02em;
     }
 
     .animated-button:hover {
-      box-shadow: 0 0 0 8px transparent;
-      color: #111116;
-      border-radius: 10px;
+      box-shadow: 0 6px 22px rgba(255, 184, 0, 0.55);
+      background: linear-gradient(135deg, #FFC837 0%, #FFB800 100%) !important;
+      color: #000000 !important;
+      border-radius: 100px;
+      transform: translateY(-1px);
     }
 
     .animated-button:hover .arr-1 {
@@ -269,26 +270,37 @@
     }
 
     .animated-button:hover .arr-2 {
-      left: 12px;
+      left: 14px;
     }
 
     .animated-button:hover .text {
       transform: translateX(8px);
+      color: #000000 !important;
     }
 
     .animated-button:hover svg {
-      fill: #111116;
+      fill: #000000 !important;
     }
 
     .animated-button:active {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 3px currentColor;
+      transform: scale(0.96);
+      box-shadow: 0 2px 10px rgba(255, 184, 0, 0.4);
     }
 
     .animated-button:hover .circle {
       width: 220px;
       height: 220px;
       opacity: 1;
+    }
+
+    /* Guard against global light mode span overrides turning text black on black */
+    [data-theme="light"] .animated-button,
+    [data-theme="light"] .animated-button span,
+    [data-theme="light"] .animated-button .text,
+    [data-theme="dark"] .animated-button,
+    [data-theme="dark"] .animated-button span,
+    [data-theme="dark"] .animated-button .text {
+      color: #0A0A0D !important;
     }
 </style>
   <!-- PWA Manifest & Theme -->
@@ -3325,7 +3337,7 @@
         badge.style.color = '#28C840';
         desc.textContent = 'Instant background push notifications are active on this device. You will be alerted for orders, edits, and chats even when the app is closed.';
         btnWrap.innerHTML = `
-          <button type="button" class="btn-outline btn-sm" style="font-size:12px;padding:6px 14px;color:var(--gold);border-color:rgba(255,184,0,0.35);" onclick="window.testClientPushSelf()">
+          <button type="button" class="btn-gold btn-sm" style="font-size:12px;padding:6px 16px;" onclick="window.testClientPushSelf()">
             🧪 Test Push Alert
           </button>
         `;

@@ -1239,9 +1239,13 @@
             </div>
             <div class="dash-form">
               <div class="field">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
                   <label style="margin-bottom:0;">Target Audience Segment</label>
-                  <span id="bc-target-count" class="live-badge" style="font-size:10px;background:rgba(255,184,0,0.12);color:var(--gold);">🌐 All Subscribers</span>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <button type="button" class="btn-outline btn-sm" style="font-size:11px;padding:2px 8px;color:var(--gold);border-color:rgba(255,184,0,0.35);" onclick="window.openCustomGroupModal()">➕ New Group</button>
+                    <button type="button" class="btn-outline btn-sm" style="font-size:11px;padding:2px 8px;" onclick="window.openManageCustomGroupsModal()">👥 Manage Groups</button>
+                    <span id="bc-target-count" class="live-badge" style="font-size:10px;background:rgba(255,184,0,0.12);color:var(--gold);">🌐 All Subscribers</span>
+                  </div>
                 </div>
                 <select id="bc-target" onchange="window.updateAudienceCounter()">
                   <option value="all">🌐 All Subscribers (Broadcast to Everyone)</option>
@@ -3279,6 +3283,72 @@
     </div>
   </div>
 
+  <!-- MODAL: CREATE / EDIT CUSTOM AUDIENCE GROUP -->
+  <div class="modal-overlay" id="modalCustomAudienceGroup">
+    <div class="modal-box" style="max-width: 580px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close" data-close="modalCustomAudienceGroup" onclick="window.closeModal('modalCustomAudienceGroup')">✕</button>
+      <div class="modal-title" id="customGroupModalTitle">Create Custom Audience Group</div>
+      <div style="font-size:0.82rem;color:var(--t2);margin-bottom:16px;">
+        Build targeted groups of clients (e.g. VIP Creators, YouTube Retainers, High-Ticket Leads) for focused push alerts &amp; promos.
+      </div>
+
+      <input type="hidden" id="customGroupId" value=""/>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label style="font-size:0.8rem;color:var(--t1);font-weight:600;display:block;margin-bottom:4px;">Group Name *</label>
+        <input id="customGroupName" type="text" placeholder="e.g. ⭐ VIP Clients or 🎬 YouTube Podcasters" style="width:100%;box-sizing:border-box;font-size:0.88rem;padding:8px 12px;background:var(--card-bg, #fff);border:1px solid var(--border);border-radius:8px;color:var(--t1);"/>
+      </div>
+
+      <div class="field" style="margin-bottom:16px;">
+        <label style="font-size:0.8rem;color:var(--t2);display:block;margin-bottom:4px;">Description / Purpose (Optional)</label>
+        <input id="customGroupDesc" type="text" placeholder="e.g. High-frequency creators on monthly video packages" style="width:100%;box-sizing:border-box;font-size:0.85rem;padding:8px 12px;background:var(--card-bg, #fff);border:1px solid var(--border);border-radius:8px;color:var(--t1);"/>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+          <div style="font-weight:700;font-size:0.85rem;color:var(--t1);">Select Clients for this Group</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="btn-outline btn-sm" style="font-size:10px;padding:3px 8px;" onclick="window.selectAllCustomGroupClients(true)">Select All</button>
+            <button type="button" class="btn-outline btn-sm" style="font-size:10px;padding:3px 8px;" onclick="window.selectAllCustomGroupClients(false)">Clear All</button>
+            <span id="customGroupSelectedBadge" class="live-badge" style="font-size:10px;background:rgba(255,184,0,0.15);color:var(--gold);">0 Selected</span>
+          </div>
+        </div>
+
+        <input type="text" id="customGroupSearchClientInput" placeholder="🔍 Search clients by name or email..." oninput="window.filterCustomGroupClientsList(this.value)" style="width:100%;box-sizing:border-box;font-size:0.8rem;padding:7px 10px;background:var(--bg2, rgba(255,255,255,0.04));border:1px solid var(--border);border-radius:6px;color:var(--t1);margin-bottom:8px;"/>
+
+        <div id="customGroupClientsChecklist" style="max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg2, rgba(255,255,255,0.02));display:flex;flex-direction:column;gap:6px;">
+          <!-- Populated dynamically with clients checkboxes -->
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+        <button type="button" id="btnDeleteCustomGroupModal" class="btn-danger btn-sm" style="display:none;" onclick="window.deleteCurrentOpenCustomGroup()">🗑️ Delete Group</button>
+        <div style="display:flex;gap:8px;margin-left:auto;">
+          <button type="button" class="btn-outline btn-sm" onclick="window.closeModal('modalCustomAudienceGroup')">Cancel</button>
+          <button type="button" class="btn-gold btn-sm" style="padding:8px 18px;" onclick="window.saveCustomAudienceGroup()">💾 Save Group</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MANAGE ALL CUSTOM AUDIENCE GROUPS -->
+  <div class="modal-overlay" id="modalManageCustomGroups">
+    <div class="modal-box" style="max-width: 650px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close" data-close="modalManageCustomGroups" onclick="window.closeModal('modalManageCustomGroups')">✕</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px;">
+        <div class="modal-title" style="margin-bottom:0;">👥 Custom Audience Groups</div>
+        <button type="button" class="btn-gold btn-sm" onclick="window.openCustomGroupModal()">➕ Create New Group</button>
+      </div>
+      <div style="font-size:0.82rem;color:var(--t2);margin-bottom:16px;">
+        Manage your targeted client cohorts for custom push notifications, promotions, and segmented updates.
+      </div>
+
+      <div id="manageCustomGroupsList" style="display:flex;flex-direction:column;gap:10px;">
+        <!-- Populated dynamically with group cards -->
+      </div>
+    </div>
+  </div>
+
 <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword }
@@ -3301,7 +3371,7 @@
     const db   = getFirestore(app);
 
     let currentUser = null, activeAdminChatPid = null, adminChatUnsub = null;
-    let projects=[], editors=[], clients=[], users=[];
+    let projects=[], editors=[], clients=[], users=[], customAudienceGroups=[];
 
     function getSecondaryAuth(appName) {
       const existing = getApps().find(a => a.name === appName);
@@ -3362,6 +3432,11 @@
       if (target === 'active_clients') return '⚡ Active Clients';
       if (target === 'payment_pending') return '💳 Payment Pending';
       if (target === 'editors' || target === 'editor') return '🎬 Staff & Editors';
+      if (String(target).startsWith('group_')) {
+        const gId = String(target).replace('group_', '');
+        const g = (customAudienceGroups || []).find(x => x.id === gId);
+        return g ? `⭐ ${g.name}` : '⭐ Custom Group';
+      }
       return String(target);
     }
 
@@ -3442,6 +3517,7 @@
       loadMasterInvoiceDefaults();
       initBroadcastHistoryListener();
       initPromoTemplatesListener();
+      initCustomGroupsListener();
       // Robust Users listener: Categorizes Staff (Editors & Managers), Admins, and Clients
       onSnapshot(collection(db, 'users'), (snap) => {
         users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -3747,25 +3823,58 @@
       }
     };
 
+    // Realtime Custom Audience Groups Listener
+    function initCustomGroupsListener() {
+      try {
+        onSnapshot(collection(db, 'custom_audience_groups'), (snapshot) => {
+          customAudienceGroups = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          populateBroadcastTargets();
+          if (document.getElementById('modalManageCustomGroups')?.classList.contains('open')) {
+            window.renderManageCustomGroupsList();
+          }
+        }, (err) => {
+          console.warn('[CustomGroups] Listener error:', err);
+        });
+      } catch (e) {
+        console.warn('[CustomGroups] Listener init error:', e);
+      }
+    }
+
     function populateBroadcastTargets() {
       const sel = document.getElementById('bc-target');
       if (sel) {
+        const prevVal = sel.value;
+        const customGroupsOptions = (customAudienceGroups || []).map(g => {
+          const count = (g.clientIds || []).length;
+          const labelName = g.name || 'Group';
+          return `<option value="group_${g.id}">⭐ ${escapeHtml(labelName)} (${count} client${count === 1 ? '' : 's'})</option>`;
+        }).join('');
+
         sel.innerHTML = `
           <option value="all">🌐 All Subscribers (Broadcast to Everyone)</option>
-          <option value="clients">💼 All Registered Clients</option>
+          <option value="clients">💼 All Registered Clients (${clients.length})</option>
           <option value="active_clients">⚡ Active Clients (In-Progress / Ongoing Projects)</option>
           <option value="payment_pending">💳 Payment Pending / Overdue Balance Clients</option>
-          <option value="editors">🎬 Staff &amp; Editors Only</option>
+          <option value="editors">🎬 Staff &amp; Editors Only (${editors.length})</option>
+          ${customAudienceGroups.length > 0 ? `
+            <optgroup label="── ⭐ Custom Audience Groups (${customAudienceGroups.length}) ──">
+              ${customGroupsOptions}
+            </optgroup>
+          ` : ''}
           <optgroup label="── Target Specific Individual Client ──">
-            ${clients.map(c => `<option value="${c.id || c.uid}">👤 ${c.name || c.displayName || c.email} (${c.email || 'No email'})</option>`).join('')}
+            ${clients.map(c => `<option value="${c.id || c.uid}">👤 ${escapeHtml(c.name || c.displayName || c.email)} (${escapeHtml(c.email || 'No email')})</option>`).join('')}
           </optgroup>
         `;
+
+        if (prevVal && sel.querySelector(`option[value="${prevVal}"]`)) {
+          sel.value = prevVal;
+        }
       }
         
       const nSel = document.getElementById('notif-target');
       if (nSel) {
         nSel.innerHTML = '<option value="all">📢 All Clients</option>' +
-          clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
+          clients.map(c => `<option value="${c.id}">👤 ${escapeHtml(c.name || c.email)} (${escapeHtml(c.email)})</option>`).join('');
       }
 
       if (typeof window.updateAudienceCounter === 'function') window.updateAudienceCounter();
@@ -4018,6 +4127,22 @@
         const uids = allEditorsList.map(e => e.id || e.uid).filter(Boolean);
         return { type: 'editors', count: uids.length, uids };
       }
+      if (String(targetType).startsWith('group_')) {
+        const gId = String(targetType).replace('group_', '');
+        const group = (customAudienceGroups || []).find(g => g.id === gId);
+        if (group) {
+          const uids = (group.clientIds || []).filter(Boolean);
+          return { type: 'custom_group', name: group.name, count: uids.length, uids };
+        }
+        return { type: 'custom_group', name: 'Custom Group', count: 0, uids: [] };
+      }
+
+      // Individual Client
+      const matchedClient = allClientsList.find(c => (c.id === targetType || c.uid === targetType));
+      if (matchedClient) {
+        return { type: 'individual', count: 1, uids: [matchedClient.id || matchedClient.uid] };
+      }
+
       return { type: 'all', count: (users || []).length, uids: [] };
     };
 
@@ -4030,10 +4155,241 @@
         badge.textContent = '🌐 All Subscribers';
         badge.style.background = 'rgba(40,200,64,0.12)';
         badge.style.color = '#28C840';
+      } else if (sel.value.startsWith('group_')) {
+        badge.textContent = `⭐ ${res.count} client${res.count === 1 ? '' : 's'} in "${res.name || 'Group'}"`;
+        badge.style.background = res.count > 0 ? 'rgba(255,184,0,0.18)' : 'rgba(255,75,75,0.15)';
+        badge.style.color = res.count > 0 ? 'var(--gold)' : '#FF4B4B';
       } else {
         badge.textContent = `👥 ${res.count} recipient${res.count === 1 ? '' : 's'} matching`;
         badge.style.background = res.count > 0 ? 'rgba(255,184,0,0.15)' : 'rgba(255,75,75,0.15)';
         badge.style.color = res.count > 0 ? 'var(--gold)' : '#FF4B4B';
+      }
+    };
+
+    // ============================================================
+    // CUSTOM AUDIENCE GROUPS UI & ACTION HANDLERS
+    // ============================================================
+    window.openCustomGroupModal = function(groupId = null) {
+      const modal = document.getElementById('modalCustomAudienceGroup');
+      if (!modal) return;
+
+      const titleEl = document.getElementById('customGroupModalTitle');
+      const idInp = document.getElementById('customGroupId');
+      const nameInp = document.getElementById('customGroupName');
+      const descInp = document.getElementById('customGroupDesc');
+      const deleteBtn = document.getElementById('btnDeleteCustomGroupModal');
+      const searchInp = document.getElementById('customGroupSearchClientInput');
+
+      if (searchInp) searchInp.value = '';
+
+      let activeGroup = null;
+      if (groupId) {
+        activeGroup = customAudienceGroups.find(g => g.id === groupId);
+      }
+
+      if (activeGroup) {
+        if (titleEl) titleEl.textContent = 'Edit Custom Audience Group';
+        if (idInp) idInp.value = activeGroup.id;
+        if (nameInp) nameInp.value = activeGroup.name || '';
+        if (descInp) descInp.value = activeGroup.description || '';
+        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+      } else {
+        if (titleEl) titleEl.textContent = 'Create Custom Audience Group';
+        if (idInp) idInp.value = '';
+        if (nameInp) nameInp.value = '';
+        if (descInp) descInp.value = '';
+        if (deleteBtn) deleteBtn.style.display = 'none';
+      }
+
+      const selectedIds = new Set(activeGroup ? (activeGroup.clientIds || []) : []);
+      window.renderCustomGroupClientsChecklist(selectedIds);
+      openModal('modalCustomAudienceGroup');
+    };
+
+    window.renderCustomGroupClientsChecklist = function(selectedIds = new Set()) {
+      const container = document.getElementById('customGroupClientsChecklist');
+      if (!container) return;
+
+      if (!clients.length) {
+        container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--t3);font-size:0.8rem;">No clients registered yet.</div>';
+        window.updateCustomGroupSelectedCount();
+        return;
+      }
+
+      container.innerHTML = clients.map(c => {
+        const cid = c.id || c.uid;
+        const isChecked = selectedIds.has(cid);
+        const projCount = (projects || []).filter(p => p.clientId === cid).length;
+        const mobile = c.mobile || c.phone || '';
+        return `
+          <label class="custom-group-client-item" data-search="${(c.name || '').toLowerCase()} ${(c.email || '').toLowerCase()} ${(mobile).toLowerCase()}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:var(--card-bg, #fff);border:1px solid var(--border);cursor:pointer;transition:background 0.15s;">
+            <input type="checkbox" name="customGroupClientCheckbox" value="${cid}" ${isChecked ? 'checked' : ''} onchange="window.updateCustomGroupSelectedCount()" style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;"/>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                <strong style="font-size:0.85rem;color:var(--t1);">${escapeHtml(c.name || 'Client')}</strong>
+                <span style="font-size:0.75rem;color:var(--gold);">${projCount} Proj</span>
+              </div>
+              <div style="font-size:0.76rem;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                ${escapeHtml(c.email || 'No email')} ${mobile ? '· ' + escapeHtml(mobile) : ''}
+              </div>
+            </div>
+          </label>
+        `;
+      }).join('');
+
+      window.updateCustomGroupSelectedCount();
+    };
+
+    window.filterCustomGroupClientsList = function(q) {
+      const query = (q || '').trim().toLowerCase();
+      const items = document.querySelectorAll('#customGroupClientsChecklist .custom-group-client-item');
+      items.forEach(item => {
+        const text = item.getAttribute('data-search') || '';
+        item.style.display = (!query || text.includes(query)) ? 'flex' : 'none';
+      });
+    };
+
+    window.selectAllCustomGroupClients = function(selectAll = true) {
+      const checkboxes = document.querySelectorAll('#customGroupClientsChecklist input[type="checkbox"]');
+      checkboxes.forEach(cb => {
+        const parent = cb.closest('.custom-group-client-item');
+        if (!parent || parent.style.display !== 'none') {
+          cb.checked = selectAll;
+        }
+      });
+      window.updateCustomGroupSelectedCount();
+    };
+
+    window.updateCustomGroupSelectedCount = function() {
+      const checked = document.querySelectorAll('#customGroupClientsChecklist input[type="checkbox"]:checked');
+      const badge = document.getElementById('customGroupSelectedBadge');
+      if (badge) {
+        badge.textContent = `${checked.length} Selected`;
+      }
+    };
+
+    window.saveCustomAudienceGroup = async function() {
+      const gId = document.getElementById('customGroupId')?.value.trim();
+      const name = document.getElementById('customGroupName')?.value.trim();
+      const description = document.getElementById('customGroupDesc')?.value.trim() || '';
+
+      if (!name) {
+        showToast('Please enter a group name.', 'error');
+        return;
+      }
+
+      const checked = Array.from(document.querySelectorAll('#customGroupClientsChecklist input[type="checkbox"]:checked')).map(cb => cb.value);
+      if (checked.length === 0) {
+        showToast('Please select at least 1 client for this group.', 'warning');
+        return;
+      }
+
+      try {
+        const groupData = {
+          name,
+          description,
+          clientIds: checked,
+          updatedAt: serverTimestamp()
+        };
+
+        if (gId) {
+          await updateDoc(doc(db, 'custom_audience_groups', gId), groupData);
+          showToast(`Group "${name}" updated successfully! 🎉`, 'success');
+        } else {
+          groupData.createdAt = serverTimestamp();
+          await addDoc(collection(db, 'custom_audience_groups'), groupData);
+          showToast(`Custom group "${name}" created with ${checked.length} clients! 🎉`, 'success');
+        }
+
+        closeModal('modalCustomAudienceGroup');
+      } catch (err) {
+        console.error('Error saving custom group:', err);
+        showToast('Failed to save group: ' + err.message, 'error');
+      }
+    };
+
+    window.deleteCurrentOpenCustomGroup = async function() {
+      const gId = document.getElementById('customGroupId')?.value.trim();
+      if (!gId) return;
+      await window.deleteCustomAudienceGroup(gId);
+      closeModal('modalCustomAudienceGroup');
+    };
+
+    window.deleteCustomAudienceGroup = async function(groupId) {
+      const group = customAudienceGroups.find(g => g.id === groupId);
+      const name = group ? group.name : 'this group';
+      if (!confirm(`Are you sure you want to delete custom group "${name}"?`)) return;
+
+      try {
+        await deleteDoc(doc(db, 'custom_audience_groups', groupId));
+        showToast(`Group "${name}" deleted. 🗑️`, 'info');
+      } catch (err) {
+        console.error('Error deleting group:', err);
+        showToast('Failed to delete group: ' + err.message, 'error');
+      }
+    };
+
+    window.openManageCustomGroupsModal = function() {
+      window.renderManageCustomGroupsList();
+      openModal('modalManageCustomGroups');
+    };
+
+    window.renderManageCustomGroupsList = function() {
+      const container = document.getElementById('manageCustomGroupsList');
+      if (!container) return;
+
+      if (!customAudienceGroups.length) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:32px;color:var(--t3);">
+            <div style="font-size:2rem;margin-bottom:8px;">👥</div>
+            <div style="font-weight:600;font-size:0.95rem;color:var(--t2);">No Custom Groups Created Yet</div>
+            <div style="font-size:0.8rem;color:var(--t3);margin:6px 0 16px;">Create your first cohort of clients to send targeted promo alerts.</div>
+            <button type="button" class="btn-gold btn-sm" onclick="closeModal('modalManageCustomGroups');window.openCustomGroupModal()">➕ Create Group Now</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = customAudienceGroups.map(g => {
+        const clientIds = g.clientIds || [];
+        const memberNames = clientIds.map(uid => {
+          const clientObj = clients.find(c => (c.id === uid || c.uid === uid));
+          return clientObj ? (clientObj.name || clientObj.email) : uid.substring(0, 6) + '…';
+        });
+
+        return `
+          <div style="background:var(--card-bg, #fff);border:1px solid var(--border);border-radius:10px;padding:14px;transition:border-color 0.2s;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <strong style="font-size:1rem;color:var(--t1);">⭐ ${escapeHtml(g.name)}</strong>
+                  <span class="live-badge" style="font-size:10px;background:rgba(255,184,0,0.15);color:var(--gold);">${clientIds.length} Client${clientIds.length === 1 ? '' : 's'}</span>
+                </div>
+                ${g.description ? `<div style="font-size:0.8rem;color:var(--t2);margin-top:3px;">${escapeHtml(g.description)}</div>` : ''}
+              </div>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <button type="button" class="btn-outline btn-sm" style="font-size:11px;padding:4px 10px;" onclick="window.targetCustomGroupBroadcast('${g.id}')" title="Target this group for broadcast">📢 Target</button>
+                <button type="button" class="btn-outline btn-sm" style="font-size:11px;padding:4px 10px;color:var(--gold);border-color:rgba(255,184,0,0.35);" onclick="closeModal('modalManageCustomGroups');window.openCustomGroupModal('${g.id}')">✏️ Edit</button>
+                <button type="button" class="btn-danger btn-sm" style="font-size:11px;padding:4px 8px;" onclick="window.deleteCustomAudienceGroup('${g.id}')" title="Delete group">🗑️</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;">
+              ${memberNames.slice(0, 8).map(name => `<span style="font-size:11px;background:var(--bg2, rgba(255,255,255,0.05));border:1px solid var(--border);padding:2px 7px;border-radius:12px;color:var(--t2);">👤 ${escapeHtml(name)}</span>`).join('')}
+              ${memberNames.length > 8 ? `<span style="font-size:11px;color:var(--t3);padding:2px 4px;">+${memberNames.length - 8} more</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    window.targetCustomGroupBroadcast = function(groupId) {
+      closeModal('modalManageCustomGroups');
+      const sel = document.getElementById('bc-target');
+      if (sel) {
+        sel.value = 'group_' + groupId;
+        window.updateAudienceCounter();
+        sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showToast('Target set to custom group! Ready to compose broadcast. 🚀', 'info');
       }
     };
 
@@ -4141,6 +4497,11 @@
 
       if (!chanOneSignal && !chanInApp && !chanTelegram) {
         showToast('Please select at least one dispatch channel (Web Push, Dashboard Marquee, or Telegram).', 'warning');
+        return;
+      }
+
+      if (targetGroup !== 'all' && targetUids.length === 0) {
+        showToast('No matching clients found in this target audience group.', 'warning');
         return;
       }
 

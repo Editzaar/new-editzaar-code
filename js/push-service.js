@@ -132,9 +132,10 @@
         payload.chrome_web_image = opts.bigPicture;
       }
 
-      // Target specific user ID or segment
-      if (opts.targetUid) {
-        const uids = Array.isArray(opts.targetUid) ? opts.targetUid : [opts.targetUid];
+      // Target specific user ID(s) or segment
+      const targetIds = opts.targetUids || opts.targetUid;
+      if (targetIds) {
+        const uids = Array.isArray(targetIds) ? targetIds : [targetIds];
         if (uids.length === 0) {
           return { success: true, count: 0, message: 'No recipients matching audience filter' };
         }
