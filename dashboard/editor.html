@@ -169,6 +169,102 @@
     @media (max-width: 540px) {
       .v2-stats-grid, .stat-card-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
     }
+
+    /* Compact & Stylish Animated Button (From Uiverse.io by gharsh11032000) */
+    .animated-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 9px 24px;
+      border: 2px solid transparent;
+      font-size: 13px;
+      background-color: transparent;
+      border-radius: 100px;
+      font-weight: 600;
+      color: #28C840;
+      box-shadow: 0 0 0 2px #28C840;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      text-decoration: none;
+    }
+
+    .animated-button.gold {
+      color: var(--gold, #FFB800);
+      box-shadow: 0 0 0 2px var(--gold, #FFB800);
+    }
+
+    .animated-button svg {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      z-index: 9;
+      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .animated-button .arr-1 {
+      right: 12px;
+    }
+
+    .animated-button .arr-2 {
+      left: -25%;
+    }
+
+    .animated-button .circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      background-color: currentColor;
+      border-radius: 50%;
+      opacity: 0;
+      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .animated-button .text {
+      position: relative;
+      z-index: 1;
+      transform: translateX(-8px);
+      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      white-space: nowrap;
+    }
+
+    .animated-button:hover {
+      box-shadow: 0 0 0 8px transparent;
+      color: #111116;
+      border-radius: 10px;
+    }
+
+    .animated-button:hover .arr-1 {
+      right: -25%;
+    }
+
+    .animated-button:hover .arr-2 {
+      left: 12px;
+    }
+
+    .animated-button:hover .text {
+      transform: translateX(8px);
+    }
+
+    .animated-button:hover svg {
+      fill: #111116;
+    }
+
+    .animated-button:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 3px currentColor;
+    }
+
+    .animated-button:hover .circle {
+      width: 220px;
+      height: 220px;
+      opacity: 1;
+    }
   </style>
 
   <!-- PWA Manifest & Theme -->
@@ -551,6 +647,38 @@
           </div>
         </div>
 
+        <!-- Device Push Notification Control Card -->
+        <div class="dash-card" style="margin-bottom: 20px; border: 1.5px solid rgba(255,184,0,0.3); background: var(--card-bg, rgba(255,255,255,0.03));">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px; flex: 1; min-width: 260px;">
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255,184,0,0.12); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
+                🔔
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <strong style="font-size: 1rem; color: var(--t1);">Editor Push Notifications</strong>
+                  <span id="editorPushStatusBadge" class="live-badge" style="font-size: 11px; padding: 2px 8px;">Checking...</span>
+                </div>
+                <div id="editorPushStatusDesc" style="font-size: 0.82rem; color: var(--t2); margin-top: 3px; line-height: 1.4;">
+                  Get instant project assignment alerts and client chat messages directly on your phone/desktop even when the browser is closed.
+                </div>
+              </div>
+            </div>
+            <div id="editorPushActionWrap" style="flex-shrink: 0;">
+              <button id="btnToggleEditorPush" class="animated-button" onclick="window.enableEditorPushNotifications()">
+                <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+                </svg>
+                <span class="text">Turn On Notifications</span>
+                <span class="circle"></span>
+                <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:20px;">
           <!-- Banking Details -->
           <div class="dash-card">
@@ -691,8 +819,100 @@
       }
       if (name === 'settings') {
         if (typeof window.loadEditorProfileDetails === 'function') window.loadEditorProfileDetails();
+        if (typeof window.checkEditorPushStatus === 'function') window.checkEditorPushStatus();
       }
     };
+
+    // Manual Device Push Notification Subscription Handler for Editors
+    window.checkEditorPushStatus = async function() {
+      const badge = document.getElementById('editorPushStatusBadge');
+      const desc = document.getElementById('editorPushStatusDesc');
+      const btnWrap = document.getElementById('editorPushActionWrap');
+      if (!badge || !desc || !btnWrap) return;
+
+      const perm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
+
+      if (perm === 'granted') {
+        badge.textContent = 'Active 🟢';
+        badge.style.background = 'rgba(40,200,64,0.12)';
+        badge.style.color = '#28C840';
+        desc.textContent = 'Instant background push notifications are active on this device. You will receive project assignments and client chat messages even when the app is closed.';
+        btnWrap.innerHTML = `
+          <button type="button" class="btn-outline btn-sm" style="font-size:12px;padding:6px 14px;color:var(--gold);border-color:rgba(255,184,0,0.35);" onclick="window.testEditorPushSelf()">
+            🧪 Test Push Alert
+          </button>
+        `;
+      } else if (perm === 'denied') {
+        badge.textContent = 'Blocked 🚫';
+        badge.style.background = 'rgba(255,75,75,0.12)';
+        badge.style.color = '#FF4B4B';
+        desc.textContent = 'Notifications are blocked in your browser. Tap the site settings / lock icon in your address bar and change Notifications to "Allow".';
+        btnWrap.innerHTML = `
+          <button type="button" class="btn-outline btn-sm" style="color:#FF4B4B;border-color:rgba(255,75,75,0.35);font-size:12px;padding:6px 14px;" onclick="window.enableEditorPushNotifications()">
+            🔄 Check Again
+          </button>
+        `;
+      } else {
+        badge.textContent = 'Disabled ⚠️';
+        badge.style.background = 'rgba(255,184,0,0.12)';
+        badge.style.color = 'var(--gold)';
+        desc.textContent = 'Tap the button below to turn on instant push alerts on this device.';
+        btnWrap.innerHTML = `
+          <button id="btnToggleEditorPush" class="animated-button" onclick="window.enableEditorPushNotifications()">
+            <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+            </svg>
+            <span class="text">Turn On Notifications</span>
+            <span class="circle"></span>
+            <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+            </svg>
+          </button>
+        `;
+      }
+    };
+
+    window.enableEditorPushNotifications = async function() {
+      if (typeof window.OneSignalDeferred !== 'undefined') {
+        window.OneSignalDeferred.push(async function(OneSignal) {
+          try {
+            await OneSignal.Notifications.requestPermission();
+            if (currentUser?.uid && window.EditzaarPush) {
+              window.EditzaarPush.identifyUser(currentUser.uid, 'editor', {
+                name: currentUser.displayName || currentUser.name || 'Editor',
+                email: currentUser.email || ''
+              });
+            }
+            setTimeout(window.checkEditorPushStatus, 1000);
+          } catch (err) {
+            console.warn('[Push] Editor permission error:', err);
+          }
+        });
+      } else if (typeof Notification !== 'undefined') {
+        await Notification.requestPermission();
+        window.checkEditorPushStatus();
+      }
+    };
+
+    window.testEditorPushSelf = async function() {
+      if (!currentUser?.uid) return;
+      showToast('Dispatching test alert to your device... 🚀', 'info');
+      if (window.EditzaarPush && typeof window.EditzaarPush.sendPush === 'function') {
+        const res = await window.EditzaarPush.sendPush({
+          title: '🎬 Editzaar Editor Alert Active',
+          message: 'Editor push notifications are connected and working!',
+          url: 'https://editzaar.in/dashboard/editor.html',
+          targetUid: currentUser.uid
+        });
+        if (res.success) {
+          showToast('Notification sent to your device! 🔔', 'success');
+        } else {
+          showToast('Notification queued! 🔔', 'info');
+        }
+      }
+    };
+
+    setTimeout(window.checkEditorPushStatus, 1500);
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.replace('index.html'); return; }

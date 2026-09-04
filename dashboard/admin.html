@@ -1303,13 +1303,14 @@
             <div class="dash-card-header">
               <div class="dash-card-title">Live <em>Push Notification Preview</em></div>
             </div>
-            <div style="background:rgba(18,18,24,0.9);border:1px solid rgba(255,184,0,0.25);border-radius:14px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+            <div id="prevNotificationCard" style="background: var(--bg2, var(--card, #ffffff)); border: 1.5px solid rgba(255,184,0,0.35); border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); transition: background 0.3s ease;">
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                <img src="/media/fav-logo.png" style="width:24px;height:24px;border-radius:6px;object-fit:contain;background:#000;" alt="logo"/>
+                <img src="/media/fav-logo.png" style="width:26px;height:26px;border-radius:6px;object-fit:contain;background:#000;" alt="logo"/>
                 <div style="flex:1;">
                   <div style="font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;">Editzaar Agency · Now</div>
                   <div style="font-size:0.7rem;color:var(--t3);">editzaar.in</div>
                 </div>
+                <span class="live-badge" style="font-size:10px;background:rgba(40,200,64,0.12);color:#28C840;">OS Push 🔔</span>
               </div>
               <div id="prevTitle" style="font-weight:700;font-size:0.95rem;color:var(--t1);margin-bottom:4px;">🔥 Weekend Flash Sale: 20% Off Reels &amp; Shorts!</div>
               <div id="prevMsg" style="font-size:0.84rem;color:var(--t2);line-height:1.45;margin-bottom:12px;">Get high-retention video post-production delivered in 24h. Tap to claim discount code...</div>
@@ -1318,18 +1319,47 @@
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:10px;">
                 <span style="font-size:0.72rem;color:var(--t3);">Lockscreen &amp; System Tray</span>
-                <span style="font-size:0.75rem;color:var(--gold);font-weight:600;">Open Offer ↗</span>
+                <span style="font-size:0.75rem;color:var(--gold);font-weight:700;">Open Offer ↗</span>
               </div>
             </div>
 
-            <!-- Quick Promo Templates -->
-            <div style="margin-top:18px;">
-              <div style="font-size:0.75rem;text-transform:uppercase;font-weight:700;color:var(--t3);margin-bottom:8px;">Quick Promo Templates:</div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('discount')" style="font-size:11px;padding:4px 8px;">🏷️ 20% Discount</button>
-                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('portfolio')" style="font-size:11px;padding:4px 8px;">🎬 New Video Showcase</button>
-                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('holiday')" style="font-size:11px;padding:4px 8px;">🎉 Festival Offer</button>
-                <button type="button" class="btn-outline btn-sm" onclick="window.applyPushTemplate('speed')" style="font-size:11px;padding:4px 8px;">⚡ 24h Express Delivery</button>
+            <!-- Quick Promo Templates Manager -->
+            <div style="margin-top:20px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+                <div style="font-size:0.75rem;text-transform:uppercase;font-weight:700;color:var(--t3);letter-spacing:0.5px;">Quick Promo Templates:</div>
+                <button type="button" class="btn-outline btn-sm" style="font-size:11px;padding:3px 10px;color:var(--gold);border-color:rgba(255,184,0,0.35);" onclick="window.toggleTemplateCreator()">➕ New Template</button>
+              </div>
+
+              <!-- Collapsible Template Creator Form -->
+              <div id="promoTemplateCreatorBox" style="display:none;background:var(--bg2, rgba(255,255,255,0.03));border:1.5px dashed rgba(255,184,0,0.4);border-radius:12px;padding:14px;margin-bottom:14px;">
+                <div style="font-size:0.82rem;font-weight:700;color:var(--gold);margin-bottom:10px;">Create Custom Promo Template</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;">
+                  <div>
+                    <label style="font-size:0.75rem;color:var(--t3);display:block;margin-bottom:4px;">Chip Label / Tag *</label>
+                    <input id="newTplLabel" type="text" placeholder="e.g. 🎁 Welcome Bonus" style="width:100%;box-sizing:border-box;font-size:0.8rem;padding:7px 10px;background:var(--card-bg, #fff);border:1px solid var(--border);border-radius:6px;color:var(--t1);"/>
+                  </div>
+                  <div>
+                    <label style="font-size:0.75rem;color:var(--t3);display:block;margin-bottom:4px;">Click URL (Optional)</label>
+                    <input id="newTplUrl" type="url" placeholder="https://editzaar.in/#pricing" style="width:100%;box-sizing:border-box;font-size:0.8rem;padding:7px 10px;background:var(--card-bg, #fff);border:1px solid var(--border);border-radius:6px;color:var(--t1);"/>
+                  </div>
+                </div>
+                <div style="margin-bottom:8px;">
+                  <label style="font-size:0.75rem;color:var(--t3);display:block;margin-bottom:4px;">Campaign Title *</label>
+                  <input id="newTplTitle" type="text" placeholder="e.g. 🎁 15% Welcome Bonus on First Project" style="width:100%;box-sizing:border-box;font-size:0.8rem;padding:7px 10px;background:var(--card-bg, #fff);border:1px solid var(--border);border-radius:6px;color:var(--t1);"/>
+                </div>
+                <div style="margin-bottom:10px;">
+                  <label style="font-size:0.75rem;color:var(--t3);display:block;margin-bottom:4px;">Notification Message *</label>
+                  <textarea id="newTplMsg" rows="2" placeholder="Enter message copy..." style="width:100%;box-sizing:border-box;font-size:0.8rem;padding:7px 10px;background:var(--card-bg, #fff);border:1px solid var(--border);border-radius:6px;color:var(--t1);"></textarea>
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:8px;">
+                  <button type="button" class="btn-outline btn-sm" style="font-size:11px;padding:5px 12px;" onclick="window.toggleTemplateCreator()">Cancel</button>
+                  <button type="button" class="btn-gold btn-sm" style="font-size:11px;padding:5px 14px;" onclick="window.saveCustomPromoTemplate()">💾 Save Template</button>
+                </div>
+              </div>
+
+              <!-- Dynamic Template Chips Container -->
+              <div id="promoTemplateChipsContainer" style="display:flex;gap:6px;flex-wrap:wrap;">
+                <!-- Populated dynamically via Firestore listener -->
               </div>
             </div>
           </div>
@@ -3411,6 +3441,7 @@
     function initRealtimeListeners() {
       loadMasterInvoiceDefaults();
       initBroadcastHistoryListener();
+      initPromoTemplatesListener();
       // Robust Users listener: Categorizes Staff (Editors & Managers), Admins, and Clients
       onSnapshot(collection(db, 'users'), (snap) => {
         users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -3718,12 +3749,26 @@
 
     function populateBroadcastTargets() {
       const sel = document.getElementById('bc-target');
-      sel.innerHTML = '<option value="all">📢 All Clients &amp; Users (Broadcast)</option>' +
-        clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
+      if (sel) {
+        sel.innerHTML = `
+          <option value="all">🌐 All Subscribers (Broadcast to Everyone)</option>
+          <option value="clients">💼 All Registered Clients</option>
+          <option value="active_clients">⚡ Active Clients (In-Progress / Ongoing Projects)</option>
+          <option value="payment_pending">💳 Payment Pending / Overdue Balance Clients</option>
+          <option value="editors">🎬 Staff &amp; Editors Only</option>
+          <optgroup label="── Target Specific Individual Client ──">
+            ${clients.map(c => `<option value="${c.id || c.uid}">👤 ${c.name || c.displayName || c.email} (${c.email || 'No email'})</option>`).join('')}
+          </optgroup>
+        `;
+      }
         
       const nSel = document.getElementById('notif-target');
-      nSel.innerHTML = '<option value="all">📢 All Clients</option>' +
-        clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
+      if (nSel) {
+        nSel.innerHTML = '<option value="all">📢 All Clients</option>' +
+          clients.map(c => `<option value="${c.id}">👤 ${c.name || c.email} (${c.email})</option>`).join('');
+      }
+
+      if (typeof window.updateAudienceCounter === 'function') window.updateAudienceCounter();
     }
 
     // ============================================================
@@ -3751,31 +3796,156 @@
       }
     };
 
-    window.applyPushTemplate = function(type) {
+    // Default & Custom Promo Templates Management
+    const DEFAULT_PROMO_TEMPLATES = [
+      {
+        id: 'tpl-discount',
+        isDefault: true,
+        label: '🏷️ 20% Discount',
+        title: '🔥 Weekend Flash Sale: 20% Off Reels & Shorts!',
+        message: 'Get high-retention video post-production delivered in 24h. Tap to claim discount code FLASH20.',
+        url: 'https://editzaar.in/#pricing'
+      },
+      {
+        id: 'tpl-portfolio',
+        isDefault: true,
+        label: '🎬 Video Showcase',
+        title: '🎬 New 4K Work Delivered — Check Out Our Latest Edits!',
+        message: 'See our newest high-retention commercial & YouTube video transformations fresh out of the editing room.',
+        url: 'https://editzaar.in/#portfolio'
+      },
+      {
+        id: 'tpl-holiday',
+        isDefault: true,
+        label: '🎉 Festival Offer',
+        title: '🎉 Festival Season Creator Special: Double Revisions!',
+        message: 'Book your video editing slots early to guarantee 24-hour turnaround times for all festive campaigns.',
+        url: 'https://editzaar.in/#pricing'
+      },
+      {
+        id: 'tpl-speed',
+        isDefault: true,
+        label: '⚡ 24h Delivery',
+        title: '⚡ Need Urgent Video Edits? Express 24h Delivery Available',
+        message: 'Send your raw footage today, receive polished broadcast-ready video cuts within 24 hours guaranteed.',
+        url: 'https://editzaar.in/#booking'
+      },
+      {
+        id: 'tpl-payment',
+        isDefault: true,
+        label: '💳 Payment Reminder',
+        title: '💳 Project Ready for Final Delivery — Balance Due',
+        message: 'Your high-resolution video renders are finalized! Please complete your milestone payment to download 4K master files.',
+        url: 'https://editzaar.in/dashboard/client.html'
+      }
+    ];
+
+    let customPromoTemplates = [];
+
+    window.toggleTemplateCreator = function() {
+      const box = document.getElementById('promoTemplateCreatorBox');
+      if (!box) return;
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    };
+
+    window.saveCustomPromoTemplate = async function() {
+      const label = document.getElementById('newTplLabel')?.value.trim();
+      const title = document.getElementById('newTplTitle')?.value.trim();
+      const msg   = document.getElementById('newTplMsg')?.value.trim();
+      const url   = document.getElementById('newTplUrl')?.value.trim() || 'https://editzaar.in';
+
+      if (!label || !title || !msg) {
+        showToast('Please fill in Template Label, Title, and Message.', 'error');
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, 'promo_templates'), {
+          label,
+          title,
+          message: msg,
+          url,
+          createdAt: serverTimestamp()
+        });
+        showToast('Custom promo template saved! 🎉', 'success');
+        document.getElementById('newTplLabel').value = '';
+        document.getElementById('newTplTitle').value = '';
+        document.getElementById('newTplMsg').value = '';
+        if (document.getElementById('newTplUrl')) document.getElementById('newTplUrl').value = '';
+        window.toggleTemplateCreator();
+      } catch (err) {
+        showToast('Failed to save template: ' + err.message, 'error');
+      }
+    };
+
+    window.deletePromoTemplate = async function(tplId, isDefault) {
+      if (isDefault) {
+        showToast('Default agency templates cannot be deleted.', 'info');
+        return;
+      }
+      if (!confirm('Are you sure you want to delete this custom template?')) return;
+      try {
+        await deleteDoc(doc(db, 'promo_templates', tplId));
+        showToast('Template deleted successfully! 🗑️', 'info');
+      } catch (err) {
+        showToast('Error deleting template: ' + err.message, 'error');
+      }
+    };
+
+    window.applyPushTemplate = function(tObj) {
+      if (typeof tObj === 'string') {
+        const found = [...DEFAULT_PROMO_TEMPLATES, ...customPromoTemplates].find(x => x.id === tObj || x.id === 'tpl-' + tObj);
+        if (found) tObj = found;
+        else return;
+      }
       const tInp = document.getElementById('bc-title');
       const mInp = document.getElementById('bc-msg');
       const uInp = document.getElementById('bc-url');
       if (!tInp || !mInp) return;
 
-      if (type === 'discount') {
-        tInp.value = '🔥 20% OFF Video Editing Packages — This Week Only!';
-        mInp.value = 'Scale your Instagram Reels, TikToks & YouTube channel with luxury high-retention post-production. Claim your discount code now!';
-        if (uInp) uInp.value = 'https://editzaar.in/#pricing';
-      } else if (type === 'portfolio') {
-        tInp.value = '🎬 New 4K Work Delivered — Check Out Our Latest Edits!';
-        mInp.value = 'See the latest dynamic pacing, motion graphics, and sound design created for our top creator brands.';
-        if (uInp) uInp.value = 'https://editzaar.in/work.html';
-      } else if (type === 'holiday') {
-        tInp.value = '🎉 Festival Season Creator Special: Double Revisions!';
-        mInp.value = 'Book your video editing slots early to guarantee 24-hour turnaround times for all festive campaigns.';
-        if (uInp) uInp.value = 'https://editzaar.in/#pricing';
-      } else if (type === 'speed') {
-        tInp.value = '⚡ Need Urgent Video Edits? Express 24h Delivery Available';
-        mInp.value = 'Send your raw footage today, receive polished broadcast-ready video cuts within 24 hours guaranteed.';
-        if (uInp) uInp.value = 'https://editzaar.in/#booking';
+      if (tObj && typeof tObj === 'object') {
+        tInp.value = tObj.title || '';
+        mInp.value = tObj.message || '';
+        if (uInp && tObj.url) uInp.value = tObj.url;
       }
       window.updatePushPreview();
     };
+
+    function renderPromoTemplateChips() {
+      const container = document.getElementById('promoTemplateChipsContainer');
+      if (!container) return;
+      const allTemplates = [...DEFAULT_PROMO_TEMPLATES, ...customPromoTemplates];
+      container.innerHTML = allTemplates.map(tpl => {
+        const isCustom = !tpl.isDefault;
+        return `
+          <div style="display:inline-flex;align-items:center;background:var(--bg2, rgba(255,255,255,0.05));border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:border-color 0.2s;">
+            <button type="button" onclick="window.applyPushTemplate('${tpl.id}')" style="background:transparent;border:none;color:var(--t1);padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+              ${tpl.label || tpl.title}
+            </button>
+            ${isCustom ? `
+              <button type="button" onclick="window.deletePromoTemplate('${tpl.id}', false)" style="background:rgba(255,59,48,0.1);border:none;border-left:1px solid var(--border);color:#FF3B30;padding:4px 8px;font-size:11px;cursor:pointer;" title="Delete custom template">
+                ✕
+              </button>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function initPromoTemplatesListener() {
+      renderPromoTemplateChips();
+      try {
+        onSnapshot(collection(db, 'promo_templates'), (snapshot) => {
+          customPromoTemplates = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderPromoTemplateChips();
+        }, (err) => {
+          console.warn('Promo templates listener warning:', err);
+          renderPromoTemplateChips();
+        });
+      } catch (err) {
+        console.warn('Error setting up promo templates listener:', err);
+      }
+    }
 
     window.testAdminPushSelf = async function() {
       if (!currentUser?.uid) {
