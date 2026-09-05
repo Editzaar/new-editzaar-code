@@ -9213,105 +9213,113 @@
 
   // 💾 SAVE FULL SERVICE PACKAGE (ALL TEXT, BULLETS, PRICING, CUSTOM, BUTTON CTA)
   window.saveFullAdminServicePackage = async function() {
-    var id = document.getElementById('editSvcId').value;
-    var cat = document.getElementById('editSvcCategory').value;
-    var name = document.getElementById('editSvcName').value.trim();
-    var price = parseInt(document.getElementById('editSvcPrice').value) || 0;
-    var priceUSD = parseInt(document.getElementById('editSvcPriceUSD').value) || 0;
-    var unit = document.getElementById('editSvcUnit').value.trim() || '/ project';
-    var delivery = document.getElementById('editSvcDelivery').value.trim() || '48 Hours';
-    var badge = document.getElementById('editSvcBadge').value.trim();
-    var btnText = document.getElementById('editSvcBtnText').value.trim();
-    var isCustom = document.getElementById('editSvcIsCustom').checked;
-    var desc = document.getElementById('editSvcDesc').value.trim();
-    var features = rawFeatures.split('\n').map(function(f) {
-      var trimmed = f.trim();
-      if (!trimmed) return '';
-      if (trimmed.startsWith('—') || trimmed.startsWith('- ') || trimmed.startsWith('✗') || trimmed.startsWith('x ')) {
-        return '— ' + trimmed.replace(/^[—\-x✗✦•*]\s*/, '').trim();
-      }
-      return trimmed.replace(/^[✦•*]\s*/, '').trim();
-    }).filter(Boolean);
-
-    if (!name) { showToast('Package name is required.', 'error'); return; }
-
     var saveBtn = document.getElementById('btnSaveFullServicePackage');
-    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving package... ⏳'; }
-
-    var catIcon = '🎬';
-    if (cat.indexOf('Web') >= 0) catIcon = '💻';
-    else if (cat.indexOf('Paid') >= 0) catIcon = '📈';
-    else if (cat.indexOf('Social') >= 0) catIcon = '📣';
-    else if (cat.indexOf('Custom') >= 0) catIcon = '⭐';
-
-    // 1. Update in-memory
-    var s = allAdminServices.find(function(item) { return item.id === id; });
-    if (!s) {
-      s = { id: id || (name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now()), order: allAdminServices.length + 1 };
-      allAdminServices.push(s);
-    }
-
-    s.name = name;
-    s.category = cat;
-    s.categoryIcon = catIcon;
-    s.price = price;
-    s.priceUSD = priceUSD;
-    s.unit = unit;
-    s.delivery = delivery;
-    s.badge = badge;
-    s.btnText = btnText;
-    s.isCustom = isCustom;
-    s.description = desc;
-    s.features = features;
-
-    // 2. Persist to localStorage
     try {
-      localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices));
-      if (window.EditzaarServices && typeof window.EditzaarServices.saveCustomCatalog === 'function') {
-        window.EditzaarServices.saveCustomCatalog(allAdminServices);
+      var id = document.getElementById('editSvcId').value;
+      var cat = document.getElementById('editSvcCategory').value;
+      var name = document.getElementById('editSvcName').value.trim();
+      var price = parseInt(document.getElementById('editSvcPrice').value) || 0;
+      var priceUSD = parseInt(document.getElementById('editSvcPriceUSD').value) || 0;
+      var unit = document.getElementById('editSvcUnit').value.trim() || '/ project';
+      var delivery = document.getElementById('editSvcDelivery').value.trim() || '48 Hours';
+      var badge = document.getElementById('editSvcBadge').value.trim();
+      var btnText = document.getElementById('editSvcBtnText').value.trim();
+      var isCustom = document.getElementById('editSvcIsCustom').checked;
+      var desc = document.getElementById('editSvcDesc').value.trim();
+      var rawFeatures = document.getElementById('editSvcFeatures') ? document.getElementById('editSvcFeatures').value : '';
+      var features = rawFeatures.split('\n').map(function(f) {
+        var trimmed = f.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('—') || trimmed.startsWith('- ') || trimmed.startsWith('✗') || trimmed.startsWith('x ')) {
+          return '— ' + trimmed.replace(/^[—\-x✗✦•*]\s*/, '').trim();
+        }
+        return trimmed.replace(/^[✦•*]\s*/, '').trim();
+      }).filter(Boolean);
+
+      if (!name) { showToast('Package name is required.', 'error'); return; }
+
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving package... ⏳'; }
+
+      var catIcon = '🎬';
+      if (cat.indexOf('Web') >= 0) catIcon = '💻';
+      else if (cat.indexOf('Paid') >= 0) catIcon = '📈';
+      else if (cat.indexOf('Social') >= 0) catIcon = '📣';
+      else if (cat.indexOf('Custom') >= 0) catIcon = '⭐';
+
+      // 1. Update in-memory
+      var s = allAdminServices.find(function(item) { return item.id === id; });
+      if (!s) {
+        s = { id: id || (name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now()), order: allAdminServices.length + 1 };
+        allAdminServices.push(s);
       }
-    } catch(e) {}
 
-    // 3. Persist to Firestore 'services'
-    try {
-      await setDoc(doc(db, 'services', s.id), {
-        id: s.id,
-        name: s.name,
-        category: s.category,
-        categoryIcon: s.categoryIcon,
-        price: s.price,
-        priceUSD: s.priceUSD,
-        unit: s.unit,
-        delivery: s.delivery,
-        badge: s.badge || '',
-        btnText: s.btnText || '',
-        isCustom: s.isCustom,
-        description: s.description,
-        features: s.features,
-        order: s.order || 1,
-        active: true,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-    } catch(e1) {
-      console.warn('Direct services doc write note:', e1.message);
+      s.name = name;
+      s.category = cat;
+      s.categoryIcon = catIcon;
+      s.price = price;
+      s.priceUSD = priceUSD;
+      s.unit = unit;
+      s.delivery = delivery;
+      s.badge = badge;
+      s.btnText = btnText;
+      s.isCustom = isCustom;
+      s.description = desc;
+      s.features = features;
+
+      // 2. Persist to localStorage
+      try {
+        localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices));
+        localStorage.setItem('editzaar_dynamic_services', JSON.stringify(allAdminServices));
+        if (window.EditzaarServices && typeof window.EditzaarServices.saveCustomCatalog === 'function') {
+          window.EditzaarServices.saveCustomCatalog(allAdminServices);
+        }
+      } catch(e) {}
+
+      // 3. Persist to Firestore 'services'
+      try {
+        await setDoc(doc(db, 'services', s.id), {
+          id: s.id,
+          name: s.name,
+          category: s.category,
+          categoryIcon: s.categoryIcon,
+          price: s.price,
+          priceUSD: s.priceUSD,
+          unit: s.unit,
+          delivery: s.delivery,
+          badge: s.badge || '',
+          btnText: s.btnText || '',
+          isCustom: s.isCustom,
+          description: s.description,
+          features: s.features,
+          order: s.order || 1,
+          active: true,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      } catch(e1) {
+        console.warn('Direct services doc write note:', e1.message);
+      }
+
+      // 4. Persist to Firestore fallback 'projects/config_services'
+      try {
+        var servicesMap = {};
+        allAdminServices.forEach(function(item) { servicesMap[item.id] = item; });
+        await setDoc(doc(db, 'projects', 'config_services'), {
+          services: servicesMap,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      } catch(e2) {
+        console.warn('Fallback config_services write note:', e2.message);
+      }
+
+      window.renderAdminServicesTable();
+      closeModal('modalEditServicePackage');
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save All Package Details & Publish Live →'; }
+      showToast('✅ Package "' + name + '" fully updated! Live across website & checkout.', 'success');
+    } catch(err) {
+      console.error('Error saving service package:', err);
+      showToast('Error saving package: ' + err.message, 'error');
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save All Package Details & Publish Live →'; }
     }
-
-    // 4. Persist to Firestore fallback 'projects/config_services'
-    try {
-      var servicesMap = {};
-      allAdminServices.forEach(function(item) { servicesMap[item.id] = item; });
-      await setDoc(doc(db, 'projects', 'config_services'), {
-        services: servicesMap,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-    } catch(e2) {
-      console.warn('Fallback config_services write note:', e2.message);
-    }
-
-    window.renderAdminServicesTable();
-    closeModal('modalEditServicePackage');
-    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save All Package Details & Publish Live →'; }
-    showToast('✅ Package "' + name + '" fully updated! Live across website & checkout.', 'success');
   };
 
   window.saveAdminServicePrice = async function(id) {
