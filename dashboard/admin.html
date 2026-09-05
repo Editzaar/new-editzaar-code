@@ -8,12 +8,65 @@
   <link rel="icon" type="image/png" href="../media/fav-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link rel="stylesheet" href="css/dashboard.css?v=300.0"/>
+  <link rel="stylesheet" href="css/dashboard.css?v=315.0"/>
   <script src="../js/services-config.js?v=310.0"></script>
   <script src="../js/telegram-service.js?v=310.0"></script>
   <script src="../js/drive-service.js?v=310.0"></script>
 
   <style>
+    /* Strict Layout Constraints to eliminate horizontal clipping */
+    .dash-shell {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      position: relative;
+    }
+    .dash-main {
+      margin-left: var(--sidebar-w, 240px);
+      flex: 1 1 0%;
+      min-width: 0;
+      width: calc(100% - var(--sidebar-w, 240px));
+      max-width: calc(100% - var(--sidebar-w, 240px));
+      box-sizing: border-box;
+      overflow-x: hidden;
+      padding: 28px 36px;
+    }
+    @media (max-width: 900px) {
+      .dash-main {
+        padding: 22px 18px;
+        width: calc(100% - var(--sidebar-w, 240px));
+        max-width: calc(100% - var(--sidebar-w, 240px));
+      }
+    }
+    @media (max-width: 768px) {
+      .dash-main {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 64px 14px calc(var(--bottom-nav-h, 60px) + 24px + var(--safe-bottom, 0px)) 14px;
+      }
+    }
+    .dash-card {
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
+    }
+    .dash-topbar {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .table-scroll-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+    }
+
     .modal-overlay {
       position:fixed; inset:0;
       background:rgba(0,0,0,0.82);
@@ -2058,28 +2111,28 @@
         </div>
 
         <div class="dash-card">
-          <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-            <div class="dash-card-title">Live Active <em>Service Catalog &amp; Prices</em> (<span id="adminSvcCount">16</span>)</div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button class="btn-sm btn-outline admin-svc-filter active" onclick="window.filterAdminServices('all', this)" style="font-size:11px;background:rgba(255,184,0,0.15);color:var(--gold);">All Services (16)</button>
-              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Video Post-Production', this)" style="font-size:11px;">🎬 Video (4)</button>
-              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Website Design & Development', this)" style="font-size:11px;">💻 Web (4)</button>
-              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Paid Advertising & Growth', this)" style="font-size:11px;">📈 Growth (4)</button>
-              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Social Media Management', this)" style="font-size:11px;">📣 Social (4)</button>
-              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('custom', this)" style="font-size:11px;color:#c084fc;border-color:rgba(147,51,234,0.4);">💎 Custom Cards (4)</button>
+          <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;width:100%;box-sizing:border-box;">
+            <div class="dash-card-title" style="margin:0;">Live Active <em>Service Catalog &amp; Prices</em> (<span id="adminSvcCount">16</span>)</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+              <button class="btn-sm btn-outline admin-svc-filter active" onclick="window.filterAdminServices('all', this)" style="font-size:11px;background:rgba(255,184,0,0.15);color:var(--gold);white-space:nowrap;">All Services (16)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Video Post-Production', this)" style="font-size:11px;white-space:nowrap;">🎬 Video (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Website Design & Development', this)" style="font-size:11px;white-space:nowrap;">💻 Web (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Paid Advertising & Growth', this)" style="font-size:11px;white-space:nowrap;">📈 Growth (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Social Media Management', this)" style="font-size:11px;white-space:nowrap;">📣 Social (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('custom', this)" style="font-size:11px;color:#c084fc;border-color:rgba(147,51,234,0.4);white-space:nowrap;">💎 Custom Cards (4)</button>
             </div>
           </div>
           <div class="table-scroll-wrap">
-            <table class="dash-table">
+            <table class="dash-table" style="min-width:960px;">
               <thead>
                 <tr>
-                  <th>Category</th>
-                  <th>Service Name</th>
-                  <th>India (₹)</th>
-                  <th>Intl ($)</th>
-                  <th>Delivery</th>
-                  <th>Description</th>
-                  <th>Quick Actions</th>
+                  <th style="white-space:nowrap;">Category</th>
+                  <th style="min-width:180px;">Service Name</th>
+                  <th style="white-space:nowrap;">India (₹)</th>
+                  <th style="white-space:nowrap;">Intl ($)</th>
+                  <th style="white-space:nowrap;">Delivery</th>
+                  <th style="min-width:160px;">Description</th>
+                  <th style="white-space:nowrap;text-align:right;">Quick Actions</th>
                 </tr>
               </thead>
               <tbody id="servicesTbody"></tbody>
@@ -9100,22 +9153,22 @@
       var btnLabel = s.btnText || (isCustom ? 'Book Custom Service →' : 'Choose Plan & Checkout →');
 
       html += '<tr>'
-        + '<td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);white-space:nowrap;">' + (s.categoryIcon || '📌') + ' ' + (s.category || 'General') + '</span></td>'
-        + '<td><div style="font-weight:700;color:var(--t1);">' + (s.name || '') + badgeBadge + customBadge + '</div>'
-        + '<div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">' + (s.unit || '/ project') + (s.features && s.features.length ? ' · ' + s.features.length + ' features' : '') + ' · <span style="color:var(--gold);font-weight:600;">Button: "' + btnLabel + '"</span></div></td>'
-        + '<td><div style="display:flex;align-items:center;gap:4px;">'
+        + '<td style="white-space:nowrap;"><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);white-space:nowrap;">' + (s.categoryIcon || '📌') + ' ' + (s.category || 'General') + '</span></td>'
+        + '<td><div style="font-weight:700;color:var(--t1);white-space:nowrap;">' + (s.name || '') + badgeBadge + customBadge + '</div>'
+        + '<div style="font-size:0.75rem;color:var(--t3);margin-top:2px;white-space:nowrap;">' + (s.unit || '/ project') + (s.features && s.features.length ? ' · ' + s.features.length + ' features' : '') + ' · <span style="color:var(--gold);font-weight:600;">Button: "' + btnLabel + '"</span></div></td>'
+        + '<td style="white-space:nowrap;"><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:var(--gold);font-weight:700;">₹</span>'
         + '<input type="number" id="inp-price-' + s.id + '" value="' + inrVal + '" placeholder="' + (isCustom ? 'Custom' : '0') + '" style="width:85px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.9rem;" min="0"/>'
         + (isCustom ? '<span style="font-size:10px;color:var(--gold);font-weight:700;">(Custom)</span>' : '')
         + '</div></td>'
-        + '<td><div style="display:flex;align-items:center;gap:4px;">'
+        + '<td style="white-space:nowrap;"><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:#28c840;font-weight:700;">$</span>'
         + '<input type="number" id="inp-price-usd-' + s.id + '" value="' + usdVal + '" placeholder="' + (isCustom ? 'Custom' : '0') + '" style="width:75px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:#28c840;font-weight:700;font-size:0.9rem;" min="0"/>'
         + (isCustom ? '<span style="font-size:10px;color:#28c840;font-weight:700;">(Custom)</span>' : '')
         + '</div></td>'
-        + '<td><input type="text" id="inp-time-' + s.id + '" value="' + (s.delivery || '48 Hours') + '" style="width:115px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:0.85rem;"/></td>'
-        + '<td style="font-size:0.85rem;color:var(--t2);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (s.description || '') + '">' + (s.description || '—') + '</td>'
-        + '<td><div style="display:flex;gap:6px;align-items:center;">'
+        + '<td style="white-space:nowrap;"><input type="text" id="inp-time-' + s.id + '" value="' + (s.delivery || '48 Hours') + '" style="width:115px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:0.85rem;"/></td>'
+        + '<td style="font-size:0.85rem;color:var(--t2);min-width:160px;max-width:240px;white-space:normal;line-height:1.35;" title="' + (s.description || '') + '">' + (s.description || '—') + '</td>'
+        + '<td style="white-space:nowrap;text-align:right;"><div style="display:flex;gap:6px;align-items:center;justify-content:flex-end;">'
         + '<button class="btn-gold btn-sm" id="btn-save-svc-' + s.id + '" onclick="window.saveAdminServicePrice(\'' + s.id + '\')" title="Quick Save Price &amp; Delivery">💾 SAVE</button>'
         + '<button class="btn-outline btn-sm" style="color:var(--gold);border-color:var(--gold-border);" onclick="window.openEditServiceModal(\'' + s.id + '\')" title="Edit All Information, Button Text &amp; Bullets">✏️ EDIT ALL</button>'
         + '<button class="btn-outline btn-sm" style="color:#ff5555;border-color:rgba(255,85,85,0.3);" onclick="window.deleteAdminService(\'' + s.id + '\')" title="Delete Service">🗑️</button>'
