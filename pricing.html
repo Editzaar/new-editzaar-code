@@ -932,11 +932,19 @@
             }
           }
 
-          // 5. Dynamic Features Bullets
+          // 5. Dynamic Features Bullets (Supports active ✦ and excluded — bullets)
           if (Array.isArray(s.features) && s.features.length > 0) {
             const featUl = card.querySelector('.pc-features');
             if (featUl) {
-              featUl.innerHTML = s.features.map(f => `<li class="pc-feat"><span class="pc-check">✦</span> ${f}</li>`).join('');
+              featUl.innerHTML = s.features.map(f => {
+                const trimmed = String(f || '').trim();
+                const isDim = trimmed.startsWith('—') || trimmed.startsWith('- ') || trimmed.startsWith('✗') || trimmed.startsWith('x ');
+                const cleanText = trimmed.replace(/^[—\-x✗✦*]\s*/, '');
+                if (isDim) {
+                  return `<li class="pc-feat pc-dim"><span class="pc-cross">—</span> ${cleanText}</li>`;
+                }
+                return `<li class="pc-feat"><span class="pc-check">✦</span> ${cleanText}</li>`;
+              }).join('');
             }
           }
 

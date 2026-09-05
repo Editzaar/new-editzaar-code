@@ -3185,7 +3185,7 @@
         <div class="field">
           <label>Feature &amp; Deliverable Bullets (✦ One per line)</label>
           <textarea id="editSvcFeatures" rows="5" placeholder="✦ First deliverable bullet&#10;✦ Second deliverable bullet&#10;✦ Third deliverable bullet" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--t1);font-family:var(--font-b);font-size:0.88rem;line-height:1.5;resize:vertical;"></textarea>
-          <div style="font-size:0.78rem;color:var(--t3);margin-top:4px;">Each line in this box will become a bullet point with the luxury gold ✦ icon on the pricing card.</div>
+          <div style="font-size:0.78rem;color:var(--t3);margin-top:4px;">Each line becomes a bullet point with the gold ✦ icon. To mark an excluded deliverable, prefix with <code style="color:var(--gold);">-</code> or <code style="color:var(--gold);">—</code> (renders dimmed with the <span style="color:var(--t3); font-weight:700;">—</span> icon).</div>
         </div>
 
         <div style="display:flex;gap:10px;margin-top:8px;">
@@ -8621,10 +8621,12 @@
       delivery: "48 Hours",
       description: "High-retention vertical editing with kinetic typography, SFX & 3-second hook structure.",
       features: [
-        "Kinetic Subtitles & Sound Design (SFX)",
-        "Motion Graphics & Dynamic B-Roll",
-        "Hook Optimization for Max Retention",
-        "Color Grading & Audio Enhancement"
+        "Up to 60-second video cut",
+        "3-sec hook optimization",
+        "Kinetic subtitles & captions",
+        "Background music & audio balancing",
+        "— Custom motion VFX",
+        "Revisions: 1"
       ],
       order: 1
     },
@@ -9222,8 +9224,14 @@
     var btnText = document.getElementById('editSvcBtnText').value.trim();
     var isCustom = document.getElementById('editSvcIsCustom').checked;
     var desc = document.getElementById('editSvcDesc').value.trim();
-    var rawFeatures = document.getElementById('editSvcFeatures').value;
-    var features = rawFeatures.split('\n').map(function(f) { return f.replace(/^[✦•\-*]\s*/, '').trim(); }).filter(Boolean);
+    var features = rawFeatures.split('\n').map(function(f) {
+      var trimmed = f.trim();
+      if (!trimmed) return '';
+      if (trimmed.startsWith('—') || trimmed.startsWith('- ') || trimmed.startsWith('✗') || trimmed.startsWith('x ')) {
+        return '— ' + trimmed.replace(/^[—\-x✗✦•*]\s*/, '').trim();
+      }
+      return trimmed.replace(/^[✦•*]\s*/, '').trim();
+    }).filter(Boolean);
 
     if (!name) { showToast('Package name is required.', 'error'); return; }
 
