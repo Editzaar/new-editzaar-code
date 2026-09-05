@@ -962,6 +962,51 @@
       });
     }
 
+    // Realtime listeners for service catalog changes across tabs and Firestore
+    window.addEventListener('editzaar:services_updated', () => {
+      renderDynamicPackagePrices();
+    });
+
+    async function initPricingFirestoreServicesSync() {
+      try {
+        const { initializeApp, getApps, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+        const { getFirestore, collection, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        const firebaseConfig = {
+          apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+          authDomain: "editzaar-fa8d9.firebaseapp.com",
+          projectId: "editzaar-fa8d9",
+          storageBucket: "editzaar-fa8d9.firebasestorage.app",
+          messagingSenderId: "419930711716",
+          appId: "1:419930711716:web:d261e46ee744319688bc8a"
+        };
+        const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        onSnapshot(collection(db, 'services'), (snapshot) => {
+          if (!snapshot.empty && window.EditzaarServices) {
+            const currentList = window.EditzaarServices.getAll();
+            snapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              const sid = docSnap.id;
+              if (sid === 'cinematic-documentary') return;
+              const idx = currentList.findIndex(s => s.id === sid);
+              if (idx >= 0) {
+                currentList[idx] = { ...currentList[idx], ...data, id: sid };
+              } else {
+                currentList.push({ ...data, id: sid });
+              }
+            });
+            window.EditzaarServices.saveCustomCatalog(currentList);
+            renderDynamicPackagePrices();
+          }
+        }, (err) => {
+          console.warn('[Pricing] Firestore services sync warning:', err.message);
+        });
+      } catch(e) {
+        console.warn('[Pricing] Could not init Firestore sync:', e);
+      }
+    }
+
     // Custom Quote Modal Handler (100% Customizable, No Forced Price)
     window.openCustomQuote = function(pName, category, svcId, customBtnLabel) {
       const defaultQuoteAction = customBtnLabel || 'Book Custom Service →';
@@ -1826,6 +1871,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       autoDetectVisitorCountry();
+      initPricingFirestoreServicesSync();
     });
   </script>
   <script>

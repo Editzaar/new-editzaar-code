@@ -429,7 +429,8 @@
         if (local) {
           const parsed = JSON.parse(local);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            const merged = [...parsed];
+            const filtered = parsed.filter(m => m.id !== 'cinematic-documentary');
+            const merged = [...filtered];
             DEFAULT_SERVICES.forEach(def => {
               const exists = merged.find(m => m.id === def.id);
               if (!exists) {
@@ -575,9 +576,11 @@
         const icon = list[0]?.categoryIcon || '📌';
         html += `<optgroup label="${icon} ${catName}">`;
         list.forEach(s => {
-          const val = `${s.name}|${s.price}|${s.delivery}`;
+          const isCustom = !!(s.isCustom || s.price <= 0 || s.unit === 'Custom');
+          const val = isCustom ? `${s.name}|0|Custom` : `${s.name}|${s.price}|${s.delivery}`;
           const isSel = (s.id === selectedId || s.name === selectedId) ? 'selected' : '';
-          html += `<option value="${val}" ${isSel}>${icon} ${s.name} — ₹${s.price.toLocaleString()} ${s.unit}</option>`;
+          const priceLabel = isCustom ? '— Custom Quote' : `— ₹${(s.price || 0).toLocaleString()} ${s.unit || ''}`;
+          html += `<option value="${val}" ${isSel}>${icon} ${s.name} ${priceLabel}</option>`;
         });
         html += `</optgroup>`;
       }

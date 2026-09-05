@@ -2058,7 +2058,17 @@
         </div>
 
         <div class="dash-card">
-          <div class="dash-card-header"><div class="dash-card-title">Live Active <em>Service Catalog &amp; Prices</em></div></div>
+          <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div class="dash-card-title">Live Active <em>Service Catalog &amp; Prices</em> (<span id="adminSvcCount">16</span>)</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn-sm btn-outline admin-svc-filter active" onclick="window.filterAdminServices('all', this)" style="font-size:11px;background:rgba(255,184,0,0.15);color:var(--gold);">All Services (16)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Video Post-Production', this)" style="font-size:11px;">🎬 Video (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Website Design & Development', this)" style="font-size:11px;">💻 Web (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Paid Advertising & Growth', this)" style="font-size:11px;">📈 Growth (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('Social Media Management', this)" style="font-size:11px;">📣 Social (4)</button>
+              <button class="btn-sm btn-outline admin-svc-filter" onclick="window.filterAdminServices('custom', this)" style="font-size:11px;color:#c084fc;border-color:rgba(147,51,234,0.4);">💎 Custom Cards (4)</button>
+            </div>
+          </div>
           <div class="table-scroll-wrap">
             <table class="dash-table">
               <thead>
@@ -8863,6 +8873,23 @@
     }
   ];
 
+  var currentAdminSvcFilter = 'all';
+
+  window.filterAdminServices = function(filterCategory, btnEl) {
+    currentAdminSvcFilter = filterCategory;
+    document.querySelectorAll('.admin-svc-filter').forEach(function(b) {
+      b.classList.remove('active');
+      b.style.background = 'transparent';
+      b.style.color = 'var(--t2)';
+    });
+    if (btnEl) {
+      btnEl.classList.add('active');
+      btnEl.style.background = 'rgba(255,184,0,0.15)';
+      btnEl.style.color = 'var(--gold)';
+    }
+    window.renderAdminServicesTable();
+  };
+
   window.initServicesFirestoreListener = function() {
     // Check localStorage first
     try {
@@ -8870,12 +8897,10 @@
       if (localCached) {
         var parsed = JSON.parse(localCached);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          var merged = parsed.slice();
-          DEFAULT_SERVICES_LIST.forEach(function(def) {
-            var exists = merged.find(function(m) { return m.id === def.id; });
-            if (!exists) merged.push(def);
+          allAdminServices = DEFAULT_SERVICES_LIST.map(function(def) {
+            var found = parsed.find(function(p) { return p.id === def.id; });
+            return found ? { ...def, ...found } : { ...def };
           });
-          allAdminServices = merged;
         }
       }
     } catch(e) {}
@@ -8885,24 +8910,90 @@
     }
     window.renderAdminServicesTable();
 
-    // 1. Listen to 'services' collection
+    // 1. Listen to 'services' collection with auto-seeding of missing packages
     try {
-      onSnapshot(collection(db, 'services'), function(snapshot) {
+      onSnapshot(collection(db, 'services'), async function(snapshot) {
+        var cloudMap = {};
         if (!snapshot.empty) {
-          var cloudList = [];
           snapshot.forEach(function(d) {
-            var data = d.data();
-            data.id = d.id;
-            cloudList.push(data);
+            cloudMap[d.id] = { id: d.id, ...d.data() };
           });
-          cloudList.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
-          allAdminServices = cloudList;
-          try { localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices)); } catch(e) {}
-          window.renderAdminServicesTable();
-        } else if (!hasSeededServices) {
-          hasSeededServices = true;
-          autoSeedServicesToFirestore();
         }
+
+        // Clean up legacy / obsolete 'cinematic-documentary' document from Firestore
+        if (cloudMap['cinematic-documentary']) {
+          deleteDoc(doc(db, 'services', 'cinematic-documentary')).catch(function() {});
+          delete cloudMap['cinematic-documentary'];
+        }
+
+        // Ensure ALL 16 official services are represented and synced
+        var needsFirestoreSeed = false;
+        var fullCatalog = DEFAULT_SERVICES_LIST.map(function(def) {
+          var cloudData = cloudMap[def.id];
+          if (cloudData) {
+            return {
+              ...def,
+              ...cloudData,
+              category: def.category,
+              categoryIcon: def.categoryIcon,
+              isCustom: !!def.isCustom,
+              order: (cloudData.order !== undefined) ? cloudData.order : def.order
+            };
+          } else {
+            needsFirestoreSeed = true;
+            return { ...def };
+          }
+        });
+
+        // Also retain any extra custom services created manually by admin
+        Object.keys(cloudMap).forEach(function(cid) {
+          if (!DEFAULT_SERVICES_LIST.some(function(d) { return d.id === cid; })) {
+            fullCatalog.push(cloudMap[cid]);
+          }
+        });
+
+        fullCatalog.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+        allAdminServices = fullCatalog;
+
+        // Auto-seed missing services to Firestore so the database is always 100% complete
+        if (needsFirestoreSeed) {
+          DEFAULT_SERVICES_LIST.forEach(async function(def) {
+            if (!cloudMap[def.id]) {
+              try {
+                await setDoc(doc(db, 'services', def.id), {
+                  id: def.id,
+                  category: def.category,
+                  categoryIcon: def.categoryIcon,
+                  name: def.name,
+                  price: def.price,
+                  priceUSD: def.priceUSD,
+                  unit: def.unit,
+                  delivery: def.delivery,
+                  description: def.description,
+                  features: def.features || [],
+                  badge: def.badge || '',
+                  btnText: def.btnText || (def.isCustom ? 'Book Custom Service →' : 'Choose Plan & Checkout →'),
+                  isCustom: !!def.isCustom,
+                  order: def.order,
+                  active: true,
+                  updatedAt: serverTimestamp()
+                }, { merge: true });
+              } catch(seedErr) {
+                console.warn('[Auto-seed service error]', def.id, seedErr);
+              }
+            }
+          });
+        }
+
+        try {
+          localStorage.setItem('editzaar_services_catalog', JSON.stringify(allAdminServices));
+          localStorage.setItem('editzaar_dynamic_services', JSON.stringify(allAdminServices));
+          if (window.EditzaarServices && typeof window.EditzaarServices.saveCustomCatalog === 'function') {
+            window.EditzaarServices.saveCustomCatalog(allAdminServices);
+          }
+        } catch(e) {}
+
+        window.renderAdminServicesTable();
       }, function(err) {
         console.warn('services listener notice (will use fallback):', err.message);
       });
@@ -8916,6 +9007,7 @@
           if (dat && dat.services) {
             var map = dat.services;
             Object.keys(map).forEach(function(sid) {
+              if (sid === 'cinematic-documentary') return;
               var s = map[sid];
               var existing = allAdminServices.find(function(item) { return item.id === sid; });
               if (existing) {
@@ -8925,10 +9017,9 @@
                 if (s.delivery) existing.delivery = s.delivery;
                 if (s.description) existing.description = s.description;
                 if (s.badge !== undefined) existing.badge = s.badge;
+                if (s.btnText !== undefined) existing.btnText = s.btnText;
                 if (s.isCustom !== undefined) existing.isCustom = s.isCustom;
                 if (s.features) existing.features = s.features;
-              } else {
-                allAdminServices.push(s);
               }
             });
             window.renderAdminServicesTable();
@@ -8942,6 +9033,10 @@
 
   async function autoSeedServicesToFirestore() {
     try {
+      try {
+        await deleteDoc(doc(db, 'services', 'cinematic-documentary'));
+      } catch(e) {}
+
       for (var i = 0; i < DEFAULT_SERVICES_LIST.length; i++) {
         var s = DEFAULT_SERVICES_LIST[i];
         await setDoc(doc(db, 'services', s.id), {
@@ -8956,14 +9051,15 @@
           description: s.description,
           features: s.features || [],
           badge: s.badge || '',
+          btnText: s.btnText || (s.isCustom ? 'Book Custom Service →' : 'Choose Plan & Checkout →'),
           isCustom: !!s.isCustom,
           order: s.order,
           active: true,
-          createdAt: serverTimestamp()
-        });
+          updatedAt: serverTimestamp()
+        }, { merge: true });
       }
-      console.log('Services catalog auto-seeded to Firestore!');
-    } catch(e) { console.log('Services seed note:', e.message); }
+      console.log('All 16 service packages auto-seeded to Firestore successfully!');
+    } catch(e) { console.warn('Services seed note:', e.message); }
   }
 
   window.onAdminInrPriceInput = function(val) {
@@ -8978,27 +9074,44 @@
   window.renderAdminServicesTable = function() {
     var tbody = document.getElementById('servicesTbody');
     if (!tbody) return;
+
+    var countEl = document.getElementById('adminSvcCount');
+    if (countEl) countEl.textContent = allAdminServices.length;
+
+    var filtered = allAdminServices.filter(function(s) {
+      if (currentAdminSvcFilter === 'all') return true;
+      if (currentAdminSvcFilter === 'custom') return !!(s.isCustom || s.price <= 0 || s.unit === 'Custom');
+      return s.category === currentAdminSvcFilter;
+    });
+
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:30px;">No service packages found in this category.</td></tr>';
+      return;
+    }
+
     var html = '';
-    allAdminServices.forEach(function(s) {
+    filtered.forEach(function(s) {
       var inrVal = s.price || 0;
       var isCustom = !!(s.isCustom || s.price <= 0 || s.unit === 'Custom');
       var usdVal = (s.priceUSD !== undefined) ? s.priceUSD : (window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(inrVal) : Math.round(inrVal / 80));
       var badgeBadge = s.badge ? '<span class="status-badge" style="background:rgba(255,184,0,0.15);color:var(--gold);margin-left:6px;font-size:10px;">' + s.badge + '</span>' : '';
-      var customBadge = isCustom ? '<span class="status-badge" style="background:rgba(147,51,234,0.18);color:#c084fc;margin-left:6px;font-size:10px;">💎 CUSTOM</span>' : '';
+      var customBadge = isCustom ? '<span class="status-badge" style="background:rgba(147,51,234,0.22);color:#c084fc;border:1px solid rgba(147,51,234,0.4);margin-left:6px;font-size:10px;">💎 CUSTOM CARD</span>' : '';
 
       var btnLabel = s.btnText || (isCustom ? 'Book Custom Service →' : 'Choose Plan & Checkout →');
 
       html += '<tr>'
-        + '<td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);">' + (s.categoryIcon || '📌') + ' ' + (s.category || 'General') + '</span></td>'
+        + '<td><span class="status-badge" style="background:rgba(255,184,0,0.1);color:var(--gold);white-space:nowrap;">' + (s.categoryIcon || '📌') + ' ' + (s.category || 'General') + '</span></td>'
         + '<td><div style="font-weight:700;color:var(--t1);">' + (s.name || '') + badgeBadge + customBadge + '</div>'
         + '<div style="font-size:0.75rem;color:var(--t3);margin-top:2px;">' + (s.unit || '/ project') + (s.features && s.features.length ? ' · ' + s.features.length + ' features' : '') + ' · <span style="color:var(--gold);font-weight:600;">Button: "' + btnLabel + '"</span></div></td>'
         + '<td><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:var(--gold);font-weight:700;">₹</span>'
-        + '<input type="number" id="inp-price-' + s.id + '" value="' + inrVal + '" style="width:85px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.9rem;" min="0"/>'
+        + '<input type="number" id="inp-price-' + s.id + '" value="' + inrVal + '" placeholder="' + (isCustom ? 'Custom' : '0') + '" style="width:85px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-weight:700;font-size:0.9rem;" min="0"/>'
+        + (isCustom ? '<span style="font-size:10px;color:var(--gold);font-weight:700;">(Custom)</span>' : '')
         + '</div></td>'
         + '<td><div style="display:flex;align-items:center;gap:4px;">'
         + '<span style="color:#28c840;font-weight:700;">$</span>'
-        + '<input type="number" id="inp-price-usd-' + s.id + '" value="' + usdVal + '" style="width:75px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:#28c840;font-weight:700;font-size:0.9rem;" min="0"/>'
+        + '<input type="number" id="inp-price-usd-' + s.id + '" value="' + usdVal + '" placeholder="' + (isCustom ? 'Custom' : '0') + '" style="width:75px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:#28c840;font-weight:700;font-size:0.9rem;" min="0"/>'
+        + (isCustom ? '<span style="font-size:10px;color:#28c840;font-weight:700;">(Custom)</span>' : '')
         + '</div></td>'
         + '<td><input type="text" id="inp-time-' + s.id + '" value="' + (s.delivery || '48 Hours') + '" style="width:115px;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-size:0.85rem;"/></td>'
         + '<td style="font-size:0.85rem;color:var(--t2);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (s.description || '') + '">' + (s.description || '—') + '</td>'

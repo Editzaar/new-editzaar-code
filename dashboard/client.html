@@ -789,16 +789,25 @@
               <option value="Shorts &amp; Instagram Reels|1000|48 Hours" selected>📱 Shorts &amp; Instagram Reels — ₹1,000 / video</option>
               <option value="Motion Graphic &amp; Animated Video|2500|48 Hours">🎨 Motion Graphic &amp; Animated Video — ₹2,500 / video</option>
               <option value="Long Form YouTube Video Edit|5000|48-72 Hours">🎬 Long Form YouTube Video Edit — ₹5,000 / video</option>
-              <option value="Cinematic Documentary &amp; Ad Film|10000|3-5 Days">🎥 Cinematic Documentary &amp; Ad Film — ₹10,000 / video</option>
+              <option value="Monthly Creator Partnership|0|Monthly Retainer">💎 Monthly Creator Partnership — Custom Quote</option>
             </optgroup>
             <optgroup label="💻 Website Design &amp; Development">
               <option value="High-Converting Landing Page|4999|3-5 Days">⚡ High-Converting Landing Page — ₹4,999 / project</option>
-              <option value="D2C Brand &amp; E-Commerce Store|12999|7-10 Days">🛍️ D2C Brand &amp; E-Commerce Store — ₹12,999 / project</option>
+              <option value="Corporate / D2C Storefront|12999|5-7 Days">🛍️ Corporate / D2C Storefront — ₹12,999 / project</option>
               <option value="Full Web System &amp; Portal|24999|10-14 Days">💻 Full Web System &amp; Portal — ₹24,999 / project</option>
+              <option value="Custom Web &amp; Enterprise System|0|Milestone Based">💎 Custom Web &amp; Enterprise System — Custom Quote</option>
             </optgroup>
             <optgroup label="📈 Paid Advertising &amp; Growth">
-              <option value="Paid Ad Setup &amp; Creatives|7999|3-5 Days">🎯 Paid Ad Setup &amp; Creatives (Meta &amp; Google) — ₹7,999 / campaign</option>
-              <option value="Full Channel Growth Retainer|14999|Monthly">🚀 Full Channel Growth Retainer — ₹14,999 / month</option>
+              <option value="Paid Ad Setup &amp; Creatives|7999|3-5 Days">🎯 Paid Ad Setup &amp; Creatives — ₹7,999 / campaign</option>
+              <option value="Full Channel Growth Retainer|14999|Monthly Retainer">🚀 Full Channel Growth Retainer — ₹14,999 / month</option>
+              <option value="Multi-Platform Scale Engine|24999|7-10 Days / Ongoing">⚡ Multi-Platform Scale Engine — ₹24,999 / month</option>
+              <option value="Custom Enterprise Growth Partner|0|Monthly Retainer">💎 Custom Enterprise Growth Partner — Custom Quote</option>
+            </optgroup>
+            <optgroup label="📣 Social Media Management">
+              <option value="Essential Social Presence|6999|Monthly Retainer">📣 Essential Social Presence — ₹6,999 / month</option>
+              <option value="Omnichannel Growth Engine|12999|Monthly Retainer">🚀 Omnichannel Growth Engine — ₹12,999 / month</option>
+              <option value="YouTube Authority &amp; Domination|18999|Monthly Retainer">👑 YouTube Authority &amp; Domination — ₹18,999 / month</option>
+              <option value="Custom Brand Authority Partnership|0|Monthly Retainer">💎 Custom Brand Authority Partnership — Custom Quote</option>
             </optgroup>
             <optgroup label="⭐ Custom Service / Quote">
               <option value="Custom Service / Custom Quote|0|Custom">✨ Custom Service / Custom Quote Request</option>
@@ -2257,7 +2266,10 @@
     cnpServiceSelect.addEventListener('change', (e)=>{
       const [serviceName, priceStr] = e.target.value.split('|');
       const customWrap = document.getElementById('cnpCustomServiceWrap');
-      const isCustom = serviceName.includes('Custom Service');
+      const isCustom = serviceName.includes('Custom Service') || 
+                       serviceName.toLowerCase().includes('custom') || 
+                       serviceName.toLowerCase().includes('partnership') || 
+                       parseInt(priceStr) === 0;
 
       if (isCustom) {
         customWrap.style.display = 'block';
@@ -2292,7 +2304,10 @@
       const rawVal = cnpServiceSelect.value || 'Shorts & Instagram Reels|1000|48 Hours';
       const parts = rawVal.split('|');
       const serviceName = parts[0] || 'Video Service';
-      const isCustom = serviceName.includes('Custom Service');
+      const isCustom = serviceName.includes('Custom Service') || 
+                       serviceName.toLowerCase().includes('custom') || 
+                       serviceName.toLowerCase().includes('partnership') || 
+                       (parseInt(parts[1]) === 0);
       const customName = document.getElementById('cnp-custom-name') ? document.getElementById('cnp-custom-name').value.trim() : '';
       const finalServiceName = isCustom && customName ? customName : serviceName;
 
