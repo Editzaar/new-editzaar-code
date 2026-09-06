@@ -149,13 +149,6 @@
     .stat-card-label { font-size: 0.88rem; color: var(--t2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
     .stat-card-value { font-size: 2rem; font-weight: 700; color: var(--gold); }
     
-    .chat-layout { display: flex; gap: 20px; height: calc(100vh - 150px); }
-    .chat-sidebar { width: 280px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); overflow-y: auto; }
-    .chat-main { flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r); display: flex; flex-direction: column; }
-    .chat-project-item { padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
-    .chat-project-item:hover { background: rgba(255,255,255,0.05); }
-    .chat-project-item.active { background: var(--gold-dim); border-left: 3px solid var(--gold); }
-
     .file-tabs { display: flex; gap: 12px; margin-bottom: 16px; overflow-x: auto; }
     .file-tab { padding: 8px 16px; background: var(--bg-card2); border: 1px solid var(--border); border-radius: var(--r); cursor: pointer; white-space: nowrap; }
     .file-tab.active { background: var(--gold); color: #000; border-color: var(--gold); }
@@ -328,7 +321,10 @@
   <div class="dash-shell">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <a href="../" class="sidebar-logo" title="Back to Home Page">EDIT<em>ZAAR</em> ↗</a>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-right:8px;">
+        <a href="../" class="sidebar-logo" style="margin-bottom:0;flex:1;" title="Back to Home Page">EDIT<em>ZAAR</em> ↗</a>
+        <button id="sidebarCloseBtn" class="sidebar-close-btn" style="background:none;border:none;color:var(--t2);font-size:1.4rem;cursor:pointer;padding:4px 8px;display:none;" aria-label="Close menu">✕</button>
+      </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div class="sidebar-role-badge" style="margin-bottom:0;">👤 Client Portal</div>
         <button class="notif-bell-btn" id="clientSidebarBellBtn" title="Real-time Alerts &amp; Notifications" onclick="window.toggleClientNotifPanel(event)">
@@ -367,7 +363,7 @@
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="clientEmail">Loading…</div>
-        <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
+        <button class="sidebar-signout" id="signoutBtn">🚪 Sign Out</button>
       </div>
     </aside>
 
@@ -601,6 +597,13 @@
             <div class="field"><label>New Password</label><input type="password" id="set-password"></div>
             <button class="btn-gold" id="btnChangePassword">Change Password</button>
           </div>
+        </div>
+        <div class="dash-card" style="max-width: 600px; margin-top: 24px; border: 1px solid rgba(255,95,87,0.35);">
+          <div class="dash-card-header"><div class="dash-card-title" style="color:#ff6b6b;">Session &amp; Account</div></div>
+          <p style="font-size:0.86rem; color:var(--t2); margin-bottom:14px;">Sign out of your client portal session on this device.</p>
+          <button class="btn-outline" id="btnSettingsSignOut" style="border-color:rgba(255,95,87,0.5); color:#ff6b6b; font-weight:700; width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px;">
+            🚪 Sign Out of Editzaar
+          </button>
         </div>
       </section>
 
@@ -1160,7 +1163,8 @@
       loadUsers(); listenRealtimeProjects(); listenAnnouncements(); listenNotifications(); listenSupportTickets();
     });
 
-    document.getElementById('signoutBtn').addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('index.html')));
+    document.getElementById('signoutBtn')?.addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('index.html')));
+    document.getElementById('btnSettingsSignOut')?.addEventListener('click',()=>signOut(auth).then(()=>window.location.replace('index.html')));
 
     async function loadUsers() {
       const snap = await getDocs(collection(db,'users'));
@@ -1510,6 +1514,9 @@
           <span style="font-size:0.72rem; color:var(--t3);">${p.editorName || 'Assigned Editor'}</span>
         </div>
       </div>`).join('');
+      if (!globalChatPid && projects && projects.length > 0) {
+        window.openGlobalChat(projects[0].id, projects[0].title || 'Project');
+      }
     }
     
     window.openGlobalChat = (pid, ptitle) => {
@@ -3312,6 +3319,10 @@
         sidebarOverlay.classList.remove('active');
       });
     }
+    document.getElementById('sidebarCloseBtn')?.addEventListener('click', () => {
+      document.getElementById('sidebar')?.classList.remove('open');
+      sidebarOverlay?.classList.remove('active');
+    });
     // Push Notification system
     function showPushNotif(icon, title, text, duration=4000) {
       const el    = document.getElementById('pushNotif');

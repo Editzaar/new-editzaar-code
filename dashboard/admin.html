@@ -1010,7 +1010,7 @@
       </nav>
       <div class="sidebar-footer">
         <div class="sidebar-user-info" id="adminEmail">Loading…</div>
-        <button class="sidebar-signout" id="signoutBtn">Sign Out</button>
+        <button class="sidebar-signout" id="signoutBtn">🚪 Sign Out</button>
       </div>
     </aside>
 
@@ -2746,6 +2746,13 @@
             <button class="btn-danger" id="btnClearAllTickets" style="padding:10px 16px;font-size:12px;">🎫 Clear Support Tickets</button>
           </div>
         </div>
+        <div class="dash-card" style="margin-top:20px; border:1px solid rgba(255,95,87,0.35);">
+          <div class="dash-card-header"><div class="dash-card-title" style="color:#ff6b6b;">Session &amp; Security</div></div>
+          <p style="font-size:0.86rem; color:var(--t2); margin-bottom:14px;">Sign out of the administrator control panel on this device.</p>
+          <button class="btn-outline" id="btnAdminSettingsSignOut" style="border-color:rgba(255,95,87,0.5); color:#ff6b6b; font-weight:700; width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px;">
+            🚪 Sign Out of Admin Portal
+          </button>
+        </div>
       </section>
 
     </main>
@@ -3618,7 +3625,8 @@
 
     });
 
-    document.getElementById('signoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.replace('index.html')));
+    document.getElementById('signoutBtn')?.addEventListener('click', () => signOut(auth).then(() => window.location.replace('index.html')));
+    document.getElementById('btnAdminSettingsSignOut')?.addEventListener('click', () => signOut(auth).then(() => window.location.replace('index.html')));
 
     function formatAudienceBadge(target) {
       if (!target || target === 'all') return '🌐 All';
@@ -7813,6 +7821,10 @@
         sidebarOverlay.classList.remove('active');
       });
     }
+    document.getElementById('sidebarCloseBtn')?.addEventListener('click', () => {
+      document.getElementById('sidebar')?.classList.remove('open');
+      sidebarOverlay?.classList.remove('active');
+    });
     // Push Notification system
     function showPushNotif(icon, title, text, duration=4000) {
       const el    = document.getElementById('pushNotif');
