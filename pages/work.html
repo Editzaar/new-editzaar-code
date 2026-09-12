@@ -168,12 +168,8 @@
             padding: 12px;
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-        }
-
-        .phone-frame:hover {
-            transform: translateY(-10px);
-            border-color: var(--gold-border);
+            transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+            will-change: transform;
         }
 
         .phone-frame::before {
@@ -196,13 +192,15 @@
             aspect-ratio: 9/16;
             border-radius: 30px;
             overflow: hidden;
-            background: #000;
+            background: #0b0b0e;
+            cursor: pointer;
         }
 
         .video-container video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            background: #0b0b0e;
         }
 
         /* Video Grid (Horizontal 16:9) */
@@ -218,17 +216,21 @@
             border-radius: 15px;
             padding: 15px;
             position: relative;
-            transition: transform 0.3s ease;
-        }
-
-        .monitor-frame:hover {
-            transform: translateY(-10px);
-            border-color: var(--gold-border);
+            transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+            will-change: transform;
         }
 
         .monitor-frame .video-container {
             aspect-ratio: 16/9;
             border-radius: 10px;
+        }
+
+        /* Stable Hover: Target parent wrapper div so cursor never leaves bounds, totally preventing jitter/vibration */
+        .carousel-track > div:hover .phone-frame,
+        .carousel-track > div:hover .monitor-frame {
+            transform: translateY(-6px);
+            border-color: var(--gold-border);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 184, 0, 0.2);
         }
 
         .video-overlay {
@@ -237,7 +239,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.38);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -247,7 +249,7 @@
             pointer-events: none;
         }
 
-        .video-container:hover .video-overlay {
+        .video-container.is-playing .video-overlay {
             opacity: 0;
         }
 
@@ -569,14 +571,17 @@
         .carousel-track>div {
             flex: 0 0 auto;
             scroll-snap-align: start;
+            padding-top: 10px;
         }
 
         .video-grid-vertical>div {
             width: 280px;
+            flex: 0 0 280px;
         }
 
         .video-grid-horizontal>div {
             width: 420px;
+            flex: 0 0 420px;
         }
 
         .web-grid>div {
@@ -1084,7 +1089,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1100,7 +1105,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1116,7 +1121,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1132,7 +1137,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1147,7 +1152,7 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1162,7 +1167,7 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1178,7 +1183,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1194,7 +1199,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1210,7 +1215,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1226,7 +1231,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1253,7 +1258,7 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1269,7 +1274,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1285,7 +1290,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1301,7 +1306,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1317,7 +1322,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1333,7 +1338,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1349,7 +1354,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1365,7 +1370,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1381,7 +1386,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1397,7 +1402,7 @@
                             <div class="video-container">
                                 <video
                                     src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
-                                    muted loop playsinline></video>
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1926,59 +1931,163 @@
 
     <!-- Scripts -->
     <script>
-        // Video Play/Pause (Hover on Desktop, Tap on Touch Devices)
-        const videoContainers = document.querySelectorAll('.video-container');
+        // Universal High-Performance Video Engine (Zero-Vibration, Instant-Play, Mobile-Optimized)
+        function wireVideoHover(root) {
+            if (!root) return;
+            var containers = root.querySelectorAll ? root.querySelectorAll('.video-container') : [];
+            if (root.classList && root.classList.contains('video-container')) {
+                containers = [root];
+            }
 
-        videoContainers.forEach(container => {
-            const video = container.querySelector('video');
-            if (!video) return;
-            const muteBtn = container.querySelector('.mute-btn');
-            const overlay = container.querySelector('.video-overlay');
+            var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-            // Fade overlay when playing/paused
-            video.addEventListener('play', () => {
-                if (overlay) overlay.style.opacity = '0';
-            });
-            video.addEventListener('pause', () => {
-                if (overlay) overlay.style.opacity = '1';
-            });
+            containers.forEach(function(container) {
+                var video = container.querySelector('video');
+                if (!video || video._vInit) return;
+                video._vInit = true;
 
-            // Desktop hover
-            container.addEventListener('mouseenter', () => {
-                video.play().catch(() => {});
-            });
+                var muteBtn = container.querySelector('.mute-btn');
+                var overlay = container.querySelector('.video-overlay');
 
-            container.addEventListener('mouseleave', () => {
-                video.pause();
-            });
+                // Crucial video playback properties
+                video.muted = true;
+                video.playsInline = true;
+                video.setAttribute('playsinline', '');
+                video.setAttribute('webkit-playsinline', '');
+                video.setAttribute('preload', 'metadata');
 
-            // Mobile / Touch tap to toggle play/pause
-            container.addEventListener('click', (e) => {
-                if (e.target.closest('.mute-btn')) return;
-                if (video.paused) {
-                    video.play().catch(() => {});
-                } else {
-                    video.pause();
+                // Render first frame immediately so cards are never black boxes
+                function triggerFirstFrame() {
+                    if (video.currentTime === 0) {
+                        try { video.currentTime = 0.001; } catch(e) {}
+                    }
                 }
-            });
+                if (video.readyState >= 1) {
+                    triggerFirstFrame();
+                } else {
+                    video.addEventListener('loadedmetadata', triggerFirstFrame, { once: true });
+                }
 
-            if (muteBtn) {
-                muteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation(); // prevent play toggle
-                    video.muted = !video.muted;
-                    const icon = muteBtn.querySelector('i');
-                    if (icon) {
-                        if (video.muted) {
-                            icon.classList.remove('fa-volume-up');
-                            icon.classList.add('fa-volume-mute');
-                        } else {
-                            icon.classList.remove('fa-volume-mute');
-                            icon.classList.add('fa-volume-up');
+                var playPromise = null;
+                var hoverTimer = null;
+
+                function doPlay() {
+                    container.classList.add('is-playing');
+                    if (overlay) overlay.style.opacity = '0';
+
+                    if (video.paused) {
+                        playPromise = video.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(function() {
+                                playPromise = null;
+                            }).catch(function(err) {
+                                playPromise = null;
+                                if (video.paused) {
+                                    container.classList.remove('is-playing');
+                                    if (overlay) overlay.style.opacity = '1';
+                                }
+                            });
                         }
                     }
+                }
+
+                function doPause() {
+                    container.classList.remove('is-playing');
+                    if (overlay) overlay.style.opacity = '1';
+
+                    if (playPromise) {
+                        playPromise.then(function() {
+                            video.pause();
+                        }).catch(function() {
+                            video.pause();
+                        });
+                    } else {
+                        video.pause();
+                    }
+                }
+
+                video.addEventListener('play', function() {
+                    container.classList.add('is-playing');
+                    if (overlay) overlay.style.opacity = '0';
                 });
-            }
-        });
+
+                video.addEventListener('pause', function() {
+                    container.classList.remove('is-playing');
+                    if (overlay) overlay.style.opacity = '1';
+                });
+
+                // Desktop: Smooth Hover with 60ms debounce (prevents thrashing on fast mouse movement)
+                if (!isTouch) {
+                    var cardWrap = container.closest('.phone-frame') || container.closest('.monitor-frame') || container.parentElement || container;
+                    cardWrap.addEventListener('mouseenter', function() {
+                        clearTimeout(hoverTimer);
+                        hoverTimer = setTimeout(function() {
+                            doPlay();
+                        }, 60);
+                    });
+
+                    cardWrap.addEventListener('mouseleave', function() {
+                        clearTimeout(hoverTimer);
+                        doPause();
+                    });
+                }
+
+                // Universal Click / Tap to Toggle Play / Pause
+                container.addEventListener('click', function(e) {
+                    if (e.target.closest('.mute-btn')) return;
+                    clearTimeout(hoverTimer);
+                    if (video.paused) {
+                        doPlay();
+                    } else {
+                        doPause();
+                    }
+                });
+
+                // Audio Mute / Unmute Toggle
+                if (muteBtn) {
+                    muteBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        video.muted = !video.muted;
+                        var icon = muteBtn.querySelector('i');
+                        if (icon) {
+                            if (video.muted) {
+                                icon.className = 'fas fa-volume-mute';
+                            } else {
+                                icon.className = 'fas fa-volume-up';
+                                // Auto-mute any other video so sounds do not clash
+                                document.querySelectorAll('video').forEach(function(otherV) {
+                                    if (otherV !== video && !otherV.muted) {
+                                        otherV.muted = true;
+                                        var otherIcon = otherV.closest('.video-container') ? otherV.closest('.video-container').querySelector('.mute-btn i') : null;
+                                        if (otherIcon) otherIcon.className = 'fas fa-volume-mute';
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Initialize all videos on page load
+        wireVideoHover(document);
+
+        // IntersectionObserver: Pause offscreen videos to save CPU & data
+        if ('IntersectionObserver' in window) {
+            var videoObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    var v = entry.target.querySelector('video');
+                    if (!v) return;
+                    if (!entry.isIntersecting && !v.paused) {
+                        v.pause();
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.video-container').forEach(function(el) {
+                videoObserver.observe(el);
+            });
+        }
 
         // Portfolio Filtering (Supports dynamic filter pills added at runtime)
         document.addEventListener('click', (e) => {
@@ -2122,48 +2231,6 @@
             }
         };
 
-        function wireVideoHover(container) {
-            var vids = container.querySelectorAll('video');
-            vids.forEach(function(v) {
-                var card = v.closest('.phone-frame') || v.closest('.monitor-frame') || v.parentElement;
-                if (!card) return;
-                var overlay = card.querySelector('.video-overlay');
-
-                v.addEventListener('play', function() {
-                    if (overlay) overlay.style.opacity = '0';
-                });
-                v.addEventListener('pause', function() {
-                    if (overlay) overlay.style.opacity = '1';
-                });
-
-                card.addEventListener('mouseenter', function() {
-                    v.play().catch(function(){});
-                });
-                card.addEventListener('mouseleave', function() {
-                    v.pause();
-                });
-
-                // Touch / Click toggle play for mobile devices
-                var videoWrap = v.closest('.video-container') || card;
-                videoWrap.addEventListener('click', function(e) {
-                    if (e.target.closest('.mute-btn')) return;
-                    if (v.paused) {
-                        v.play().catch(function(){});
-                    } else {
-                        v.pause();
-                    }
-                });
-
-                var muteBtn = card.querySelector('.mute-btn');
-                if (muteBtn) {
-                    muteBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        v.muted = !v.muted;
-                        muteBtn.innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-                    });
-                }
-            });
-        }
 
         function normalizeUrl(url) {
             if (!url) return '#';
@@ -2216,7 +2283,7 @@
                     vertHtml += `<div>
                         <div class="phone-frame">
                             <div class="video-container">
-                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} muted loop playsinline></video>
+                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -2237,7 +2304,7 @@
                     horizHtml += `<div>
                         <div class="monitor-frame">
                             <div class="video-container">
-                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} muted loop playsinline></video>
+                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -2459,7 +2526,7 @@
                         cardsHtml += `<div>
                             <div class="phone-frame">
                                 <div class="video-container">
-                                    <video src="${mediaUrl}" muted loop playsinline></video>
+                                    <video src="${mediaUrl}" preload="metadata" muted loop playsinline webkit-playsinline></video>
                                     <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                     <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                                 </div>
@@ -2473,7 +2540,7 @@
                         cardsHtml += `<div>
                             <div class="monitor-frame">
                                 <div class="video-container">
-                                    <video src="${mediaUrl}" muted loop playsinline></video>
+                                    <video src="${mediaUrl}" preload="metadata" muted loop playsinline webkit-playsinline></video>
                                     <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                     <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                                 </div>
