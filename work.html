@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -419,34 +419,92 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 2rem;
-            transition: transform 0.3s ease;
+            padding: 1.8rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            box-sizing: border-box;
         }
 
         .data-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
             border-color: var(--gold-border);
         }
 
         .data-icon {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: var(--gold);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        .data-card-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold-border);
+            background: rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+
+        .data-card-platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--gold);
+            background: var(--gold-dim);
+            border: 1px solid var(--gold-border);
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-card-banner-wrap {
+            width: 100%;
+            height: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .data-card-banner {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Prevents awkward zoom or distortion */
+            transition: transform 0.3s ease;
+        }
+
+        .data-card-banner.fit-cover {
+            object-fit: cover;
+        }
+
+        .data-card:hover .data-card-banner {
+            transform: scale(1.02);
         }
 
         .data-card h4 {
             font-family: var(--font-h);
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: inherit;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .data-metric {
             font-family: var(--font-b);
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--gold);
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             display: block;
         }
 
@@ -454,6 +512,24 @@
             color: var(--t2);
             font-family: var(--font-b);
             line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.92rem;
+        }
+
+        .data-card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            transition: color 0.2s ease, gap 0.2s ease;
+        }
+
+        .data-card-link:hover {
+            color: #ffffff;
+            gap: 9px;
         }
 
         /* Carousel / Slider Layout for Portfolio */
@@ -504,11 +580,13 @@
         }
 
         .web-grid>div {
-            width: 360px;
+            width: 350px;
+            flex: 0 0 350px;
         }
 
         .card-grid>div {
-            width: 330px;
+            width: 350px;
+            flex: 0 0 350px;
         }
 
         .carousel-btn {
@@ -546,23 +624,6 @@
             right: -18px;
         }
 
-        @media (max-width: 768px) {
-            .carousel-btn {
-                display: none;
-            }
-
-            .video-grid-horizontal>div {
-                width: 300px;
-            }
-
-            .web-grid>div {
-                width: 300px;
-            }
-
-            .card-grid>div {
-                width: 280px;
-            }
-        }
 
 
         /* Live Browser Iframe Preview Styles */
@@ -660,18 +721,265 @@
         /* Grid Layout Mode */
         .is-grid-layout .carousel-track {
             display: grid !important;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
             gap: 2rem !important;
             overflow: visible !important;
             padding: 10px 0 !important;
         }
 
+        .is-grid-layout .video-grid-vertical {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) !important;
+        }
+
+        .is-grid-layout .video-grid-horizontal {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)) !important;
+        }
+
+        .is-grid-layout .web-grid {
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)) !important;
+        }
+
         .is-grid-layout .carousel-track > div {
             width: 100% !important;
+            flex: initial !important;
         }
 
         .is-grid-layout .carousel-btn {
             display: none !important;
+        }
+
+        .browser-fallback-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1f1a14 0%, #0e0e12 100%);
+            color: var(--gold);
+            gap: 10px;
+            text-align: center;
+            padding: 16px;
+        }
+
+        /* ==========================================================================
+           DEVICE RESPONSIVENESS & ALIGNMENT (TABLETS, PHONES, COMPACT SCREENS)
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .carousel-btn.prev-btn {
+                left: -8px;
+            }
+            .carousel-btn.next-btn {
+                right: -8px;
+            }
+            .portfolio-section {
+                padding: 3rem 1.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .portfolio-section {
+                padding: 2.5rem 0.85rem;
+            }
+
+            .section-header {
+                margin-bottom: 1.8rem;
+            }
+
+            .section-header h3 {
+                font-size: 1.85rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .portfolio-filters {
+                gap: 0.5rem;
+                margin: 1.8rem auto 1.2rem;
+                padding: 0 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1.1rem;
+                font-size: 0.86rem;
+            }
+
+            .view-switcher-container {
+                margin: 0 auto 2.2rem;
+                gap: 8px;
+            }
+
+            .view-toggle-btn {
+                padding: 6px 14px;
+                font-size: 0.82rem;
+            }
+
+            .carousel-btn {
+                display: none !important;
+            }
+
+            .carousel-track {
+                gap: 1.4rem;
+                padding: 12px 2px 22px;
+            }
+
+            .video-grid-vertical > div {
+                width: 270px;
+                flex: 0 0 270px;
+            }
+
+            .video-grid-horizontal > div {
+                width: 310px;
+                flex: 0 0 310px;
+            }
+
+            .web-grid > div {
+                width: 310px;
+                flex: 0 0 310px;
+            }
+
+            .card-grid > div {
+                width: 290px;
+                flex: 0 0 290px;
+            }
+
+            .browser-content {
+                height: 210px;
+            }
+
+            .web-info {
+                padding: 1.25rem;
+            }
+
+            .web-info h4 {
+                font-size: 1.4rem;
+            }
+
+            .data-card {
+                padding: 1.5rem;
+            }
+
+            .data-card h4 {
+                font-size: 1.4rem;
+            }
+
+            .data-metric {
+                font-size: 1.6rem;
+            }
+
+            /* Mobile Grid Mode Optimization */
+            .is-grid-layout .carousel-track {
+                gap: 1.25rem !important;
+                padding: 8px 0 !important;
+            }
+
+            .is-grid-layout .video-grid-vertical {
+                grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)) !important;
+            }
+
+            .is-grid-layout .video-grid-horizontal {
+                grid-template-columns: 1fr !important;
+            }
+
+            .is-grid-layout .web-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .is-grid-layout .card-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portfolio-section {
+                padding: 2rem 0.5rem;
+            }
+
+            .portfolio-filters {
+                gap: 0.4rem;
+                margin: 1.4rem auto 1rem;
+            }
+
+            .filter-btn {
+                padding: 0.45rem 0.85rem;
+                font-size: 0.8rem;
+            }
+
+            .view-switcher-container {
+                margin: 0 auto 1.8rem;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .view-toggle-bar {
+                width: 100%;
+                max-width: 290px;
+                justify-content: center;
+            }
+
+            .carousel-track {
+                gap: 1.1rem !important;
+                padding: 10px 2px 20px !important;
+            }
+
+            .phone-frame {
+                border-radius: 30px;
+                padding: 8px;
+            }
+
+            .phone-frame::before {
+                width: 90px;
+                height: 18px;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+            }
+
+            .video-container {
+                border-radius: 22px;
+            }
+
+            .video-grid-vertical > div {
+                width: 245px !important;
+                flex: 0 0 245px !important;
+            }
+
+            .video-grid-horizontal > div {
+                width: 285px !important;
+                flex: 0 0 285px !important;
+            }
+
+            .web-grid > div {
+                width: 285px !important;
+                flex: 0 0 285px !important;
+            }
+
+            .card-grid > div {
+                width: 285px !important;
+                flex: 0 0 285px !important;
+            }
+
+            .browser-content {
+                height: 185px;
+            }
+
+            .data-card-banner-wrap {
+                height: 140px;
+            }
+
+            .data-card {
+                padding: 1.2rem;
+            }
+
+            .data-card h4 {
+                font-size: 1.25rem;
+            }
+
+            .data-metric {
+                font-size: 1.4rem;
+            }
+
+            .data-card p {
+                font-size: 0.86rem;
+            }
         }
 
     </style>
@@ -724,12 +1032,12 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="sec" style="padding-top: 120px; text-align: center;">
+    <section class="sec" style="padding-top: clamp(90px, 12vh, 120px); text-align: center;">
         <div class="sec-hdr reveal">
             <span class="sec-tag">PORTFOLIO</span>
-            <h1 class="sec-title" style="font-size: 4rem;">Our Work & Portfolio</h1>
+            <h1 class="sec-title" style="font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1.15;">Our Work &amp; Portfolio</h1>
             <p
-                style="color: var(--t2); font-family: var(--font-b); max-width: 600px; margin: 1rem auto 0; font-size: 1.2rem;">
+                style="color: var(--t2); font-family: var(--font-b); max-width: 600px; margin: 1rem auto 0; font-size: clamp(0.95rem, 3.5vw, 1.15rem); padding: 0 1rem; line-height: 1.6;">
                 From vertical reels to cinematic long-form — see the work that drives results.
             </p>
         </div>
@@ -1115,86 +1423,92 @@
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
                 <div class="carousel-track web-grid" id="webPortfolioTrack">
                     <!-- Web 1 -->
-                    <div class="browser-frame">
-                        <div class="browser-header">
-                            <div class="browser-dots"><span></span><span></span><span></span></div>
-                        </div>
-                        <div class="browser-content">
-                            <a href="https://dpluscure.com" target="_blank" rel="noopener noreferrer" class="browser-content-link"
-                                title="Open D Plus Cure">
-                                <iframe src="https://dpluscure.com" loading="lazy" tabindex="-1"></iframe>
-                                <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
-                            </a>
-                        </div>
-                        <div class="web-info">
-                            <h4>D Plus Cure</h4>
-                            <a href="https://dpluscure.com" target="_blank" rel="noopener noreferrer">dpluscure.com ↗</a>
-                            <div class="web-tech">
-                                <span class="tech-badge">WordPress</span>
-                                <span class="tech-badge">WooCommerce</span>
-                                <span class="tech-badge">PHP</span>
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
                             </div>
-                            <p
-                                style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
-                                Healthcare E-commerce Platform</p>
-                            <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 92/100</div>
+                            <div class="browser-content">
+                                <a href="https://dpluscure.com" target="_blank" rel="noopener noreferrer" class="browser-content-link"
+                                    title="Open D Plus Cure">
+                                    <iframe src="https://dpluscure.com" loading="lazy" tabindex="-1"></iframe>
+                                    <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>D Plus Cure</h4>
+                                <a href="https://dpluscure.com" target="_blank" rel="noopener noreferrer">dpluscure.com ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">WordPress</span>
+                                    <span class="tech-badge">WooCommerce</span>
+                                    <span class="tech-badge">PHP</span>
+                                </div>
+                                <p
+                                    style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Healthcare E-commerce Platform</p>
+                                <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 92/100</div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Web 2 -->
-                    <div class="browser-frame">
-                        <div class="browser-header">
-                            <div class="browser-dots"><span></span><span></span><span></span></div>
-                        </div>
-                        <div class="browser-content">
-                            <a href="https://www.newsflashdaily.in" target="_blank" rel="noopener noreferrer" class="browser-content-link"
-                                title="Open News Flash Daily">
-                                <iframe src="https://www.newsflashdaily.in" loading="lazy" tabindex="-1"></iframe>
-                                <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
-                            </a>
-                        </div>
-                        <div class="web-info">
-                            <h4>News Flash Daily</h4>
-                            <a href="https://www.newsflashdaily.in" target="_blank" rel="noopener noreferrer">newsflashdaily.in ↗</a>
-                            <div class="web-tech">
-                                <span class="tech-badge">WordPress</span>
-                                <span class="tech-badge">SEO</span>
-                                <span class="tech-badge">News Portal</span>
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
                             </div>
-                            <p
-                                style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
-                                Digital News & Media Publication Portal</p>
-                            <div class="speed-metric" style="color: var(--gold);"><i class="fas fa-tachometer-alt"></i>
-                                Speed: 95/100</div>
+                            <div class="browser-content">
+                                <a href="https://www.newsflashdaily.in" target="_blank" rel="noopener noreferrer" class="browser-content-link"
+                                    title="Open News Flash Daily">
+                                    <iframe src="https://www.newsflashdaily.in" loading="lazy" tabindex="-1"></iframe>
+                                    <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>News Flash Daily</h4>
+                                <a href="https://www.newsflashdaily.in" target="_blank" rel="noopener noreferrer">newsflashdaily.in ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">WordPress</span>
+                                    <span class="tech-badge">SEO</span>
+                                    <span class="tech-badge">News Portal</span>
+                                </div>
+                                <p
+                                    style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Digital News & Media Publication Portal</p>
+                                <div class="speed-metric" style="color: var(--gold);"><i class="fas fa-tachometer-alt"></i>
+                                    Speed: 95/100</div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Web 3 -->
-                    <div class="browser-frame">
-                        <div class="browser-header">
-                            <div class="browser-dots"><span></span><span></span><span></span></div>
-                        </div>
-                        <div class="browser-content">
-                            <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html" target="_blank" rel="noopener noreferrer"
-                                class="browser-content-link" title="Open Raja Priya Group">
-                                <iframe src="https://editzaar.github.io/rajapriyagroup-creator/index.html"
-                                    loading="lazy" tabindex="-1"></iframe>
-                                <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
-                            </a>
-                        </div>
-                        <div class="web-info">
-                            <h4>Raja Priya Group</h4>
-                            <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html"
-                                target="_blank" rel="noopener noreferrer">editzaar.github.io/rajapriyagroup-creator ↗</a>
-                            <div class="web-tech">
-                                <span class="tech-badge">HTML5</span>
-                                <span class="tech-badge">CSS3</span>
-                                <span class="tech-badge">JavaScript</span>
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
                             </div>
-                            <p
-                                style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
-                                Real Estate & Construction Group Platform</p>
-                            <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 96/100</div>
+                            <div class="browser-content">
+                                <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html" target="_blank" rel="noopener noreferrer"
+                                    class="browser-content-link" title="Open Raja Priya Group">
+                                    <iframe src="https://editzaar.github.io/rajapriyagroup-creator/index.html"
+                                        loading="lazy" tabindex="-1"></iframe>
+                                    <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>Raja Priya Group</h4>
+                                <a href="https://editzaar.github.io/rajapriyagroup-creator/index.html"
+                                    target="_blank" rel="noopener noreferrer">editzaar.github.io/rajapriyagroup-creator ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">HTML5</span>
+                                    <span class="tech-badge">CSS3</span>
+                                    <span class="tech-badge">JavaScript</span>
+                                </div>
+                                <p
+                                    style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Real Estate & Construction Group Platform</p>
+                                <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: 96/100</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1211,27 +1525,175 @@
 
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
-                <div class="carousel-track card-grid">
-                    <div class="data-card">
-                        <i class="fab fa-meta data-icon"></i>
-                        <h4>Finance Niche</h4>
-                        <span class="data-metric">+380% ROAS</span>
-                        <p>Meta Ads Campaign optimization leading to 2.1M targeted impressions and massive ROI scaling
-                            within 60 days.</p>
+                <div class="carousel-track web-grid" id="brandPortfolioTrack">
+                    <!-- Brand Card 1 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-meta"></i> Meta Ads</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="Finance Niche Meta Ads Campaign">
+                                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Finance Niche" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-meta data-icon"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">Finance Niche Scaling</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>View Campaign ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>Finance Niche Scaling</h4>
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer">meta.com/ads ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">Meta Ads</span>
+                                    <span class="tech-badge">ROAS Scaling</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Meta Ads Campaign optimization leading to 2.1M targeted impressions and massive ROI scaling within 60 days.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: +380% ROAS
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="data-card">
-                        <i class="fab fa-google data-icon"></i>
-                        <h4>Real Estate</h4>
-                        <span class="data-metric">340+ Leads</span>
-                        <p>Google Search & Display Ads campaign targeting high-net-worth individuals, achieving a 28%
-                            CTR.</p>
+
+                    <!-- Brand Card 2 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-google"></i> Google Ads</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="Real Estate High-Ticket Lead Gen">
+                                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80" alt="Real Estate" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-google data-icon"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">Real Estate High-Ticket</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>View Campaign ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>Real Estate High-Ticket</h4>
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer">ads.google.com ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">Google Search</span>
+                                    <span class="tech-badge">Display Ads</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Google Search & Display Ads campaign targeting high-net-worth individuals, achieving a 28% CTR.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: 340+ Qualified Leads
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="data-card">
-                        <i class="fab fa-instagram data-icon"></i>
-                        <h4>D2C Brand</h4>
-                        <span class="data-metric">12K → 89K</span>
-                        <p>Instagram Growth strategy through viral reels and targeted influencer promotions over a
-                            90-day period.</p>
+
+                    <!-- Brand Card 3 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-instagram"></i> Instagram</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://www.instagram.com/editzaar.insta/" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="D2C Brand Instagram Growth">
+                                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80" alt="D2C Brand" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-instagram data-icon" style="color:#E1306C;"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">D2C Brand Growth</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>Visit Profile ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>D2C Brand Growth</h4>
+                                <a href="https://www.instagram.com/editzaar.insta/" target="_blank" rel="noopener noreferrer">instagram.com/editzaar.insta ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">Viral Reels</span>
+                                    <span class="tech-badge">Influencer</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Instagram Growth strategy through viral reels and targeted influencer promotions over a 90-day period.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: 12K → 89K Followers
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brand Card 4 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-linkedin"></i> LinkedIn Ads</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://linkedin.com/company/editzaar" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="B2B Enterprise Lead Gen">
+                                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80" alt="B2B Enterprise" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-linkedin data-icon" style="color:#0A66C2;"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">B2B Enterprise Lead Gen</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>View Campaign ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>B2B Enterprise Lead Gen</h4>
+                                <a href="https://linkedin.com/company/editzaar" target="_blank" rel="noopener noreferrer">linkedin.com/ads ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">LinkedIn Ads</span>
+                                    <span class="tech-badge">InMail Funnel</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Targeted Account-Based Marketing (ABM) ad funnels targeting enterprise directors and tech founders.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: 185+ Closed Deals
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brand Card 5 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-tiktok"></i> TikTok Ads</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="E-Commerce Viral Blitz">
+                                    <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80" alt="E-Commerce Blitz" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-tiktok data-icon"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">E-Commerce Viral Blitz</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>View Campaign ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>E-Commerce Viral Blitz</h4>
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer">tiktok.com/ads ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">TikTok Ads</span>
+                                    <span class="tech-badge">Spark Ads</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Dynamic short-form video advertising and creative UGC scaling leading to 4.2M views and 5.4x ROAS.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: 5.4x Return on Ad Spend
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
@@ -1247,32 +1709,183 @@
 
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
-                <div class="carousel-track card-grid">
-                    <div class="data-card">
-                        <i class="fab fa-youtube data-icon"></i>
-                        <h4>YouTube Channel Growth</h4>
-                        <span class="data-metric">0 to 50K Subs</span>
-                        <p>Comprehensive management including script optimization, A/B testing CTR-optimized thumbnails,
-                            and retention editing.</p>
+                <div class="carousel-track web-grid" id="socialPortfolioTrack">
+                    <!-- Social Card 1 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-youtube"></i> YouTube</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://www.youtube.com/channel/UC10LSLGKMDMyj5odLUl6dgQ" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="YouTube Channel Growth">
+                                    <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80" alt="YouTube Channel Growth" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-youtube data-icon" style="color:#FF0000;"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">YouTube Channel Growth</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>Visit Channel ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>YouTube Channel Growth</h4>
+                                <a href="https://www.youtube.com/channel/UC10LSLGKMDMyj5odLUl6dgQ" target="_blank" rel="noopener noreferrer">youtube.com/@editzaar ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">YouTube</span>
+                                    <span class="tech-badge">SEO</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Comprehensive management including script optimization, A/B testing CTR-optimized thumbnails, and retention editing.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: 0 to 50K Subs
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="data-card">
-                        <i class="fab fa-instagram data-icon" style="color: #E1306C;"></i>
-                        <h4>Instagram Page Handling</h4>
-                        <span class="data-metric">Full Stack</span>
-                        <p>End-to-end management: Content planning, creative carousel posts, daily stories, and engaging
-                            reels strategy.</p>
+
+                    <!-- Social Card 2 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-instagram"></i> Instagram</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://www.instagram.com/editzaar.insta/" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="Instagram Page Handling">
+                                    <img src="https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=800&q=80" alt="Instagram Page Handling" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-instagram data-icon" style="color:#E1306C;"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">Instagram Page Handling</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>Visit Profile ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>Instagram Page Handling</h4>
+                                <a href="https://www.instagram.com/editzaar.insta/" target="_blank" rel="noopener noreferrer">instagram.com/editzaar.insta ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">Instagram</span>
+                                    <span class="tech-badge">Reels</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    End-to-end management: Content planning, creative carousel posts, daily stories, and engaging reels strategy.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: Full Stack Management
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="data-card">
-                        <i class="fas fa-chart-line data-icon"></i>
-                        <h4>Content Strategy</h4>
-                        <span class="data-metric">SEO-Driven</span>
-                        <p>Developing analytics-backed posting calendars that align with search trends to maximize
-                            organic reach and growth.</p>
+
+                    <!-- Social Card 3 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fas fa-chart-line"></i> Strategy</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="Content Strategy & SEO">
+                                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Content Strategy" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fas fa-chart-line data-icon" style="color:var(--gold);"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">Content Strategy &amp; SEO</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>View Strategy ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>Content Strategy &amp; SEO</h4>
+                                <a href="https://editzaar.in/work" target="_blank" rel="noopener noreferrer">editzaar.in/strategy ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">SEO</span>
+                                    <span class="tech-badge">Analytics</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Developing analytics-backed posting calendars that align with search trends to maximize organic reach and growth.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: SEO-Driven Growth
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Card 4 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://www.linkedin.com/in/editzaar" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="Founder Personal Brand Growth">
+                                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Personal Branding" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-linkedin data-icon" style="color:#0A66C2;"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">Founder Personal Brand</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>Visit Profile ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>Founder Personal Brand</h4>
+                                <a href="https://www.linkedin.com/in/editzaar" target="_blank" rel="noopener noreferrer">linkedin.com/in/editzaar ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">LinkedIn</span>
+                                    <span class="tech-badge">Ghostwriting</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Executive thought leadership, viral carousel slides, and short video clips scaling founder reach by 850% in 90 days.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: 3.2M Annual Impressions
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Card 5 -->
+                    <div>
+                        <div class="browser-frame">
+                            <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-dots"><span></span><span></span><span></span></div>
+                                <span class="data-card-platform-badge"><i class="fab fa-x-twitter"></i> Twitter / X</span>
+                            </div>
+                            <div class="browser-content">
+                                <a href="https://twitter.com/editzaar" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="Viral Tech Community Growth">
+                                    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80" alt="Tech Community" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                    <div class="browser-fallback-card" style="display:none;">
+                                        <i class="fab fa-x-twitter data-icon"></i>
+                                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">Viral Tech Community</span>
+                                    </div>
+                                    <div class="browser-preview-overlay"><span>Visit Profile ↗</span></div>
+                                </a>
+                            </div>
+                            <div class="web-info">
+                                <h4>Viral Tech Community</h4>
+                                <a href="https://twitter.com/editzaar" target="_blank" rel="noopener noreferrer">x.com/editzaar ↗</a>
+                                <div class="web-tech">
+                                    <span class="tech-badge">Twitter / X</span>
+                                    <span class="tech-badge">Community</span>
+                                </div>
+                                <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">
+                                    Daily thread architecture, viral meme syndication, and active engagement funnels building a loyal tech audience.
+                                </p>
+                                <div class="speed-metric" style="color:var(--gold);font-weight:700;">
+                                    <i class="fas fa-chart-line"></i> Results: 28K+ Active Followers
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
             </div>
         </section>
+
+        <!-- Dynamic Custom / Future Sections Container -->
+        <div id="custom-portfolio-sections"></div>
 
     </div>
 
@@ -1313,67 +1926,81 @@
 
     <!-- Scripts -->
     <script>
-        // Video Hover Play/Pause
+        // Video Play/Pause (Hover on Desktop, Tap on Touch Devices)
         const videoContainers = document.querySelectorAll('.video-container');
 
         videoContainers.forEach(container => {
             const video = container.querySelector('video');
+            if (!video) return;
             const muteBtn = container.querySelector('.mute-btn');
+            const overlay = container.querySelector('.video-overlay');
 
+            // Fade overlay when playing/paused
+            video.addEventListener('play', () => {
+                if (overlay) overlay.style.opacity = '0';
+            });
+            video.addEventListener('pause', () => {
+                if (overlay) overlay.style.opacity = '1';
+            });
+
+            // Desktop hover
             container.addEventListener('mouseenter', () => {
-                video.play();
+                video.play().catch(() => {});
             });
 
             container.addEventListener('mouseleave', () => {
                 video.pause();
-                // Optional: reset video to start
-                // video.currentTime = 0; 
+            });
+
+            // Mobile / Touch tap to toggle play/pause
+            container.addEventListener('click', (e) => {
+                if (e.target.closest('.mute-btn')) return;
+                if (video.paused) {
+                    video.play().catch(() => {});
+                } else {
+                    video.pause();
+                }
             });
 
             if (muteBtn) {
                 muteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation(); // prevent other events
+                    e.stopPropagation(); // prevent play toggle
                     video.muted = !video.muted;
                     const icon = muteBtn.querySelector('i');
-                    if (video.muted) {
-                        icon.classList.remove('fa-volume-up');
-                        icon.classList.add('fa-volume-mute');
-                    } else {
-                        icon.classList.remove('fa-volume-mute');
-                        icon.classList.add('fa-volume-up');
+                    if (icon) {
+                        if (video.muted) {
+                            icon.classList.remove('fa-volume-up');
+                            icon.classList.add('fa-volume-mute');
+                        } else {
+                            icon.classList.remove('fa-volume-mute');
+                            icon.classList.add('fa-volume-up');
+                        }
                     }
                 });
             }
         });
 
-        // Portfolio Filtering
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const portfolioSections = document.querySelectorAll('.portfolio-section');
+        // Portfolio Filtering (Supports dynamic filter pills added at runtime)
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active from all buttons
-                filterBtns.forEach(b => b.classList.remove('active'));
-                // Add active to clicked button
-                btn.classList.add('active');
-
-                const filterValue = btn.getAttribute('data-filter');
-
-                portfolioSections.forEach(section => {
-                    if (filterValue === 'all') {
+            const filterValue = btn.getAttribute('data-filter');
+            document.querySelectorAll('.portfolio-section').forEach(section => {
+                if (filterValue === 'all') {
+                    section.style.display = 'block';
+                    setTimeout(() => section.classList.add('active'), 10);
+                } else {
+                    if (section.getAttribute('data-category') === filterValue) {
                         section.style.display = 'block';
-                        // small delay for animation
                         setTimeout(() => section.classList.add('active'), 10);
                     } else {
-                        if (section.getAttribute('data-category') === filterValue) {
-                            section.style.display = 'block';
-                            setTimeout(() => section.classList.add('active'), 10);
-                        } else {
-                            section.style.display = 'none';
-                            section.classList.remove('active');
-                        }
+                        section.style.display = 'none';
+                        section.classList.remove('active');
                     }
-                });
+                }
             });
         });
 
@@ -1450,9 +2077,21 @@
   <script type="module" src="js/nav-auth.js?v=300.0"></script>
 
     <!-- Dynamic Firebase Portfolio Sync & View Mode Controller -->
+    <script>
+        window.scrollCarousel = function(btn, dir) {
+            var wrapper = btn.closest('.carousel-wrapper');
+            if (!wrapper) return;
+            var track = wrapper.querySelector('.carousel-track');
+            if (!track) return;
+            var card = track.querySelector(':scope > div');
+            var scrollAmount = card ? (card.offsetWidth + 28) : (track.clientWidth * 0.75);
+            track.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+        };
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
@@ -1488,12 +2127,33 @@
             vids.forEach(function(v) {
                 var card = v.closest('.phone-frame') || v.closest('.monitor-frame') || v.parentElement;
                 if (!card) return;
+                var overlay = card.querySelector('.video-overlay');
+
+                v.addEventListener('play', function() {
+                    if (overlay) overlay.style.opacity = '0';
+                });
+                v.addEventListener('pause', function() {
+                    if (overlay) overlay.style.opacity = '1';
+                });
+
                 card.addEventListener('mouseenter', function() {
                     v.play().catch(function(){});
                 });
                 card.addEventListener('mouseleave', function() {
                     v.pause();
                 });
+
+                // Touch / Click toggle play for mobile devices
+                var videoWrap = v.closest('.video-container') || card;
+                videoWrap.addEventListener('click', function(e) {
+                    if (e.target.closest('.mute-btn')) return;
+                    if (v.paused) {
+                        v.play().catch(function(){});
+                    } else {
+                        v.pause();
+                    }
+                });
+
                 var muteBtn = card.querySelector('.mute-btn');
                 if (muteBtn) {
                     muteBtn.addEventListener('click', function(e) {
@@ -1503,6 +2163,43 @@
                     });
                 }
             });
+        }
+
+        function normalizeUrl(url) {
+            if (!url) return '#';
+            var u = String(url).trim();
+            if (!u || u === '#') return '#';
+            if (u.startsWith('@')) {
+                return 'https://www.instagram.com/' + u.replace(/^@+/, '');
+            }
+            if (/^(https?:|\/\/|mailto:|tel:)/i.test(u)) return u;
+            return 'https://' + u;
+        }
+
+        function getPlatformIconHtml(platform) {
+            var p = (platform || '').toLowerCase();
+            if (p.includes('meta') || p.includes('facebook')) return '<i class="fab fa-meta data-icon"></i>';
+            if (p.includes('google')) return '<i class="fab fa-google data-icon"></i>';
+            if (p.includes('insta')) return '<i class="fab fa-instagram data-icon" style="color:#E1306C;"></i>';
+            if (p.includes('youtube')) return '<i class="fab fa-youtube data-icon" style="color:#FF0000;"></i>';
+            if (p.includes('linkedin')) return '<i class="fab fa-linkedin data-icon" style="color:#0A66C2;"></i>';
+            if (p.includes('tiktok')) return '<i class="fab fa-tiktok data-icon"></i>';
+            if (p.includes('twitter') || p.includes(' x')) return '<i class="fab fa-x-twitter data-icon"></i>';
+            return '<i class="fas fa-chart-line data-icon"></i>';
+        }
+
+        function getPlatformBadge(platform) {
+            var p = (platform || '').toLowerCase();
+            var icon = 'fa-tag';
+            if (p.includes('meta') || p.includes('facebook')) icon = 'fab fa-meta';
+            else if (p.includes('google')) icon = 'fab fa-google';
+            else if (p.includes('insta')) icon = 'fab fa-instagram';
+            else if (p.includes('youtube')) icon = 'fab fa-youtube';
+            else if (p.includes('linkedin')) icon = 'fab fa-linkedin';
+            else if (p.includes('tiktok')) icon = 'fab fa-tiktok';
+            else if (p.includes('twitter') || p.includes(' x')) icon = 'fab fa-x-twitter';
+            else icon = 'fas fa-bullhorn';
+            return `<span class="data-card-platform-badge"><i class="${icon}"></i> ${platform || 'Campaign'}</span>`;
         }
 
         // Render Dynamic Videos from Firestore
@@ -1563,23 +2260,34 @@
 
             var webHtml = '';
             webs.forEach(w => {
-                var techBadges = (w.tech || 'HTML5, CSS3, JS').split(',').map(t => `<span class="tech-badge">${t.trim()}</span>`).join('');
+                var fullUrl = normalizeUrl(w.url);
+                var techBadges = (w.tech || 'HTML5, CSS3, JS').split(',').map(t => `<span class="tech-badge">${t.trim()}</span>`).join(' ');
+                var previewContent = w.screenshot 
+                    ? `<img src="${w.screenshot}" alt="${w.name || 'Website'}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                       <div class="browser-fallback-card" style="display:none;">
+                           <i class="fas fa-globe data-icon" style="font-size:2.6rem;color:var(--gold);"></i>
+                           <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${w.name || 'Website Project'}</span>
+                       </div>` 
+                    : `<iframe src="${fullUrl}" loading="lazy" scrolling="no" tabindex="-1"></iframe>`;
+                var cleanDisplayUrl = (w.url || '').replace(/^https?:\/\//i, '').replace(/\/$/, '');
+
                 webHtml += `<div>
                     <div class="browser-frame">
                         <div class="browser-header">
                             <div class="browser-dots"><span></span><span></span><span></span></div>
                         </div>
                         <div class="browser-content">
-                            <a href="${w.url}" target="_blank" rel="noopener noreferrer" class="browser-content-link">
-                                ${w.screenshot ? '<img src="' + w.screenshot + '" alt="' + (w.name || 'Website') + '" style="width:100%;height:100%;object-fit:cover;"/>' : '<iframe src="' + w.url + '" loading="lazy" scrolling="no"></iframe>'}
-                                <div class="browser-preview-overlay"><span>Visit Live Website ↗</span></div>
+                            <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="browser-content-link" title="${w.name || 'Website'}">
+                                ${previewContent}
+                                <div class="browser-preview-overlay"><span>Visit Live Site ↗</span></div>
                             </a>
                         </div>
                         <div class="web-info">
                             <h4>${w.name || 'Website Project'}</h4>
-                            <a href="${w.url}" target="_blank" rel="noopener noreferrer">${w.url} ↗</a>
+                            <a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${cleanDisplayUrl} ↗</a>
                             <div class="web-tech">${techBadges}</div>
-                            <div class="speed-metric"><i class="fas fa-bolt"></i> Speed: ${w.speed || '98/100'} (Mobile &amp; Desktop)</div>
+                            <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${w.niche || 'Web Development'}</p>
+                            <div class="speed-metric"><i class="fas fa-tachometer-alt"></i> Speed: ${w.speed || '98/100'}</div>
                         </div>
                     </div>
                 </div>`;
@@ -1587,9 +2295,321 @@
             webTrack.innerHTML = webHtml;
         }
 
-        // Listen in real-time
+        // Render Dynamic Brand Promotions & Paid Ads
+        function renderDynamicBrandAds(ads) {
+            var track = document.getElementById('brandPortfolioTrack');
+            if (!track || ads.length === 0) return;
+
+            var html = '';
+            ads.forEach(ad => {
+                var fullUrl = normalizeUrl(ad.link || ad.targetUrl || '');
+                var cleanDisplayUrl = (fullUrl || '').replace(/^https?:\/\//i, '').replace(/\/$/, '');
+                if (!cleanDisplayUrl || cleanDisplayUrl === '#') cleanDisplayUrl = 'View Campaign';
+                if (cleanDisplayUrl.length > 30) cleanDisplayUrl = cleanDisplayUrl.substring(0, 28) + '...';
+
+                var badge = getPlatformBadge(ad.platform);
+                var imgUrl = ad.bannerUrl || ad.image || ad.avatarUrl;
+                
+                var previewHtml = '';
+                if (imgUrl) {
+                    previewHtml = `<img src="${imgUrl}" alt="${ad.title || 'Brand Promotion'}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                    <div class="browser-fallback-card" style="display:none;">
+                        <div style="font-size:2.6rem;">${getPlatformIconHtml(ad.platform)}</div>
+                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${ad.title || 'Brand Promotion'}</span>
+                    </div>`;
+                } else {
+                    previewHtml = `<div class="browser-fallback-card" style="display:flex;">
+                        <div style="font-size:2.6rem;">${getPlatformIconHtml(ad.platform)}</div>
+                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${ad.title || 'Brand Promotion'}</span>
+                    </div>`;
+                }
+
+                var isInstagram = (ad.platform || '').toLowerCase().includes('insta');
+                var overlayText = isInstagram ? 'Visit Profile ↗' : 'View Campaign ↗';
+
+                html += `<div>
+                    <div class="browser-frame">
+                        <div class="browser-header" style="justify-content:space-between;">
+                            <div class="browser-dots"><span></span><span></span><span></span></div>
+                            ${badge}
+                        </div>
+                        <div class="browser-content">
+                            <a href="${fullUrl}" ${fullUrl !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="browser-content-link" title="${ad.title || 'Brand Promotion'}">
+                                ${previewHtml}
+                                <div class="browser-preview-overlay"><span>${overlayText}</span></div>
+                            </a>
+                        </div>
+                        <div class="web-info">
+                            <h4>${ad.title || 'Brand Promotion'}</h4>
+                            ${fullUrl !== '#' ? `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${cleanDisplayUrl} ↗</a>` : `<span style="font-size:0.85rem;color:var(--gold);">${ad.platform || 'Campaign'}</span>`}
+                            <div class="web-tech">
+                                <span class="tech-badge">${ad.platform || 'Meta Ads'}</span>
+                                ${ad.metric ? `<span class="tech-badge" style="color:var(--gold);font-weight:700;">${ad.metric}</span>` : ''}
+                            </div>
+                            <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${ad.description || ''}</p>
+                            ${ad.metric ? `<div class="speed-metric" style="color:var(--gold);font-weight:700;"><i class="fas fa-chart-line"></i> Results: ${ad.metric}</div>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            track.innerHTML = html;
+        }
+
+        // Render Dynamic Social Media Management
+        function renderDynamicSocialGrowth(items) {
+            var track = document.getElementById('socialPortfolioTrack');
+            if (!track || items.length === 0) return;
+
+            var html = '';
+            items.forEach(item => {
+                var fullUrl = normalizeUrl(item.profileUrl || item.link || '');
+                var cleanDisplayUrl = (fullUrl || '').replace(/^https?:\/\//i, '').replace(/\/$/, '');
+                if (!cleanDisplayUrl || cleanDisplayUrl === '#') cleanDisplayUrl = 'Visit Profile';
+                if (cleanDisplayUrl.length > 30) cleanDisplayUrl = cleanDisplayUrl.substring(0, 28) + '...';
+
+                var badge = getPlatformBadge(item.platform);
+                var imgUrl = item.bannerUrl || item.image || item.avatarUrl;
+
+                var previewHtml = '';
+                if (imgUrl) {
+                    previewHtml = `<img src="${imgUrl}" alt="${item.title || 'Social Profile'}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                    <div class="browser-fallback-card" style="display:none;">
+                        <div style="font-size:2.6rem;">${getPlatformIconHtml(item.platform)}</div>
+                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${item.title || 'Social Growth'}</span>
+                    </div>`;
+                } else {
+                    previewHtml = `<div class="browser-fallback-card" style="display:flex;">
+                        <div style="font-size:2.6rem;">${getPlatformIconHtml(item.platform)}</div>
+                        <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${item.title || 'Social Growth'}</span>
+                    </div>`;
+                }
+
+                var isYouTube = (item.platform || '').toLowerCase().includes('youtube');
+                var overlayText = isYouTube ? 'Visit Channel ↗' : 'Visit Profile ↗';
+
+                html += `<div>
+                    <div class="browser-frame">
+                        <div class="browser-header" style="justify-content:space-between;">
+                            <div class="browser-dots"><span></span><span></span><span></span></div>
+                            ${badge}
+                        </div>
+                        <div class="browser-content">
+                            <a href="${fullUrl}" ${fullUrl !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="browser-content-link" title="${item.title || 'Social Account'}">
+                                ${previewHtml}
+                                <div class="browser-preview-overlay"><span>${overlayText}</span></div>
+                            </a>
+                        </div>
+                        <div class="web-info">
+                            <h4>${item.title || 'Social Account'}</h4>
+                            ${fullUrl !== '#' ? `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${cleanDisplayUrl} ↗</a>` : `<span style="font-size:0.85rem;color:var(--gold);">${item.platform || 'Social'}</span>`}
+                            <div class="web-tech">
+                                <span class="tech-badge">${item.platform || 'Instagram'}</span>
+                                ${item.metric ? `<span class="tech-badge" style="color:var(--gold);font-weight:700;">${item.metric}</span>` : ''}
+                            </div>
+                            <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${item.description || ''}</p>
+                            ${item.metric ? `<div class="speed-metric" style="color:var(--gold);font-weight:700;"><i class="fas fa-chart-line"></i> Results: ${item.metric}</div>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            track.innerHTML = html;
+        }
+
+        // Render Dynamic Custom & Future Portfolio Sections
+        function renderDynamicCustomSections(items) {
+            var container = document.getElementById('custom-portfolio-sections');
+            var filterBar = document.querySelector('.portfolio-filters');
+            if (!container || !items || items.length === 0) {
+                if (container) container.innerHTML = '';
+                return;
+            }
+
+            // Group items by sectionTitle
+            var sectionsMap = {};
+            items.forEach(function(item) {
+                var secTitle = (item.sectionTitle || 'Custom Projects').trim();
+                var slug = (item.category || secTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')) || 'custom';
+                if (!sectionsMap[slug]) {
+                    sectionsMap[slug] = {
+                        title: secTitle,
+                        subtitle: item.sectionSubtitle || 'Selected creative projects and client case studies.',
+                        category: slug,
+                        items: []
+                    };
+                }
+                sectionsMap[slug].items.push(item);
+            });
+
+            var html = '';
+            Object.keys(sectionsMap).forEach(function(slug) {
+                var sec = sectionsMap[slug];
+                sec.items.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+
+                var cardsHtml = '';
+                sec.items.forEach(function(c) {
+                    var fullUrl = normalizeUrl(c.link || '');
+                    var layout = c.layout || 'browser';
+                    var tagsHtml = (c.tags || '').split(',').filter(Boolean).map(function(t) {
+                        return '<span class="tech-badge">' + t.trim() + '</span>';
+                    }).join(' ');
+
+                    var mediaUrl = c.media || c.image || c.videoUrl || '';
+
+                    if (layout === 'video_vertical') {
+                        cardsHtml += `<div>
+                            <div class="phone-frame">
+                                <div class="video-container">
+                                    <video src="${mediaUrl}" muted loop playsinline></video>
+                                    <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                    <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-label">
+                                <h4>${c.title || 'Creative Reel'}</h4>
+                                <span class="tech-badge">${c.tags || 'Creative'}</span>
+                            </div>
+                        </div>`;
+                    } else if (layout === 'video_horizontal') {
+                        cardsHtml += `<div>
+                            <div class="monitor-frame">
+                                <div class="video-container">
+                                    <video src="${mediaUrl}" muted loop playsinline></video>
+                                    <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
+                                    <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-label">
+                                <h4>${c.title || 'Cinematic Video'}</h4>
+                                <span class="tech-badge">${c.tags || 'Showcase'}</span>
+                            </div>
+                        </div>`;
+                    } else if (layout === 'campaign') {
+                        var badge = `<span class="data-card-platform-badge"><i class="fas fa-star"></i> ${c.metric || 'Featured'}</span>`;
+                        cardsHtml += `<div>
+                            <div class="browser-frame">
+                                <div class="browser-header" style="justify-content:space-between;">
+                                    <div class="browser-dots"><span></span><span></span><span></span></div>
+                                    ${badge}
+                                </div>
+                                <div class="browser-content">
+                                    <a href="${fullUrl}" ${fullUrl !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="browser-content-link" title="${c.title || ''}">
+                                        <img src="${mediaUrl}" alt="${c.title || ''}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                        <div class="browser-fallback-card" style="display:none;">
+                                            <i class="fas fa-palette data-icon" style="font-size:2.6rem;color:var(--gold);"></i>
+                                            <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${c.title || 'Creative'}</span>
+                                        </div>
+                                        <div class="browser-preview-overlay"><span>View Project ↗</span></div>
+                                    </a>
+                                </div>
+                                <div class="web-info">
+                                    <h4>${c.title || 'Creative Project'}</h4>
+                                    ${fullUrl !== '#' ? `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">View Project ↗</a>` : ''}
+                                    <div class="web-tech">${tagsHtml}</div>
+                                    <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${c.description || ''}</p>
+                                    ${c.metric ? `<div class="speed-metric" style="color:var(--gold);font-weight:700;"><i class="fas fa-chart-line"></i> ${c.metric}</div>` : ''}
+                                </div>
+                            </div>
+                        </div>`;
+                    } else {
+                        // Standard browser showcase card
+                        cardsHtml += `<div>
+                            <div class="browser-frame">
+                                <div class="browser-header" style="justify-content:space-between;">
+                                    <div class="browser-dots"><span></span><span></span><span></span></div>
+                                    <span class="tech-badge" style="font-size:11px;">${c.metric || 'Showcase'}</span>
+                                </div>
+                                <div class="browser-content">
+                                    <a href="${fullUrl}" ${fullUrl !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="browser-content-link" title="${c.title || ''}">
+                                        <img src="${mediaUrl}" alt="${c.title || ''}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                                        <div class="browser-fallback-card" style="display:none;">
+                                            <i class="fas fa-layer-group data-icon" style="font-size:2.6rem;color:var(--gold);"></i>
+                                            <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${c.title || 'Showcase'}</span>
+                                        </div>
+                                        <div class="browser-preview-overlay"><span>View Showcase ↗</span></div>
+                                    </a>
+                                </div>
+                                <div class="web-info">
+                                    <h4>${c.title || 'Creative Showcase'}</h4>
+                                    ${fullUrl !== '#' ? `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">Live Preview ↗</a>` : ''}
+                                    <div class="web-tech">${tagsHtml}</div>
+                                    <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${c.description || ''}</p>
+                                    ${c.metric ? `<div class="speed-metric" style="color:var(--gold);font-weight:700;"><i class="fas fa-award"></i> ${c.metric}</div>` : ''}
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                });
+
+                var trackClass = sec.items.some(function(i) { return i.layout === 'video_vertical'; }) ? 'video-grid-vertical' : (sec.items.some(function(i) { return i.layout === 'video_horizontal'; }) ? 'video-grid-horizontal' : 'web-grid');
+
+                html += `<section class="portfolio-section active reveal" id="sec-custom-${slug}" data-category="${slug}">
+                    <div class="section-header">
+                        <h3>${sec.title}</h3>
+                        <p>${sec.subtitle}</p>
+                    </div>
+                    <div class="carousel-wrapper">
+                        <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
+                        <div class="carousel-track ${trackClass}" id="track-${slug}">
+                            ${cardsHtml}
+                        </div>
+                        <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
+                    </div>
+                </section>`;
+
+                // Append dynamic filter button if not present
+                if (filterBar && !filterBar.querySelector(`[data-filter="${slug}"]`)) {
+                    var btn = document.createElement('button');
+                    btn.className = 'filter-btn dynamic-filter-pill';
+                    btn.setAttribute('data-filter', slug);
+                    btn.textContent = sec.title;
+                    filterBar.appendChild(btn);
+                }
+            });
+
+            container.innerHTML = html;
+            container.querySelectorAll('.carousel-track').forEach(function(t) { wireVideoHover(t); });
+        }
+
+        // Instant local cache loader & cross-tab sync
+        function loadPortfolioFromLocalCache() {
+            try {
+                var webs = localStorage.getItem('cms_portfolio_websites');
+                if (webs) {
+                    var parsedWebs = JSON.parse(webs);
+                    if (Array.isArray(parsedWebs) && parsedWebs.length > 0) renderDynamicWebsites(parsedWebs);
+                }
+                var ads = localStorage.getItem('cms_portfolio_brand_ads');
+                if (ads) {
+                    var parsedAds = JSON.parse(ads);
+                    if (Array.isArray(parsedAds) && parsedAds.length > 0) renderDynamicBrandAds(parsedAds);
+                }
+                var social = localStorage.getItem('cms_portfolio_social');
+                if (social) {
+                    var parsedSocial = JSON.parse(social);
+                    if (Array.isArray(parsedSocial) && parsedSocial.length > 0) renderDynamicSocialGrowth(parsedSocial);
+                }
+                var custom = localStorage.getItem('cms_portfolio_custom');
+                if (custom) {
+                    var parsedCustom = JSON.parse(custom);
+                    if (Array.isArray(parsedCustom) && parsedCustom.length > 0) renderDynamicCustomSections(parsedCustom);
+                }
+                var vids = localStorage.getItem('cms_portfolio_videos');
+                if (vids) {
+                    var parsedVids = JSON.parse(vids);
+                    if (Array.isArray(parsedVids) && parsedVids.length > 0) renderDynamicVideos(parsedVids);
+                }
+            } catch(e) {
+                console.warn('Local cache read error:', e);
+            }
+        }
+
+        loadPortfolioFromLocalCache();
+        window.addEventListener('storage', loadPortfolioFromLocalCache);
+        window.addEventListener('focus', loadPortfolioFromLocalCache);
+
+        // Listen in real-time with isolated error boundaries
+        // 1. Videos (collection & fallback doc)
         try {
-            // 1. Primary: collection listener
             onSnapshot(collection(db, 'portfolio_videos'), (snap) => {
                 var vids = [];
                 snap.forEach(d => {
@@ -1600,24 +2620,34 @@
                 if (vids.length > 0) {
                     vids.sort((a, b) => (a.order || 1) - (b.order || 1));
                     renderDynamicVideos(vids);
+                    try { localStorage.setItem('cms_portfolio_videos', JSON.stringify(vids)); } catch(e) {}
                 }
             }, (err) => {
                 console.warn('portfolio_videos listener note:', err.message);
             });
+        } catch(e) {
+            console.warn('Videos collection setup error:', e);
+        }
 
-            // 2. Fallback: doc listener under projects
+        try {
             onSnapshot(doc(db, 'projects', 'cms_portfolio_videos'), (docSnap) => {
                 if (docSnap.exists()) {
                     var dat = docSnap.data();
                     if (dat && dat.videos && Array.isArray(dat.videos) && dat.videos.length > 0) {
                         dat.videos.sort((a, b) => (a.order || 1) - (b.order || 1));
                         renderDynamicVideos(dat.videos);
+                        try { localStorage.setItem('cms_portfolio_videos', JSON.stringify(dat.videos)); } catch(e) {}
                     }
                 }
             }, (err) => {
                 console.warn('cms_portfolio_videos fallback note:', err.message);
             });
+        } catch(e) {
+            console.warn('Videos fallback doc setup error:', e);
+        }
 
+        // 2. Websites
+        try {
             onSnapshot(collection(db, 'portfolio_websites'), (snap) => {
                 var webs = [];
                 snap.forEach(d => {
@@ -1628,10 +2658,76 @@
                 if (webs.length > 0) {
                     webs.sort((a, b) => (a.order || 1) - (b.order || 1));
                     renderDynamicWebsites(webs);
+                    try { localStorage.setItem('cms_portfolio_websites', JSON.stringify(webs)); } catch(e) {}
                 }
+            }, (err) => {
+                console.warn('portfolio_websites listener note:', err.message);
             });
         } catch(e) {
-            console.log("Firestore portfolio sync:", e);
+            console.warn('Websites listener setup error:', e);
+        }
+
+        // 3. Brand Promotions & Paid Ads
+        try {
+            onSnapshot(collection(db, 'portfolio_brand_ads'), (snap) => {
+                var ads = [];
+                snap.forEach(d => {
+                    var dat = d.data();
+                    dat.id = d.id;
+                    ads.push(dat);
+                });
+                if (ads.length > 0) {
+                    ads.sort((a, b) => (a.order || 1) - (b.order || 1));
+                    renderDynamicBrandAds(ads);
+                    try { localStorage.setItem('cms_portfolio_brand_ads', JSON.stringify(ads)); } catch(e) {}
+                }
+            }, (err) => {
+                console.warn('portfolio_brand_ads listener note:', err.message);
+            });
+        } catch(e) {
+            console.warn('Brand Ads listener setup error:', e);
+        }
+
+        // 4. Social Media Management
+        try {
+            onSnapshot(collection(db, 'portfolio_social'), (snap) => {
+                var items = [];
+                snap.forEach(d => {
+                    var dat = d.data();
+                    dat.id = d.id;
+                    items.push(dat);
+                });
+                if (items.length > 0) {
+                    items.sort((a, b) => (a.order || 1) - (b.order || 1));
+                    renderDynamicSocialGrowth(items);
+                    try { localStorage.setItem('cms_portfolio_social', JSON.stringify(items)); } catch(e) {}
+                }
+            }, (err) => {
+                console.warn('portfolio_social listener note:', err.message);
+            });
+        } catch(e) {
+            console.warn('Social growth listener setup error:', e);
+        }
+
+        // 5. Custom / Future Sections
+        try {
+            onSnapshot(collection(db, 'portfolio_custom'), (snap) => {
+                var items = [];
+                snap.forEach(d => {
+                    var dat = d.data();
+                    dat.id = d.id;
+                    items.push(dat);
+                });
+                if (items.length > 0) {
+                    items.sort((a, b) => (a.order || 1) - (b.order || 1));
+                    renderDynamicCustomSections(items);
+                    try { localStorage.setItem('cms_portfolio_custom', JSON.stringify(items)); } catch(e) {}
+                }
+            }, (err) => {
+                console.warn('portfolio_custom listener note:', err.message);
+            });
+        } catch(e) {
+            console.warn('Custom sections listener setup error:', e);
         }
     </script>
 

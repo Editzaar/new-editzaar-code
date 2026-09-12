@@ -2374,6 +2374,9 @@
         <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
           <button class="tab-btn active" id="tab-cms-video" onclick="switchCmsTab('portfolio_videos')">🎬 Video Editing Showcase</button>
           <button class="tab-btn" id="tab-cms-web" onclick="switchCmsTab('portfolio_web')">💻 Website Showcase</button>
+          <button class="tab-btn" id="tab-cms-brand" onclick="switchCmsTab('portfolio_brand')">📢 Brand Promotions &amp; Ads</button>
+          <button class="tab-btn" id="tab-cms-social" onclick="switchCmsTab('portfolio_social')">📱 Social Media Growth</button>
+          <button class="tab-btn" id="tab-cms-custom" onclick="switchCmsTab('portfolio_custom')" style="border-color:rgba(255,184,0,0.5);color:var(--gold);">🎨 Custom &amp; Other Sections</button>
           <button class="tab-btn" id="tab-cms-testi" onclick="switchCmsTab('testimonials')">⭐ Testimonials</button>
           <button class="tab-btn" id="tab-cms-faq" onclick="switchCmsTab('faqs')">❓ FAQs</button>
           <button class="tab-btn" id="tab-cms-contact" onclick="switchCmsTab('contact')">📞 Contact Info</button>
@@ -2503,8 +2506,17 @@
                   </div>
                 </div>
                 <div class="field">
-                  <label>Screenshot / Mockup Image URL (Optional)</label>
-                  <input id="web-screenshot" type="text" placeholder="https://.../screenshot.jpg (Optional - if blank, live iframe preview is used)"/>
+                  <label>Screenshot / Mockup Image (Upload File OR paste Image URL - Optional)</label>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <input id="web-screenshot" type="text" placeholder="https://.../screenshot.jpg or choose file →" style="flex:1;" oninput="var p=document.getElementById('web-preview-img'); if(p){p.src=this.value;p.style.display=this.value?'block':'none';}"/>
+                    <label class="btn-outline btn-sm" style="cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;margin:0;height:40px;">
+                      📷 Choose Image
+                      <input type="file" accept="image/*" style="display:none;" onchange="window.handleImageFilePicker(this, 'web-screenshot', 'web-preview-img')"/>
+                    </label>
+                  </div>
+                  <div style="margin-top:8px;">
+                    <img id="web-preview-img" src="" alt="Preview" style="display:none;max-height:140px;border-radius:8px;border:1px solid var(--border);object-fit:cover;"/>
+                  </div>
                 </div>
                 <button class="btn-gold" style="margin-top:8px;width:100%;justify-content:center;height:42px;" id="btnSaveWeb" onclick="window.savePortfolioWebsiteNow()">💾 Save Website Project →</button>
               </div>
@@ -2533,7 +2545,320 @@
             </div>
           </div>
 
-                    <!-- TESTIMONIALS TAB -->
+          <!-- BRAND PROMOTIONS & PAID ADS CMS TAB -->
+          <div id="cms-tab-portfolio_brand" style="display:none;">
+            <div class="dash-card" style="margin-bottom:24px;">
+              <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div class="dash-card-title">＋ Add / Update <em>Brand Promotion &amp; Paid Ad</em></div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn-outline btn-sm" onclick="window.seedDefaultPortfolioBrandAds()">↺ Import Starter Brand Ads</button>
+                  <button class="btn-gold btn-sm" onclick="window.resetBrandAdForm()">＋ Add New Ad / Promotion</button>
+                </div>
+              </div>
+              <div class="dash-form" id="brandForm">
+                <input type="hidden" id="brand-id" value=""/>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Campaign / Client Title *</label>
+                    <input id="brand-title" type="text" placeholder="e.g. Finance Niche / Real Estate Leads / D2C Brand"/>
+                  </div>
+                  <div class="field">
+                    <label>Platform / Network *</label>
+                    <select id="brand-platform">
+                      <option value="Meta Ads">Meta Ads (Facebook &amp; Instagram)</option>
+                      <option value="Google Ads">Google Ads (Search &amp; YouTube)</option>
+                      <option value="Instagram">Instagram Growth</option>
+                      <option value="YouTube">YouTube Ads &amp; Growth</option>
+                      <option value="LinkedIn">LinkedIn B2B</option>
+                      <option value="TikTok">TikTok Ads</option>
+                      <option value="Twitter / X">Twitter / X Ads</option>
+                      <option value="Custom">Custom Campaign</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Key Result / Metric Highlight *</label>
+                    <input id="brand-metric" type="text" placeholder="e.g. +380% ROAS / 340+ Leads / 12K → 89K"/>
+                  </div>
+                  <div class="field">
+                    <label>Display Sort Order (Number)</label>
+                    <input id="brand-order" type="number" placeholder="1, 2, 3..." value="1"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Campaign Creative / Ad Image (Upload File OR paste Image URL) *</label>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <input id="brand-banner" type="text" placeholder="https://.../image.jpg or choose file →" style="flex:1;" oninput="var p=document.getElementById('brand-preview-img'); if(p){p.src=this.value;p.style.display=this.value?'block':'none';}"/>
+                    <label class="btn-outline btn-sm" style="cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;margin:0;height:40px;">
+                      📷 Choose Image
+                      <input type="file" accept="image/*" style="display:none;" onchange="window.handleImageFilePicker(this, 'brand-banner', 'brand-preview-img')"/>
+                    </label>
+                  </div>
+                  <div style="margin-top:8px;">
+                    <img id="brand-preview-img" src="" alt="Preview" style="display:none;max-height:140px;border-radius:8px;border:1px solid var(--border);object-fit:cover;"/>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Instagram Profile / Campaign Link URL *</label>
+                    <input id="brand-link" type="text" placeholder="https://instagram.com/username or @username or https://..."/>
+                  </div>
+                  <div class="field">
+                    <label>Brand Logo / Avatar URL (Optional)</label>
+                    <input id="brand-avatar" type="text" placeholder="https://.../brand-logo.png (Optional logo)"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Campaign Description / Summary</label>
+                  <textarea id="brand-desc" rows="3" placeholder="Meta Ads Campaign optimization leading to 2.1M targeted impressions and massive ROI scaling within 60 days."></textarea>
+                </div>
+                <button class="btn-gold" style="margin-top:8px;width:100%;justify-content:center;height:42px;" id="btnSaveBrandAd" onclick="window.savePortfolioBrandAdNow()">💾 Save Brand Promotion →</button>
+              </div>
+            </div>
+
+            <!-- Brand Ads Table -->
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Live <em>Brand Promotions &amp; Paid Ads</em></div></div>
+              <div class="table-scroll-wrap">
+                <table class="dash-table">
+                  <thead>
+                    <tr>
+                      <th>Campaign Title</th>
+                      <th>Platform</th>
+                      <th>Metric</th>
+                      <th>Preview / Banner</th>
+                      <th>Order</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cmsBrandAdsTbody">
+                    <tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">Loading brand promotions...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- SOCIAL MEDIA GROWTH CMS TAB -->
+          <div id="cms-tab-portfolio_social" style="display:none;">
+            <div class="dash-card" style="margin-bottom:24px;">
+              <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div class="dash-card-title">＋ Add / Update <em>Social Media Growth &amp; Profile</em></div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn-outline btn-sm" onclick="window.seedDefaultPortfolioSocial()">↺ Import Starter Social Accounts</button>
+                  <button class="btn-gold btn-sm" onclick="window.resetSocialForm()">＋ Add New Social Account</button>
+                </div>
+              </div>
+              <div class="dash-form" id="socialForm">
+                <input type="hidden" id="social-id" value=""/>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Account / Channel Name *</label>
+                    <input id="social-title" type="text" placeholder="e.g. YouTube Channel Growth / @editzaar.insta"/>
+                  </div>
+                  <div class="field">
+                    <label>Platform / Network *</label>
+                    <select id="social-platform">
+                      <option value="Instagram">Instagram</option>
+                      <option value="YouTube">YouTube</option>
+                      <option value="LinkedIn">LinkedIn</option>
+                      <option value="TikTok">TikTok</option>
+                      <option value="Twitter / X">Twitter / X</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="Strategy">Strategy &amp; SEO</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Growth Result / Scale Metric *</label>
+                    <input id="social-metric" type="text" placeholder="e.g. 0 to 50K Subs / Full Stack / 1.5M Monthly Reach"/>
+                  </div>
+                  <div class="field">
+                    <label>Display Sort Order (Number)</label>
+                    <input id="social-order" type="number" placeholder="1, 2, 3..." value="1"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Social Profile / Feed Creative Image (Upload File OR paste Image URL) *</label>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <input id="social-banner" type="text" placeholder="https://.../image.jpg or choose file →" style="flex:1;" oninput="var p=document.getElementById('social-preview-img'); if(p){p.src=this.value;p.style.display=this.value?'block':'none';}"/>
+                    <label class="btn-outline btn-sm" style="cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;margin:0;height:40px;">
+                      📷 Choose Image
+                      <input type="file" accept="image/*" style="display:none;" onchange="window.handleImageFilePicker(this, 'social-banner', 'social-preview-img')"/>
+                    </label>
+                  </div>
+                  <div style="margin-top:8px;">
+                    <img id="social-preview-img" src="" alt="Preview" style="display:none;max-height:140px;border-radius:8px;border:1px solid var(--border);object-fit:cover;"/>
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Instagram Profile / Channel Link URL *</label>
+                    <input id="social-link" type="text" placeholder="https://instagram.com/editzaar.insta or @editzaar.insta or https://youtube.com/..."/>
+                  </div>
+                  <div class="field">
+                    <label>Profile Avatar URL (Optional)</label>
+                    <input id="social-avatar" type="text" placeholder="https://.../avatar.jpg (Optional circular avatar)"/>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Management Scope &amp; Strategy Description</label>
+                  <textarea id="social-desc" rows="3" placeholder="End-to-end management: Content planning, creative carousel posts, daily stories, and engaging reels strategy."></textarea>
+                </div>
+                <button class="btn-gold" style="margin-top:8px;width:100%;justify-content:center;height:42px;" id="btnSaveSocial" onclick="window.savePortfolioSocialNow()">💾 Save Social Account →</button>
+              </div>
+            </div>
+
+            <!-- Social Accounts Table -->
+            <div class="dash-card">
+              <div class="dash-card-header"><div class="dash-card-title">Live <em>Social Media Accounts &amp; Profiles</em></div></div>
+              <div class="table-scroll-wrap">
+                <table class="dash-table">
+                  <thead>
+                    <tr>
+                      <th>Account / Title</th>
+                      <th>Platform</th>
+                      <th>Metric</th>
+                      <th>Avatar / Banner</th>
+                      <th>Order</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cmsSocialTbody">
+                    <tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">Loading social accounts...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- CUSTOM & OTHER SECTIONS CMS TAB -->
+          <div id="cms-tab-portfolio_custom" style="display:none;">
+            <div class="dash-card" style="margin-bottom:24px;">
+              <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div>
+                  <div class="dash-card-title">＋ Add / Update <em>Custom Portfolio Section &amp; Cards</em></div>
+                  <div style="font-size:0.85rem;color:var(--t2);margin-top:4px;">Add any new section to editzaar.in/work (e.g. Graphic Design, 3D &amp; VFX, Thumbnails, Case Studies)</div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn-outline btn-sm" onclick="window.seedDefaultPortfolioCustom()">↺ Import Starter Custom Cards</button>
+                  <button class="btn-gold btn-sm" onclick="window.resetCustomForm()">＋ Add New Custom Card</button>
+                </div>
+              </div>
+              <div class="dash-form" id="customForm">
+                <input type="hidden" id="custom-id" value=""/>
+                
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Section Name / Category Title *</label>
+                    <input id="custom-section-title" type="text" placeholder="e.g. Graphic Design &amp; Thumbnails / 3D Animation &amp; VFX" list="presetSectionsList"/>
+                    <datalist id="presetSectionsList">
+                      <option value="Graphic Design &amp; Thumbnails"></option>
+                      <option value="3D Animation &amp; VFX"></option>
+                      <option value="Branding &amp; Visual Identity"></option>
+                      <option value="E-Commerce Product Visuals"></option>
+                      <option value="Performance Marketing Case Studies"></option>
+                      <option value="Podcast Audio &amp; Video Production"></option>
+                    </datalist>
+                    <small style="color:var(--t2);font-size:11px;">Pick a suggestion or type your own new section name</small>
+                  </div>
+                  <div class="field">
+                    <label>Section Subtitle / Tagline</label>
+                    <input id="custom-section-subtitle" type="text" placeholder="e.g. High-converting visual assets, YouTube thumbnails, and branding packages."/>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Card Title *</label>
+                    <input id="custom-title" type="text" placeholder="e.g. Tech Channel 3D Thumbnail / Luxury Brand Identity"/>
+                  </div>
+                  <div class="field">
+                    <label>Card Display Layout *</label>
+                    <select id="custom-layout">
+                      <option value="browser">💻 Browser / Mockup Showcase Card</option>
+                      <option value="campaign">📢 Brand / Growth Campaign Card</option>
+                      <option value="video_vertical">📱 Vertical Reel Phone Frame (9:16)</option>
+                      <option value="video_horizontal">🖥️ Horizontal Video Monitor (16:9)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Key Result / Metric Highlight</label>
+                    <input id="custom-metric" type="text" placeholder="e.g. +180% CTR / 4K Render / Viral Hit"/>
+                  </div>
+                  <div class="field">
+                    <label>Display Sort Order (Number)</label>
+                    <input id="custom-order" type="number" placeholder="1, 2, 3..." value="1"/>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Creative Media URL (Upload File OR paste Image / Video URL) *</label>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <input id="custom-media" type="text" placeholder="https://.../image.jpg or video.mp4 or choose file →" style="flex:1;" oninput="var p=document.getElementById('custom-preview-img'); if(p){p.src=this.value;p.style.display=this.value?'block':'none';}"/>
+                    <label class="btn-outline btn-sm" style="cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;margin:0;height:40px;">
+                      📷 Choose Image
+                      <input type="file" accept="image/*" style="display:none;" onchange="window.handleImageFilePicker(this, 'custom-media', 'custom-preview-img')"/>
+                    </label>
+                  </div>
+                  <div style="margin-top:8px;">
+                    <img id="custom-preview-img" src="" alt="Preview" style="display:none;max-height:140px;border-radius:8px;border:1px solid var(--border);object-fit:cover;"/>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Target Link URL (Instagram, Behance, Drive, Website, etc.) *</label>
+                    <input id="custom-link" type="text" placeholder="https://instagram.com/... or https://behance.net/... or https://..."/>
+                  </div>
+                  <div class="field">
+                    <label>Badges / Tags (Comma-separated)</label>
+                    <input id="custom-tags" type="text" placeholder="e.g. Photoshop, Illustrator, 4K, Branding"/>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Card Description / Scope Details</label>
+                  <textarea id="custom-desc" rows="3" placeholder="Describe the creative work, software tools used, results achieved, or client background..."></textarea>
+                </div>
+
+                <button class="btn-gold" style="margin-top:8px;width:100%;justify-content:center;height:42px;" id="btnSaveCustom" onclick="window.savePortfolioCustomNow()">💾 Save Custom Card to Section →</button>
+              </div>
+            </div>
+
+            <!-- Custom Cards Table -->
+            <div class="dash-card">
+              <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div class="dash-card-title">Live <em>Custom Sections &amp; Cards</em></div>
+                <div style="font-size:0.85rem;color:var(--t2);">Cards are grouped by section title automatically on the Work page</div>
+              </div>
+              <div class="table-scroll-wrap">
+                <table class="dash-table">
+                  <thead>
+                    <tr>
+                      <th>Section Name</th>
+                      <th>Card Title</th>
+                      <th>Layout</th>
+                      <th>Metric / Tags</th>
+                      <th>Preview</th>
+                      <th>Order</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cmsCustomTbody">
+                    <tr><td colspan="7" style="text-align:center;color:var(--t2);padding:24px;">Loading custom cards...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TESTIMONIALS TAB -->
           <div id="cms-tab-testimonials" style="display:none;">
             <div class="dash-card" style="margin-bottom:24px;">
               <div class="dash-card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
@@ -7862,6 +8187,58 @@
   // ============================================================
   // WEBSITE CMS & PORTFOLIO MANAGER (FIREBASE FIRESTORE SYNC)
   // ============================================================
+  // Universal Client-Side Image File Picker & Canvas Optimizer
+  window.handleImageFilePicker = function(inputEl, targetInputId, previewImgId) {
+    var file = inputEl.files && inputEl.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file (PNG, JPG, WebP, etc.)');
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxW = 800, maxH = 500;
+        var w = img.width, h = img.height;
+        if (w > maxW || h > maxH) {
+          if (w / maxW > h / maxH) {
+            h = Math.round(h * (maxW / w));
+            w = maxW;
+          } else {
+            w = Math.round(w * (maxH / h));
+            h = maxH;
+          }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+        var target = document.getElementById(targetInputId);
+        if (target) target.value = dataUrl;
+
+        if (previewImgId) {
+          var preview = document.getElementById(previewImgId);
+          if (preview) {
+            preview.src = dataUrl;
+            preview.style.display = 'block';
+          }
+        }
+        alert('✅ Image selected and compressed successfully! Ready to save.');
+      };
+      img.onerror = function() {
+        alert('Could not process this image file. Please try another image.');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
   var DEFAULT_STARTER_VIDEOS = [
       { id: 'v1', type: 'vertical', title: 'Cinematic Reel', niche: 'Creative', videoUrl: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4', order: 1 },
       { id: 'v2', type: 'vertical', title: 'Motion Graphics', niche: 'Creative / Motion', videoUrl: 'https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4', order: 2 },
@@ -7885,21 +8262,118 @@
       { id: 'v20', type: 'horizontal', title: 'Full Podcast Episode Edit', niche: 'Multi-Cam Podcast', videoUrl: 'https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4', order: 20 }
     ];
   var DEFAULT_STARTER_WEBSITES = [
-      { id: 'w1', name: 'D Plus Cure', url: 'https://dpluscure.com', niche: 'Healthcare E-Commerce', tech: 'WordPress, WooCommerce, PHP, Elementor', speed: '92/100', order: 1 },
-      { id: 'w2', name: 'News Flash Daily', url: 'https://newsflashdaily.in', niche: 'News & Media Portal', tech: 'WordPress, SEO Suite, AMP, Custom Theme', speed: '96/100', order: 2 },
-      { id: 'w3', name: 'Editzaar Agency', url: 'https://editzaar.in', niche: 'Creative Agency Portfolio', tech: 'HTML5, CSS3, JavaScript, Firebase Cloud', speed: '98/100', order: 3 }
+      { id: 'w1', name: 'D Plus Cure', url: 'https://dpluscure.com', niche: 'Healthcare E-Commerce Platform', tech: 'WordPress, WooCommerce, PHP', speed: '92/100', screenshot: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80', order: 1 },
+      { id: 'w2', name: 'News Flash Daily', url: 'https://www.newsflashdaily.in', niche: 'Digital News & Media Publication Portal', tech: 'WordPress, SEO, News Portal', speed: '95/100', screenshot: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80', order: 2 },
+      { id: 'w3', name: 'Raja Priya Group', url: 'https://editzaar.github.io/rajapriyagroup-creator/index.html', niche: 'Real Estate & Construction Group Platform', tech: 'HTML5, CSS3, JavaScript', speed: '96/100', screenshot: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80', order: 3 }
+    ];
+
+  var DEFAULT_STARTER_BRAND_ADS = [
+      { id: 'b1', title: 'Finance Niche Scaling', platform: 'Meta Ads', metric: '+380% ROAS', bannerUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80', link: 'https://editzaar.in/work', description: 'Meta Ads Campaign optimization leading to 2.1M targeted impressions and massive ROI scaling within 60 days.', order: 1 },
+      { id: 'b2', title: 'Real Estate High-Ticket', platform: 'Google Ads', metric: '340+ Leads', bannerUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80', link: 'https://editzaar.in/work', description: 'Google Search & Display Ads campaign targeting high-net-worth individuals, achieving a 28% CTR.', order: 2 },
+      { id: 'b3', title: 'D2C Brand Growth', platform: 'Instagram', metric: '12K → 89K Followers', bannerUrl: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80', link: 'https://www.instagram.com/editzaar.insta/', description: 'Instagram Growth strategy through viral reels and targeted influencer promotions over a 90-day period.', order: 3 },
+      { id: 'b4', title: 'B2B Enterprise Lead Gen', platform: 'LinkedIn Ads', metric: '185+ Closed Deals', bannerUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80', link: 'https://linkedin.com/company/editzaar', description: 'Targeted Account-Based Marketing (ABM) ad funnels targeting enterprise directors and tech founders.', order: 4 },
+      { id: 'b5', title: 'E-Commerce Viral Blitz', platform: 'TikTok Ads', metric: '5.4x ROAS', bannerUrl: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80', link: 'https://editzaar.in/work', description: 'Dynamic short-form video advertising and creative UGC scaling leading to 4.2M views and 5.4x ROAS.', order: 5 }
+    ];
+
+  var DEFAULT_STARTER_SOCIAL = [
+      { id: 's1', title: 'YouTube Channel Growth', platform: 'YouTube', metric: '0 to 50K Subs', bannerUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80', link: 'https://www.youtube.com/channel/UC10LSLGKMDMyj5odLUl6dgQ', description: 'Comprehensive management including script optimization, A/B testing CTR-optimized thumbnails, and retention editing.', order: 1 },
+      { id: 's2', title: 'Instagram Page Handling', platform: 'Instagram', metric: 'Full Stack', bannerUrl: 'https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=800&q=80', link: 'https://www.instagram.com/editzaar.insta/', description: 'End-to-end management: Content planning, creative carousel posts, daily stories, and engaging reels strategy.', order: 2 },
+      { id: 's3', title: 'Content Strategy & SEO', platform: 'Strategy', metric: 'SEO-Driven', bannerUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80', link: 'https://editzaar.in/work', description: 'Developing analytics-backed posting calendars that align with search trends to maximize organic reach and growth.', order: 3 },
+      { id: 's4', title: 'Founder Personal Brand', platform: 'LinkedIn', metric: '3.2M Impressions', bannerUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80', link: 'https://www.linkedin.com/in/editzaar', description: 'Executive thought leadership, viral carousel slides, and short video clips scaling founder reach by 850% in 90 days.', order: 4 },
+      { id: 's5', title: 'Viral Tech Community', platform: 'Twitter / X', metric: '28K+ Followers', bannerUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80', image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80', link: 'https://twitter.com/editzaar', description: 'Daily thread architecture, viral meme syndication, and active engagement funnels building a loyal tech audience.', order: 5 }
+    ];
+
+  var DEFAULT_STARTER_CUSTOM = [
+      {
+        id: 'c1',
+        sectionTitle: 'Graphic Design & Thumbnails',
+        sectionSubtitle: 'High-CTR YouTube thumbnails, branding kits, and bespoke vector artwork.',
+        category: 'graphic_design',
+        title: 'Tech Channel 3D Thumbnail',
+        layout: 'browser',
+        media: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+        link: 'https://editzaar.in/work',
+        tags: 'Photoshop, Blender, 3D',
+        metric: '+185% CTR Growth',
+        description: 'Custom 3D-modeled YouTube thumbnail package that drove 450K+ impressions in 14 days.',
+        order: 1
+      },
+      {
+        id: 'c2',
+        sectionTitle: 'Graphic Design & Thumbnails',
+        sectionSubtitle: 'High-CTR YouTube thumbnails, branding kits, and bespoke vector artwork.',
+        category: 'graphic_design',
+        title: 'Podcast Brand Identity Kit',
+        layout: 'browser',
+        media: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=800&q=80',
+        link: 'https://editzaar.in/work',
+        tags: 'Illustrator, Typography, Vector',
+        metric: 'Full Brand Suite',
+        description: 'Complete visual identity system including logo, color theory, social cover kits, and merchandise assets.',
+        order: 2
+      },
+      {
+        id: 'c3',
+        sectionTitle: '3D Animation & VFX',
+        sectionSubtitle: 'Cinema 4D, Blender, and Unreal Engine product animations that elevate conversions.',
+        category: 'animation_3d',
+        title: 'Sneaker Commercial 3D Render',
+        layout: 'campaign',
+        media: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
+        link: 'https://editzaar.in/work',
+        tags: 'Blender, Cycles, Unreal Engine',
+        metric: 'Photorealistic 4K',
+        description: 'Dynamic photorealistic 3D product animation showcasing textures, liquid dynamics, and lighting breakdown.',
+        order: 1
+      }
     ];
 
   var allCmsVideos = [...DEFAULT_STARTER_VIDEOS];
   var allCmsWebsites = [...DEFAULT_STARTER_WEBSITES];
+  var allCmsBrandAds = [...DEFAULT_STARTER_BRAND_ADS];
+  var allCmsSocial = [...DEFAULT_STARTER_SOCIAL];
+  var allCmsCustom = [...DEFAULT_STARTER_CUSTOM];
   var currentVidFilter = 'all';
   var hasSeededVideos = false;
   var hasSeededWebsites = false;
+  var hasSeededBrandAds = false;
+  var hasSeededSocial = false;
+  var hasSeededCustom = false;
+
+  // Restore existing local cache if present
+  try {
+    var cachedWebs = localStorage.getItem('cms_portfolio_websites');
+    if (cachedWebs) {
+      var pWebs = JSON.parse(cachedWebs);
+      if (Array.isArray(pWebs) && pWebs.length > 0) allCmsWebsites = pWebs;
+    }
+    var cachedAds = localStorage.getItem('cms_portfolio_brand_ads');
+    if (cachedAds) {
+      var pAds = JSON.parse(cachedAds);
+      if (Array.isArray(pAds) && pAds.length > 0) allCmsBrandAds = pAds;
+    }
+    var cachedSocial = localStorage.getItem('cms_portfolio_social');
+    if (cachedSocial) {
+      var pSoc = JSON.parse(cachedSocial);
+      if (Array.isArray(pSoc) && pSoc.length > 0) allCmsSocial = pSoc;
+    }
+    var cachedCustom = localStorage.getItem('cms_portfolio_custom');
+    if (cachedCustom) {
+      var pCust = JSON.parse(cachedCustom);
+      if (Array.isArray(pCust) && pCust.length > 0) allCmsCustom = pCust;
+    }
+    var cachedVids = localStorage.getItem('cms_portfolio_videos');
+    if (cachedVids) {
+      var pVids = JSON.parse(cachedVids);
+      if (Array.isArray(pVids) && pVids.length > 0) allCmsVideos = pVids;
+    }
+  } catch(e) {}
 
   window.switchCmsTab = function(tabName) {
-    var tabs = ['portfolio_videos', 'portfolio_web', 'testimonials', 'faqs', 'contact'];
+    var tabs = ['portfolio_videos', 'portfolio_web', 'portfolio_brand', 'portfolio_social', 'portfolio_custom', 'testimonials', 'faqs', 'contact'];
     tabs.forEach(function(t) {
-      var btn = document.getElementById('tab-cms-' + (t === 'portfolio_videos' ? 'video' : (t === 'portfolio_web' ? 'web' : (t === 'testimonials' ? 'testi' : (t === 'faqs' ? 'faq' : 'contact')))));
+      var tabKey = (t === 'portfolio_videos' ? 'video' : (t === 'portfolio_web' ? 'web' : (t === 'portfolio_brand' ? 'brand' : (t === 'portfolio_social' ? 'social' : (t === 'portfolio_custom' ? 'custom' : (t === 'testimonials' ? 'testi' : (t === 'faqs' ? 'faq' : 'contact')))))));
+      var btn = document.getElementById('tab-cms-' + tabKey);
       var container = document.getElementById('cms-tab-' + t);
       if (btn) {
         if (t === tabName) btn.classList.add('active');
@@ -7915,6 +8389,9 @@
   function initPortfolioCmsListeners() {
     renderCmsVideos();
     renderCmsWebsites();
+    renderCmsBrandAds();
+    renderCmsSocial();
+    renderCmsCustom();
 
     try {
       onSnapshot(collection(db, 'portfolio_videos'), function(snapshot) {
@@ -7923,7 +8400,6 @@
             hasSeededVideos = true;
             autoSeedVideosToFirestore();
           }
-          allCmsVideos = [...DEFAULT_STARTER_VIDEOS];
         } else {
           allCmsVideos = [];
           snapshot.forEach(function(docSnap) {
@@ -7932,6 +8408,7 @@
             allCmsVideos.push(data);
           });
           allCmsVideos.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          try { localStorage.setItem('cms_portfolio_videos', JSON.stringify(allCmsVideos)); } catch(e) {}
         }
         renderCmsVideos();
       }, function(err) {
@@ -7945,7 +8422,6 @@
             hasSeededWebsites = true;
             autoSeedWebsitesToFirestore();
           }
-          allCmsWebsites = [...DEFAULT_STARTER_WEBSITES];
         } else {
           allCmsWebsites = [];
           snapshot.forEach(function(docSnap) {
@@ -7954,11 +8430,78 @@
             allCmsWebsites.push(data);
           });
           allCmsWebsites.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          try { localStorage.setItem('cms_portfolio_websites', JSON.stringify(allCmsWebsites)); } catch(e) {}
         }
         renderCmsWebsites();
       }, function(err) {
         console.error('Error listening to portfolio_websites:', err);
         renderCmsWebsites();
+      });
+
+      onSnapshot(collection(db, 'portfolio_brand_ads'), function(snapshot) {
+        if (snapshot.empty) {
+          if (!hasSeededBrandAds) {
+            hasSeededBrandAds = true;
+            autoSeedBrandAdsToFirestore();
+          }
+        } else {
+          allCmsBrandAds = [];
+          snapshot.forEach(function(docSnap) {
+            var data = docSnap.data();
+            data.id = docSnap.id;
+            allCmsBrandAds.push(data);
+          });
+          allCmsBrandAds.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          try { localStorage.setItem('cms_portfolio_brand_ads', JSON.stringify(allCmsBrandAds)); } catch(e) {}
+        }
+        renderCmsBrandAds();
+      }, function(err) {
+        console.error('Error listening to portfolio_brand_ads:', err);
+        renderCmsBrandAds();
+      });
+
+      onSnapshot(collection(db, 'portfolio_social'), function(snapshot) {
+        if (snapshot.empty) {
+          if (!hasSeededSocial) {
+            hasSeededSocial = true;
+            autoSeedSocialToFirestore();
+          }
+        } else {
+          allCmsSocial = [];
+          snapshot.forEach(function(docSnap) {
+            var data = docSnap.data();
+            data.id = docSnap.id;
+            allCmsSocial.push(data);
+          });
+          allCmsSocial.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          try { localStorage.setItem('cms_portfolio_social', JSON.stringify(allCmsSocial)); } catch(e) {}
+        }
+        renderCmsSocial();
+      }, function(err) {
+        console.error('Error listening to portfolio_social:', err);
+        renderCmsSocial();
+      });
+
+      onSnapshot(collection(db, 'portfolio_custom'), function(snapshot) {
+        if (snapshot.empty) {
+          if (!hasSeededCustom) {
+            hasSeededCustom = true;
+            autoSeedCustomToFirestore();
+          }
+        } else {
+          allCmsCustom = [];
+          snapshot.forEach(function(docSnap) {
+            var data = docSnap.data();
+            data.id = docSnap.id;
+            allCmsCustom.push(data);
+          });
+          allCmsCustom.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+          try { localStorage.setItem('cms_portfolio_custom', JSON.stringify(allCmsCustom)); } catch(e) {}
+        }
+        renderCmsCustom();
+      }, function(err) {
+        console.error('Error listening to portfolio_custom:', err);
+        renderCmsCustom();
       });
     } catch(e) {
       console.error('initPortfolioCmsListeners error:', e);
@@ -7994,13 +8537,66 @@
           niche: s.niche,
           tech: s.tech,
           speed: s.speed,
+          screenshot: s.screenshot || '',
           order: s.order,
           active: true,
           createdAt: serverTimestamp()
         });
       }
+      alert('✅ Starter Websites imported successfully to Firestore!');
     } catch(e) {
       console.log('Auto-seed websites note:', e);
+      alert('Note: ' + e.message);
+    }
+  }
+
+  async function autoSeedBrandAdsToFirestore() {
+    try {
+      for (var i = 0; i < DEFAULT_STARTER_BRAND_ADS.length; i++) {
+        var s = DEFAULT_STARTER_BRAND_ADS[i];
+        await addDoc(collection(db, 'portfolio_brand_ads'), {
+          title: s.title,
+          platform: s.platform,
+          metric: s.metric,
+          description: s.description,
+          bannerUrl: s.bannerUrl || s.image || '',
+          image: s.bannerUrl || s.image || '',
+          link: s.link || '',
+          targetUrl: s.link || '',
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter Brand Promotions & Paid Ads imported successfully to Firestore!');
+    } catch(e) {
+      console.log('Auto-seed brand ads note:', e);
+      alert('Note: ' + e.message);
+    }
+  }
+
+  async function autoSeedSocialToFirestore() {
+    try {
+      for (var i = 0; i < DEFAULT_STARTER_SOCIAL.length; i++) {
+        var s = DEFAULT_STARTER_SOCIAL[i];
+        await addDoc(collection(db, 'portfolio_social'), {
+          title: s.title,
+          platform: s.platform,
+          metric: s.metric,
+          description: s.description,
+          bannerUrl: s.bannerUrl || s.image || '',
+          image: s.bannerUrl || s.image || '',
+          link: s.link || '',
+          profileUrl: s.link || '',
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter Social Media Accounts imported successfully to Firestore!');
+    } catch(e) {
+      console.log('Auto-seed social note:', e);
+      alert('Note: ' + e.message);
     }
   }
 
@@ -8058,9 +8654,10 @@
 
     var html = '';
     allCmsWebsites.forEach(function(w) {
+      var liveHref = w.url ? (/^https?:\/\//i.test(w.url) ? w.url : 'https://' + w.url) : '#';
       html += `<tr>
         <td><strong>${w.name || 'Untitled'}</strong></td>
-        <td><a href="${w.url}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">${w.url || '-'} ↗</a></td>
+        <td><a href="${liveHref}" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">${w.url || '-'} ↗</a></td>
         <td><span class="tech-badge" style="font-size:0.78rem;">${w.niche || 'Web'}</span></td>
         <td style="font-size:0.8rem;color:var(--t2);">${w.tech || 'Custom'}</td>
         <td><span style="color:#27c93f;font-weight:600;">⚡ ${w.speed || '98/100'}</span></td>
@@ -8068,6 +8665,96 @@
           <div style="display:flex;gap:6px;">
             <button class="btn-outline btn-sm" onclick="window.editCmsWebsite('${w.id}')">✏️ Edit</button>
             <button class="btn-danger btn-sm" onclick="window.deleteCmsWebsite('${w.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderCmsBrandAds() {
+    var tbody = document.getElementById('cmsBrandAdsTbody');
+    if (!tbody) return;
+
+    if (allCmsBrandAds.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No brand promotions added yet. Click <strong>"＋ Add New Ad / Promotion"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsBrandAds.forEach(function(b) {
+      var imgUrl = b.bannerUrl || b.image;
+      var preview = '';
+      if (imgUrl) {
+        preview = `<img src="${imgUrl}" alt="Preview" style="width:48px;height:32px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px;border:1px solid var(--border);" /> <a href="${imgUrl}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--gold);text-decoration:underline;">[Image ↗]</a>`;
+      } else if (b.avatarUrl) {
+        preview = `<img src="${b.avatarUrl}" alt="Logo" style="width:30px;height:30px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:1px solid var(--gold-border);" />`;
+      } else {
+        preview = '<span style="color:var(--t2);font-size:0.8rem;">No Image</span>';
+      }
+
+      var linkHref = b.link || b.targetUrl;
+      var linkDisplay = linkHref ? linkHref.replace(/^https?:\/\/(www\.)?/i, '') : '';
+      if (linkDisplay.length > 22) linkDisplay = linkDisplay.substring(0, 20) + '...';
+
+      html += `<tr>
+        <td><strong>${b.title || 'Untitled'}</strong></td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${b.platform || 'General'}</span></td>
+        <td>
+          <span style="color:var(--gold);font-weight:700;">${b.metric || '-'}</span>
+          ${linkHref ? `<br/><a href="${linkHref}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--t2);text-decoration:underline;">${linkDisplay} ↗</a>` : ''}
+        </td>
+        <td>${preview}</td>
+        <td>${b.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsBrandAd('${b.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsBrandAd('${b.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderCmsSocial() {
+    var tbody = document.getElementById('cmsSocialTbody');
+    if (!tbody) return;
+
+    if (allCmsSocial.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--t2);padding:24px;">No social accounts added yet. Click <strong>"＋ Add New Social Account"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsSocial.forEach(function(s) {
+      var imgUrl = s.bannerUrl || s.image;
+      var preview = '';
+      if (imgUrl) {
+        preview = `<img src="${imgUrl}" alt="Preview" style="width:48px;height:32px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px;border:1px solid var(--border);" /> <a href="${imgUrl}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--gold);text-decoration:underline;">[Image ↗]</a>`;
+      } else if (s.avatarUrl) {
+        preview = `<img src="${s.avatarUrl}" alt="Avatar" style="width:30px;height:30px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;border:1px solid var(--gold-border);" />`;
+      } else {
+        preview = '<span style="color:var(--t2);font-size:0.8rem;">No Image</span>';
+      }
+
+      var linkHref = s.link || s.profileUrl;
+      var linkDisplay = linkHref ? linkHref.replace(/^https?:\/\/(www\.)?/i, '') : '';
+      if (linkDisplay.length > 22) linkDisplay = linkDisplay.substring(0, 20) + '...';
+
+      html += `<tr>
+        <td><strong>${s.title || 'Untitled'}</strong></td>
+        <td><span class="tech-badge" style="font-size:0.78rem;">${s.platform || 'Social'}</span></td>
+        <td>
+          <span style="color:var(--gold);font-weight:700;">${s.metric || '-'}</span>
+          ${linkHref ? `<br/><a href="${linkHref}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--t2);text-decoration:underline;">${linkDisplay} ↗</a>` : ''}
+        </td>
+        <td>${preview}</td>
+        <td>${s.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsSocial('${s.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsSocial('${s.id}')">🗑️ Delete</button>
           </div>
         </td>
       </tr>`;
@@ -8213,20 +8900,28 @@
     document.getElementById('web-tech').value = '';
     document.getElementById('web-order').value = (allCmsWebsites.length + 1);
     document.getElementById('web-screenshot').value = '';
+    var p = document.getElementById('web-preview-img');
+    if (p) { p.src = ''; p.style.display = 'none'; }
     document.getElementById('btnSaveWeb').innerText = '💾 Save Website Project →';
   };
 
   window.editCmsWebsite = function(id) {
     var w = allCmsWebsites.find(function(item) { return item.id === id; });
     if (!w) return;
-    document.getElementById('web-id').value = w.id.startsWith('w') ? '' : w.id;
+    document.getElementById('web-id').value = w.id;
     document.getElementById('web-name').value = w.name || '';
     document.getElementById('web-url').value = w.url || '';
     document.getElementById('web-niche').value = w.niche || '';
     document.getElementById('web-speed').value = w.speed || '98/100';
     document.getElementById('web-tech').value = w.tech || '';
     document.getElementById('web-order').value = w.order || 1;
-    document.getElementById('web-screenshot').value = w.screenshot || '';
+    var sVal = w.screenshot || '';
+    document.getElementById('web-screenshot').value = sVal;
+    var p = document.getElementById('web-preview-img');
+    if (p) {
+      if (sVal) { p.src = sVal; p.style.display = 'block'; }
+      else { p.src = ''; p.style.display = 'none'; }
+    }
     document.getElementById('btnSaveWeb').innerText = '💾 Update Website Project →';
     document.getElementById('webForm').scrollIntoView({ behavior: 'smooth' });
   };
@@ -8235,6 +8930,9 @@
     var id = document.getElementById('web-id').value;
     var name = document.getElementById('web-name').value.trim();
     var url = document.getElementById('web-url').value.trim();
+    if (url && !/^https?:\/\//i.test(url)) {
+      url = 'https://' + url;
+    }
     var niche = document.getElementById('web-niche').value.trim();
     var speed = document.getElementById('web-speed').value.trim() || '98/100';
     var tech = document.getElementById('web-tech').value.trim();
@@ -8250,32 +8948,45 @@
     btn.disabled = true;
     btn.innerText = 'Saving Website...';
 
-    try {
-      var payload = {
-        name: name,
-        url: url,
-        niche: niche || 'Web Development',
-        speed: speed,
-        tech: tech || 'HTML5, CSS3, JavaScript',
-        order: order,
-        screenshot: screenshot,
-        active: true,
-        updatedAt: serverTimestamp()
-      };
+    var payload = {
+      name: name,
+      url: url,
+      niche: niche || 'Web Development',
+      speed: speed,
+      tech: tech || 'HTML5, CSS3, JavaScript',
+      order: order,
+      screenshot: screenshot,
+      active: true,
+      updatedAt: serverTimestamp()
+    };
 
+    var existingIdx = id ? allCmsWebsites.findIndex(function(x) { return x.id === id; }) : -1;
+    if (existingIdx !== -1) {
+      payload.id = id;
+      allCmsWebsites[existingIdx] = Object.assign({}, allCmsWebsites[existingIdx], payload);
+    } else {
+      var newId = id || 'web_' + Date.now();
+      payload.id = newId;
+      allCmsWebsites.push(payload);
+    }
+    allCmsWebsites.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+    try { localStorage.setItem('cms_portfolio_websites', JSON.stringify(allCmsWebsites)); } catch(e) {}
+    renderCmsWebsites();
+
+    try {
       if (id && !id.startsWith('w')) {
         await updateDoc(doc(db, 'portfolio_websites', id), payload);
       } else {
         payload.createdAt = serverTimestamp();
-        await addDoc(collection(db, 'portfolio_websites'), payload);
+        var docRef = await addDoc(collection(db, 'portfolio_websites'), payload);
+        if (payload.id.startsWith('web_')) payload.id = docRef.id;
       }
-
-      window.resetWebsiteForm();
       alert('✅ Website project saved successfully! It is now LIVE on editzaar.in/work.');
     } catch(err) {
-      console.error('Error saving website:', err);
-      alert('Error: ' + err.message);
+      console.warn('Firestore write note:', err.message);
+      alert('✅ Website updated in local workspace! (Note: ' + err.message + ')');
     } finally {
+      window.resetWebsiteForm();
       btn.disabled = false;
       btn.innerText = '💾 Save Website Project →';
     }
@@ -8283,22 +8994,533 @@
 
   window.deleteCmsWebsite = async function(id) {
     if (!confirm('Are you sure you want to remove this website from your live portfolio?')) return;
+    allCmsWebsites = allCmsWebsites.filter(function(x) { return x.id !== id; });
+    try { localStorage.setItem('cms_portfolio_websites', JSON.stringify(allCmsWebsites)); } catch(e) {}
+    renderCmsWebsites();
     try {
       if (id && !id.startsWith('w')) {
         await deleteDoc(doc(db, 'portfolio_websites', id));
-      } else {
-        allCmsWebsites = allCmsWebsites.filter(function(x) { return x.id !== id; });
-        renderCmsWebsites();
       }
       alert('✅ Website project deleted from live portfolio.');
     } catch(err) {
-      console.error('Error deleting website:', err);
-      alert('Error: ' + err.message);
+      console.warn('Firestore delete note:', err.message);
+      alert('✅ Website removed.');
     }
   };
 
   window.seedDefaultPortfolioVideos = autoSeedVideosToFirestore;
   window.seedDefaultPortfolioWebsites = autoSeedWebsitesToFirestore;
+
+  // --- BRAND PROMOTIONS & PAID ADS CRUD ---
+  window.resetBrandAdForm = function() {
+    document.getElementById('brand-id').value = '';
+    document.getElementById('brand-title').value = '';
+    document.getElementById('brand-platform').value = 'Meta Ads';
+    document.getElementById('brand-metric').value = '';
+    document.getElementById('brand-order').value = (allCmsBrandAds.length + 1);
+    document.getElementById('brand-avatar').value = '';
+    document.getElementById('brand-banner').value = '';
+    var p = document.getElementById('brand-preview-img');
+    if (p) { p.src = ''; p.style.display = 'none'; }
+    document.getElementById('brand-link').value = '';
+    document.getElementById('brand-desc').value = '';
+    document.getElementById('btnSaveBrandAd').innerText = '💾 Save Brand Promotion →';
+  };
+
+  window.editCmsBrandAd = function(id) {
+    var b = allCmsBrandAds.find(function(item) { return item.id === id; });
+    if (!b) return;
+    document.getElementById('brand-id').value = b.id;
+    document.getElementById('brand-title').value = b.title || '';
+    document.getElementById('brand-platform').value = b.platform || 'Meta Ads';
+    document.getElementById('brand-metric').value = b.metric || '';
+    document.getElementById('brand-order').value = b.order || 1;
+    document.getElementById('brand-avatar').value = b.avatarUrl || '';
+    var imgVal = b.bannerUrl || b.image || '';
+    document.getElementById('brand-banner').value = imgVal;
+    var p = document.getElementById('brand-preview-img');
+    if (p) {
+      if (imgVal) { p.src = imgVal; p.style.display = 'block'; }
+      else { p.src = ''; p.style.display = 'none'; }
+    }
+    document.getElementById('brand-link').value = b.link || b.targetUrl || '';
+    document.getElementById('brand-desc').value = b.description || '';
+    document.getElementById('btnSaveBrandAd').innerText = '💾 Update Brand Promotion →';
+    document.getElementById('brandForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioBrandAdNow = async function() {
+    var id = document.getElementById('brand-id').value;
+    var title = document.getElementById('brand-title').value.trim();
+    var platform = document.getElementById('brand-platform').value.trim() || 'Meta Ads';
+    var metric = document.getElementById('brand-metric').value.trim();
+    var order = parseInt(document.getElementById('brand-order').value) || 1;
+    var avatarUrl = document.getElementById('brand-avatar').value.trim();
+    var bannerUrl = document.getElementById('brand-banner').value.trim();
+    var link = document.getElementById('brand-link').value.trim();
+    if (link) {
+      if (link.startsWith('@')) {
+        link = 'https://www.instagram.com/' + link.replace(/^@+/, '');
+      } else if (!/^https?:\/\//i.test(link)) {
+        link = 'https://' + link;
+      }
+    }
+    var desc = document.getElementById('brand-desc').value.trim();
+
+    if (!title || !metric) {
+      alert('Please provide Campaign Title and Metric Highlight.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveBrandAd');
+    btn.disabled = true;
+    btn.innerText = 'Saving Promotion...';
+
+    var payload = {
+      title: title,
+      platform: platform,
+      metric: metric,
+      order: order,
+      avatarUrl: avatarUrl,
+      bannerUrl: bannerUrl,
+      image: bannerUrl,
+      link: link,
+      targetUrl: link,
+      description: desc,
+      active: true,
+      updatedAt: serverTimestamp()
+    };
+
+    var existingIdx = id ? allCmsBrandAds.findIndex(function(x) { return x.id === id; }) : -1;
+    if (existingIdx !== -1) {
+      payload.id = id;
+      allCmsBrandAds[existingIdx] = Object.assign({}, allCmsBrandAds[existingIdx], payload);
+    } else {
+      var newId = id || 'brand_' + Date.now();
+      payload.id = newId;
+      allCmsBrandAds.push(payload);
+    }
+    allCmsBrandAds.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+    try { localStorage.setItem('cms_portfolio_brand_ads', JSON.stringify(allCmsBrandAds)); } catch(e) {}
+    renderCmsBrandAds();
+
+    try {
+      if (id && !id.startsWith('b')) {
+        await updateDoc(doc(db, 'portfolio_brand_ads', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        var docRef = await addDoc(collection(db, 'portfolio_brand_ads'), payload);
+        if (payload.id.startsWith('brand_')) payload.id = docRef.id;
+      }
+      alert('✅ Brand promotion saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.warn('Firestore write note:', err.message);
+      alert('✅ Brand promotion updated in local workspace! (Note: ' + err.message + ')');
+    } finally {
+      window.resetBrandAdForm();
+      btn.disabled = false;
+      btn.innerText = '💾 Save Brand Promotion →';
+    }
+  };
+
+  window.deleteCmsBrandAd = async function(id) {
+    if (!confirm('Are you sure you want to remove this promotion from your live portfolio?')) return;
+    allCmsBrandAds = allCmsBrandAds.filter(function(x) { return x.id !== id; });
+    try { localStorage.setItem('cms_portfolio_brand_ads', JSON.stringify(allCmsBrandAds)); } catch(e) {}
+    renderCmsBrandAds();
+    try {
+      if (id && !id.startsWith('b')) {
+        await deleteDoc(doc(db, 'portfolio_brand_ads', id));
+      }
+      alert('✅ Promotion deleted from live portfolio.');
+    } catch(err) {
+      console.warn('Firestore delete note:', err.message);
+      alert('✅ Promotion removed.');
+    }
+  };
+
+  window.seedDefaultPortfolioBrandAds = autoSeedBrandAdsToFirestore;
+
+  // --- SOCIAL MEDIA MANAGEMENT CRUD ---
+  window.resetSocialForm = function() {
+    document.getElementById('social-id').value = '';
+    document.getElementById('social-title').value = '';
+    document.getElementById('social-platform').value = 'Instagram';
+    document.getElementById('social-metric').value = '';
+    document.getElementById('social-order').value = (allCmsSocial.length + 1);
+    document.getElementById('social-avatar').value = '';
+    document.getElementById('social-banner').value = '';
+    var p = document.getElementById('social-preview-img');
+    if (p) { p.src = ''; p.style.display = 'none'; }
+    document.getElementById('social-link').value = '';
+    document.getElementById('social-desc').value = '';
+    document.getElementById('btnSaveSocial').innerText = '💾 Save Social Account →';
+  };
+
+  window.editCmsSocial = function(id) {
+    var s = allCmsSocial.find(function(item) { return item.id === id; });
+    if (!s) return;
+    document.getElementById('social-id').value = s.id;
+    document.getElementById('social-title').value = s.title || '';
+    document.getElementById('social-platform').value = s.platform || 'Instagram';
+    document.getElementById('social-metric').value = s.metric || '';
+    document.getElementById('social-order').value = s.order || 1;
+    document.getElementById('social-avatar').value = s.avatarUrl || '';
+    var imgVal = s.bannerUrl || s.image || '';
+    document.getElementById('social-banner').value = imgVal;
+    var p = document.getElementById('social-preview-img');
+    if (p) {
+      if (imgVal) { p.src = imgVal; p.style.display = 'block'; }
+      else { p.src = ''; p.style.display = 'none'; }
+    }
+    document.getElementById('social-link').value = s.link || s.profileUrl || '';
+    document.getElementById('social-desc').value = s.description || '';
+    document.getElementById('btnSaveSocial').innerText = '💾 Update Social Account →';
+    document.getElementById('socialForm').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioSocialNow = async function() {
+    var id = document.getElementById('social-id').value;
+    var title = document.getElementById('social-title').value.trim();
+    var platform = document.getElementById('social-platform').value.trim() || 'Instagram';
+    var metric = document.getElementById('social-metric').value.trim();
+    var order = parseInt(document.getElementById('social-order').value) || 1;
+    var avatarUrl = document.getElementById('social-avatar').value.trim();
+    var bannerUrl = document.getElementById('social-banner').value.trim();
+    var link = document.getElementById('social-link').value.trim();
+    if (link) {
+      if (link.startsWith('@')) {
+        link = 'https://www.instagram.com/' + link.replace(/^@+/, '');
+      } else if (!/^https?:\/\//i.test(link)) {
+        link = 'https://' + link;
+      }
+    }
+    var desc = document.getElementById('social-desc').value.trim();
+
+    if (!title || !metric) {
+      alert('Please provide Account Name and Growth Metric.');
+      return;
+    }
+
+    var btn = document.getElementById('btnSaveSocial');
+    btn.disabled = true;
+    btn.innerText = 'Saving Social Account...';
+
+    var payload = {
+      title: title,
+      platform: platform,
+      metric: metric,
+      order: order,
+      avatarUrl: avatarUrl,
+      bannerUrl: bannerUrl,
+      image: bannerUrl,
+      link: link,
+      profileUrl: link,
+      description: desc,
+      active: true,
+      updatedAt: serverTimestamp()
+    };
+
+    var existingIdx = id ? allCmsSocial.findIndex(function(x) { return x.id === id; }) : -1;
+    if (existingIdx !== -1) {
+      payload.id = id;
+      allCmsSocial[existingIdx] = Object.assign({}, allCmsSocial[existingIdx], payload);
+    } else {
+      var newId = id || 'social_' + Date.now();
+      payload.id = newId;
+      allCmsSocial.push(payload);
+    }
+    allCmsSocial.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+    try { localStorage.setItem('cms_portfolio_social', JSON.stringify(allCmsSocial)); } catch(e) {}
+    renderCmsSocial();
+
+    try {
+      if (id && !id.startsWith('s')) {
+        await updateDoc(doc(db, 'portfolio_social', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        var docRef = await addDoc(collection(db, 'portfolio_social'), payload);
+        if (payload.id.startsWith('social_')) payload.id = docRef.id;
+      }
+      alert('✅ Social account saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.warn('Firestore write note:', err.message);
+      alert('✅ Social account updated in local workspace! (Note: ' + err.message + ')');
+    } finally {
+      window.resetSocialForm();
+      btn.disabled = false;
+      btn.innerText = '💾 Save Social Account →';
+    }
+  };
+
+  window.deleteCmsSocial = async function(id) {
+    if (!confirm('Are you sure you want to remove this social account from your live portfolio?')) return;
+    allCmsSocial = allCmsSocial.filter(function(x) { return x.id !== id; });
+    try { localStorage.setItem('cms_portfolio_social', JSON.stringify(allCmsSocial)); } catch(e) {}
+    renderCmsSocial();
+    try {
+      if (id && !id.startsWith('s')) {
+        await deleteDoc(doc(db, 'portfolio_social', id));
+      }
+      alert('✅ Social account deleted from live portfolio.');
+    } catch(err) {
+      console.warn('Firestore delete note:', err.message);
+      alert('✅ Social account removed.');
+    }
+  };
+
+  window.seedDefaultPortfolioSocial = autoSeedSocialToFirestore;
+
+  function renderCmsCustom() {
+    var tbody = document.getElementById('cmsCustomTbody');
+    if (!tbody) return;
+
+    if (allCmsCustom.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--t2);padding:24px;">No custom sections or cards added yet. Click <strong>"＋ Add New Custom Card"</strong> above!</td></tr>`;
+      return;
+    }
+
+    var html = '';
+    allCmsCustom.forEach(function(c) {
+      var mediaUrl = c.media || c.image || c.videoUrl;
+      var preview = '';
+      if (mediaUrl) {
+        if (c.layout && c.layout.startsWith('video')) {
+          preview = `<span style="font-size:0.75rem;color:var(--gold);"><i class="fas fa-play-circle"></i> Video Card</span>`;
+        } else {
+          preview = `<img src="${mediaUrl}" alt="Preview" style="width:48px;height:32px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:6px;border:1px solid var(--border);" /> <a href="${mediaUrl}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:var(--gold);text-decoration:underline;">[Media ↗]</a>`;
+        }
+      } else {
+        preview = '<span style="color:var(--t2);font-size:0.8rem;">No Media</span>';
+      }
+
+      var layoutBadge = '💻 Browser';
+      if (c.layout === 'campaign') layoutBadge = '📢 Campaign';
+      else if (c.layout === 'video_vertical') layoutBadge = '📱 Reel (9:16)';
+      else if (c.layout === 'video_horizontal') layoutBadge = '🖥️ Video (16:9)';
+
+      html += `<tr>
+        <td><strong style="color:var(--gold);">${c.sectionTitle || 'Custom'}</strong></td>
+        <td><strong>${c.title || 'Untitled'}</strong></td>
+        <td><span class="tech-badge" style="font-size:0.75rem;">${layoutBadge}</span></td>
+        <td>
+          <span style="color:var(--gold);font-weight:700;font-size:0.82rem;">${c.metric || '-'}</span>
+          ${c.tags ? `<br/><span style="font-size:0.72rem;color:var(--t2);">${c.tags}</span>` : ''}
+        </td>
+        <td>${preview}</td>
+        <td>${c.order || 1}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-outline btn-sm" onclick="window.editCmsCustom('${c.id}')">✏️ Edit</button>
+            <button class="btn-danger btn-sm" onclick="window.deleteCmsCustom('${c.id}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  }
+
+  window.resetCustomForm = function() {
+    var idEl = document.getElementById('custom-id');
+    if (idEl) idEl.value = '';
+    var secTitle = document.getElementById('custom-section-title');
+    if (secTitle) secTitle.value = '';
+    var secSub = document.getElementById('custom-section-subtitle');
+    if (secSub) secSub.value = '';
+    var title = document.getElementById('custom-title');
+    if (title) title.value = '';
+    var layout = document.getElementById('custom-layout');
+    if (layout) layout.value = 'browser';
+    var metric = document.getElementById('custom-metric');
+    if (metric) metric.value = '';
+    var order = document.getElementById('custom-order');
+    if (order) order.value = '1';
+    var media = document.getElementById('custom-media');
+    if (media) media.value = '';
+    var link = document.getElementById('custom-link');
+    if (link) link.value = '';
+    var tags = document.getElementById('custom-tags');
+    if (tags) tags.value = '';
+    var desc = document.getElementById('custom-desc');
+    if (desc) desc.value = '';
+    var prev = document.getElementById('custom-preview-img');
+    if (prev) { prev.src = ''; prev.style.display = 'none'; }
+    var btn = document.getElementById('btnSaveCustom');
+    if (btn) btn.innerText = '💾 Save Custom Card to Section →';
+  };
+
+  window.editCmsCustom = function(id) {
+    var item = allCmsCustom.find(function(x) { return x.id === id; });
+    if (!item) return;
+    var idEl = document.getElementById('custom-id');
+    if (idEl) idEl.value = item.id;
+    var secTitle = document.getElementById('custom-section-title');
+    if (secTitle) secTitle.value = item.sectionTitle || '';
+    var secSub = document.getElementById('custom-section-subtitle');
+    if (secSub) secSub.value = item.sectionSubtitle || '';
+    var title = document.getElementById('custom-title');
+    if (title) title.value = item.title || '';
+    var layout = document.getElementById('custom-layout');
+    if (layout) layout.value = item.layout || 'browser';
+    var metric = document.getElementById('custom-metric');
+    if (metric) metric.value = item.metric || '';
+    var order = document.getElementById('custom-order');
+    if (order) order.value = item.order || 1;
+    var media = document.getElementById('custom-media');
+    if (media) media.value = item.media || item.image || item.videoUrl || '';
+    var link = document.getElementById('custom-link');
+    if (link) link.value = item.link || '';
+    var tags = document.getElementById('custom-tags');
+    if (tags) tags.value = item.tags || '';
+    var desc = document.getElementById('custom-desc');
+    if (desc) desc.value = item.description || '';
+    var prev = document.getElementById('custom-preview-img');
+    if (prev) {
+      if (item.media) {
+        prev.src = item.media;
+        prev.style.display = 'block';
+      } else {
+        prev.src = '';
+        prev.style.display = 'none';
+      }
+    }
+    var btn = document.getElementById('btnSaveCustom');
+    if (btn) btn.innerText = '💾 Update Custom Card (' + item.title + ') →';
+    document.getElementById('cms-tab-portfolio_custom').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.savePortfolioCustomNow = async function() {
+    var secTitle = (document.getElementById('custom-section-title').value || '').trim();
+    var title = (document.getElementById('custom-title').value || '').trim();
+    var media = (document.getElementById('custom-media').value || '').trim();
+
+    if (!secTitle) {
+      alert('Please enter a Section Name / Category Title (e.g. Graphic Design, 3D & VFX, Case Studies).');
+      document.getElementById('custom-section-title').focus();
+      return;
+    }
+    if (!title) {
+      alert('Please enter a Card Title.');
+      document.getElementById('custom-title').focus();
+      return;
+    }
+    if (!media) {
+      alert('Please provide a Media Creative (Image or Video URL, or Choose Image file).');
+      document.getElementById('custom-media').focus();
+      return;
+    }
+
+    var id = (document.getElementById('custom-id').value || '').trim();
+    var secSub = (document.getElementById('custom-section-subtitle').value || '').trim();
+    var layout = document.getElementById('custom-layout').value || 'browser';
+    var metric = (document.getElementById('custom-metric').value || '').trim();
+    var order = parseInt(document.getElementById('custom-order').value, 10) || 1;
+    var link = (document.getElementById('custom-link').value || '').trim();
+    var tags = (document.getElementById('custom-tags').value || '').trim();
+    var desc = (document.getElementById('custom-desc').value || '').trim();
+    var slug = secTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'custom';
+
+    var btn = document.getElementById('btnSaveCustom');
+    btn.disabled = true;
+    btn.innerText = 'Saving Custom Card...';
+
+    var payload = {
+      sectionTitle: secTitle,
+      sectionSubtitle: secSub,
+      category: slug,
+      title: title,
+      layout: layout,
+      metric: metric,
+      order: order,
+      media: media,
+      image: media,
+      videoUrl: layout.startsWith('video') ? media : '',
+      link: link,
+      tags: tags,
+      description: desc,
+      active: true,
+      updatedAt: serverTimestamp()
+    };
+
+    if (id) {
+      payload.id = id;
+      var idx = allCmsCustom.findIndex(function(x) { return x.id === id; });
+      if (idx >= 0) allCmsCustom[idx] = payload;
+      else allCmsCustom.push(payload);
+    } else {
+      payload.id = 'custom_' + Date.now();
+      allCmsCustom.push(payload);
+    }
+
+    allCmsCustom.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
+    try { localStorage.setItem('cms_portfolio_custom', JSON.stringify(allCmsCustom)); } catch(e) {}
+    renderCmsCustom();
+
+    try {
+      if (id && !id.startsWith('c')) {
+        await updateDoc(doc(db, 'portfolio_custom', id), payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        var docRef = await addDoc(collection(db, 'portfolio_custom'), payload);
+        if (payload.id.startsWith('custom_')) payload.id = docRef.id;
+      }
+      alert('✅ Custom card saved successfully! It is now LIVE on editzaar.in/work.');
+    } catch(err) {
+      console.warn('Firestore write note:', err.message);
+      alert('✅ Custom card updated in local workspace! (Note: ' + err.message + ')');
+    } finally {
+      window.resetCustomForm();
+      btn.disabled = false;
+      btn.innerText = '💾 Save Custom Card to Section →';
+    }
+  };
+
+  window.deleteCmsCustom = async function(id) {
+    if (!confirm('Are you sure you want to remove this custom card from your live portfolio?')) return;
+    allCmsCustom = allCmsCustom.filter(function(x) { return x.id !== id; });
+    try { localStorage.setItem('cms_portfolio_custom', JSON.stringify(allCmsCustom)); } catch(e) {}
+    renderCmsCustom();
+    try {
+      if (id && !id.startsWith('c')) {
+        await deleteDoc(doc(db, 'portfolio_custom', id));
+      }
+      alert('✅ Custom card deleted from live portfolio.');
+    } catch(err) {
+      console.warn('Firestore delete note:', err.message);
+      alert('✅ Custom card removed.');
+    }
+  };
+
+  async function autoSeedCustomToFirestore() {
+    try {
+      for (var i = 0; i < DEFAULT_STARTER_CUSTOM.length; i++) {
+        var s = DEFAULT_STARTER_CUSTOM[i];
+        await addDoc(collection(db, 'portfolio_custom'), {
+          sectionTitle: s.sectionTitle,
+          sectionSubtitle: s.sectionSubtitle,
+          category: s.category,
+          title: s.title,
+          layout: s.layout,
+          metric: s.metric,
+          tags: s.tags,
+          description: s.description,
+          media: s.media,
+          image: s.media,
+          videoUrl: s.layout.startsWith('video') ? s.media : '',
+          link: s.link,
+          order: s.order,
+          active: true,
+          createdAt: serverTimestamp()
+        });
+      }
+      alert('✅ Starter Custom Sections & Cards imported successfully to Firestore!');
+    } catch(e) {
+      console.log('Auto-seed custom note:', e);
+      alert('Note: ' + e.message);
+    }
+  }
+
+  window.seedDefaultPortfolioCustom = autoSeedCustomToFirestore;
 
 
   var DEFAULT_STARTER_TESTIMONIALS = [

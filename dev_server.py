@@ -9,6 +9,8 @@ import urllib.error
 PORT = 8080
 
 class EditzaarDevServerHandler(http.server.SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.0"
+
     def end_headers(self):
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.send_header('Pragma', 'no-cache')
@@ -91,18 +93,59 @@ class EditzaarDevServerHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         url_path = self.path.split('?')[0].split('#')[0]
-        # Clean URL rewrite support (e.g. /pricing -> /pricing.html)
-        if url_path != '/' and not os.path.exists('.' + url_path):
-            if os.path.exists('.' + url_path + '.html'):
-                query_hash = self.path[len(url_path):]
-                self.path = url_path + '.html' + query_hash
+        query_hash = self.path[len(url_path):]
+
+        # 1. Handle domain links clicked without protocol (e.g. /www.collegementor or /pages/www.collegementor)
+        stripped_domain = url_path.replace('/pages/', '/').lstrip('/')
+        if stripped_domain.startswith('www.') or any(stripped_domain.endswith(tld) for tld in ['.com', '.in', '.org', '.net', '.io', '.co']):
+            target_url = 'https://' + stripped_domain
+            self.send_response(302)
+            self.send_header('Location', target_url)
+            self.end_headers()
+            return
+
+        # 2. Handle asset requests under /pages/ (e.g. /pages/js/..., /pages/css/..., /pages/media/...)
+        if url_path.startswith('/pages/') and not os.path.exists('.' + url_path):
+            root_equiv = url_path[6:]  # remove '/pages'
+            if os.path.exists('.' + root_equiv):
+                self.path = root_equiv + query_hash
+                return super().do_GET()
+
+        # 3. Handle dashboard shortcuts (/admin -> /dashboard/admin.html, /dashboard -> /dashboard/index.html)
+        if url_path.rstrip('/') in ['/admin', '/dashboard/admin']:
+            self.path = '/dashboard/admin.html' + query_hash
+            return super().do_GET()
+        if url_path.rstrip('/') in ['/dashboard', '/login']:
+            self.path = '/dashboard/index.html' + query_hash
+            return super().do_GET()
+
+        # 4. Clean URL rewrite support (e.g. /work or /work/ -> /work.html)
+        norm_path = url_path.rstrip('/')
+        if norm_path != '' and not os.path.exists('.' + url_path):
+            # Check root .html
+            if os.path.exists('.' + norm_path + '.html'):
+                self.path = norm_path + '.html' + query_hash
+                return super().do_GET()
+            # Check pages/ .html
+            if os.path.exists('./pages' + norm_path + '.html'):
+                self.path = '/pages' + norm_path + '.html' + query_hash
+                return super().do_GET()
+            # If relative link appended to subroute (e.g. /work/services or /work/pricing)
+            sub_name = norm_path.split('/')[-1]
+            if os.path.exists('./' + sub_name + '.html'):
+                self.path = '/' + sub_name + '.html' + query_hash
+                return super().do_GET()
+
         return super().do_GET()
+
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
 
 if __name__ == '__main__':
     import sys
     sys.stdout.reconfigure(encoding='utf-8')
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), EditzaarDevServerHandler) as httpd:
+    with ThreadedTCPServer(("0.0.0.0", PORT), EditzaarDevServerHandler) as httpd:
         print(f"[Editzaar] Dev server running at http://localhost:{PORT}")
         print(f"[Editzaar] Features: Clean URLs + /api/notify-telegram + /api/upload-drive active")
         sys.stdout.flush()
