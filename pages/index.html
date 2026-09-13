@@ -33,6 +33,9 @@
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=Outfit:wght@300;400;500;600;700&display=swap?v=270.0"
     rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=510.0" />
+  <!-- OneSignal Web Push & Presence Engine -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script src="js/push-service.js" defer></script>
 
   <style>
     .hero-v2 {
@@ -1277,6 +1280,8 @@
   </footer>
 
   <script src="js/services-config.js?v=310.0"></script>
+  <script src="js/telegram-service.js?v=310.0"></script>
+  <script src="js/drive-service.js?v=310.0"></script>
   <script src="js/main.js?v=510.0"></script>
   <script>
     // Hero Live Edit Preview Continuous Video Loop & Rotation
@@ -1324,8 +1329,11 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function (reg) { console.log('[SW] Registered:', reg.scope); })
+      navigator.serviceWorker.register('/sw.js?v=600.0')
+        .then(function (reg) {
+          reg.update();
+          console.log('[SW] Registered & Updated:', reg.scope);
+        })
         .catch(function (err) { console.warn('[SW] Error:', err); });
     }
     let _deferredInstallPrompt = null;

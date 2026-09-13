@@ -72,7 +72,7 @@ self.addEventListener('notificationclick', function (event) {
 });
 
 // ── Offline Cache (PWA) — Network First Strategy ─────────────────────────────
-const CACHE_NAME = 'editzaar-v' + Date.now();
+const CACHE_NAME = 'editzaar-v600.0';
 
 self.addEventListener('install', function (event) {
   self.skipWaiting();
@@ -92,7 +92,20 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('fetch', function (event) {
   if (event.request.method !== 'GET') return;
 
-  // Network-first strategy: always fetch fresh from server, fallback to cache only if offline
+  // Let browser natively handle video, audio, and large media streams without SW interference
+  const url = event.request.url;
+  if (
+    event.request.destination === 'video' ||
+    event.request.destination === 'audio' ||
+    /\.(mp4|webm|mov|ogg|mp3|wav)(\?.*)?$/i.test(url) ||
+    url.includes('r2.dev') ||
+    url.includes('cloudinary.com') ||
+    url.includes('firebasestorage')
+  ) {
+    return; // Pass through natively to network for flawless byte-range streaming
+  }
+
+  // Network-first strategy for pages and assets
   event.respondWith(
     fetch(event.request)
       .then(function (response) {
@@ -103,3 +116,4 @@ self.addEventListener('fetch', function (event) {
       })
   );
 });
+
