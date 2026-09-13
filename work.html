@@ -168,8 +168,7 @@
             padding: 12px;
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-            will-change: transform;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .phone-frame::before {
@@ -216,8 +215,7 @@
             border-radius: 15px;
             padding: 15px;
             position: relative;
-            transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-            will-change: transform;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .monitor-frame .video-container {
@@ -225,12 +223,13 @@
             border-radius: 10px;
         }
 
-        /* Stable Hover: Target parent wrapper div so cursor never leaves bounds, totally preventing jitter/vibration */
+        /* Luxury Gold Glow on Hover - Zero physical movement prevents all vibration / jitter */
         .carousel-track > div:hover .phone-frame,
-        .carousel-track > div:hover .monitor-frame {
-            transform: translateY(-6px);
-            border-color: var(--gold-border);
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 184, 0, 0.2);
+        .carousel-track > div:hover .monitor-frame,
+        .phone-frame:hover,
+        .monitor-frame:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 25px rgba(255, 184, 0, 0.35), 0 12px 35px rgba(0, 0, 0, 0.85);
         }
 
         .video-overlay {
@@ -1088,8 +1087,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/video%201.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1104,8 +1103,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/short%202.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1120,8 +1119,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/ai%20car%20.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1136,8 +1135,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/short%20video/Short%20%201.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1151,8 +1150,8 @@
                     <div>
                         <div class="phone-frame">
                             <div class="video-container">
-                                <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1166,8 +1165,8 @@
                     <div>
                         <div class="phone-frame">
                             <div class="video-container">
-                                <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1182,8 +1181,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1198,8 +1197,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1214,8 +1213,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1230,8 +1229,8 @@
                         <div class="phone-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1257,8 +1256,8 @@
                     <div>
                         <div class="monitor-frame">
                             <div class="video-container">
-                                <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                <video src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long2.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1273,8 +1272,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%203.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1289,8 +1288,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%204%20.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1305,8 +1304,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%205%20.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1321,8 +1320,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%206.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1337,8 +1336,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/long%20video/long%20video%207.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1353,8 +1352,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1369,8 +1368,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/hostital_1_hot7al.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1385,8 +1384,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://pub-fb141b1eee8144558197aeb16a8d9589.r2.dev/plot_buy-_lrljqq.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1401,8 +1400,8 @@
                         <div class="monitor-frame">
                             <div class="video-container">
                                 <video
-                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4#t=0.5"
-                                    preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    src="https://res.cloudinary.com/drkoehipf/video/upload/v1781142463/Shun_Jhuriye_New_Song_10_yqtcdq.mp4"
+                                    preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -1952,20 +1951,9 @@
                     video.playsInline = true;
                     video.setAttribute('playsinline', '');
                     video.setAttribute('webkit-playsinline', '');
-                    video.setAttribute('preload', 'auto');
+                    video.setAttribute('preload', 'metadata');
 
-                    // Ensure video decodes past any black 0-second fade frame
-                    function seekPreviewFrame() {
-                        if (video.currentTime < 0.2) {
-                            try { video.currentTime = 0.5; } catch(e) {}
-                        }
-                    }
-                    if (video.readyState >= 1) {
-                        seekPreviewFrame();
-                    } else {
-                        video.addEventListener('loadedmetadata', seekPreviewFrame, { once: true });
-                        video.addEventListener('canplay', seekPreviewFrame, { once: true });
-                    }
+                    
 
                     var playPromise = null;
 
@@ -2305,7 +2293,7 @@
                     vertHtml += `<div>
                         <div class="phone-frame">
                             <div class="video-container">
-                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="auto" muted loop playsinline webkit-playsinline></video>
+                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -2326,7 +2314,7 @@
                     horizHtml += `<div>
                         <div class="monitor-frame">
                             <div class="video-container">
-                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="auto" muted loop playsinline webkit-playsinline></video>
+                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -2548,7 +2536,7 @@
                         cardsHtml += `<div>
                             <div class="phone-frame">
                                 <div class="video-container">
-                                    <video src="${mediaUrl}" preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    <video src="${mediaUrl}" preload="metadata" muted loop playsinline webkit-playsinline></video>
                                     <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                     <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                                 </div>
@@ -2562,7 +2550,7 @@
                         cardsHtml += `<div>
                             <div class="monitor-frame">
                                 <div class="video-container">
-                                    <video src="${mediaUrl}" preload="auto" muted loop playsinline webkit-playsinline></video>
+                                    <video src="${mediaUrl}" preload="metadata" muted loop playsinline webkit-playsinline></video>
                                     <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                     <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                                 </div>
