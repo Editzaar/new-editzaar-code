@@ -2282,21 +2282,35 @@
             return `<span class="data-card-platform-badge"><i class="${icon}"></i> ${platform || 'Campaign'}</span>`;
         }
 
+        var _lastRendered = {
+            vids: '',
+            webs: '',
+            ads: '',
+            social: '',
+            custom: ''
+        };
+
         // Render Dynamic Videos from Firestore
         function renderDynamicVideos(vids) {
+            if (!vids || !Array.isArray(vids) || vids.length === 0) return;
+            var vertVids = vids.filter(v => v.type === 'vertical' && v.active !== false);
+            var horizVids = vids.filter(v => v.type === 'horizontal' && v.active !== false);
+
+            var stateKey = JSON.stringify({ vert: vertVids, horiz: horizVids });
+            if (stateKey === _lastRendered.vids) return; // Prevent unnecessary DOM destruction & blinking!
+            _lastRendered.vids = stateKey;
+
             var vertTrack = document.getElementById('verticalReelsTrack');
             var horizTrack = document.getElementById('horizontalVideosTrack');
-
-            var vertVids = vids.filter(v => v.type === 'vertical');
-            var horizVids = vids.filter(v => v.type === 'horizontal');
 
             if (vertVids.length > 0 && vertTrack) {
                 var vertHtml = '';
                 vertVids.forEach(v => {
+                    var cleanUrl = (v.videoUrl || '').replace(/#t=[\d\.]+/g, '');
                     vertHtml += `<div>
                         <div class="phone-frame">
                             <div class="video-container">
-                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
+                                <video src="${cleanUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -2314,10 +2328,11 @@
             if (horizVids.length > 0 && horizTrack) {
                 var horizHtml = '';
                 horizVids.forEach(v => {
+                    var cleanUrl = (v.videoUrl || '').replace(/#t=[\d\.]+/g, '');
                     horizHtml += `<div>
                         <div class="monitor-frame">
                             <div class="video-container">
-                                <video src="${v.videoUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
+                                <video src="${cleanUrl}" ${v.posterUrl ? 'poster="' + v.posterUrl + '"' : ''} preload="metadata" muted loop playsinline webkit-playsinline></video>
                                 <div class="video-overlay"><i class="fas fa-play play-icon"></i></div>
                                 <button class="mute-btn"><i class="fas fa-volume-mute"></i></button>
                             </div>
@@ -2336,10 +2351,14 @@
         // Render Dynamic Websites from Firestore
         function renderDynamicWebsites(webs) {
             var webTrack = document.getElementById('webPortfolioTrack');
-            if (!webTrack || webs.length === 0) return;
+            if (!webTrack || !Array.isArray(webs) || webs.length === 0) return;
+            var validWebs = webs.filter(w => w.active !== false);
+            var stateKey = JSON.stringify(validWebs);
+            if (stateKey === _lastRendered.webs) return;
+            _lastRendered.webs = stateKey;
 
             var webHtml = '';
-            webs.forEach(w => {
+            validWebs.forEach(w => {
                 var fullUrl = normalizeUrl(w.url);
                 var techBadges = (w.tech || 'HTML5, CSS3, JS').split(',').map(t => `<span class="tech-badge">${t.trim()}</span>`).join(' ');
                 var previewContent = w.screenshot 
@@ -2378,10 +2397,14 @@
         // Render Dynamic Brand Promotions & Paid Ads
         function renderDynamicBrandAds(ads) {
             var track = document.getElementById('brandPortfolioTrack');
-            if (!track || ads.length === 0) return;
+            if (!track || !Array.isArray(ads) || ads.length === 0) return;
+            var validAds = ads.filter(a => a.active !== false);
+            var stateKey = JSON.stringify(validAds);
+            if (stateKey === _lastRendered.ads) return;
+            _lastRendered.ads = stateKey;
 
             var html = '';
-            ads.forEach(ad => {
+            validAds.forEach(ad => {
                 var fullUrl = normalizeUrl(ad.link || ad.targetUrl || '');
                 var cleanDisplayUrl = (fullUrl || '').replace(/^https?:\/\//i, '').replace(/\/$/, '');
                 if (!cleanDisplayUrl || cleanDisplayUrl === '#') cleanDisplayUrl = 'View Campaign';
@@ -2438,10 +2461,14 @@
         // Render Dynamic Social Media Management
         function renderDynamicSocialGrowth(items) {
             var track = document.getElementById('socialPortfolioTrack');
-            if (!track || items.length === 0) return;
+            if (!track || !Array.isArray(items) || items.length === 0) return;
+            var validItems = items.filter(s => s.active !== false);
+            var stateKey = JSON.stringify(validItems);
+            if (stateKey === _lastRendered.social) return;
+            _lastRendered.social = stateKey;
 
             var html = '';
-            items.forEach(item => {
+            validItems.forEach(item => {
                 var fullUrl = normalizeUrl(item.profileUrl || item.link || '');
                 var cleanDisplayUrl = (fullUrl || '').replace(/^https?:\/\//i, '').replace(/\/$/, '');
                 if (!cleanDisplayUrl || cleanDisplayUrl === '#') cleanDisplayUrl = 'Visit Profile';
@@ -2495,47 +2522,28 @@
             track.innerHTML = html;
         }
 
-        // Render Dynamic Custom & Future Portfolio Sections
-        function renderDynamicCustomSections(items) {
-            var container = document.getElementById('custom-portfolio-sections');
-            var filterBar = document.querySelector('.portfolio-filters');
-            if (!container || !items || items.length === 0) {
-                if (container) container.innerHTML = '';
-                return;
-            }
-
-            // Group items by sectionTitle
-            var sectionsMap = {};
-            items.forEach(function(item) {
-                var secTitle = (item.sectionTitle || 'Custom Projects').trim();
-                var slug = (item.category || secTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')) || 'custom';
-                if (!sectionsMap[slug]) {
-                    sectionsMap[slug] = {
-                        title: secTitle,
-                        subtitle: item.sectionSubtitle || 'Selected creative projects and client case studies.',
-                        category: slug,
-                        items: []
-                    };
-                }
-                sectionsMap[slug].items.push(item);
-            });
+        // Render Dynamic Custom / Future Sections
+        function renderDynamicCustomSections(sections) {
+            var container = document.getElementById('dynamicCustomSectionsContainer');
+            if (!container || !Array.isArray(sections) || sections.length === 0) return;
+            var validSecs = sections.filter(s => s.active !== false);
+            var stateKey = JSON.stringify(validSecs);
+            if (stateKey === _lastRendered.custom) return;
+            _lastRendered.custom = stateKey;
 
             var html = '';
-            Object.keys(sectionsMap).forEach(function(slug) {
-                var sec = sectionsMap[slug];
-                sec.items.sort(function(a, b) { return (a.order || 1) - (b.order || 1); });
-
+            validSecs.forEach(sec => {
+                var cards = sec.cards || [];
                 var cardsHtml = '';
-                sec.items.forEach(function(c) {
-                    var fullUrl = normalizeUrl(c.link || '');
-                    var layout = c.layout || 'browser';
-                    var tagsHtml = (c.tags || '').split(',').filter(Boolean).map(function(t) {
-                        return '<span class="tech-badge">' + t.trim() + '</span>';
-                    }).join(' ');
 
-                    var mediaUrl = c.media || c.image || c.videoUrl || '';
+                cards.forEach(card => {
+                    var fullUrl = normalizeUrl(card.link || '');
+                    var mediaUrl = (card.mediaUrl || '').replace(/#t=[\d\.]+/g, '');
+                    var cleanDisplayUrl = (fullUrl || '').replace(/^https?:\/\//i, '').replace(/\/$/, '');
+                    if (!cleanDisplayUrl || cleanDisplayUrl === '#') cleanDisplayUrl = 'Learn More';
+                    if (cleanDisplayUrl.length > 30) cleanDisplayUrl = cleanDisplayUrl.substring(0, 28) + '...';
 
-                    if (layout === 'video_vertical') {
+                    if (sec.cardType === 'video-vertical') {
                         cardsHtml += `<div>
                             <div class="phone-frame">
                                 <div class="video-container">
@@ -2545,11 +2553,11 @@
                                 </div>
                             </div>
                             <div class="card-label">
-                                <h4>${c.title || 'Creative Reel'}</h4>
-                                <span class="tech-badge">${c.tags || 'Creative'}</span>
+                                <h4>${card.title || 'Project'}</h4>
+                                <span class="tech-badge">${card.badge || 'Creative'}</span>
                             </div>
                         </div>`;
-                    } else if (layout === 'video_horizontal') {
+                    } else if (sec.cardType === 'video-horizontal') {
                         cardsHtml += `<div>
                             <div class="monitor-frame">
                                 <div class="video-container">
@@ -2559,91 +2567,66 @@
                                 </div>
                             </div>
                             <div class="card-label">
-                                <h4>${c.title || 'Cinematic Video'}</h4>
-                                <span class="tech-badge">${c.tags || 'Showcase'}</span>
-                            </div>
-                        </div>`;
-                    } else if (layout === 'campaign') {
-                        var badge = `<span class="data-card-platform-badge"><i class="fas fa-star"></i> ${c.metric || 'Featured'}</span>`;
-                        cardsHtml += `<div>
-                            <div class="browser-frame">
-                                <div class="browser-header" style="justify-content:space-between;">
-                                    <div class="browser-dots"><span></span><span></span><span></span></div>
-                                    ${badge}
-                                </div>
-                                <div class="browser-content">
-                                    <a href="${fullUrl}" ${fullUrl !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="browser-content-link" title="${c.title || ''}">
-                                        <img src="${mediaUrl}" alt="${c.title || ''}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
-                                        <div class="browser-fallback-card" style="display:none;">
-                                            <i class="fas fa-palette data-icon" style="font-size:2.6rem;color:var(--gold);"></i>
-                                            <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${c.title || 'Creative'}</span>
-                                        </div>
-                                        <div class="browser-preview-overlay"><span>View Project ↗</span></div>
-                                    </a>
-                                </div>
-                                <div class="web-info">
-                                    <h4>${c.title || 'Creative Project'}</h4>
-                                    ${fullUrl !== '#' ? `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">View Project ↗</a>` : ''}
-                                    <div class="web-tech">${tagsHtml}</div>
-                                    <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${c.description || ''}</p>
-                                    ${c.metric ? `<div class="speed-metric" style="color:var(--gold);font-weight:700;"><i class="fas fa-chart-line"></i> ${c.metric}</div>` : ''}
-                                </div>
+                                <h4>${card.title || 'Project'}</h4>
+                                <span class="tech-badge">${card.badge || 'Commercial'}</span>
                             </div>
                         </div>`;
                     } else {
-                        // Standard browser showcase card
+                        var previewContent = mediaUrl 
+                            ? `<img src="${mediaUrl}" alt="${card.title || 'Preview'}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
+                               <div class="browser-fallback-card" style="display:none;">
+                                   <i class="fas fa-star data-icon" style="font-size:2.6rem;color:var(--gold);"></i>
+                                   <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${card.title || 'Project'}</span>
+                               </div>`
+                            : `<div class="browser-fallback-card" style="display:flex;">
+                                   <i class="fas fa-star data-icon" style="font-size:2.6rem;color:var(--gold);"></i>
+                                   <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${card.title || 'Project'}</span>
+                               </div>`;
+
                         cardsHtml += `<div>
                             <div class="browser-frame">
-                                <div class="browser-header" style="justify-content:space-between;">
+                                <div class="browser-header">
                                     <div class="browser-dots"><span></span><span></span><span></span></div>
-                                    <span class="tech-badge" style="font-size:11px;">${c.metric || 'Showcase'}</span>
+                                    ${card.badge ? `<span class="data-card-platform-badge">${card.badge}</span>` : ''}
                                 </div>
                                 <div class="browser-content">
-                                    <a href="${fullUrl}" ${fullUrl !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="browser-content-link" title="${c.title || ''}">
-                                        <img src="${mediaUrl}" alt="${c.title || ''}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none'; var fb=this.parentElement.querySelector('.browser-fallback-card'); if(fb) fb.style.display='flex';"/>
-                                        <div class="browser-fallback-card" style="display:none;">
-                                            <i class="fas fa-layer-group data-icon" style="font-size:2.6rem;color:var(--gold);"></i>
-                                            <span style="font-size:0.95rem;font-weight:600;letter-spacing:0.04em;color:var(--t1);">${c.title || 'Showcase'}</span>
-                                        </div>
-                                        <div class="browser-preview-overlay"><span>View Showcase ↗</span></div>
+                                    <a href="${fullUrl}" ${fullUrl !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="browser-content-link" title="${card.title || 'Project'}">
+                                        ${previewContent}
+                                        <div class="browser-preview-overlay"><span>Explore Project ↗</span></div>
                                     </a>
                                 </div>
                                 <div class="web-info">
-                                    <h4>${c.title || 'Creative Showcase'}</h4>
-                                    ${fullUrl !== '#' ? `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">Live Preview ↗</a>` : ''}
-                                    <div class="web-tech">${tagsHtml}</div>
-                                    <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${c.description || ''}</p>
-                                    ${c.metric ? `<div class="speed-metric" style="color:var(--gold);font-weight:700;"><i class="fas fa-award"></i> ${c.metric}</div>` : ''}
+                                    <h4>${card.title || 'Project'}</h4>
+                                    ${fullUrl !== '#' ? `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${cleanDisplayUrl} ↗</a>` : ''}
+                                    <div class="web-tech">
+                                        ${card.badge ? `<span class="tech-badge">${card.badge}</span>` : ''}
+                                        ${card.metric ? `<span class="tech-badge" style="color:var(--gold);font-weight:700;">${card.metric}</span>` : ''}
+                                    </div>
+                                    <p style="color: var(--t2); font-family: var(--font-b); margin-bottom: 1rem; font-size: 0.9rem;">${card.description || ''}</p>
+                                    ${card.metric ? `<div class="speed-metric" style="color:var(--gold);font-weight:700;"><i class="fas fa-chart-line"></i> Results: ${card.metric}</div>` : ''}
                                 </div>
                             </div>
                         </div>`;
                     }
                 });
 
-                var trackClass = sec.items.some(function(i) { return i.layout === 'video_vertical'; }) ? 'video-grid-vertical' : (sec.items.some(function(i) { return i.layout === 'video_horizontal'; }) ? 'video-grid-horizontal' : 'web-grid');
+                var trackClass = 'browser-grid';
+                if (sec.cardType === 'video-vertical') trackClass = 'video-grid-vertical';
+                if (sec.cardType === 'video-horizontal') trackClass = 'video-grid-horizontal';
 
-                html += `<section class="portfolio-section active reveal" id="sec-custom-${slug}" data-category="${slug}">
+                html += `<div class="portfolio-section" data-category="${sec.categoryKey || 'custom'}" style="margin-bottom: 4rem;">
                     <div class="section-header">
-                        <h3>${sec.title}</h3>
-                        <p>${sec.subtitle}</p>
+                        <h3>${sec.title || 'Featured Work'}</h3>
+                        <p>${sec.subtitle || ''}</p>
                     </div>
                     <div class="carousel-wrapper">
                         <button class="carousel-btn prev-btn" onclick="scrollCarousel(this, -1)">‹</button>
-                        <div class="carousel-track ${trackClass}" id="track-${slug}">
+                        <div class="carousel-track ${trackClass}">
                             ${cardsHtml}
                         </div>
                         <button class="carousel-btn next-btn" onclick="scrollCarousel(this, 1)">›</button>
                     </div>
-                </section>`;
-
-                // Append dynamic filter button if not present
-                if (filterBar && !filterBar.querySelector(`[data-filter="${slug}"]`)) {
-                    var btn = document.createElement('button');
-                    btn.className = 'filter-btn dynamic-filter-pill';
-                    btn.setAttribute('data-filter', slug);
-                    btn.textContent = sec.title;
-                    filterBar.appendChild(btn);
-                }
+                </div>`;
             });
 
             container.innerHTML = html;
@@ -2653,6 +2636,12 @@
         // Instant local cache loader & cross-tab sync
         function loadPortfolioFromLocalCache() {
             try {
+                // Purge legacy cache with #t=0.5 if present
+                var legacyVids = localStorage.getItem('cms_portfolio_videos');
+                if (legacyVids && legacyVids.includes('#t=0.5')) {
+                    localStorage.removeItem('cms_portfolio_videos');
+                }
+
                 var webs = localStorage.getItem('cms_portfolio_websites');
                 if (webs) {
                     var parsedWebs = JSON.parse(webs);
@@ -2685,7 +2674,6 @@
 
         loadPortfolioFromLocalCache();
         window.addEventListener('storage', loadPortfolioFromLocalCache);
-        window.addEventListener('focus', loadPortfolioFromLocalCache);
 
         // Listen in real-time with isolated error boundaries
         // 1. Videos (collection & fallback doc)
