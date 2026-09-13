@@ -135,6 +135,36 @@
       font-weight: bold;
     }
 
+    /* Service Block Grid & Responsive Alternation */
+    .srv-block {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 52px;
+      align-items: center;
+    }
+
+    @media (min-width: 901px) {
+      .srv-block-reverse .srv-content {
+        order: 2;
+      }
+      .srv-block-reverse .srv-visual {
+        order: 1;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .srv-block {
+        grid-template-columns: 1fr;
+        padding: 28px 20px;
+        gap: 28px;
+      }
+      .srv-block > div,
+      .srv-content,
+      .srv-visual {
+        order: 0 !important;
+      }
+    }
+
     /* Mockups */
     .timeline-mockup,
     .browser-mockup {
@@ -267,6 +297,109 @@
       border-radius: 12px;
     }
 
+    .bm-preview-card {
+      background: rgba(255, 184, 0, 0.04);
+      border: 1px solid rgba(255, 184, 0, 0.25);
+      border-radius: 10px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .bm-preview-tag {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .bm-preview-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      color: var(--t1);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .bm-preview-sub {
+      font-size: 0.86rem;
+      color: var(--t2);
+      margin-bottom: 14px;
+    }
+
+    .bm-preview-cta {
+      display: inline-block;
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 6px 16px;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .bm-metrics-bar {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .dash-stat-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .dash-chart-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    /* Light Theme Styling for Browser & Dashboard Mockups */
+    [data-theme="light"] .browser-mockup,
+    [data-theme="light"] .timeline-mockup {
+      background: #FFFFFF;
+      border: 1px solid rgba(212, 160, 23, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    }
+
+    [data-theme="light"] .bm-preview-card {
+      background: #FAF8F5;
+      border: 1px solid rgba(212, 160, 23, 0.3);
+    }
+
+    [data-theme="light"] .bm-url-bar {
+      background: #F0EDE6;
+      color: #333333;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="light"] .dash-stat-box {
+      background: #FAF8F5;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="light"] .dash-chart-box {
+      background: #FAF8F5;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="light"] .srv-deliv-item {
+      background: #FAF8F5;
+      border: 1px solid var(--border);
+      color: var(--t1);
+    }
+
     .bm-code {
       font-family: monospace;
       font-size: 13px;
@@ -364,7 +497,7 @@
   <!-- SERVICE 01 — VIDEO EDITING & GRAPHIC DESIGN -->
   <section class="sec sec-alt" id="video-production">
     <div class="srv-block">
-      <div>
+      <div class="srv-content">
         <div class="srv-block-tag">Core Service Pillar 01</div>
         <h2 class="srv-block-title">Video Editing &amp; Graphic Design That Makes Your Brand <em>Impossible to Ignore</em></h2>
         <p class="srv-block-desc">We turn raw footage and ideas into high-impact visual content built to capture attention, communicate clearly, and strengthen your brand. From short-form videos and YouTube content to thumbnails, social creatives, and motion graphics, every asset is designed with purpose.</p>
@@ -385,7 +518,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="srv-visual">
         <div class="timeline-mockup">
           <div class="tm-topbar">
             <div class="tm-dot r"></div>
@@ -432,8 +565,8 @@
 
   <!-- SERVICE 02 — WEBSITE DEVELOPMENT & SEO -->
   <section class="sec" id="web-development">
-    <div class="srv-block">
-      <div style="order:2;">
+    <div class="srv-block srv-block-reverse">
+      <div class="srv-content">
         <div class="srv-block-tag">Core Service Pillar 02</div>
         <h2 class="srv-block-title">Websites Built to Look Better, <em>Load Faster &amp; Convert</em></h2>
         <p class="srv-block-desc">We design and develop fast, responsive websites that do more than look good. Every page is structured around user experience, conversion, search visibility, and your business goals — from high-converting landing pages to complete corporate and e-commerce websites.</p>
@@ -455,7 +588,7 @@
         </div>
       </div>
 
-      <div style="order:1;">
+      <div class="srv-visual">
         <div class="browser-mockup">
           <div class="bm-topbar">
             <div class="bm-dots">
@@ -466,16 +599,16 @@
             <div class="bm-url-bar">https://yourwebsite.com</div>
             <div class="bm-speed-badge">⚡ 98/100</div>
           </div>
-          <div style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,184,0,0.25);border-radius:10px;padding:24px 20px;text-align:center;margin-bottom:14px;">
-            <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;">YOUR HIGH-PERFORMANCE WEBSITE</div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--t1);line-height:1.2;margin-bottom:8px;">SCALE YOUR BRAND</div>
-            <div style="font-size:0.86rem;color:var(--t2);margin-bottom:14px;">Turn visitors into paying customers.</div>
-            <div style="display:inline-block;background:var(--gold);color:#000;font-weight:700;font-size:0.8rem;padding:6px 16px;border-radius:6px;letter-spacing:0.04em;">GET STARTED →</div>
+          <div class="bm-preview-card">
+            <div class="bm-preview-tag">YOUR HIGH-PERFORMANCE WEBSITE</div>
+            <div class="bm-preview-title">SCALE YOUR BRAND</div>
+            <div class="bm-preview-sub">Turn visitors into paying customers.</div>
+            <div class="bm-preview-cta">GET STARTED →</div>
           </div>
-          <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:16px;flex-wrap:wrap;justify-content:space-around;">
-            <span style="font-size: 12px;color:#28C840;font-weight:700;">⚡ SPEED: 98/100 ✓ (Built for Speed)</span>
-            <span style="font-size: 12px;color:var(--gold);font-weight:700;">📱 MOBILE: 100/100 ✓ (Mobile First)</span>
-            <span style="font-size: 12px;color:#38bdf8;font-weight:700;">🔍 SEO: 94/100 ✓ (SEO Ready)</span>
+          <div class="bm-metrics-bar">
+            <span class="bm-metric-speed">⚡ SPEED: 98/100 ✓ (Built for Speed)</span>
+            <span class="bm-metric-mobile">📱 MOBILE: 100/100 ✓ (Mobile First)</span>
+            <span class="bm-metric-seo">🔍 SEO: 94/100 ✓ (SEO Ready)</span>
           </div>
         </div>
       </div>
@@ -485,7 +618,7 @@
   <!-- SERVICE 03 — PAID ADVERTISING & PERFORMANCE MARKETING -->
   <section class="sec sec-alt" id="paid-advertising">
     <div class="srv-block">
-      <div>
+      <div class="srv-content">
         <div class="srv-block-tag">Core Service Pillar 03</div>
         <h2 class="srv-block-title">Paid Advertising &amp; <em>Performance Marketing</em></h2>
         <p class="srv-block-desc">We build and manage performance campaigns designed to turn advertising budgets into measurable business growth. From creative strategy and audience targeting to campaign optimization and retargeting, we connect every part of the funnel to your business goals.</p>
@@ -507,30 +640,30 @@
         </div>
       </div>
 
-      <div>
+      <div class="srv-visual">
         <div class="browser-mockup" style="border-color:rgba(74,144,226,0.35);">
           <div style="font-size: 13px;color:#4A90E2;font-weight:700;letter-spacing:0.1em;margin-bottom:14px;text-transform:uppercase;display:flex;align-items:center;gap:8px;">
             <span>📊</span> CAMPAIGN PERFORMANCE DASHBOARD
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+            <div class="dash-stat-box">
               <div style="font-size: 11px;color:var(--t3);text-transform:uppercase;letter-spacing:0.04em;">ROAS / RETURN</div>
               <div style="font-family:var(--font-h);font-size:1.7rem;color:#28C840;font-weight:600;">4.82x</div>
             </div>
-            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+            <div class="dash-stat-box">
               <div style="font-size: 11px;color:var(--t3);text-transform:uppercase;letter-spacing:0.04em;">CONVERSIONS</div>
               <div style="font-family:var(--font-h);font-size:1.7rem;color:var(--gold);font-weight:600;">+1,240</div>
             </div>
-            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+            <div class="dash-stat-box">
               <div style="font-size: 11px;color:var(--t3);text-transform:uppercase;letter-spacing:0.04em;">CLICK RATE (CTR)</div>
               <div style="font-family:var(--font-h);font-size:1.7rem;color:var(--gold);font-weight:600;">3.64%</div>
             </div>
-            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+            <div class="dash-stat-box">
               <div style="font-size: 11px;color:var(--t3);text-transform:uppercase;letter-spacing:0.04em;">COST PER LEAD</div>
               <div style="font-family:var(--font-h);font-size:1.7rem;color:#28C840;font-weight:600;">Optimized</div>
             </div>
           </div>
-          <div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:12px;">
+          <div class="dash-chart-box">
             <div style="font-size:11px;color:var(--t3);margin-bottom:6px;">CAMPAIGN PERFORMANCE GROWTH CURVE</div>
             <svg viewBox="0 0 300 45" style="width:100%;height:40px;display:block;">
               <path d="M0,38 Q50,30 90,32 T170,18 T240,12 T300,4" fill="none" stroke="#28C840" stroke-width="3" stroke-linecap="round"/>
@@ -549,8 +682,8 @@
 
   <!-- SERVICE 04 — SOCIAL MEDIA MANAGEMENT -->
   <section class="sec" id="social-growth">
-    <div class="srv-block">
-      <div style="order:2;">
+    <div class="srv-block srv-block-reverse">
+      <div class="srv-content">
         <div class="srv-block-tag">Core Service Pillar 04</div>
         <h2 class="srv-block-title">Social Media Management &amp; <em>Channel Growth</em></h2>
         <p class="srv-block-desc">We turn your social platforms into consistent, strategic growth channels. From content planning and publishing to thumbnails, SEO, community management, and analytics, we manage the system behind your social presence so your brand stays active, relevant, and growing.</p>
@@ -572,22 +705,22 @@
         </div>
       </div>
 
-      <div style="order:1;">
+      <div class="srv-visual">
         <div class="browser-mockup" style="border-color:rgba(255,184,0,0.35);">
           <div style="font-size: 13px;color:var(--gold);font-weight:700;letter-spacing:0.1em;margin-bottom:14px;text-transform:uppercase;display:flex;align-items:center;gap:8px;">
             <span>📣</span> SOCIAL GROWTH DASHBOARD
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+            <div class="dash-stat-box">
               <div style="font-size: 11px;color:var(--t3);text-transform:uppercase;letter-spacing:0.04em;">TOTAL VIEWS</div>
               <div style="font-family:var(--font-h);font-size:1.7rem;color:var(--gold);font-weight:600;">4.8M+</div>
             </div>
-            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;">
+            <div class="dash-stat-box">
               <div style="font-size: 11px;color:var(--t3);text-transform:uppercase;letter-spacing:0.04em;">NEW FOLLOWERS</div>
               <div style="font-family:var(--font-h);font-size:1.7rem;color:#28C840;font-weight:600;">+54.2K</div>
             </div>
           </div>
-          <div style="background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px;">
+          <div class="dash-chart-box">
             <div style="font-size:11px;color:var(--gold);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em;">MONTHLY CONTENT PERFORMANCE</div>
             <div style="display:flex;flex-direction:column;gap:8px;">
               <div>
