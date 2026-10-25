@@ -798,7 +798,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="ai-msg bot">
             <div class="ai-bubble">
               👋 <strong>Hi! Welcome to Editzaar!</strong><br/><br/>
-              I am your <strong>Senior Creative Strategist &amp; Client Onboarding AI</strong>. I have analyzed all our website services, pricing, case studies, and <strong>every published article on the <a href="https://blog.editzaar.in/" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Editzaar Blog</a></strong>.<br/><br/>
+              I am your <strong>Senior Creative Strategist &amp; Client Onboarding AI</strong>. I have analyzed all our website services, pricing, case studies, and <strong>every published article on the <a href="https://www.editzaarblog.in/" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Editzaar Blog</a></strong>.<br/><br/>
               How can we help elevate your video retention, website, or digital brand today?
             </div>
             <span class="ai-msg-time">Just now</span>
@@ -828,40 +828,40 @@ document.addEventListener('DOMContentLoaded', function () {
     var liveBlogArticles = [
       {
         title: "Movie Video Editing Breakdown: Cinematic Pacing Lessons | Editzaar",
-        url: "https://blog.editzaar.in/2026/08/movie-video-editing-breakdown-cinematic.html",
+        url: "https://www.editzaarblog.in/2026/08/movie-video-editing-breakdown-cinematic.html",
         keywords: ["movie", "cinematic", "pacing", "film", "rhythm", "tension", "hollywood", "b-roll", "storytelling", "match-cut", "audio layering", "apv"],
         summary: "In blockbuster films, every cut is motivated by emotion and movement (like match-cutting on action). Alternating between high-energy sequences and slower reflective breathers builds dramatic tension without causing sensory fatigue."
       },
       {
         title: "How to Get the 'Shaidai' TV Drama Look in DaVinci Resolve | Editzaar",
-        url: "https://blog.editzaar.in/2026/07/how-to-get-shaidai-tv-drama-look-in.html",
+        url: "https://www.editzaarblog.in/2026/07/how-to-get-shaidai-tv-drama-look-in.html",
         keywords: ["shaidai", "davinci", "resolve", "color", "grading", "lut", "node", "skin tone", "gloss", "diffusion", "contrast", "teal and orange"],
         summary: "TV drama aesthetics rely on a 5-node master pipeline in DaVinci Resolve: Exposure Normalization ➔ Color Space Transform (CST) ➔ Primary Teal/Orange Split ➔ Isolated HSL Skin Tone Qualifier ➔ Diffusion Glow finish, shot in 10-bit Log with manual 24fps 180° shutter."
       },
       {
         title: "Why High-Budget Videos Fail (And What Retention Editing Fixes) | Editzaar",
-        url: "https://blog.editzaar.in/2026/07/why-high-budget-videos-fail-and-what.html",
+        url: "https://www.editzaarblog.in/2026/07/why-high-budget-videos-fail-and-what.html",
         keywords: ["fail", "drop off", "retention", "high budget", "expensive", "camera", "lighting", "hook", "watch time", "low views", "drop-off", "swipe"],
         summary: "Expensive cameras and 4K lighting don't stop the scroll. Videos fail when they lack an irresistible 3-second hook (first 150 frames) and pattern interrupts every 3–5 seconds (micro-zooms, kinetic text, riser SFX)."
       },
       {
         title: "Is AI Replacing Video Editors? The Reality of Video Editing in 2026",
-        url: "https://blog.editzaar.in/2026/06/is-ai-replacing-video-editors-reality.html",
+        url: "https://www.editzaarblog.in/2026/06/is-ai-replacing-video-editors-reality.html",
         keywords: ["ai", "replace", "replacing", "future", "automation", "tools", "robot", "editors", "2026", "software"],
         summary: "AI excels at automating repetitive grunt work (silence trimming, rough cuts, auto-captions), but cannot replicate human narrative rhythm, comedic timing, emotional resonance, or custom brand strategy."
       },
       {
         title: "Why AI Can't Replace Human Strategy in Video Editing",
-        url: "https://blog.editzaar.in/2026/06/why-ai-cant-replace-human-strategy-in.html",
+        url: "https://www.editzaarblog.in/2026/06/why-ai-cant-replace-human-strategy-in.html",
         keywords: ["human", "strategy", "creative director", "nuance", "emotion", "brand", "story", "differentiator"],
         summary: "Editing is psychological persuasion. Human editors understand cultural context, audience empathy, and how to craft unique visual signatures that build genuine brand loyalty."
       }
     ];
 
-    // Live Feed Auto-Sync from blog.editzaar.in
+    // Live Feed Auto-Sync from www.editzaarblog.in
     function syncLiveBlogFeed() {
       try {
-        var feedUrl = 'https://blog.editzaar.in/feeds/posts/default?alt=json&max-results=50';
+        var feedUrl = 'https://www.editzaarblog.in/feeds/posts/default?alt=json&max-results=50';
         fetch(feedUrl)
           .then(function(res) { return res.json(); })
           .then(function(data) {
@@ -1175,7 +1175,7 @@ document.addEventListener('DOMContentLoaded', function () {
              `• <strong>02 · BUILD:</strong> Fast Websites &amp; SEO Systems (98+ PageSpeed)<br/>` +
              `• <strong>03 · ACQUIRE:</strong> Paid Ads &amp; Performance ROAS Funnels<br/>` +
              `• <strong>04 · GROW:</strong> Social Media Management &amp; Content Calendars<br/><br/>` +
-             `You can also read our deep-dive tutorials on video retention, cinematic grading, and AI editing on our <a href="https://blog.editzaar.in/" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Editzaar Blog Hub ↗</a>.<br/><br/>` +
+             `You can also read our deep-dive tutorials on video retention, cinematic grading, and AI editing on our <a href="https://www.editzaarblog.in/" target="_blank" rel="noopener noreferrer" style="color:var(--gold);text-decoration:underline;">Editzaar Blog Hub ↗</a>.<br/><br/>` +
              `<div style="display:flex;gap:8px;flex-wrap:wrap;">` +
              `<a href="pricing" class="btn-gold-brand btn-sm" style="text-decoration:none;">View Pricing →</a>` +
              `<a href="work" class="btn-outline btn-sm" style="text-decoration:none;">View Work 🎬</a>` +
