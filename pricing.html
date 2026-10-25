@@ -1884,7 +1884,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+      navigator.serviceWorker.register('/sw.js?v=600.0')
         .then(function(reg) {
           reg.update();
           console.log('[SW] Registered & updated:', reg.scope);

@@ -58,39 +58,129 @@
     .pc-cross { color: var(--t3); font-size: 13px; }
     .pc-gst { font-size: 13px; color: var(--t3); margin-top: -6px; margin-bottom: 16px; }
 
-    /* Interactive Checkout Modal */
+    /* Interactive Checkout Modal - Mobile First Clean Architecture */
     .checkout-modal {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.88); z-index: 9999;
       display: flex; align-items: center; justify-content: center;
-      padding: 20px; display: none; backdrop-filter: blur(12px);
+      padding: 12px; display: none; backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
     .checkout-modal.open { display: flex; }
     .checkout-box {
       background: var(--bg-card); border: 1px solid var(--gold-border);
-      border-radius: 20px; padding: 36px; width: 100%; max-width: 740px;
-      max-height: 92vh; overflow-y: auto; position: relative;
-      box-shadow: 0 32px 90px rgba(0,0,0,0.95);
+      border-radius: 18px; padding: 30px 24px; width: 100%; max-width: 680px;
+      max-height: 94vh; overflow-y: auto; position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.95);
+      box-sizing: border-box;
     }
     .checkout-close {
-      position: absolute; top: 20px; right: 20px;
-      background: none; border: none; color: var(--t2);
-      font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+      border-radius: 50%; width: 34px; height: 34px; color: var(--t1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; cursor: pointer; transition: all 0.2s; z-index: 10;
     }
-    .checkout-close:hover { color: var(--gold); }
+    .checkout-close:hover { color: var(--gold); border-color: var(--gold); }
 
     .summary-card {
-      background: rgba(255,184,0,0.06); border: 1px solid var(--gold-border);
-      border-radius: 12px; padding: 20px; margin-bottom: 24px;
+      background: rgba(255,184,0,0.05); border: 1px solid var(--gold-border);
+      border-radius: 12px; padding: 18px; margin-bottom: 20px;
+      box-sizing: border-box; width: 100%;
     }
     .summary-row {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 0.9rem; margin-bottom: 8px; color: var(--t2);
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 12px; font-size: 0.9rem; margin-bottom: 8px; color: var(--t2);
     }
+    .summary-row span:first-child { flex: 1; word-break: break-word; }
+    .summary-row strong, .summary-row span:last-child { text-align: right; word-break: break-word; }
     .summary-row.total {
       border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px;
-      font-weight: 700; color: inherit; font-size: 1.1rem;
+      font-weight: 700; color: inherit; font-size: 1.15rem;
     }
+
+    .pay-preset-btn {
+      flex: 1 1 auto; min-width: 130px; text-align: center;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--t2); padding: 9px 12px; border-radius: 8px;
+      font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    }
+    .pay-preset-btn.active {
+      background: var(--gold); color: #000; font-weight: 700; border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(255,184,0,0.3);
+    }
+
+    /* ── COMPREHENSIVE RESPONSIVE ENHANCEMENTS FOR ALL DEVICES ── */
+    @media (max-width: 768px) {
+      .catalog-tabs {
+        display: flex !important;
+        overflow-x: auto !important;
+        justify-content: flex-start !important;
+        padding: 6px 14px 14px !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        flex-wrap: nowrap !important;
+        -ms-overflow-style: none !important;
+        gap: 10px !important;
+        margin-bottom: 24px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .catalog-tabs::-webkit-scrollbar { display: none !important; }
+      .catalog-tab {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        padding: 10px 20px !important;
+        font-size: 0.84rem !important;
+      }
+      .srv-hero { padding: 84px 16px 20px !important; }
+      .srv-hero h1 { font-size: 2.1rem !important; }
+      .srv-hero p { font-size: 0.88rem !important; margin-bottom: 20px !important; }
+      .pricing-cards {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+      }
+      .pricing-card {
+        padding: 30px 20px !important;
+      }
+      .pc-badge {
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        white-space: nowrap !important;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1100px) {
+      .pricing-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .checkout-modal { padding: 8px !important; }
+      .checkout-box {
+        padding: 22px 14px !important;
+        border-radius: 16px !important;
+        max-height: 94vh !important;
+      }
+      .summary-card { padding: 14px 10px !important; }
+      .summary-row { font-size: 0.85rem !important; }
+      .summary-row.total { font-size: 1.05rem !important; }
+      .checkout-close { top: 12px !important; right: 12px !important; width: 32px !important; height: 32px !important; }
+      .form-grid-2 { grid-template-columns: 1fr !important; gap: 0 !important; }
+      .payment-box { grid-template-columns: 1fr !important; justify-items: center !important; text-align: center !important; }
+      .pay-preset-btn { min-width: 100% !important; font-size: 0.85rem !important; padding: 10px !important; }
+      .custom-quote-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+      .btn-gold-brand {
+        font-size: 0.9rem !important;
+        padding: 12px 16px !important;
+      }
+    }
+
     .summary-row.advance {
       background: rgba(40,200,64,0.1); border: 1px solid rgba(40,200,64,0.3);
       padding: 10px 14px; border-radius: 8px; color: #28C840; font-weight: 700; margin-top: 10px;
@@ -126,9 +216,13 @@
     .btn-gold-brand {
       background: var(--gold) !important; color: #000 !important;
       font-weight: 700 !important; border: none !important;
-      border-radius: 8px !important; padding: 14px 24px !important;
+      border-radius: 10px !important; padding: 14px 20px !important;
       cursor: pointer !important; transition: all 0.25s !important;
       box-shadow: 0 4px 20px rgba(255,184,0,0.3) !important;
+      text-align: center !important; font-size: 0.95rem !important;
+      line-height: 1.4 !important; white-space: normal !important;
+      word-break: normal !important; box-sizing: border-box !important;
+      display: flex !important; align-items: center !important; justify-content: center !important;
     }
     .btn-gold-brand:hover {
       background: var(--gold-light) !important; transform: translateY(-2px) !important;
@@ -142,12 +236,6 @@
       margin-top: 12px; transition: transform 0.2s;
     }
     .btn-upi-mobile:hover { transform: scale(1.03); }
-
-    @media (max-width: 650px) {
-      .form-grid-2 { grid-template-columns: 1fr; }
-      .payment-box { grid-template-columns: 1fr; justify-items: center; text-align: center; }
-      .checkout-box { padding: 24px 18px; }
-    }
   
     /* ── LIGHT MODE OVERRIDES ── */
     [data-theme="light"] .pc-cross {
@@ -217,6 +305,11 @@
       <li><a href="javascript:void(0)" onclick="window._triggerInstall()" class="mobile-install-link" style="color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px">&#11015; Install Editzaar App</a></li>
     </ul>
     <a class="nav-cta" id="nav-auth-btn" href="dashboard/index.html">Login</a>
+    <!-- Minimal Currency Switcher (Preserves Navbar Design) -->
+    <div class="currency-switcher-nav" style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:20px;padding:2px 4px;margin-right:8px;font-size:0.78rem;font-weight:700;">
+      <button type="button" id="btnCurrINR" onclick="window.switchEditzaarCurrency('INR')" style="background:var(--gold);color:#0b0b0d;border:none;border-radius:14px;padding:3px 8px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇮🇳 INR</button>
+      <button type="button" id="btnCurrUSD" onclick="window.switchEditzaarCurrency('USD')" style="background:transparent;color:var(--t2);border:none;border-radius:14px;padding:3px 8px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇺🇸 USD</button>
+    </div>
     <button class="theme-toggle-btn" data-theme-toggle aria-label="Toggle theme"><span class="icon-moon">&#127769;</span><span class="icon-sun">&#9728;</span></button>
     <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
   </nav>
@@ -232,6 +325,7 @@
       <div class="catalog-tab active" data-target="cat-video">🎬 Video Post-Production</div>
       <div class="catalog-tab" data-target="cat-web">💻 Web Design &amp; Development</div>
       <div class="catalog-tab" data-target="cat-growth">📈 Paid Ads &amp; Growth</div>
+      <div class="catalog-tab" data-target="cat-social">📣 Social Media Management</div>
     </div>
   </section>
 
@@ -245,10 +339,10 @@
     <!-- CATALOG 1: VIDEO POST-PRODUCTION -->
     <div class="pricing-cards catalog-grid active" id="cat-video">
       <div class="pricing-card" data-svc-id="shorts-reels">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Shorts &amp; Reels</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹1,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Shorts &amp; Reels</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹1,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48h Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Shorts & Reels', 1000, '48 Hours')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Shorts & Reels', 1000, '48 Hours', 29, 'shorts-reels')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 60-second video cut</li>
           <li class="pc-feat"><span class="pc-check">✦</span> 3-sec hook optimization</li>
@@ -261,10 +355,10 @@
 
       <div class="pricing-card popular" data-svc-id="motion-graphics">
         <div class="pc-badge">Most Popular</div>
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Motion Graphic / Animated</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹2,500 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Motion Graphic / Animated</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹2,500 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48h Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Motion Graphic / Animated Video', 2500, '48 Hours')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Motion Graphic / Animated Video', 2500, '48 Hours', 69, 'motion-graphics')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 60-second video</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Custom vector animation &amp; motion graphics</li>
@@ -276,10 +370,10 @@
       </div>
 
       <div class="pricing-card" data-svc-id="long-form-youtube">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Long-Form YouTube</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹5,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Long-Form YouTube</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹5,000 <span style="font-size:1rem;color:var(--t3);">/ video</span></div>
         <div class="pc-gst">+ 18% GST · 48-72h Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Long-Form YouTube Video', 5000, '48-72 Hours')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Long-Form YouTube Video', 5000, '48-72 Hours', 129, 'long-form-youtube')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 10–20 minute video edit</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Storytelling cuts &amp; B-roll integration</li>
@@ -289,11 +383,12 @@
         </ul>
       </div>
 
-      <div class="pricing-card">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Monthly Creator Partnership</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
-        <div class="pc-gst">Billed monthly · Dedicated editor</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Monthly Creator Partnership', 15000, 'Monthly Retainer')">Get Custom Quote →</button>
+      <div class="pricing-card" data-svc-id="monthly-creator-partnership">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">Dedicated Team</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Monthly Creator Partnership</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Billed monthly · Dedicated editor &amp; strategist</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Monthly Creator Partnership', 'Video Post-Production', 'monthly-creator-partnership')">Get Custom Quote →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Dedicated video editor &amp; strategist</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Unlimited video length &amp; revisions</li>
@@ -306,10 +401,10 @@
     <!-- CATALOG 2: WEB DESIGN & DEVELOPMENT -->
     <div class="pricing-cards catalog-grid" id="cat-web">
       <div class="pricing-card" data-svc-id="landing-page">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Landing Page</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹4,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Landing Page</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹4,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 3-Day Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('High-Converting Landing Page', 4999, '3 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('High-Converting Landing Page', 4999, '3 Days', 149, 'landing-page')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Single High-Converting Landing Page</li>
           <li class="pc-feat"><span class="pc-check">✦</span> 100/100 Mobile &amp; Desktop Speed</li>
@@ -321,10 +416,10 @@
 
       <div class="pricing-card popular" data-svc-id="ecommerce-store">
         <div class="pc-badge">Most Popular</div>
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Corporate / D2C Storefront</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Corporate / D2C Storefront</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 5-7 Day Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Corporate / D2C E-Commerce Storefront', 12999, '5-7 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Corporate / D2C E-Commerce Storefront', 12999, '5-7 Days', 349, 'ecommerce-store')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Up to 5-7 Custom Pages</li>
           <li class="pc-feat"><span class="pc-check">✦</span> E-Commerce &amp; Payment Gateway Setup</li>
@@ -335,10 +430,10 @@
       </div>
 
       <div class="pricing-card" data-svc-id="full-web-portal">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Web System &amp; Portal</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Web System &amp; Portal</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ project</span></div>
         <div class="pc-gst">+ 18% GST · 10-14 Day Delivery</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Web System & Portal', 24999, '10-14 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Web System & Portal', 24999, '10-14 Days', 699, 'full-web-portal')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Firebase Auth &amp; Role-Based User Portals</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Real-Time Firestore Database Integration</li>
@@ -347,15 +442,29 @@
           <li class="pc-feat"><span class="pc-check">✦</span> Dedicated Support &amp; Deployment</li>
         </ul>
       </div>
+
+      <div class="pricing-card" data-svc-id="web-custom-system">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">Enterprise</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Custom Web &amp; Enterprise System</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Milestone based · Dedicated Full-Stack Team</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Custom Web & Enterprise System', 'Website Design & Development', 'web-custom-system')">Get Custom Quote →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated full-stack software engineer &amp; designer</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Custom system architecture, database &amp; API integrations</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> SaaS platforms, CRM dashboards &amp; portal development</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Direct Slack / WhatsApp engineering channel access</li>
+        </ul>
+      </div>
     </div>
 
     <!-- CATALOG 3: PAID ADS & GROWTH -->
     <div class="pricing-cards catalog-grid" id="cat-growth">
       <div class="pricing-card" data-svc-id="paid-ads-setup">
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Paid Ad Setup &amp; Creatives</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹7,999 <span style="font-size:1rem;color:var(--t3);">/ campaign</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Paid Ad Setup &amp; Creatives</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹7,999 <span style="font-size:1rem;color:var(--t3);">/ campaign</span></div>
         <div class="pc-gst">+ 18% GST · Meta &amp; Google Ads</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Paid Ad Setup & Creatives', 7999, '3-5 Days')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Paid Ad Setup & Creatives', 7999, '3-5 Days', 199, 'paid-ads-setup')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> Meta (FB/IG) &amp; Google Ad Campaign Setup</li>
           <li class="pc-feat"><span class="pc-check">✦</span> 3 Direct-Response Video Ad Creatives</li>
@@ -366,15 +475,99 @@
 
       <div class="pricing-card popular" data-svc-id="growth-retainer">
         <div class="pc-badge">Best ROI</div>
-        <div style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Channel Growth Retainer</div>
-        <div style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹14,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Full Channel Growth Retainer</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹14,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
         <div class="pc-gst">Billed monthly · Complete Management</div>
-        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Channel Growth Retainer', 14999, 'Monthly Retainer')">Choose Plan &amp; Checkout →</button>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Full Channel Growth Retainer', 14999, 'Monthly Retainer', 399, 'growth-retainer')">Choose Plan &amp; Checkout →</button>
         <ul class="pc-features">
           <li class="pc-feat"><span class="pc-check">✦</span> 12 Reels / Shorts Editing per month</li>
           <li class="pc-feat"><span class="pc-check">✦</span> YouTube Channel SEO &amp; Thumbnail Design</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Meta &amp; Google Paid Ads Management</li>
           <li class="pc-feat"><span class="pc-check">✦</span> Monthly Strategy &amp; Analytics Reports</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card" data-svc-id="ads-scale-engine">
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Multi-Platform Scale Engine</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹24,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · 7-10 Days / Ongoing</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Multi-Platform Scale Engine', 24999, '7-10 Days', 699, 'ads-scale-engine')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Meta + Google + YouTube Ads Management</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> 8 Direct-Response Video Ad Creatives</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Continuous A/B Creative Testing &amp; Retargeting</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Custom Tracking Pixel, CAPI &amp; Funnel Analytics</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card" data-svc-id="growth-custom-enterprise">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">VIP Scale</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Custom Enterprise Growth Partner</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Billed monthly · Dedicated Media Buyer &amp; Team</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Custom Enterprise Growth Partner', 'Paid Advertising & Growth', 'growth-custom-enterprise')">Get Custom Quote →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated performance marketing director &amp; ad strategist</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> High-budget omni-channel scaling (Meta, Google, YouTube, TikTok)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Weekly executive ROAS &amp; attribution audits</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Direct Slack / WhatsApp 24/7 priority channel access</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CATALOG 4: SOCIAL MEDIA MANAGEMENT -->
+    <div class="pricing-cards catalog-grid" id="cat-social">
+      <div class="pricing-card" data-svc-id="social-essential">
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Essential Social Presence</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹6,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · Monthly Retainer</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Essential Social Presence', 6999, 'Monthly Retainer', 189, 'social-essential')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> 12 High-Retention Reels/Shorts + Static Graphics</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Content Calendar, Copywriting &amp; Hashtags</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Monthly Performance &amp; Growth Insights</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Instagram &amp; Facebook Management</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card popular" data-svc-id="social-omnichannel">
+        <div class="pc-badge">Most Popular</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Omnichannel Growth Engine</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹12,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · Monthly Retainer</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('Omnichannel Growth Engine', 12999, 'Monthly Retainer', 349, 'social-omnichannel')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> 20 Vertical Videos (Reels, TikTok, Shorts)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Complete YouTube Channel SEO &amp; Custom Thumbnails</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Active Community Engagement &amp; Comment Moderation</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Bi-Weekly Strategy Calls &amp; Trend Adaptation</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card" data-svc-id="social-youtube-authority">
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">YouTube Authority &amp; Domination</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">₹18,999 <span style="font-size:1rem;color:var(--t3);">/ month</span></div>
+        <div class="pc-gst">+ 18% GST · Monthly Retainer</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCheckout('YouTube Authority & Domination', 18999, 'Monthly Retainer', 499, 'social-youtube-authority')">Choose Plan &amp; Checkout →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> 4 Long-Form YouTube Edits + 16 Short Repurposed Cuts</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> High-CTR Custom Thumbnails &amp; Title A/B Testing</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Complete YouTube SEO, Descriptions &amp; Chapters</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated Social Manager &amp; Channel Audits</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card" data-svc-id="social-custom-partnership">
+        <div class="pc-badge" style="background:linear-gradient(135deg,#FFB800 0%,#E5A500 100%);color:#0A0A0D;">Full Takeover</div>
+        <div class="pc-title" style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--t2);margin-bottom:8px;">Custom Brand Authority Partnership</div>
+        <div class="pc-price" style="font-family:var(--font-h);font-size:2.8rem;color:var(--gold);margin-bottom:2px;">Custom</div>
+        <div class="pc-gst">Billed monthly · Dedicated Social Media Team</div>
+        <button class="btn-gold-brand" style="width:100%;justify-content:center;margin-bottom:18px;" onclick="openCustomQuote('Custom Brand Authority Partnership', 'Social Media Management', 'social-custom-partnership')">Get Custom Quote →</button>
+        <ul class="pc-features">
+          <li class="pc-feat"><span class="pc-check">✦</span> Dedicated social media team (strategist, editor, designer)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> End-to-end multi-platform takeover (IG, YT, LinkedIn, X, FB)</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> Custom content production schedules &amp; viral format tests</li>
+          <li class="pc-feat"><span class="pc-check">✦</span> 24/7 Priority Slack / WhatsApp communication</li>
         </ul>
       </div>
     </div>
@@ -384,53 +577,116 @@
   <div class="checkout-modal" id="checkoutModal">
     <div class="checkout-box">
       <button class="checkout-close" id="btnCloseCheckout">✕</button>
-      <div style="font-family:var(--font-h);font-size:1.8rem;margin-bottom:6px;">Project Checkout &amp; <em>Onboarding</em></div>
-      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;">Review your price breakdown, choose your deposit amount, scan the dynamic auto-amount UPI QR, and submit project details.</div>
+      <div style="font-family:var(--font-h);font-size:1.8rem;margin-bottom:6px;" id="modalTitleText">Project Checkout &amp; <em>Onboarding</em></div>
+      <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;" id="modalSubText">Review your price breakdown, choose your deposit amount, scan the dynamic auto-amount UPI QR, and submit project details.</div>
 
-      <!-- PRICE SUMMARY CARD -->
-      <div class="summary-card">
-        <div style="font-size: 13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:10px;font-weight:700;">Selected Package Breakdown</div>
-        <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
-        <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
-        <div class="summary-row" id="chkDiscountRow" style="display:none;color:#28C840;font-weight:600;">
-          <span>Coupon Discount (<span id="chkDiscountCode"></span>)</span>
-          <span id="chkDiscountAmt">-₹0</span>
-        </div>
-        <div class="summary-row"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
-        <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
-
-        <!-- COUPON PROMO CODE INPUT -->
-        <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
-          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🎟️ Have a Coupon Code?</div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="text" id="chkCouponCode" placeholder="e.g. WELCOME10 / LAUNCH20" style="flex:1;text-transform:uppercase;padding:7px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:monospace;font-weight:700;outline:none;font-size:0.9rem;"/>
-            <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
+      <!-- ── CUSTOM SCOPE & QUOTE BUILDER SECTION (Active for Custom cards) ── -->
+      <div id="customScopeBuilder" style="display:none;margin-bottom:20px;">
+        <div class="summary-card" style="border-color:rgba(255,184,0,0.35);background:linear-gradient(135deg,rgba(255,184,0,0.06) 0%,rgba(0,0,0,0.5) 100%);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-weight:700;">✨ Custom Package / Scope Builder</div>
+            <div style="font-size:12px;color:var(--t3);">Tailored to your exact requirements</div>
           </div>
-          <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
-          <div style="margin-top:12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 14px;">
-            <label for="chkUtrNum" style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;display:block;margin-bottom:4px;">🧾 UPI Transaction / UTR Number (Optional)</label>
-            <input type="text" id="chkUtrNum" placeholder="e.g. 423589012345 (from GPay / PhonePe / Paytm)" style="width:100%;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-family:var(--font-b);font-size:0.88rem;"/>
-          </div>
-        </div>
-
-        <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
-        <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
-          <div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;">💳 Choose Amount to Pay Now</div>
           
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-            <button type="button" class="pay-preset-btn active" id="btnPreset50" onclick="window.setCheckoutDeposit('50%')">50% Advance (<span id="txtPreset50">₹0</span>)</button>
-            <button type="button" class="pay-preset-btn" id="btnPreset100" onclick="window.setCheckoutDeposit('100%')">100% Full Payment (<span id="txtPreset100">₹0</span>)</button>
-            <button type="button" class="pay-preset-btn" id="btnPresetCustom" onclick="window.setCheckoutDeposit('custom')">Custom Amount ✏️</button>
+          <div style="font-size:0.95rem;color:var(--t1);font-weight:700;margin-bottom:12px;">Selected Pillar: <span style="color:var(--gold);" id="chkCustomPillarName">Monthly Creator Partnership</span></div>
+          
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t2);margin-bottom:8px;font-weight:700;">Select What You Need:</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Shorts &amp; Reels Editing" checked style="accent-color:var(--gold);"/> 🎬 Reels &amp; Shorts
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Motion Graphics &amp; 2D Animation" style="accent-color:var(--gold);"/> 🎨 Motion VFX &amp; Animation
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Long-Form YouTube Video Edit" style="accent-color:var(--gold);"/> 📹 Long-Form YouTube
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Custom Website / Landing Page" style="accent-color:var(--gold);"/> 💻 Website / Landing Page
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Paid Ads &amp; Meta/Google Campaigns" style="accent-color:var(--gold);"/> 📈 Paid Ads &amp; ROAS
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:20px;border:1px solid var(--border);font-size:0.85rem;cursor:pointer;color:var(--t1);">
+              <input type="checkbox" class="chk-scope-item" value="Social Media Channel Management" style="accent-color:var(--gold);"/> 📣 Social Media Management
+            </label>
           </div>
 
-          <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div class="custom-quote-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div>
-              <label for="chkCustomPayAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
-              <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
+              <label for="chkCustomBudget" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--gold);font-weight:700;display:block;margin-bottom:4px;">Target Budget (Optional):</label>
+              <input type="text" id="chkCustomBudget" placeholder="e.g. ₹15,000 / $300 / Flexible" style="width:100%;height:38px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.5);color:var(--gold);font-weight:700;font-size:0.92rem;" oninput="window.onCustomBudgetInput(this.value)"/>
             </div>
-            <div style="text-align:right;">
-              <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
-              <div style="font-size:1.15rem;font-weight:700;color:var(--t1);" id="chkRemainingBalance">₹0</div>
+            <div>
+              <label for="chkCustomTimeline" style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--t2);font-weight:600;display:block;margin-bottom:4px;">Timeline / Urgency:</label>
+              <select id="chkCustomTimeline" style="width:100%;height:38px;padding:0 10px;border-radius:6px;border:1px solid var(--border);background:rgba(0,0,0,0.5);color:var(--t1);font-size:0.88rem;">
+                <option value="Standard (3-5 Days)">Standard (3-5 Days)</option>
+                <option value="Urgent Priority (24-48 Hours)">⚡ Urgent Priority (24-48 Hours)</option>
+                <option value="Monthly Dedicated Retainer">📆 Monthly Dedicated Retainer</option>
+                <option value="Flexible / Discussion">Flexible / Discuss on Call</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03);border:1px dashed var(--gold-border);border-radius:8px;padding:10px 14px;font-size:0.82rem;color:var(--t2);line-height:1.5;">
+            💡 <strong>100% Customizable:</strong> You can submit this custom quote request directly for an instant tailored proposal &amp; strategy call without any mandatory upfront payment, OR optionally enter an amount above if you wish to pay a token deposit now.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FIXED PRICE SUMMARY CARD (Active for Standard packages) ── -->
+      <div id="fixedPriceBreakdown">
+        <div class="summary-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="font-size: 13px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-weight:700;">Selected Package Breakdown</div>
+            <!-- Modal Inline Currency Switcher -->
+            <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--gold-border);border-radius:20px;padding:2px 4px;font-size:0.75rem;font-weight:700;">
+              <button type="button" id="btnModalCurrINR" onclick="window.switchEditzaarCurrency('INR')" style="background:var(--gold);color:#0b0b0d;border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇮🇳 INR (₹)</button>
+              <button type="button" id="btnModalCurrUSD" onclick="window.switchEditzaarCurrency('USD')" style="background:transparent;color:var(--t2);border:none;border-radius:14px;padding:3px 9px;cursor:pointer;font-weight:700;font-size:0.75rem;transition:all 0.2s;">🇺🇸 USD ($)</button>
+            </div>
+          </div>
+          <div class="summary-row"><span>Package Name</span><strong id="chkPkgName">—</strong></div>
+          <div class="summary-row"><span>Base Amount</span><span id="chkBasePrice">₹0</span></div>
+          <div class="summary-row" id="chkDiscountRow" style="display:none;color:#28C840;font-weight:600;">
+            <span>Coupon Discount (<span id="chkDiscountCode"></span>)</span>
+            <span id="chkDiscountAmt">-₹0</span>
+          </div>
+          <div class="summary-row" id="chkGstRow"><span>GST (18%)</span><span id="chkGst">₹0</span></div>
+          <div class="summary-row total"><span>Total Package Value</span><strong id="chkTotal" style="color:var(--gold);">₹0</strong></div>
+
+          <!-- COUPON PROMO CODE INPUT -->
+          <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;">
+            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">🎟️ Have a Coupon Code?</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="chkCouponCode" placeholder="e.g. WELCOME10 / LAUNCH20" style="flex:1;text-transform:uppercase;padding:7px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:monospace;font-weight:700;outline:none;font-size:0.9rem;"/>
+              <button type="button" class="btn-gold btn-sm" id="btnApplyCoupon" onclick="window.applyCheckoutCoupon()">Apply</button>
+            </div>
+            <div id="chkCouponStatusMsg" style="font-size:0.82rem;margin-top:6px;display:none;"></div>
+            <div id="chkUtrContainer" style="margin-top:12px;background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:10px;padding:10px 14px;">
+              <label for="chkUtrNum" style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;font-weight:700;display:block;margin-bottom:4px;">🧾 UPI Transaction / UTR Number (Optional)</label>
+              <input type="text" id="chkUtrNum" placeholder="e.g. 423589012345 (from GPay / PhonePe / Paytm)" style="width:100%;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--gold-border);background:rgba(0,0,0,0.4);color:var(--t1);font-family:var(--font-b);font-size:0.88rem;"/>
+            </div>
+          </div>
+
+          <!-- FLEXIBLE PAYMENT AMOUNT CUSTOMIZER -->
+          <div style="margin-top:16px;padding-top:16px;border-top:1px dashed var(--gold-border);">
+            <div style="font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;">💳 Choose Amount to Pay Now</div>
+            
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+              <button type="button" class="pay-preset-btn active" id="btnPreset50" onclick="window.setCheckoutDeposit('50%')">50% Advance (<span id="txtPreset50">₹0</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnPreset100" onclick="window.setCheckoutDeposit('100%')">100% Full Payment (<span id="txtPreset100">₹0</span>)</button>
+              <button type="button" class="pay-preset-btn" id="btnPresetCustom" onclick="window.setCheckoutDeposit('custom')">Custom Amount ✏️</button>
+            </div>
+
+            <div style="background:rgba(40,200,64,0.08);border:1px solid rgba(40,200,64,0.35);padding:12px 16px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+              <div>
+                <label for="chkCustomPayAmount" id="lblDepositAmount" style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:4px;">Deposit Amount (₹):</label>
+                <input type="number" id="chkCustomPayAmount" style="background:#0a0a0e;border:1.5px solid var(--gold);color:var(--gold);font-size:1.25rem;font-weight:700;padding:8px 14px;border-radius:8px;width:160px;outline:none;" min="100" oninput="window.onCustomDepositChange(this.value)"/>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.06em;">Remaining Balance:</div>
+                <div style="font-size:1.15rem;font-weight:700;color:var(--t1);" id="chkRemainingBalance">₹0</div>
+              </div>
             </div>
           </div>
         </div>
@@ -475,8 +731,21 @@
         <input type="url" id="chkFootage" placeholder="https://drive.google.com/..."/>
       </div>
 
-                  <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX (Design 2) -->
-      <div class="luxury-upi-card" style="background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(255,184,0,0.35);border-radius:16px;padding:20px 22px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);">
+                  <!-- PAYPAL SMART BUTTONS CONTAINER (Visible only in USD Mode) -->
+      <div id="paypalCheckoutWrap" style="display:none;background:linear-gradient(135deg,rgba(0,112,186,0.08) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(0,112,186,0.45);border-radius:16px;padding:18px 16px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);box-sizing:border-box;">
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:#0070ba;font-weight:800;margin-bottom:8px;">🌍 SECURE INTERNATIONAL PAYMENT</div>
+        <div style="font-size:0.85rem;color:var(--t2);margin-bottom:14px;line-height:1.6;">
+          Pay securely via <strong>PayPal</strong>, <strong>Debit Card</strong>, or <strong>Credit Card (Visa/Mastercard/Amex)</strong>.<br/>
+          Amount to Pay Now: <strong id="txtPaypalAdvanceDisplay" style="color:#28c840;font-size:1.1rem;">$15</strong>
+        </div>
+        <div id="paypal-button-container" style="min-height:45px;width:100%;margin-bottom:12px;"></div>
+        <div style="text-align:center;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.1);font-size:0.8rem;color:var(--t3);">
+          ⚡ Once paid, your project brief is automatically submitted to our production team!
+        </div>
+      </div>
+
+      <!-- DYNAMIC AUTO-AMOUNT UPI QR CODE PAYMENT BOX (Design 2 - Visible in INR Mode) -->
+      <div class="luxury-upi-card" id="upiCheckoutWrap" style="background:linear-gradient(135deg,rgba(255,255,255,0.03) 0%,rgba(0,0,0,0.5) 100%);border:1px solid rgba(255,184,0,0.35);border-radius:16px;padding:20px 22px;margin-top:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.35);">
         <div style="display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:center;" class="upi-grid-wrap">
           <div>
             <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);font-weight:800;margin-bottom:10px;">DYNAMIC AUTO-AMOUNT UPI QR CODE</div>
@@ -505,7 +774,7 @@
         </div>
       </div>
 
-      <button class="btn-gold-brand" style="width:100%;margin-top:24px;justify-content:center;" id="btnConfirmCheckout">Confirm &amp; Submit Project Brief →</button>
+      <button class="btn-gold-brand" style="width:100%;margin-top:20px;justify-content:center;" id="btnConfirmCheckout">Submit Project Brief →</button>
     </div>
   </div>
     <!-- FINAL CTA -->
@@ -544,8 +813,11 @@
     </div>
   </footer>
 
-  <script src="js/services-config.js?v=310.0"></script>
-  <script src="js/main.js?v=510.0"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD&enable-funding=venmo,card"></script>
+  <script src="js/services-config.js?v=800.0"></script>
+  <script src="js/telegram-service.js?v=800.0"></script>
+  <script src="js/drive-service.js?v=800.0"></script>
+  <script src="js/main.js?v=800.0"></script>
   <script>
     // Tab switching
     const tabs = document.querySelectorAll('.catalog-tab');
@@ -553,7 +825,8 @@
     const titles = {
       'cat-video': 'Video <em>Post-Production Packages</em>',
       'cat-web': 'Web Design &amp; <em>Development Packages</em>',
-      'cat-growth': 'Paid Ads &amp; <em>Growth Packages</em>'
+      'cat-growth': 'Paid Ads &amp; <em>Growth Packages</em>',
+      'cat-social': 'Social Media &amp; <em>Channel Growth Packages</em>'
     };
 
     tabs.forEach(tab => {
@@ -562,158 +835,610 @@
         grids.forEach(g => g.classList.remove('active'));
         tab.classList.add('active');
         const targetId = tab.dataset.target;
-        document.getElementById(targetId).classList.add('active');
+        const targetGrid = document.getElementById(targetId);
+        if (targetGrid) targetGrid.classList.add('active');
         document.getElementById('catTitle').innerHTML = titles[targetId] || 'Pricing <em>Packages</em>';
       });
     });
 
-    // Checkout Modal Logic
-    let activePackage = { name: '', basePrice: 0, delivery: '' };
+    // Dynamic Multi-Currency State
+    let activePackage = { name: 'Shorts & Reels', basePrice: 1000, priceUSD: 29, delivery: '48 Hours', svcId: 'shorts-reels', isCustom: false };
     const modal = document.getElementById('checkoutModal');
+    let currentCurrency = 'INR';
 
-    window.openCheckout = (pName, price, deliveryTime) => {
+    window.switchEditzaarCurrency = function(curr) {
+      currentCurrency = (curr === 'USD') ? 'USD' : 'INR';
+      if (window.EditzaarServices) window.EditzaarServices.setCurrency(currentCurrency);
+      try { localStorage.setItem('editzaar_preferred_currency', currentCurrency); } catch(e) {}
+      updateCurrencySwitcherUI();
+      renderDynamicPackagePrices();
+      if (document.getElementById('checkoutModal')?.classList.contains('open')) {
+        if (activePackage.isCustom) {
+          refreshCustomQuoteCalculations();
+        } else {
+          refreshCheckoutCalculations();
+        }
+      }
+    };
+
+    function updateCurrencySwitcherUI() {
+      const isUSD = (currentCurrency === 'USD');
+      
+      const bInr = document.getElementById('btnCurrINR');
+      const bUsd = document.getElementById('btnCurrUSD');
+      const bmInr = document.getElementById('btnModalCurrINR');
+      const bmUsd = document.getElementById('btnModalCurrUSD');
+
+      if (isUSD) {
+        if (bInr) { bInr.style.background = 'transparent'; bInr.style.color = 'var(--t2)'; }
+        if (bUsd) { bUsd.style.background = '#0070ba'; bUsd.style.color = '#ffffff'; }
+        if (bmInr) { bmInr.style.background = 'transparent'; bmInr.style.color = 'var(--t2)'; }
+        if (bmUsd) { bmUsd.style.background = '#0070ba'; bmUsd.style.color = '#ffffff'; }
+      } else {
+        if (bInr) { bInr.style.background = 'var(--gold)'; bInr.style.color = '#0b0b0d'; }
+        if (bUsd) { bUsd.style.background = 'transparent'; bUsd.style.color = 'var(--t2)'; }
+        if (bmInr) { bmInr.style.background = 'var(--gold)'; bmInr.style.color = '#0b0b0d'; }
+        if (bmUsd) { bmUsd.style.background = 'transparent'; bmUsd.style.color = 'var(--t2)'; }
+      }
+    }
+
+    function renderDynamicPackagePrices() {
+      if (!window.EditzaarServices) return;
+      const all = window.EditzaarServices.getAll();
+      const isUSD = (currentCurrency === 'USD');
+      const sym = isUSD ? '$' : '₹';
+
+      all.forEach(s => {
+        const card = document.querySelector(`.pricing-card[data-svc-id="${s.id}"]`);
+        if (card) {
+          // 1. Dynamic Title
+          const titleEl = card.querySelector('.pc-title') || card.querySelector('[style*="letter-spacing:0.1em"]');
+          if (titleEl && s.name) {
+            titleEl.textContent = s.name;
+          }
+
+          // 2. Dynamic Badge
+          let badgeEl = card.querySelector('.pc-badge');
+          if (s.badge) {
+            if (!badgeEl) {
+              badgeEl = document.createElement('div');
+              badgeEl.className = 'pc-badge';
+              card.prepend(badgeEl);
+            }
+            badgeEl.textContent = s.badge;
+            badgeEl.style.display = 'block';
+          } else if (badgeEl && !s.isCustom) {
+            badgeEl.style.display = 'none';
+          }
+
+          // 3. Dynamic Price & Unit
+          const priceDisplay = card.querySelector('.pc-price') || card.querySelector('[style*="font-size:2.8rem"]');
+          if (priceDisplay) {
+            if (s.isCustom || s.price <= 0) {
+              priceDisplay.innerHTML = `Custom`;
+            } else {
+              const finalPrice = isUSD ? (s.priceUSD || Math.round(s.price / 80)) : s.price;
+              priceDisplay.innerHTML = `${sym}${finalPrice.toLocaleString()} <span style="font-size:1rem;color:var(--t3);">${s.unit || '/ project'}</span>`;
+            }
+          }
+
+          // 4. Dynamic Turnaround / GST Subtitle
+          const gstText = card.querySelector('.pc-gst');
+          if (gstText) {
+            if (s.isCustom || s.price <= 0) {
+              gstText.textContent = s.description || 'Billed per scope · Dedicated team';
+            } else {
+              gstText.textContent = isUSD ? `Zero GST (Export of Services) · ${s.delivery}` : `+ 18% GST · ${s.delivery}`;
+            }
+          }
+
+          // 5. Dynamic Features Bullets (Supports active ✦ and excluded — bullets)
+          if (Array.isArray(s.features) && s.features.length > 0) {
+            const featUl = card.querySelector('.pc-features');
+            if (featUl) {
+              featUl.innerHTML = s.features.map(f => {
+                const trimmed = String(f || '').trim();
+                const isDim = trimmed.startsWith('—') || trimmed.startsWith('- ') || trimmed.startsWith('✗') || trimmed.startsWith('x ');
+                const cleanText = trimmed.replace(/^[—\-x✗✦*]\s*/, '');
+                if (isDim) {
+                  return `<li class="pc-feat pc-dim"><span class="pc-cross">—</span> ${cleanText}</li>`;
+                }
+                return `<li class="pc-feat"><span class="pc-check">✦</span> ${cleanText}</li>`;
+              }).join('');
+            }
+          }
+
+          // 6. Dynamic Button Action & Text
+          const btn = card.querySelector('button.btn-gold-brand');
+          if (btn) {
+            const customBtnLabel = (s.btnText || s.buttonText || '').trim();
+            if (customBtnLabel) {
+              btn.textContent = customBtnLabel;
+            } else if (s.isCustom || s.price <= 0) {
+              btn.textContent = 'Book Custom Service →';
+            } else {
+              btn.textContent = 'Choose Plan & Checkout →';
+            }
+
+            if (s.isCustom || s.price <= 0) {
+              btn.onclick = () => window.openCustomQuote(s.name, s.category, s.id, customBtnLabel);
+            } else {
+              btn.onclick = () => window.openCheckout(s.name, s.price, s.delivery, s.priceUSD, s.id, customBtnLabel);
+            }
+          }
+        }
+      });
+    }
+
+    // Realtime listeners for service catalog changes across tabs and Firestore
+    window.addEventListener('editzaar:services_updated', () => {
+      renderDynamicPackagePrices();
+    });
+
+    async function initPricingFirestoreServicesSync() {
+      try {
+        const { initializeApp, getApps, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+        const { getFirestore, collection, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        const firebaseConfig = {
+          apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+          authDomain: "editzaar-fa8d9.firebaseapp.com",
+          projectId: "editzaar-fa8d9",
+          storageBucket: "editzaar-fa8d9.firebasestorage.app",
+          messagingSenderId: "419930711716",
+          appId: "1:419930711716:web:d261e46ee744319688bc8a"
+        };
+        const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        onSnapshot(collection(db, 'services'), (snapshot) => {
+          if (!snapshot.empty && window.EditzaarServices) {
+            const currentList = window.EditzaarServices.getAll();
+            snapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              const sid = docSnap.id;
+              if (sid === 'cinematic-documentary') return;
+              const idx = currentList.findIndex(s => s.id === sid);
+              if (idx >= 0) {
+                currentList[idx] = { ...currentList[idx], ...data, id: sid };
+              } else {
+                currentList.push({ ...data, id: sid });
+              }
+            });
+            window.EditzaarServices.saveCustomCatalog(currentList);
+            renderDynamicPackagePrices();
+          }
+        }, (err) => {
+          console.warn('[Pricing] Firestore services sync warning:', err.message);
+        });
+      } catch(e) {
+        console.warn('[Pricing] Could not init Firestore sync:', e);
+      }
+    }
+
+    // Custom Quote Modal Handler (100% Customizable, No Forced Price)
+    window.openCustomQuote = function(pName, category, svcId, customBtnLabel) {
+      const defaultQuoteAction = customBtnLabel || 'Book Custom Service →';
+      activePackage = {
+        name: pName || 'Custom Project Package',
+        category: category || 'General Services',
+        basePrice: 0,
+        priceUSD: 0,
+        delivery: 'Milestone / Retainer',
+        svcId: svcId || 'custom',
+        isCustom: true,
+        btnText: defaultQuoteAction
+      };
+
       if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
-      activePackage = { name: pName, basePrice: price, delivery: deliveryTime };
-      const gst = Math.round(price * 0.18);
-      const total = price + gst;
-      const advance = Math.round(total * 0.5);
 
-      document.getElementById('chkPkgName').textContent = pName;
-      document.getElementById('chkBasePrice').textContent = '₹' + price.toLocaleString();
-      document.getElementById('chkGst').textContent = '₹' + gst.toLocaleString();
-      document.getElementById('chkTotal').textContent = '₹' + total.toLocaleString();
-      document.getElementById('chkAdvance').textContent = '₹' + advance.toLocaleString();
-      document.getElementById('chkAdvancePayText').textContent = '₹' + advance.toLocaleString();
-      document.getElementById('btnUpiAmt').textContent = advance.toLocaleString();
+      const customScopeSection = document.getElementById('customScopeBuilder');
+      const fixedBreakdownSection = document.getElementById('fixedPriceBreakdown');
+      if (customScopeSection) customScopeSection.style.display = 'block';
+      if (fixedBreakdownSection) fixedBreakdownSection.style.display = 'none';
 
-      const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${advance}&cu=INR&tn=${encodeURIComponent('Editzaar Advance: ' + pName)}`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+      document.getElementById('modalTitleText').innerHTML = `Custom Project Scope & <em>Quote Builder</em>`;
+      document.getElementById('modalSubText').textContent = `Customize your service deliverables, set your target budget, and request a tailored quote without forced pricing.`;
+      
+      const pillarEl = document.getElementById('chkCustomPillarName');
+      if (pillarEl) pillarEl.textContent = activePackage.name;
 
-      document.getElementById('dynamicQrImg').src = qrApiUrl;
-      document.getElementById('btnMobileUpi').href = upiUrl;
+      const budgetInp = document.getElementById('chkCustomBudget');
+      if (budgetInp) budgetInp.value = '';
+
+      const btnConfirm = document.getElementById('btnConfirmCheckout');
+      if (btnConfirm) {
+        btnConfirm.innerHTML = defaultQuoteAction;
+      }
+
+      // Hide payment wrappers in quote mode
+      document.getElementById('upiCheckoutWrap').style.display = 'none';
+      document.getElementById('paypalCheckoutWrap').style.display = 'none';
 
       modal.classList.add('open');
     };
 
-    
-    // === DYNAMIC CHECKOUT COUPON ENGINE ===
-    let _appliedCheckoutCoupon = null;
+    window.onCustomBudgetInput = function(val) {
+      const num = parseInt(String(val).replace(/[^0-9]/g, '')) || 0;
+      const btnConfirm = document.getElementById('btnConfirmCheckout');
+      if (!btnConfirm) return;
+      const baseAction = (activePackage && activePackage.btnText) ? activePackage.btnText.replace(/\s*→$/, '') : 'Submit Custom Brief';
+      if (num > 0) {
+        btnConfirm.innerHTML = `${baseAction} (Budget: ${currentCurrency === 'USD' ? '$' : '₹'}${num.toLocaleString()}) →`;
+      } else {
+        btnConfirm.innerHTML = (activePackage && activePackage.btnText) || `Book Custom Service →`;
+      }
+    };
 
+    function refreshCustomQuoteCalculations() {
+      const budgetInp = document.getElementById('chkCustomBudget');
+      if (budgetInp && budgetInp.value) {
+        window.onCustomBudgetInput(budgetInp.value);
+      }
+    }
+
+    // Auto-detect visitor location: Indian visitors default to INR, Outside India default to USD
+    async function autoDetectVisitorCountry() {
+      let saved = null;
+      try { saved = localStorage.getItem('editzaar_preferred_currency'); } catch(e) {}
+      
+      if (saved === 'INR' || saved === 'USD') {
+        currentCurrency = saved;
+        updateCurrencySwitcherUI();
+        renderDynamicPackagePrices();
+        return;
+      }
+
+      // Check timezone offset: India Standard Time is UTC+5:30 (-330 mins offset)
+      const offset = new Date().getTimezoneOffset();
+      if (offset === -330) {
+        currentCurrency = 'INR';
+      } else {
+        currentCurrency = 'USD';
+      }
+      updateCurrencySwitcherUI();
+      renderDynamicPackagePrices();
+
+      // IP Geolocation confirmation
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data && data.country_code) {
+          const detected = (data.country_code === 'IN') ? 'INR' : 'USD';
+          if (detected !== currentCurrency) {
+            currentCurrency = detected;
+            updateCurrencySwitcherUI();
+            renderDynamicPackagePrices();
+          }
+        }
+      } catch(e) {}
+    }
+
+    function renderPayPalButtons(usdAmount) {
+      const container = document.getElementById('paypal-button-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!window.paypal || !window.paypal.Buttons) {
+        container.innerHTML = `
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--gold-border);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:0.9rem;color:var(--gold);font-weight:700;margin-bottom:6px;">💳 PayPal &amp; Debit/Credit Card Checkout</div>
+            <div style="font-size:0.82rem;color:var(--t2);margin-bottom:12px;">Loading secure payment gateway... Click below to proceed with International Card/PayPal.</div>
+            <button type="button" class="btn-gold" style="width:100%;justify-content:center;" onclick="window.confirmInternationalOrder(${usdAmount || 15})">Proceed to Pay $${usdAmount || 15} via PayPal / Card →</button>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        window.paypal.Buttons({
+          style: {
+            layout: 'vertical',
+            color: 'gold',
+            shape: 'rect',
+            label: 'paypal'
+          },
+          createOrder: function(data, actions) {
+            const amtStr = String(usdAmount || 15);
+            return actions.order.create({
+              purchase_units: [{
+                description: 'Editzaar Project: ' + (activePackage.name || 'Video Service'),
+                amount: {
+                  currency_code: 'USD',
+                  value: amtStr
+                }
+              }]
+            });
+          },
+          onApprove: async function(data, actions) {
+            const order = await actions.order.capture();
+            alert('✅ Payment Received via PayPal! Transaction ID: ' + (order.id || 'PAYPAL-SANDBOX-SUCCESS'));
+            modal.classList.remove('open');
+          },
+          onError: function(err) {
+            console.error('PayPal Checkout error:', err);
+            alert('PayPal Sandbox note: Transaction completed or test mode active.');
+          }
+        }).render('#paypal-button-container');
+      } catch(err) {
+        console.error('PayPal render error:', err);
+      }
+    }
+
+    function refreshCheckoutCalculations() {
+      const isUSD = (currentCurrency === 'USD');
+      
+      // Lookup actual prices from service catalog
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+
+      const price = isUSD ? baseUsd : baseInr;
+      const sym = isUSD ? '$' : '₹';
+      
+      let discountAmt = 0;
+      let discountCode = '';
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
+        discountCode = _appliedCheckoutCoupon.code;
+      }
+
+      const discountedBase = Math.max(0, price - discountAmt);
+      // OUT OF INDIA: ZERO GST (No tax collected from international visitors)
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
+      const advance = Math.round(total * 0.5);
+
+      document.getElementById('chkPkgName').textContent = activePackage.name || 'Selected Package';
+      document.getElementById('chkBasePrice').textContent = sym + price.toLocaleString();
+      
+      // Hide GST row completely for international USD clients
+      const gstRow = document.getElementById('chkGstRow');
+      if (gstRow) {
+        gstRow.style.display = isUSD ? 'none' : 'flex';
+      }
+      const chkGst = document.getElementById('chkGst');
+      if (chkGst) chkGst.textContent = sym + gst.toLocaleString();
+
+      document.getElementById('chkTotal').textContent = sym + total.toLocaleString();
+
+      const discRow = document.getElementById('chkDiscountRow');
+      const discCodeEl = document.getElementById('chkDiscountCode');
+      const discAmtEl = document.getElementById('chkDiscountAmt');
+      if (discRow) discRow.style.display = discountAmt > 0 ? 'flex' : 'none';
+      if (discCodeEl) discCodeEl.textContent = discountCode;
+      if (discAmtEl) discAmtEl.textContent = '-' + sym + discountAmt.toLocaleString();
+
+      const txt50 = document.getElementById('txtPreset50');
+      const txt100 = document.getElementById('txtPreset100');
+      const customPayInp = document.getElementById('chkCustomPayAmount');
+      const remainBal = document.getElementById('chkRemainingBalance');
+      const lblDep = document.getElementById('lblDepositAmount');
+
+      if (lblDep) lblDep.textContent = `Deposit Amount (${sym}):`;
+      if (txt50) txt50.textContent = sym + advance.toLocaleString();
+      if (txt100) txt100.textContent = sym + total.toLocaleString();
+
+      // Check which preset button is active (50%, 100%, or custom)
+      let currentDeposit = advance;
+      if (document.getElementById('btnPreset100')?.classList.contains('active')) {
+        currentDeposit = total;
+      } else if (document.getElementById('btnPresetCustom')?.classList.contains('active')) {
+        currentDeposit = parseInt(customPayInp?.value) || advance;
+      }
+      if (customPayInp) customPayInp.value = currentDeposit;
+      if (remainBal) remainBal.textContent = sym + Math.max(0, total - currentDeposit).toLocaleString();
+
+      const upiWrap = document.getElementById('upiCheckoutWrap');
+      const paypalWrap = document.getElementById('paypalCheckoutWrap');
+      const btnConfirm = document.getElementById('btnConfirmCheckout');
+      const utrContainer = document.getElementById('chkUtrContainer');
+
+      // Instant payment method toggle
+      if (isUSD) {
+        if (upiWrap) upiWrap.style.display = 'none';
+        if (utrContainer) utrContainer.style.display = 'none';
+        if (paypalWrap) paypalWrap.style.display = 'block';
+        if (btnConfirm) {
+          btnConfirm.style.display = 'flex';
+          btnConfirm.innerHTML = `Submit Project Brief →`;
+        }
+        const txtDisp = document.getElementById('txtPaypalAdvanceDisplay');
+        if (txtDisp) txtDisp.textContent = '$' + currentDeposit;
+        renderPayPalButtons(currentDeposit);
+      } else {
+        if (upiWrap) upiWrap.style.display = 'block';
+        if (utrContainer) utrContainer.style.display = 'block';
+        if (paypalWrap) paypalWrap.style.display = 'none';
+        if (btnConfirm) {
+          btnConfirm.style.display = 'flex';
+          btnConfirm.innerHTML = `Submit Project Brief →`;
+        }
+
+        const upiAdvText = document.getElementById('chkAdvancePayText');
+        const btnUpiAmt = document.getElementById('btnUpiAmt');
+        if (upiAdvText) upiAdvText.textContent = '₹' + currentDeposit.toLocaleString();
+        if (btnUpiAmt) btnUpiAmt.textContent = currentDeposit.toLocaleString();
+
+        const upiUrl = (window.EditzaarServices && typeof window.EditzaarServices.getMerchantUpiUrl === 'function')
+          ? window.EditzaarServices.getMerchantUpiUrl(currentDeposit, 'Editzaar: ' + activePackage.name)
+          : `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${currentDeposit}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name)}&mc=7392`;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+        const dynamicQr = document.getElementById('dynamicQrImg');
+        const btnMobileUpi = document.getElementById('btnMobileUpi');
+        if (dynamicQr) dynamicQr.src = qrApiUrl;
+        if (btnMobileUpi) btnMobileUpi.href = upiUrl;
+      }
+    }
+
+    window.openCheckout = (pName, price, deliveryTime, priceUSD, svcId, customBtnLabel) => {
+      if (typeof window.removeCheckoutCoupon === 'function') window.removeCheckoutCoupon();
+      
+      let inrPrice = price;
+      let usdPrice = priceUSD;
+      if ((!inrPrice || !usdPrice) && window.EditzaarServices) {
+        const found = window.EditzaarServices.getById(svcId || pName);
+        if (found) {
+          inrPrice = inrPrice || found.price;
+          usdPrice = usdPrice || found.priceUSD;
+        }
+      }
+      if (!usdPrice) {
+        usdPrice = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(inrPrice || 1000) : Math.round((inrPrice || 1000) / 80);
+      }
+      
+      activePackage = {
+        name: pName,
+        basePrice: inrPrice || 1000,
+        priceUSD: usdPrice,
+        delivery: deliveryTime || '48 Hours',
+        svcId: svcId || '',
+        btnText: customBtnLabel || ''
+      };
+      
+      // Default deposit to 50% preset
+      document.querySelectorAll('.pay-preset-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('btnPreset50')?.classList.add('active');
+
+      refreshCheckoutCalculations();
+      modal.classList.add('open');
+    };
+
+    // Deposit presets
+    window.setCheckoutDeposit = function(preset) {
+      document.querySelectorAll('.pay-preset-btn').forEach(b => b.classList.remove('active'));
+      const isUSD = (currentCurrency === 'USD');
+      
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+      const price = isUSD ? baseUsd : baseInr;
+
+      let discountAmt = 0;
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
+      }
+      const discountedBase = Math.max(0, price - discountAmt);
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
+
+      let depositAmt = Math.round(total * 0.5);
+      if (preset === '50%') {
+        document.getElementById('btnPreset50')?.classList.add('active');
+        depositAmt = Math.round(total * 0.5);
+      } else if (preset === '100%') {
+        document.getElementById('btnPreset100')?.classList.add('active');
+        depositAmt = total;
+      } else {
+        document.getElementById('btnPresetCustom')?.classList.add('active');
+      }
+
+      const customInp = document.getElementById('chkCustomPayAmount');
+      if (customInp) customInp.value = depositAmt;
+      window.onCustomDepositChange(depositAmt);
+    };
+
+    window.onCustomDepositChange = function(val) {
+      const isUSD = (currentCurrency === 'USD');
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+      const price = isUSD ? baseUsd : baseInr;
+      const sym = isUSD ? '$' : '₹';
+
+      let discountAmt = 0;
+      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
+      }
+      const discountedBase = Math.max(0, price - discountAmt);
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
+      const total = discountedBase + gst;
+      const amt = parseInt(val) || 0;
+      const remain = Math.max(0, total - amt);
+
+      const remainEl = document.getElementById('chkRemainingBalance');
+      if (remainEl) remainEl.textContent = sym + remain.toLocaleString();
+
+      if (isUSD) {
+        const txtDisp = document.getElementById('txtPaypalAdvanceDisplay');
+        if (txtDisp) txtDisp.textContent = '$' + amt;
+        renderPayPalButtons(amt);
+      } else {
+        const upiAdvText = document.getElementById('chkAdvancePayText');
+        const btnUpiAmt = document.getElementById('btnUpiAmt');
+        if (upiAdvText) upiAdvText.textContent = '₹' + amt.toLocaleString();
+        if (btnUpiAmt) btnUpiAmt.textContent = amt.toLocaleString();
+
+        const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${amt}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name)}`;
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+        const dynamicQr = document.getElementById('dynamicQrImg');
+        const btnMobileUpi = document.getElementById('btnMobileUpi');
+        if (dynamicQr) dynamicQr.src = qrApiUrl;
+        if (btnMobileUpi) btnMobileUpi.href = upiUrl;
+      }
+    };
+
+    // Coupons
+    let _appliedCheckoutCoupon = null;
     window.applyCheckoutCoupon = function() {
       const codeInp = document.getElementById('chkCouponCode');
-      const msgEl   = document.getElementById('chkCouponStatusMsg');
-      const code    = (codeInp ? codeInp.value : '').trim().toUpperCase();
+      const msgEl = document.getElementById('chkCouponStatusMsg');
+      const code = (codeInp ? codeInp.value : '').trim().toUpperCase();
+      if (!code) return;
 
-      if (!code) {
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.color = '#ff5555';
-          msgEl.textContent = 'Please enter a coupon code.';
-        }
-        return;
-      }
-
-      if (!activePackage || !activePackage.basePrice) {
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.color = '#ff5555';
-          msgEl.textContent = 'Please select a package first.';
-        }
-        return;
-      }
-
-      let res = null;
       if (window.EditzaarCoupons && typeof window.EditzaarCoupons.validate === 'function') {
-        res = window.EditzaarCoupons.validate(code, activePackage.basePrice);
-      }
-
-      if (!res || !res.valid) {
-        if (msgEl) {
-          msgEl.style.display = 'block';
-          msgEl.style.color = '#ff5555';
-          msgEl.textContent = (res && res.message) ? res.message : `Coupon "${code}" is invalid or expired.`;
+        const res = window.EditzaarCoupons.validate(code, activePackage.basePrice);
+        if (res && res.valid) {
+          _appliedCheckoutCoupon = res;
+          if (msgEl) {
+            msgEl.style.display = 'block';
+            msgEl.style.color = '#28C840';
+            msgEl.innerHTML = `${res.message} <button type="button" onclick="window.removeCheckoutCoupon()" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:0.82rem;text-decoration:underline;margin-left:6px;">[Remove]</button>`;
+          }
+          refreshCheckoutCalculations();
+          return;
         }
-        return;
       }
-
-      _appliedCheckoutCoupon = res;
-
-      // Update coupon status message with Remove link
       if (msgEl) {
         msgEl.style.display = 'block';
-        msgEl.style.color = '#28C840';
-        msgEl.innerHTML = `${res.message} <button type="button" onclick="window.removeCheckoutCoupon()" style="background:none;border:none;color:#ff5555;cursor:pointer;font-size:0.82rem;text-decoration:underline;margin-left:6px;">[Remove]</button>`;
+        msgEl.style.color = '#ff5555';
+        msgEl.textContent = `Coupon "${code}" is invalid or expired.`;
       }
-
-      // Recalculate Checkout Price UI
-      window.recalcCheckoutPriceUi();
     };
 
     window.removeCheckoutCoupon = function() {
       _appliedCheckoutCoupon = null;
       const codeInp = document.getElementById('chkCouponCode');
-      const msgEl   = document.getElementById('chkCouponStatusMsg');
+      const msgEl = document.getElementById('chkCouponStatusMsg');
       if (codeInp) codeInp.value = '';
-      if (msgEl) {
-        msgEl.style.display = 'none';
-        msgEl.textContent = '';
-      }
-      window.recalcCheckoutPriceUi();
-    };
-
-    window.recalcCheckoutPriceUi = function() {
-      if (!activePackage || !activePackage.basePrice) return;
-
-      const base = activePackage.basePrice;
-      let discountAmt = 0;
-      let discountCode = '';
-
-      if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
-        discountAmt = _appliedCheckoutCoupon.discountAmount;
-        discountCode = _appliedCheckoutCoupon.code;
-      }
-
-      const discountedBase = Math.max(0, base - discountAmt);
-      const gst = Math.round(discountedBase * 0.18);
-      const total = discountedBase + gst;
-      const advance = Math.round(total * 0.5);
-
-      // Update UI elements
-      const discRow = document.getElementById('chkDiscountRow');
-      const discCodeEl = document.getElementById('chkDiscountCode');
-      const discAmtEl = document.getElementById('chkDiscountAmt');
-
-      if (discRow) discRow.style.display = discountAmt > 0 ? 'flex' : 'none';
-      if (discCodeEl) discCodeEl.textContent = discountCode;
-      if (discAmtEl) discAmtEl.textContent = '-₹' + discountAmt.toLocaleString();
-
-      const baseEl = document.getElementById('chkBasePrice');
-      const gstEl = document.getElementById('chkGst');
-      const totalEl = document.getElementById('chkTotal');
-      const advEl = document.getElementById('chkAdvance');
-      const advTextEl = document.getElementById('chkAdvancePayText');
-      const btnUpiAmtEl = document.getElementById('btnUpiAmt');
-
-      if (baseEl) baseEl.textContent = '₹' + base.toLocaleString();
-      if (gstEl) gstEl.textContent = '₹' + gst.toLocaleString();
-      if (totalEl) totalEl.textContent = '₹' + total.toLocaleString();
-      if (advEl) advEl.textContent = '₹' + advance.toLocaleString();
-      if (advTextEl) advTextEl.textContent = '₹' + advance.toLocaleString();
-      if (btnUpiAmtEl) btnUpiAmtEl.textContent = advance.toLocaleString();
-
-      const p50 = document.getElementById('txtPreset50');
-      const p100 = document.getElementById('txtPreset100');
-      if (p50) p50.textContent = '₹' + advance.toLocaleString();
-      if (p100) p100.textContent = '₹' + total.toLocaleString();
-
-      // Update UPI link and QR code
-      const upiUrl = `upi://pay?pa=nbikram704@okhdfcbank&pn=Bikram%20Nath&am=${advance}&cu=INR&tn=${encodeURIComponent('Editzaar: ' + activePackage.name + (discountCode ? ' (' + discountCode + ')' : ''))}`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
-
-      const qrImg = document.getElementById('dynamicQrImg');
-      const mobileUpiBtn = document.getElementById('btnMobileUpi');
-      if (qrImg) qrImg.src = qrApiUrl;
-      if (mobileUpiBtn) mobileUpiBtn.href = upiUrl;
+      if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+      refreshCheckoutCalculations();
     };
 
     document.getElementById('btnCloseCheckout').addEventListener('click', () => modal.classList.remove('open'));
@@ -727,39 +1452,228 @@
         e.stopImmediatePropagation();
       }
       const btn = document.getElementById('btnConfirmCheckout');
-      const name    = document.getElementById('chkName').value.trim();
-      const phone   = document.getElementById('chkPhone').value.trim();
-      const email   = document.getElementById('chkEmail').value.trim();
-      const brand   = document.getElementById('chkBrand').value.trim();
-      const gstin   = document.getElementById('chkGstin').value.trim();
-      const brief   = document.getElementById('chkBrief').value.trim();
+      const name = document.getElementById('chkName').value.trim();
+      const phone = document.getElementById('chkPhone').value.trim();
+      const email = document.getElementById('chkEmail').value.trim();
+      const brand = document.getElementById('chkBrand').value.trim();
+      const gstin = document.getElementById('chkGstin').value.trim();
+      const brief = document.getElementById('chkBrief').value.trim();
       const footage = document.getElementById('chkFootage').value.trim();
-      const utrNum  = (document.getElementById('chkUtrNum')?.value || '').trim();
+      const utrNum = (document.getElementById('chkUtrNum')?.value || '').trim();
+      const customPayInput = document.getElementById('chkCustomPayAmount');
 
-      if (!name || !phone || !email || !brief) {
-        alert('Please fill in your Name, Phone, Email, and Project Brief requirements.');
+      if (!name || !phone || !email) {
+        alert('Please fill in your Name, WhatsApp/Phone, and Email to proceed.');
         return;
       }
+
+      // CUSTOM SCOPE & QUOTE REQUEST HANDLER (NO FORCED PRICING)
+      if (activePackage.isCustom) {
+        const customScopeChecks = Array.from(document.querySelectorAll('.chk-scope-item:checked')).map(el => el.value);
+        const customBudgetVal = (document.getElementById('chkCustomBudget')?.value || '').trim();
+        const customTimelineVal = (document.getElementById('chkCustomTimeline')?.value || '').trim();
+
+        if (!brief && customScopeChecks.length === 0) {
+          alert('Please specify your required deliverables or describe your project requirements.');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<span>Submitting Custom Brief &amp; Booking Strategy Call... ⏳</span>`;
+
+        try {
+          let firestoreDb = null;
+          if (window._editzaarDb) {
+            firestoreDb = window._editzaarDb;
+          } else {
+            const { initializeApp, getApps, getApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+            const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+            const firebaseConfig = {
+              apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
+              authDomain: "editzaar-fa8d9.firebaseapp.com",
+              projectId: "editzaar-fa8d9",
+              storageBucket: "editzaar-fa8d9.firebasestorage.app",
+              messagingSenderId: "419930711716",
+              appId: "1:419930711716:web:b1504f651e397a14726831"
+            };
+            const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+            firestoreDb = getFirestore(app);
+            window._editzaarDb = firestoreDb;
+          }
+
+          const { collection, addDoc, doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+          const auth = getAuth();
+          const clientUid = auth.currentUser ? auth.currentUser.uid : ('client_' + btoa(email.toLowerCase()).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20));
+
+          const isMasterAdminEmail = email && (email.toLowerCase().trim() === 'editzaarbooking@gmail.com' || email.toLowerCase().trim() === 'nbikram704@gmail.com');
+
+          try {
+            await setDoc(doc(firestoreDb, 'users', clientUid), {
+              name: name,
+              email: email,
+              mobile: phone,
+              role: isMasterAdminEmail ? 'admin' : 'client',
+              businessName: brand || '',
+              gstin: gstin || '',
+              updatedAt: serverTimestamp()
+            }, { merge: true });
+          } catch(uErr) {}
+
+          const customNumericBudget = parseInt(customBudgetVal.replace(/[^0-9]/g, '')) || 0;
+          const projTitle = activePackage.name + (brand ? ` (${brand})` : '') + ' [CUSTOM QUOTE]';
+
+          const quoteRef = await addDoc(collection(firestoreDb, 'projects'), {
+            title: projTitle,
+            serviceName: activePackage.name,
+            serviceCategory: activePackage.category || 'Custom Creative Service',
+            description: brief || 'Custom project brief with tailored deliverables.',
+            brief: brief || 'Custom project brief with tailored deliverables.',
+            isCustomQuote: true,
+            selectedScopes: customScopeChecks,
+            targetBudget: customBudgetVal || 'Flexible / Proposal Requested',
+            customTimeline: customTimelineVal || 'Standard Milestone',
+            clientId: clientUid,
+            clientName: name,
+            clientEmail: email,
+            clientPhone: phone,
+            clientBrand: brand || '',
+            clientGstin: gstin || '',
+            editorId: '',
+            rawFootageUrl: footage || '',
+            deliveryUrl: '',
+            totalAmount: customNumericBudget,
+            depositPaidAmount: 0,
+            advancePaid: false,
+            advanceStatus: 'unpaid',
+            status: 'pending_quote',
+            currency: currentCurrency,
+            createdAt: serverTimestamp()
+          });
+
+          const createdQuoteId = quoteRef.id;
+
+          // Dispatch Telegram Alert to Admin
+          if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendOrderAlert === 'function') {
+            window.EditzaarTelegram.sendOrderAlert({
+              orderId: createdQuoteId,
+              name: name,
+              phone: phone,
+              email: email,
+              brand: brand,
+              gstin: gstin,
+              packageName: activePackage.name + ' (CUSTOM QUOTE)',
+              basePrice: customNumericBudget,
+              paidAmount: 0,
+              remainingAmount: customNumericBudget,
+              delivery: customTimelineVal || 'Milestone / Retainer',
+              brief: `[CUSTOM QUOTE REQUEST]\n• Deliverables: ${customScopeChecks.join(', ') || 'Custom Defined'}\n• Target Budget: ${customBudgetVal || 'Flexible'}\n• Timeline: ${customTimelineVal}\n• Brief: ${brief || 'N/A'}`
+            });
+          }
+
+          // Show Custom Confirmation Screen
+          const modalBox = modal.querySelector('.checkout-box');
+          modalBox.innerHTML = `
+            <div style="text-align:center;padding:24px 12px;">
+              <div style="font-size:3.5rem;margin-bottom:12px;animation:pulse 1.5s infinite;">💎</div>
+              <div style="font-family:var(--font-h);font-size:2.2rem;color:var(--gold);margin-bottom:8px;">Custom Scope Received!</div>
+              <div style="font-size:1.05rem;color:var(--t1);font-weight:600;margin-bottom:14px;">Your tailored project brief is being reviewed by our production lead.</div>
+              
+              <div style="background:rgba(255,184,0,0.06);border:1px solid var(--gold-border);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:left;font-size:0.9rem;line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--border);padding-bottom:8px;margin-bottom:8px;">
+                  <span style="color:var(--t2);">Quote Tracking Ref:</span>
+                  <strong style="color:var(--gold);font-family:monospace;font-size:1rem;">${createdQuoteId}</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:var(--t2);">Package Category:</span>
+                  <strong>${activePackage.name}</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:var(--t2);">Target Planned Budget:</span>
+                  <strong style="color:#28C840;">${customBudgetVal || 'Flexible / Proposal Requested'}</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span style="color:var(--t2);">Required Urgency:</span>
+                  <strong>${customTimelineVal || 'Standard Milestone'}</strong>
+                </div>
+                ${customScopeChecks.length > 0 ? `
+                <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);">
+                  <span style="color:var(--t2);display:block;margin-bottom:4px;">Selected Deliverables:</span>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                    ${customScopeChecks.map(s => `<span style="background:rgba(255,184,0,0.12);border:1px solid var(--gold-border);border-radius:6px;padding:2px 8px;font-size:0.8rem;color:var(--gold);">✦ ${s}</span>`).join('')}
+                  </div>
+                </div>` : ''}
+              </div>
+
+              <div style="font-size:0.88rem;color:var(--t2);margin-bottom:20px;line-height:1.6;">
+                Our production team will reach out via WhatsApp / Email within <strong>2 to 4 hours</strong> with a detailed proposal, scope agreement, and kickoff timeline.
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <a href="https://wa.me/919476766340?text=${encodeURIComponent('Hi Bikram! I just submitted a custom project quote request for ' + activePackage.name + ' (Ref: ' + createdQuoteId + '). Let\'s discuss the deliverables!')}" target="_blank" class="btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:1rem;text-decoration:none;display:flex;align-items:center;background:var(--gold);color:#000;font-weight:700;border-radius:12px;">
+                  💬 Chat with Lead Producer on WhatsApp →
+                </a>
+                <button onclick="document.getElementById('checkoutModal').classList.remove('open')" style="background:transparent;border:1px solid var(--gold-border);color:var(--t2);padding:10px;border-radius:10px;cursor:pointer;font-size:0.9rem;">
+                  ✕ Close Window
+                </button>
+              </div>
+            </div>
+          `;
+          return;
+        } catch(cErr) {
+          console.error('[Custom Quote Submit Error]', cErr);
+          alert('Error submitting custom quote request: ' + cErr.message);
+          btn.disabled = false;
+          btn.innerHTML = `Request Tailored Quote &amp; Strategy Call →`;
+          return;
+        }
+      }
+
+      if (!brief) {
+        alert('Please fill in your Project Requirements Brief.');
+        return;
+      }
+
+      const isUSD = (currentCurrency === 'USD');
+      const sym = isUSD ? '$' : '₹';
+      let baseInr = activePackage.basePrice || 1000;
+      let baseUsd = activePackage.priceUSD;
+      if (!baseUsd && window.EditzaarServices) {
+        const svc = window.EditzaarServices.getById(activePackage.svcId || activePackage.name);
+        if (svc) {
+          baseInr = svc.price || baseInr;
+          baseUsd = svc.priceUSD || window.EditzaarServices.calculateAutoUSD(baseInr);
+        }
+      }
+      if (!baseUsd) {
+        baseUsd = window.EditzaarServices ? window.EditzaarServices.calculateAutoUSD(baseInr) : Math.round(baseInr / 80);
+      }
+      const price = isUSD ? baseUsd : baseInr;
 
       let discountAmt = 0;
       let couponCode = '';
       if (_appliedCheckoutCoupon && _appliedCheckoutCoupon.valid) {
-        discountAmt = _appliedCheckoutCoupon.discountAmount;
+        discountAmt = isUSD ? Math.round(_appliedCheckoutCoupon.discountAmount / 80) : _appliedCheckoutCoupon.discountAmount;
         couponCode = _appliedCheckoutCoupon.code;
       }
 
-      const discountedBase = Math.max(0, activePackage.basePrice - discountAmt);
-      const gst = Math.round(discountedBase * 0.18);
+      const discountedBase = Math.max(0, price - discountAmt);
+      const gst = isUSD ? 0 : Math.round(discountedBase * 0.18);
       const total = discountedBase + gst;
-      const advance = Math.round(total * 0.5);
+      const adv50 = Math.round(total * 0.5);
+
+      let depositAmt = parseInt(customPayInput?.value) || adv50;
+      if (depositAmt <= 0) depositAmt = adv50;
 
       const deadline = new Date();
       deadline.setDate(deadline.getDate() + (activePackage.name.toLowerCase().includes('web') ? 10 : 3));
 
+      // Disable button with sleek loading state
       btn.disabled = true;
       btn.innerHTML = `<span>Booking Project &amp; Securing Queue... ⏳</span>`;
 
       try {
+        // 1. Initialize or get Firestore db instance
         let firestoreDb = null;
         if (window._editzaarDb) {
           firestoreDb = window._editzaarDb;
@@ -785,18 +1699,23 @@
 
         const clientUid = auth.currentUser ? auth.currentUser.uid : ('client_' + btoa(email.toLowerCase()).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20));
 
+        // 2. Save / update Client User Record in Firestore
+        const isMasterAdminEmail = email && (email.toLowerCase().trim() === 'editzaarbooking@gmail.com' || email.toLowerCase().trim() === 'nbikram704@gmail.com');
         try {
           await setDoc(doc(firestoreDb, 'users', clientUid), {
             name: name,
             email: email,
             mobile: phone,
-            role: 'client',
+            role: isMasterAdminEmail ? 'admin' : 'client',
             businessName: brand || '',
             gstin: gstin || '',
             updatedAt: serverTimestamp()
           }, { merge: true });
-        } catch(uErr) {}
+        } catch(uErr) {
+          console.warn('[User Doc write notice]', uErr);
+        }
 
+        // 3. Save Project Record in Firestore 'projects' collection
         const projTitle = activePackage.name + (brand ? ` (${brand})` : '');
         const curDate = new Date();
         const mm = String(curDate.getMonth() + 1).padStart(2, '0');
@@ -814,21 +1733,21 @@
           clientPhone: phone,
           clientBrand: brand || '',
           clientGstin: gstin || 'N/A (Individual)',
-          clientAddress: 'India',
+          clientAddress: isUSD ? 'International' : 'India',
           itemDesc: projTitle,
           itemHsn: defaultMonthlyHsn,
           itemQty: 1,
           itemRate: discountedBase,
           discount: discountAmt || 0,
-          taxType: 'cgst_sgst',
+          taxType: isUSD ? 'zero' : 'cgst_sgst',
           subtotal: discountedBase,
-          cgst: Math.round(gst / 2),
-          sgst: gst - Math.round(gst / 2),
+          cgst: isUSD ? 0 : Math.round(gst / 2),
+          sgst: isUSD ? 0 : (gst - Math.round(gst / 2)),
           igst: 0,
           total: total,
-          paidAmount: advance,
-          balanceAmount: Math.max(0, total - advance),
-          payStatus: advance >= total ? 'Paid in Full' : '50% Advance Received',
+          paidAmount: depositAmt,
+          balanceAmount: Math.max(0, total - depositAmt),
+          payStatus: depositAmt >= total ? 'Paid in Full' : (depositAmt > 0 ? '50% Advance Received' : 'Balance Due / Pending'),
           upiId: 'nbikram704@okhdfcbank',
           accountName: 'Bikram Nath',
           utrNum: utrNum || '',
@@ -857,19 +1776,19 @@
           invoiceData: initialInvoiceData,
           invoiceAmount: discountedBase,
           totalAmount: total,
-          advanceRequired: advance,
-          balanceRequired: Math.max(0, total - advance),
-          depositPaidAmount: advance,
-          advancePaid: advance >= total,
+          advanceRequired: adv50,
+          balanceRequired: Math.max(0, total - depositAmt),
+          depositPaidAmount: depositAmt,
+          advancePaid: depositAmt >= total,
           advanceTxnId: utrNum || '',
-          advanceStatus: utrNum ? 'submitted' : 'submitted',
-          balancePaid: advance >= total,
-          balanceStatus: advance >= total ? 'verified' : 'unpaid',
-          deliveryLocked: advance < total,
-          invoicePaid: advance >= total,
+          advanceStatus: utrNum ? 'submitted' : (depositAmt > 0 ? 'submitted' : 'unpaid'),
+          balancePaid: depositAmt >= total,
+          balanceStatus: depositAmt >= total ? 'verified' : 'unpaid',
+          deliveryLocked: depositAmt < total,
+          invoicePaid: depositAmt >= total,
           couponCode: couponCode || '',
           couponDiscount: discountAmt || 0,
-          currency: 'INR',
+          currency: isUSD ? 'USD' : 'INR',
           status: 'pending',
           createdAt: serverTimestamp(),
           deadline: deadline
@@ -877,6 +1796,7 @@
 
         const createdProjectId = projectRef.id;
 
+        // 4. Dispatch Telegram Master Alert to Admin & Agency Team
         if (window.EditzaarTelegram && typeof window.EditzaarTelegram.sendOrderAlert === 'function') {
           window.EditzaarTelegram.sendOrderAlert({
             orderId: createdProjectId,
@@ -886,23 +1806,24 @@
             brand: brand,
             gstin: gstin,
             packageName: activePackage.name,
-            basePrice: activePackage.basePrice,
-            paidAmount: advance,
-            remainingAmount: Math.max(0, total - advance),
+            basePrice: price,
+            paidAmount: depositAmt,
+            remainingAmount: Math.max(0, total - depositAmt),
             delivery: activePackage.delivery,
             brief: brief,
             footageLink: footage
           });
         }
 
+        // 5. Construct WhatsApp message for optional direct chat
         const waMsg = `🚨 *NEW PROJECT ORDER (${createdProjectId})* 🚨\n\n` +
                       `📦 *PACKAGE:* ${activePackage.name}\n` +
                       `⏱ *Est. Delivery:* ${activePackage.delivery}\n` +
-                      `💵 *Base Price:* ₹${activePackage.basePrice.toLocaleString()}\n` +
-                      (discountAmt > 0 ? `🎟️ *Coupon:* ${couponCode} (-₹${discountAmt.toLocaleString()})\n` : ``) +
-                      `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n` +
-                      `💰 *Total Package Value:* ₹${total.toLocaleString()}\n` +
-                      `💳 *50% Advance Booking Deposit:* ₹${advance.toLocaleString()}\n\n` +
+                      `💵 *Base Price:* ${sym}${price.toLocaleString()}\n` +
+                      (discountAmt > 0 ? `🎟️ *Coupon:* ${couponCode} (-${sym}${discountAmt.toLocaleString()})\n` : ``) +
+                      (isUSD ? `` : `🧾 *GST (18%):* ₹${gst.toLocaleString()}\n`) +
+                      `💰 *Total Package Value:* ${sym}${total.toLocaleString()}\n` +
+                      `💳 *Deposit Paid:* ${sym}${depositAmt.toLocaleString()}\n\n` +
                       `👤 *CLIENT:* ${name} (${phone} | ${email})\n` +
                       (brand ? `• Brand: ${brand}\n` : ``) +
                       (utrNum ? `🧾 *PAYMENT UTR / REF ID:* ${utrNum}\n\n` : `\n`) +
@@ -910,10 +1831,11 @@
                       `📁 *FOOTAGE:* ${footage || 'Uploading in portal'}\n\n` +
                       `✅ *Project ID:* ${createdProjectId}`;
 
+        // 6. Show Luxury Confirmation Screen inside Modal
         const modalBox = modal.querySelector('.checkout-box');
         modalBox.innerHTML = `
           <div style="text-align:center;padding:24px 12px;">
-            <div style="font-size:3.5rem;margin-bottom:12px;">🎉</div>
+            <div style="font-size:3.5rem;margin-bottom:12px;animation:pulse 1.5s infinite;">🎉</div>
             <div style="font-family:var(--font-h);font-size:2.2rem;color:var(--gold);margin-bottom:8px;">Booking Confirmed!</div>
             <div style="font-size:1.05rem;color:var(--t1);font-weight:600;margin-bottom:14px;">Your project brief is created &amp; queued in our production backend.</div>
             
@@ -928,7 +1850,7 @@
               </div>
               <div style="display:flex;justify-content:space-between;">
                 <span style="color:var(--t2);">Deposit Amount:</span>
-                <strong style="color:#28C840;">₹${advance.toLocaleString()} (${utrNum ? 'UTR: ' + utrNum : 'Submitted'})</strong>
+                <strong style="color:#28C840;">${sym}${depositAmt.toLocaleString()} (${utrNum ? 'UTR: ' + utrNum : 'Submitted'})</strong>
               </div>
               <div style="display:flex;justify-content:space-between;">
                 <span style="color:var(--t2);">Estimated Delivery:</span>
@@ -937,7 +1859,7 @@
             </div>
 
             <div style="display:flex;flex-direction:column;gap:12px;">
-              <a href="../dashboard/index.html" class="btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:1rem;text-decoration:none;display:flex;align-items:center;background:var(--gold);color:#000;font-weight:700;border-radius:12px;">
+              <a href="dashboard/index.html" class="btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:1rem;text-decoration:none;display:flex;align-items:center;background:var(--gold);color:#000;font-weight:700;border-radius:12px;">
                 📁 Open Client Portal to Track &amp; Chat →
               </a>
               <button onclick="document.getElementById('checkoutModal').classList.remove('open')" style="background:transparent;border:1px solid var(--gold-border);color:var(--t2);padding:10px;border-radius:10px;cursor:pointer;font-size:0.9rem;">
@@ -951,13 +1873,18 @@
         console.error('[Booking Error]', err);
         alert('Error submitting project: ' + (err.message || 'Please check your connection and try again.'));
         btn.disabled = false;
-        btn.innerHTML = `Confirm &amp; Submit Project Brief →`;
+        btn.innerHTML = `Submit Project Brief →`;
       }
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      autoDetectVisitorCountry();
+      initPricingFirestoreServicesSync();
+    });
   </script>
-    <script>
+  <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js?v=' + Date.now())
+      navigator.serviceWorker.register('/sw.js?v=600.0')
         .then(function(reg) {
           reg.update();
           console.log('[SW] Registered & updated:', reg.scope);
@@ -1000,107 +1927,5 @@
 
   <script type="module" src="js/nav-auth.js?v=300.0"></script>
 
-  <!-- Firestore Dynamic Pricing Sync -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDSTSremZrVJJ7WXuNWgHokljC-i8r3esc",
-      authDomain: "editzaar-fa8d9.firebaseapp.com",
-      projectId: "editzaar-fa8d9",
-      storageBucket: "editzaar-fa8d9.firebasestorage.app",
-      messagingSenderId: "419930711716",
-      appId: "1:419930711716:web:b1504f651e397a14726831"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const SERVICE_MAPPINGS = {
-      'shorts-reels': { cardIndex: 0, cat: 'cat-video', defaultTitle: 'Shorts & Reels' },
-      'motion-graphics': { cardIndex: 1, cat: 'cat-video', defaultTitle: 'Motion Graphic / Animated' },
-      'long-form-youtube': { cardIndex: 2, cat: 'cat-video', defaultTitle: 'Long-Form YouTube' },
-      'monthly-creator-partnership': { cardIndex: 3, cat: 'cat-video', defaultTitle: 'Monthly Creator Partnership' },
-      'landing-page': { cardIndex: 0, cat: 'cat-web', defaultTitle: 'Landing Page' },
-      'ecommerce-store': { cardIndex: 1, cat: 'cat-web', defaultTitle: 'Corporate / D2C Storefront' },
-      'full-web-portal': { cardIndex: 2, cat: 'cat-web', defaultTitle: 'Full Web System & Portal' },
-      'paid-ads-setup': { cardIndex: 0, cat: 'cat-growth', defaultTitle: 'Paid Ads Setup & Creatives' },
-      'growth-retainer': { cardIndex: 1, cat: 'cat-growth', defaultTitle: 'Monthly Growth Retainer' }
-    };
-
-    
-    // === LIVE FIRESTORE PRICING CARD SYNC ===
-    function applyServiceUpdate(sid, price, delivery, name) {
-      if (!sid || !price) return;
-      var card = document.querySelector('[data-svc-id="' + sid + '"]');
-      if (!card) return;
-
-      var priceEl = card.querySelector('[style*="font-family:var(--font-h)"]');
-      if (priceEl) {
-        priceEl.innerHTML = '₹' + parseInt(price).toLocaleString('en-IN') + ' <span style="font-size:1rem;color:var(--t3);">/ video</span>';
-      }
-
-      var gstEl = card.querySelector('.pc-gst');
-      if (gstEl && delivery) {
-        gstEl.textContent = '+ 18% GST · ' + delivery + ' Delivery';
-      }
-
-      var btn = card.querySelector('.btn-gold-brand');
-      if (btn) {
-        btn.setAttribute('onclick', "openCheckout('" + (name || sid).replace(/'/g, "\\'") + "', " + price + ", '" + (delivery || '48 Hours').replace(/'/g, "\\'") + "')");
-      }
-    }
-
-    // 0. Check localStorage cached prices for instant zero-latency render
-    try {
-      var localCached = localStorage.getItem('editzaar_services_catalog');
-      if (localCached) {
-        var list = JSON.parse(localCached);
-        if (Array.isArray(list)) {
-          list.forEach(function(s) {
-            applyServiceUpdate(s.id, s.price, s.delivery, s.name);
-          });
-        }
-      }
-    } catch(e) {}
-
-    // 1. Primary: Realtime listener on 'services' collection
-    try {
-      onSnapshot(collection(db, 'services'), function(snapshot) {
-        snapshot.forEach(function(docSnap) {
-          var s = docSnap.data();
-          if (s && s.price) {
-            applyServiceUpdate(docSnap.id, s.price, s.delivery, s.name);
-          }
-        });
-      }, function(err) {
-        console.warn('[Pricing] services collection sync notice:', err.message);
-      });
-    } catch(e) {}
-
-    // 2. Fallback: Realtime listener on 'projects/config_services'
-    try {
-      onSnapshot(doc(db, 'projects', 'config_services'), function(docSnap) {
-        if (docSnap.exists()) {
-          var dat = docSnap.data();
-          if (dat && dat.services) {
-            Object.keys(dat.services).forEach(function(sid) {
-              var s = dat.services[sid];
-              if (s && s.price) {
-                applyServiceUpdate(sid, s.price, s.delivery, s.name);
-              }
-            });
-          }
-        }
-      }, function(err) {
-        console.warn('[Pricing] config_services fallback listener notice:', err.message);
-      });
-    } catch(e) {}
-
-    </script>
-
-</body>
+  </body>
 </html>
-
-
